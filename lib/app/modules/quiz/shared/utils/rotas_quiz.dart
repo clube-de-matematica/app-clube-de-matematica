@@ -1,0 +1,1 @@
+const ROTA_PAGINA_QUIZ = "/quiz";

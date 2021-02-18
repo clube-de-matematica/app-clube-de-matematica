@@ -1,0 +1,63 @@
+/itens
+//Se for uma referência a outro item:
+{
+    id: 2019PF1N1Q13, //String
+
+    nivel: 1, //int
+
+    indice: 13, //int
+
+    referencia: itens/2019PF1N1Q19 //DocumentReference
+}
+
+//Se não for uma referência a outro item:
+{
+    id: 2019PF1N1Q13, //String
+
+    ano: 2019, //int
+
+    nivel: 1, //int
+
+    indice: 13, //int
+
+    dificuldade: Baixa, //String
+
+    enunciado: [...], //List<String>
+
+    gabarito: E, //String
+
+    assuntos: [...], //List<String>
+
+    imagens_enunciado: [
+        {
+            nome: 2019pf1n1q13.png, //String
+            largura: 362.0, //double
+            altura: 87.0 //double
+        } //Map<String, dynamic>
+    ], List<Map<String, dynamic>>
+
+    alternativas: [
+        {
+            alternativa: A, //String
+            tipo: imagem, //String
+            valor: //dynamic
+                //Se "tipo" é "texto", "valor" é uma String
+                //Se "tipo" é "imagem", "valor" é:
+                    {
+                        nome: 2019pf1n1q13_item_a.png, //String
+                        largura: 66.0, //double
+                        altura: 67.0 //double
+                    } //Map<String, dynamic>
+        }, 
+        {alternativa: B, tipo: imagem, valor: {nome: 2019pf1n1q13_item_b.png, largura: 66.0, altura: 66.0}}, 
+        {alternativa: C, tipo: imagem, valor: {nome: 2019pf1n1q13_item_c.png, largura: 67.0, altura: 68.0}}, 
+        {alternativa: D, tipo: imagem, valor: {nome: 2019pf1n1q13_item_d.png, largura: 66.0, altura: 67.0}}, 
+        {alternativa: E, tipo: imagem, valor: {nome: 2019pf1n1q13_item_e.png, largura: 68.0, altura: 68.0}}
+    ] //List<Map<String, dynamic>>
+}
+
+/assuntos
+{
+    assunto: título do assunto //String
+    arvore: [...] //List<String>
+}

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "760657363926",
+    "firebase_url": "https://clube-de-matematica.firebaseio.com",
+    "project_id": "clube-de-matematica",
+    "storage_bucket": "clube-de-matematica.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760657363926:android:0b3c6e7cd4c4f997851a77",
+        "android_client_info": {
+          "package_name": "com.sslourenco.clubedematematica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "760657363926-ubhippgii7d920urpvds10fp6cg94tc2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sslourenco.clubedematematica",
+            "certificate_hash": "492b2b9948e9739f89fa660692345b95399c3571"
+          }
+        },
+        {
+          "client_id": "760657363926-353ciircs66psa361hqmt77n0t73vkut.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZtdMrZ7NsJuS4cKXf8BCZhmSXiVC8hpA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "760657363926-353ciircs66psa361hqmt77n0t73vkut.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

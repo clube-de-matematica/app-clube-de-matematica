@@ -1,0 +1,1 @@
+const APP_NOME = "Clube de Matemática";
