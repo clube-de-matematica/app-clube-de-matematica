@@ -18,36 +18,61 @@ class AuthRepository {
     } on MyExceptionAuthentication catch (e) {
       print(e.toString());
     } */
-    if (!loggedAnonymously) getUserAnonymous();
+    //if (!loggedAnonymously) signInAnonymously();
+  }
+
+  ///Retorna o usuário atual.
+  User get currentUser => _auth.currentUser;
+
+  ///Cria um usuário anônimo de forma assincrona.
+  ///Se já houver um usuário anônimo conectado, esse usuário será retornado. 
+  ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
+  ///Retorna `true` se o processo for bem sucedido.
+  Future<bool> signInAnonymously() async {
+    try {
+      if (logged) _auth.signOut();
+      final user = (await _auth.signInAnonymously()).user;
+
+      assert(user.isAnonymous);
+      assert(await user.getIdToken() != null);
+      assert(user.uid == currentUser.uid);
+
+      return user.uid == currentUser.uid;
+    } on FirebaseAuthException catch  (error) {
+      throw MyExceptionAuthRepository(error);
+    }
   }
 
   ///Solicitar login com uma cota Google.
+  ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
+  ///Retorna `true` se o processo for bem sucedido.
   Future<bool> signInWithGoogle() async {
-    ///Abrir o pop-up da UI do sistema solicitando uma conta do Google.
-    final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
-    ///Dados de autenticação da conta.
-    final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
-        
-    ///Criar uma credencial do Firebase Auth com os dados de autenticação.
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
-    
-    ///Solicitar a autenticação para o Firebase Auth.
-    final UserCredential authResult = await _auth.signInWithCredential(credential);
-    ///Usuário autenticado.
-    final User user = authResult.user;
+//dev.debugger();
+//await Future.delayed(Duration(seconds: 20));
+    try {
+      ///Abrir o pop-up da UI do sistema solicitando uma conta do Google.
+      final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+      ///Dados de autenticação da conta.
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+      ///Criar uma credencial do Firebase Auth com os dados de autenticação.
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+      ///Solicitar a autenticação para o Firebase Auth.
+      final UserCredential authResult = await _auth.signInWithCredential(credential);
+      ///Usuário autenticado.
+      final User user = authResult.user;
 
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
-    
-    ///Usuário atualmente conectado.
-    final User currentUser = _auth.currentUser;
-    assert(user.uid == currentUser.uid);
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+      assert(user.uid == currentUser.uid);
 
-    return user.uid == currentUser.uid;
+      return user.uid == currentUser.uid;
+    } on FirebaseAuthException catch  (error) {
+      throw MyExceptionAuthRepository(error);
+    }
   }
 
   ///Fazer logout da conta Google.
@@ -60,18 +85,6 @@ class AuthRepository {
 
   ///Retorna `true` se houver um usuário conectado.
   bool get logged => _auth.currentUser != null;
-
-  ///Cria um usuário anônimo de forma assincrona.
-  ///Se já houver um usuário anônimo conectado, esse usuário será retornado. 
-  ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
-  Future<UserCredential> getUserAnonymous() async {
-    try {
-      if (logged) _auth.signOut();
-      return await _auth.signInAnonymously();
-    } on FirebaseAuthException catch  (error) {
-      throw MyExceptionAuthRepository(error);
-    }
-  } 
 }
 
 ///Uma enumeração para todos os tipos de erro [MyExceptionAuthRepository].

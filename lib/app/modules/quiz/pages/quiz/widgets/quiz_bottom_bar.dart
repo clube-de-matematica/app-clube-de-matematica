@@ -31,12 +31,13 @@ class QuizBottomBar extends StatelessWidget {
               return AnimatedOpacity(
                 opacity: opacidade,
                 duration: const Duration(milliseconds: 300),
-                child: FlatButton(
-                  textTheme: ButtonTextTheme.normal,
-                  textColor: tema.colorScheme.onSurface,
-                  padding: const EdgeInsets.only(right: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32)
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    primary: tema.colorScheme.onSurface,
+                    padding: const EdgeInsets.only(right: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32)
+                    )
                   ),
                   onPressed: controller.podeVoltar ? controller.voltar : null,
                   child: Row(
@@ -55,12 +56,13 @@ class QuizBottomBar extends StatelessWidget {
               return AnimatedOpacity(
                 opacity: opacidade,
                 duration: const Duration(milliseconds: 300),
-                child: FlatButton(
-                  textTheme: ButtonTextTheme.normal,
-                  textColor: tema.colorScheme.onSurface,
-                  padding: const EdgeInsets.only(left: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32)
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    primary: tema.colorScheme.onSurface,
+                    padding: const EdgeInsets.only(left: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32)
+                    )
                   ),
                   onPressed: controller.podeAvancar ? controller.avancar : null,
                   child: Row(

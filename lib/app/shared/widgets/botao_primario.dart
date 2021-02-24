@@ -17,14 +17,12 @@ class BotaoPrimario extends StatelessWidget {
     final tema = Theme.of(context);
 
     ///[ButtonTheme] é usado para pegar os padrões do [MaterialApp];
-    return ButtonTheme(
-      child: RaisedButton(
-        textTheme: ButtonTextTheme.primary,
-        disabledColor: tema.primaryColor.withOpacity(0.4),
-        disabledTextColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
-        child: Text(label),
-        onPressed: onPressed,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        onSurface: tema.primaryColor,
       ),
+      child: Text(label),
+      onPressed: onPressed,
     );
   }
 }

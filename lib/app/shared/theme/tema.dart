@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'dart:developer' as dev;
-
 extension MyExtensionTextStyle on TextStyle {
   ///Redefine a propriedade [fontSize].
   ///[escala] é usada para uma variação proporcional no tamanho da fonte.
@@ -41,7 +39,6 @@ extension MyExtensionTextTheme on TextTheme {
     double sizeButton,
     double sizeOverline,
   }) {
-//dev.debugger();
     return copyWith(
       headline1: this.headline1?.setEscalaFontSize(escala, sizeHeadline1),
       headline2: this.headline2?.setEscalaFontSize(escala, sizeHeadline2),
@@ -61,27 +58,22 @@ extension MyExtensionTextTheme on TextTheme {
   }
 }
 
-extension MyExtensionThemeData on ThemeData {
-  ///Cor para os botões cuja propriedade `textTheme` está definida como 
-  ///[ButtonTextTheme.normal].
-  //Color get colorButtonTextNormal => colorScheme.onSurface;
-}
-
 ///Tema usado no aplicativo.
 class MeuTema {
-  double _escala = 1.0;
-  int cont = 0;
-
-  set escala(double value) {
+  ///Usada para almentar a fonte de todos os [TextStyle] do tema de forma proporcional.
+  static double _escala = 1.0;
+  ///Usada para almentar a fonte de todos os [TextStyle] do tema de forma proporcional.
+  static double get escala => _escala;
+  ///Usada para almentar a fonte de todos os [TextStyle] do tema de forma proporcional.
+  static set escala(double value) {
+    assert (value > 0);
     if (value > 0) _escala = value;
   }
 
   ThemeData get temaClaro {
     final temp = ThemeData(primarySwatch: Colors.teal);
     final onSurface = Colors.black.withOpacity(0.7);
-
-    print((cont++).toString());
-//dev.debugger();
+    
     return temp.copyWith(
       colorScheme: temp.colorScheme.copyWith(onSurface: onSurface),
 

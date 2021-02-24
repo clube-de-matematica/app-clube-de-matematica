@@ -17,8 +17,6 @@ class QuizBarOpcoesItem extends StatelessWidget {
 
   final QuizController controller;
 
-  Color get textColor => Modular.get<MeuTema>().temaClaro.colorScheme.onSurface;
-
   TextStyle get textStyle => Modular.get<MeuTema>().temaClaro.textTheme.bodyText2;
 
   @override
@@ -38,20 +36,19 @@ class QuizBarOpcoesItem extends StatelessWidget {
                 : const Text(""),
           );
         }),
-        FlatButton(
-          textTheme: ButtonTextTheme.normal,
-          textColor: textColor, //A cor será atribuída ao texto e ao ícone.
-          padding: const EdgeInsets.only(left: 16),
-          visualDensity: VisualDensity.compact,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(32)
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: textStyle,
+            primary: textStyle.color,
+            padding: const EdgeInsets.only(left: 16),
+            visualDensity: VisualDensity.compact,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32)
+            ),
           ),
           child: Row(
             children: <Widget>[
-              Text(
-                QUIZ_OPCOES_ITEM, 
-                style: textStyle,
-              ), 
+              Text(QUIZ_OPCOES_ITEM), 
               const SizedBox(width: 4),
               Icon(
                 Icons.expand_more,

@@ -78,9 +78,7 @@ class FiltroPageModel extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Expanded(child: Observer(builder: (_) {
-              return OutlineButton(
-                textTheme: ButtonTextTheme.primary,
-                //textColor: tema.colorButtonTextNormal,
+              return OutlinedButton(
                 child: const Text(FILTRO_TEXTO_BOTAO_LIMPAR),
                 onPressed: controller.ativarLimpar ? controller.limpar : null,
               );

@@ -6,6 +6,10 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import 'clube_de_matematica_controller.dart';
 import 'clube_de_matematica_widget.dart';
+import 'modules/login/login_module.dart';
+import 'modules/login/utils/rotas_login.dart';
+import 'modules/perfil/perfil_module.dart';
+import 'modules/perfil/utils/rotas_perfil.dart';
 import 'modules/quiz/quiz_module.dart';
 import 'modules/quiz/shared/utils/rotas_quiz.dart';
 import 'shared/repositories/firebase/auth_repository.dart';
@@ -37,8 +41,10 @@ class ClubeDeMatematicaModule extends MainModule {
   @override
   //Lista de rotas.
   List<ModularRouter> get routers => [
-    //ModularRouter(Modular.initialRoute, module: QuizModule()),
-    ModularRouter(ROTA_PAGINA_QUIZ, module: QuizModule()),
+    ModularRouter(Modular.initialRoute, module: LoginModule()),
+    ModularRouter(ROTA_MODULO_LOGIN_PATH, module: LoginModule()),
+    ModularRouter(ROTA_MODULO_PERFIL_PATH, module: PerfilModule()),
+    ModularRouter(ROTA_MODULO_QUIZ_PATH, module: QuizModule()),
   ];
 
   @override

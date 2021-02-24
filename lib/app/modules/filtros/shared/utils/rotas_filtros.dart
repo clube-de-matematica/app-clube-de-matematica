@@ -1,12 +1,16 @@
-import 'package:clubedematematica/app/modules/quiz/shared/utils/rotas_quiz.dart';
+import '../../../quiz/shared/utils/rotas_quiz.dart';
 
+///Rota relativa.
 const ROTA_MODULO_FILTROS = "/filtro";
-const ROTA_MODULO_FILTROS_PATH = ROTA_PAGINA_QUIZ + ROTA_MODULO_FILTROS;
+///Rota absoluta.
+const ROTA_MODULO_FILTROS_PATH = ROTA_PAGINA_QUIZ_PATH + ROTA_MODULO_FILTROS;
 
-///ROTA_MODULO_FILTROS + "/tipos"
+///Rota relativa.
 const ROTA_PAGINA_FILTROS_TIPOS = "/tipos";
+///Rota absoluta.
 const ROTA_PAGINA_FILTROS_TIPOS_PATH = ROTA_MODULO_FILTROS_PATH + ROTA_PAGINA_FILTROS_TIPOS;
 
-///ROTA_MODULO_FILTROS + "/opcoes"
+///Rota relativa.
 const ROTA_PAGINA_FILTROS_OPCOES = "/opcoes";
+///Rota absoluta.
 const ROTA_PAGINA_FILTROS_OPCOES_PATH = ROTA_MODULO_FILTROS_PATH + ROTA_PAGINA_FILTROS_OPCOES;

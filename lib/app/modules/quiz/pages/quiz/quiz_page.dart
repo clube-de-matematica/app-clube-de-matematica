@@ -117,9 +117,11 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
         style: tema.textTheme.bodyText1,
         textAlign: TextAlign.justify,
       ),
-      FlatButton(
-        textTheme: ButtonTextTheme.primary,
-        padding: const EdgeInsets.only(top: 40),
+      TextButton(
+        style: TextButton.styleFrom(
+          primary: tema.colorScheme.primary,
+          padding: const EdgeInsets.only(top: 40),
+        ),
         child: const Text(QUIZ_TEXTO_BOTAO_FILTRAR),
         onPressed: () => controller.onTapFiltrar(),
       )
