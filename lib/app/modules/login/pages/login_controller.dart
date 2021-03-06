@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
@@ -14,9 +15,11 @@ class LoginController = _LoginControllerBase with _$LoginController;
 
 abstract class _LoginControllerBase with Store {
   final AuthRepository auth;
+  final UserApp user;
 
   _LoginControllerBase(
     this.auth,
+    this.user,
   );
 
   ///Indica o método de login escolhido pelo usuário.
@@ -48,7 +51,11 @@ abstract class _LoginControllerBase with Store {
     _setLoading(true);
 
     final autenticado = await auth.signInWithGoogle();
-    if (autenticado) Modular.to.pushReplacementNamed(ROTA_PAGINA_PERFIL_PATH);
+    user
+      ..name = auth.currentUserName
+      ..email = auth.currentUserEmail
+      ..urlAvatar = auth.currentUserAvatarUrl;
+    if (autenticado) Modular.to.pushNamed(ROTA_PAGINA_PERFIL_PATH);
 
     _setLoading(false);
     _setSelectedMethod(Login.none);

@@ -1,14 +1,14 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'models/userapp.dart';
 import 'page/perfil_controller.dart';
 import 'page/perfil_page.dart';
-import '../../shared/repositories/firebase/auth_repository.dart';
 
 class PerfilModule extends ChildModule {
   @override
   List<Bind> get binds => [
     //Controles
-    Bind((i) => PerfilController(i.get<AuthRepository>())),
+    Bind((i) => PerfilController(i.get<UserApp>())),
   ];
 
   @override

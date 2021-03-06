@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../shared/theme/tema.dart';
+import '../../../../shared/utils/string_interface.dart';
+import '../../shared/utils/strings_interface.dart';
 import 'quiz_controller.dart';
 import 'widgets/quiz_alternativas.dart';
 import 'widgets/quiz_appbar.dart';
 import 'widgets/quiz_bar_opcoes_item.dart';
 import 'widgets/quiz_bottom_bar.dart';
 import 'widgets/quiz_enunciado_item.dart';
-import '../../shared/utils/strings_interface.dart';
-import '../../../../shared/theme/tema.dart';
-import '../../../../shared/utils/string_interface.dart';
 
 //Esta é a página de exibição de cada item a ser resolvido.
 class QuizPage extends StatefulWidget {

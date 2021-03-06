@@ -1,177 +1,131 @@
 import 'package:flutter/material.dart';
 
-extension MyExtensionTextStyle on TextStyle {
-  ///Redefine a propriedade [fontSize].
-  ///[escala] é usada para uma variação proporcional no tamanho da fonte.
-  TextStyle setEscalaFontSize([double escala = 1.0, double size]) {
-    return copyWith(fontSize: (size ?? fontSize) == null ? null : escala * size ?? fontSize);
-  }
-
-  ///Retorna um novo [TextStyle] com base nesta instância, com a fonte em negrito.
-  TextStyle get bold => copyWith(fontWeight: FontWeight.bold);
-
-  ///Retorna um novo [TextStyle] com base nesta instância, com `FontWeight.normal`.
-  TextStyle get normal => copyWith(fontWeight: FontWeight.normal);
-
-  ///Retorna um novo [TextStyle] com base nesta instância, com o espaçamento entre caracteres 
-  ///que será usado nos botões.
-  TextStyle get letterSpacingForButton => copyWith(letterSpacing: 1.2);
-}
-
-extension MyExtensionTextTheme on TextTheme {
-  ///Redefine a propriedade `fontSize` para os [TextStyle] correspondentes ao nome do 
-  ///parâmetro.
-  ///[escala] é usada para uma variação proporcional no tamanho da fonte nos vários estilos.
-  ///Para [button] também será definido o espaçamento entre os caracteres.
-  TextTheme overrideFontSizeInTextStyles(
-    double escala,
-    {double sizeHeadline1,
-    double sizeHeadline2,
-    double sizeHeadline3,
-    double sizeHeadline4,
-    double sizeHeadline5,
-    double sizeHeadline6,
-    double sizeSubtitle1,
-    double sizeSubtitle2,
-    double sizeBodyText1,
-    double sizeBodyText2,
-    double sizeCaption,
-    double sizeButton,
-    double sizeOverline,
-  }) {
-    return copyWith(
-      headline1: this.headline1?.setEscalaFontSize(escala, sizeHeadline1),
-      headline2: this.headline2?.setEscalaFontSize(escala, sizeHeadline2),
-      headline3: this.headline3?.setEscalaFontSize(escala, sizeHeadline3),
-      headline4: this.headline4?.setEscalaFontSize(escala, sizeHeadline4),
-      headline5: this.headline5?.setEscalaFontSize(escala, sizeHeadline5),
-      headline6: this.headline6?.setEscalaFontSize(escala, sizeHeadline6),
-      subtitle1: this.subtitle1?.setEscalaFontSize(escala, sizeSubtitle1),
-      subtitle2: this.subtitle2?.setEscalaFontSize(escala, sizeSubtitle2),
-      bodyText1: this.bodyText1?.setEscalaFontSize(escala, sizeBodyText1),
-      bodyText2: this.bodyText2?.setEscalaFontSize(escala, sizeBodyText2),
-      caption: this.caption?.setEscalaFontSize(escala, sizeCaption),
-      ///Também define o espaçamento entre os caracteres.
-      button: this.button?.letterSpacingForButton?.setEscalaFontSize(escala, sizeButton),
-      overline: this.overline?.setEscalaFontSize(escala, sizeOverline),
-    );
-  }
-}
+import '../extensions.dart';
 
 ///Tema usado no aplicativo.
 class MeuTema {
   ///Usada para almentar a fonte de todos os [TextStyle] do tema de forma proporcional.
   static double _escala = 1.0;
+
   ///Usada para almentar a fonte de todos os [TextStyle] do tema de forma proporcional.
   static double get escala => _escala;
+
   ///Usada para almentar a fonte de todos os [TextStyle] do tema de forma proporcional.
   static set escala(double value) {
-    assert (value > 0);
+    assert(value > 0);
     if (value > 0) _escala = value;
   }
 
   ThemeData get temaClaro {
     final temp = ThemeData(primarySwatch: Colors.teal);
     final onSurface = Colors.black.withOpacity(0.7);
-    
+
     return temp.copyWith(
       colorScheme: temp.colorScheme.copyWith(onSurface: onSurface),
-
-      accentTextTheme: temp.accentTextTheme?.overrideFontSizeInTextStyles(_escala), 
-      
+      accentTextTheme:
+          temp.accentTextTheme?.overrideFontSizeInTextStyles(_escala),
       appBarTheme: temp.appBarTheme?.copyWith(
-        textTheme: temp.appBarTheme?.textTheme?.overrideFontSizeInTextStyles(_escala)
-      ), 
-      
+          textTheme: temp.appBarTheme?.textTheme
+              ?.overrideFontSizeInTextStyles(_escala)),
       bannerTheme: temp.bannerTheme?.copyWith(
-        contentTextStyle: temp.bannerTheme?.contentTextStyle?.setEscalaFontSize(_escala)
-      ), 
-      
+          contentTextStyle:
+              temp.bannerTheme?.contentTextStyle?.setEscalaFontSize(_escala)),
       bottomNavigationBarTheme: temp.bottomNavigationBarTheme?.copyWith(
         selectedLabelStyle: temp.bottomNavigationBarTheme?.selectedLabelStyle
-            ?.setEscalaFontSize(_escala), 
-        unselectedLabelStyle: temp.bottomNavigationBarTheme?.unselectedLabelStyle
-            ?.setEscalaFontSize(_escala), 
+            ?.setEscalaFontSize(_escala),
+        unselectedLabelStyle: temp
+            .bottomNavigationBarTheme?.unselectedLabelStyle
+            ?.setEscalaFontSize(_escala),
       ),
-      
       chipTheme: temp.chipTheme?.copyWith(
         labelStyle: temp.chipTheme?.labelStyle?.setEscalaFontSize(_escala),
-        secondaryLabelStyle: temp.chipTheme?.secondaryLabelStyle?.setEscalaFontSize(_escala),
+        secondaryLabelStyle:
+            temp.chipTheme?.secondaryLabelStyle?.setEscalaFontSize(_escala),
       ),
-      
       cupertinoOverrideTheme: temp.cupertinoOverrideTheme?.copyWith(
-        textTheme: temp.cupertinoOverrideTheme?.textTheme?.copyWith(
-          actionTextStyle: temp.cupertinoOverrideTheme?.textTheme
-              ?.actionTextStyle?.setEscalaFontSize(_escala), 
-          textStyle: temp.cupertinoOverrideTheme?.textTheme
-              ?.textStyle?.setEscalaFontSize(_escala), 
-          pickerTextStyle: temp.cupertinoOverrideTheme?.textTheme
-              ?.pickerTextStyle?.setEscalaFontSize(_escala), 
-          navTitleTextStyle: temp.cupertinoOverrideTheme?.textTheme
-              ?.navTitleTextStyle?.setEscalaFontSize(_escala), 
-          tabLabelTextStyle: temp.cupertinoOverrideTheme?.textTheme
-              ?.tabLabelTextStyle?.setEscalaFontSize(_escala), 
-          navActionTextStyle: temp.cupertinoOverrideTheme?.textTheme
-              ?.navActionTextStyle?.setEscalaFontSize(_escala), 
-          navLargeTitleTextStyle: temp.cupertinoOverrideTheme?.textTheme
-              ?.navLargeTitleTextStyle?.setEscalaFontSize(_escala), 
-          dateTimePickerTextStyle: temp.cupertinoOverrideTheme?.textTheme
-              ?.dateTimePickerTextStyle?.setEscalaFontSize(_escala), 
-        )
-      ), 
-      
+          textTheme: temp.cupertinoOverrideTheme?.textTheme?.copyWith(
+        actionTextStyle: temp.cupertinoOverrideTheme?.textTheme?.actionTextStyle
+            ?.setEscalaFontSize(_escala),
+        textStyle: temp.cupertinoOverrideTheme?.textTheme?.textStyle
+            ?.setEscalaFontSize(_escala),
+        pickerTextStyle: temp.cupertinoOverrideTheme?.textTheme?.pickerTextStyle
+            ?.setEscalaFontSize(_escala),
+        navTitleTextStyle: temp
+            .cupertinoOverrideTheme?.textTheme?.navTitleTextStyle
+            ?.setEscalaFontSize(_escala),
+        tabLabelTextStyle: temp
+            .cupertinoOverrideTheme?.textTheme?.tabLabelTextStyle
+            ?.setEscalaFontSize(_escala),
+        navActionTextStyle: temp
+            .cupertinoOverrideTheme?.textTheme?.navActionTextStyle
+            ?.setEscalaFontSize(_escala),
+        navLargeTitleTextStyle: temp
+            .cupertinoOverrideTheme?.textTheme?.navLargeTitleTextStyle
+            ?.setEscalaFontSize(_escala),
+        dateTimePickerTextStyle: temp
+            .cupertinoOverrideTheme?.textTheme?.dateTimePickerTextStyle
+            ?.setEscalaFontSize(_escala),
+      )),
       dataTableTheme: temp.dataTableTheme?.copyWith(
-        dataTextStyle: temp.dataTableTheme?.dataTextStyle?.setEscalaFontSize(_escala), 
-        headingTextStyle: temp.dataTableTheme?.headingTextStyle?.setEscalaFontSize(_escala), 
+        dataTextStyle:
+            temp.dataTableTheme?.dataTextStyle?.setEscalaFontSize(_escala),
+        headingTextStyle:
+            temp.dataTableTheme?.headingTextStyle?.setEscalaFontSize(_escala),
       ),
-      
       dialogTheme: temp.dialogTheme?.copyWith(
-        titleTextStyle: temp.dialogTheme?.titleTextStyle?.setEscalaFontSize(_escala), 
-        contentTextStyle: temp.dialogTheme?.contentTextStyle?.setEscalaFontSize(_escala), 
+        titleTextStyle:
+            temp.dialogTheme?.titleTextStyle?.setEscalaFontSize(_escala),
+        contentTextStyle:
+            temp.dialogTheme?.contentTextStyle?.setEscalaFontSize(_escala),
       ),
-      
+      iconTheme: IconThemeData(
+        color: onSurface,
+        opacity: 1.0,
+        size: 24.0,
+      ),
       inputDecorationTheme: temp.inputDecorationTheme?.copyWith(
-        hintStyle: temp.inputDecorationTheme?.hintStyle?.setEscalaFontSize(_escala),
-        errorStyle: temp.inputDecorationTheme?.errorStyle?.setEscalaFontSize(_escala),
-        labelStyle: temp.inputDecorationTheme?.labelStyle?.setEscalaFontSize(_escala),
-        helperStyle: temp.inputDecorationTheme?.helperStyle?.setEscalaFontSize(_escala),
-        prefixStyle: temp.inputDecorationTheme?.prefixStyle?.setEscalaFontSize(_escala),
-        suffixStyle: temp.inputDecorationTheme?.suffixStyle?.setEscalaFontSize(_escala),
-        counterStyle: temp.inputDecorationTheme?.counterStyle?.setEscalaFontSize(_escala),
+        hintStyle:
+            temp.inputDecorationTheme?.hintStyle?.setEscalaFontSize(_escala),
+        errorStyle:
+            temp.inputDecorationTheme?.errorStyle?.setEscalaFontSize(_escala),
+        labelStyle:
+            temp.inputDecorationTheme?.labelStyle?.setEscalaFontSize(_escala),
+        helperStyle:
+            temp.inputDecorationTheme?.helperStyle?.setEscalaFontSize(_escala),
+        prefixStyle:
+            temp.inputDecorationTheme?.prefixStyle?.setEscalaFontSize(_escala),
+        suffixStyle:
+            temp.inputDecorationTheme?.suffixStyle?.setEscalaFontSize(_escala),
+        counterStyle:
+            temp.inputDecorationTheme?.counterStyle?.setEscalaFontSize(_escala),
       ),
-      
       navigationRailTheme: temp.navigationRailTheme?.copyWith(
         selectedLabelTextStyle: temp.navigationRailTheme?.selectedLabelTextStyle
-            ?.setEscalaFontSize(_escala), 
-        unselectedLabelTextStyle: temp.navigationRailTheme?.unselectedLabelTextStyle
-            ?.setEscalaFontSize(_escala), 
+            ?.setEscalaFontSize(_escala),
+        unselectedLabelTextStyle: temp
+            .navigationRailTheme?.unselectedLabelTextStyle
+            ?.setEscalaFontSize(_escala),
       ),
-      
       popupMenuTheme: temp.popupMenuTheme?.copyWith(
-        textStyle: temp.popupMenuTheme?.textStyle?.setEscalaFontSize(_escala)
-      ),
-      
-      primaryTextTheme: temp.primaryTextTheme?.overrideFontSizeInTextStyles(_escala), 
-      
+          textStyle:
+              temp.popupMenuTheme?.textStyle?.setEscalaFontSize(_escala)),
+      primaryTextTheme:
+          temp.primaryTextTheme?.overrideFontSizeInTextStyles(_escala),
       sliderTheme: temp.sliderTheme?.copyWith(
-        valueIndicatorTextStyle: temp.sliderTheme?.valueIndicatorTextStyle
-            ?.setEscalaFontSize(_escala)
-      ),
-      
+          valueIndicatorTextStyle: temp.sliderTheme?.valueIndicatorTextStyle
+              ?.setEscalaFontSize(_escala)),
       snackBarTheme: temp.snackBarTheme?.copyWith(
-        contentTextStyle: temp.snackBarTheme?.contentTextStyle?.setEscalaFontSize(_escala)
-      ),
-      
+          contentTextStyle:
+              temp.snackBarTheme?.contentTextStyle?.setEscalaFontSize(_escala)),
       tabBarTheme: temp.tabBarTheme?.copyWith(
-        labelStyle: temp.tabBarTheme?.labelStyle?.setEscalaFontSize(_escala)
-      ), 
-      
+          labelStyle: temp.tabBarTheme?.labelStyle?.setEscalaFontSize(_escala)),
+
       /* 
       textButtonTheme: ,
       elevatedButtonTheme: ,
       outlinedButtonTheme: ,
       */
-      
+
       textTheme: temp.textTheme?.copyWith(
         headline1: temp.textTheme?.headline1?.copyWith(
           color: onSurface,
@@ -226,6 +180,7 @@ class MeuTema {
           fontSize: _escala * 14,
           //fontWeight: FontWeight.w400,
           fontStyle: FontStyle.normal,
+
           ///Também define o espaçamento entre os caracteres.
           letterSpacing: 1.2,
         ),
@@ -235,48 +190,44 @@ class MeuTema {
           fontWeight: FontWeight.w400,
           fontStyle: FontStyle.normal,
         ),
-      ), 
-      
-      timePickerTheme: temp.timePickerTheme?.copyWith(
-        helpTextStyle: temp.timePickerTheme?.helpTextStyle
-            ?.setEscalaFontSize(_escala), 
-        dayPeriodTextStyle: temp.timePickerTheme?.dayPeriodTextStyle
-            ?.setEscalaFontSize(_escala), 
-        hourMinuteTextStyle: temp.timePickerTheme?.hourMinuteTextStyle
-            ?.setEscalaFontSize(_escala), 
-        inputDecorationTheme: temp.timePickerTheme?.inputDecorationTheme?.copyWith(
-          hintStyle: temp.timePickerTheme?.inputDecorationTheme
-              ?.hintStyle?.setEscalaFontSize(_escala),
-          errorStyle: temp.timePickerTheme?.inputDecorationTheme
-              ?.errorStyle?.setEscalaFontSize(_escala),
-          labelStyle: temp.timePickerTheme?.inputDecorationTheme
-              ?.labelStyle?.setEscalaFontSize(_escala),
-          helperStyle: temp.timePickerTheme?.inputDecorationTheme
-              ?.helperStyle?.setEscalaFontSize(_escala),
-          prefixStyle: temp.timePickerTheme?.inputDecorationTheme
-              ?.prefixStyle?.setEscalaFontSize(_escala),
-          suffixStyle: temp.timePickerTheme?.inputDecorationTheme
-              ?.suffixStyle?.setEscalaFontSize(_escala),
-          counterStyle: temp.timePickerTheme?.inputDecorationTheme
-              ?.counterStyle?.setEscalaFontSize(_escala),
-        )
       ),
-      
+      timePickerTheme: temp.timePickerTheme?.copyWith(
+          helpTextStyle:
+              temp.timePickerTheme?.helpTextStyle?.setEscalaFontSize(_escala),
+          dayPeriodTextStyle: temp.timePickerTheme?.dayPeriodTextStyle
+              ?.setEscalaFontSize(_escala),
+          hourMinuteTextStyle: temp.timePickerTheme?.hourMinuteTextStyle
+              ?.setEscalaFontSize(_escala),
+          inputDecorationTheme:
+              temp.timePickerTheme?.inputDecorationTheme?.copyWith(
+            hintStyle: temp.timePickerTheme?.inputDecorationTheme?.hintStyle
+                ?.setEscalaFontSize(_escala),
+            errorStyle: temp.timePickerTheme?.inputDecorationTheme?.errorStyle
+                ?.setEscalaFontSize(_escala),
+            labelStyle: temp.timePickerTheme?.inputDecorationTheme?.labelStyle
+                ?.setEscalaFontSize(_escala),
+            helperStyle: temp.timePickerTheme?.inputDecorationTheme?.helperStyle
+                ?.setEscalaFontSize(_escala),
+            prefixStyle: temp.timePickerTheme?.inputDecorationTheme?.prefixStyle
+                ?.setEscalaFontSize(_escala),
+            suffixStyle: temp.timePickerTheme?.inputDecorationTheme?.suffixStyle
+                ?.setEscalaFontSize(_escala),
+            counterStyle: temp
+                .timePickerTheme?.inputDecorationTheme?.counterStyle
+                ?.setEscalaFontSize(_escala),
+          )),
       toggleButtonsTheme: temp.toggleButtonsTheme?.copyWith(
-        textStyle: temp.toggleButtonsTheme?.textStyle?.setEscalaFontSize(_escala)
-      ), 
-      
+          textStyle:
+              temp.toggleButtonsTheme?.textStyle?.setEscalaFontSize(_escala)),
       tooltipTheme: temp.tooltipTheme?.copyWith(
-        textStyle: temp.tooltipTheme?.textStyle?.setEscalaFontSize(_escala)
-      ), 
-      
+          textStyle: temp.tooltipTheme?.textStyle?.setEscalaFontSize(_escala)),
       typography: temp.typography?.copyWith(
-        black: temp.typography?.black?.overrideFontSizeInTextStyles(_escala), 
+        black: temp.typography?.black?.overrideFontSizeInTextStyles(_escala),
         //Estas substituições estão gerando erro.
-        //dense: temp.typography?.dense?.overrideFontSizeInTextStyles(_escala), 
-        //englishLike: temp.typography?.englishLike?.overrideFontSizeInTextStyles(_escala), 
-        //tall: temp.typography?.tall?.overrideFontSizeInTextStyles(_escala), 
-        white: temp.typography?.white?.overrideFontSizeInTextStyles(_escala), 
+        //dense: temp.typography?.dense?.overrideFontSizeInTextStyles(_escala),
+        //englishLike: temp.typography?.englishLike?.overrideFontSizeInTextStyles(_escala),
+        //tall: temp.typography?.tall?.overrideFontSizeInTextStyles(_escala),
+        white: temp.typography?.white?.overrideFontSizeInTextStyles(_escala),
       ),
     );
   }
@@ -649,4 +600,3 @@ class MeuTema {
   );
   } **/
 }
-

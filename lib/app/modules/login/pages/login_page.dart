@@ -7,8 +7,6 @@ import '../utils/strings_interface.dart';
 import '../../../shared/theme/tema.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
 
-import 'dart:developer' as dev;
-
 ///Página de login.
 class LoginPage extends StatefulWidget {
   @override
@@ -162,6 +160,11 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   Widget _buttonLoginWithGoogle() {
     return Observer(
       builder: (_) {
+        final avatarSize = 10.0 * escala < 10.0
+            ? 10
+            : 10.0 * escala > 25.0
+                ? 25.0
+                : 10.0 * escala;
         final clicked =
             controller.loading && controller.selectedMethod == Login.google;
         return ElevatedButton(
@@ -184,12 +187,10 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircleAvatar(
+                      radius: avatarSize,
+                      backgroundImage:
+                          AssetImage(controller.assetPathIconGoogle),
                       backgroundColor: Colors.transparent,
-                      radius: 10.0,
-                      child: Image(
-                        image: AssetImage(controller.assetPathIconGoogle),
-                        fit: BoxFit.cover,
-                      ),
                     ),
                     const SizedBox(width: 8.0),
                     Flexible(
@@ -199,7 +200,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                         style: tema.textTheme.bodyText1.copyWith(
                           fontWeight: FontWeight.w500,
                           color: textColor1,
-                          fontSize: escala * 20,
+                          fontSize: escala * 18,
                         ),
                       ),
                     ),

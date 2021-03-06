@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
@@ -23,6 +24,7 @@ class ClubeDeMatematicaModule extends MainModule {
   //Como este é o módulo plincipal (MainModule), ela estará disponível para todo o app.
   List<Bind> get binds => [
     Bind((i) => MeuTema()),
+    Bind((i) => UserApp()),
 
     //Controles
     Bind((i) => ClubeDeMatematicaController()),

@@ -33,16 +33,19 @@ dependencies:
   firebase_storage: ^4.0.0 #Armazenamento de arquivos
   firebase_auth: ^0.18.0+1 #Autenticação
   google_sign_in: ^4.5.9 #Login com uma conta Google
+  catex: ^0.0.1+6 #^0.0.1+7
+  progressive_image: ^1.0.1 #Um widget de vibração que carrega progressivamente imagens grandes usando espaços reservados para imagens de baixa qualidade.
+  path: ^1.8.0-nullsafety.1 #Fornece operações comuns para manipulação de caminhos: junção, divisão, normalização, etc.
+  path_provider: ^1.6.27 #Um plugin Flutter para encontrar locais comumente usados ​​no sistema de arquivos. Suporta iOS, Android, Linux e MacOS. Nem todos os métodos são suportados em todas as plataformas.
+  dio: ^3.0.10 #Um cliente Http poderoso para Dart, que suporta interceptores, configuração global, FormData, cancelamento de solicitação, download de arquivo, tempo limite etc.
+  transparent_image: ^1.0.0 #Uma imagem transparente simples. Representado como um Uint8List. Este pacote exporta uma constante: kTransparentImage.
+  image_size_getter: ^0.2.1 #Usado para obter a largura e a altura dos arquivos de imágem.
+  diacritic: ^0.1.1 #Remove acentos comuns e sinais diacríticos de uma string, substituindo-os por um caractere equivalente.
+  image_picker: ^0.6.7+22 #Seletor de imagens.
   flutter_modular: ^2.0.1 #provedor de dependencias (widgets acessiveis em toda a sua sub-arvore) e rotas
   #dependencias para usar o mobx como gerenciador de estado
   mobx: ^1.2.1+4
   flutter_mobx: ^1.1.0+2
-  catex: ^0.0.1+6 #^0.0.1+7
-  progressive_image: ^1.0.1 #Um widget de vibração que carrega progressivamente imagens grandes usando espaços reservados para imagens de baixa qualidade.
-  path_provider: ^1.6.27 #Um plugin Flutter para encontrar locais comumente usados ​​no sistema de arquivos. Suporta iOS, Android, Linux e MacOS. Nem todos os métodos são suportados em todas as plataformas.
-  transparent_image: ^1.0.0 #Uma imagem transparente simples. Representado como um Uint8List. Este pacote exporta uma constante: kTransparentImage.
-  image_size_getter: ^0.2.1 #Usado para obter a largura e a altura dos arquivos de imágem.
-  diacritic: ^0.1.1 #Remove acentos comuns e sinais diacríticos de uma string, substituindo-os por um caractere equivalente.
 
 dev_dependencies:
   flutter_test:

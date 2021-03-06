@@ -1,8 +1,9 @@
-import 'package:clubedematematica/app/shared/theme/tema.dart';
-import 'package:clubedematematica/app/shared/widgets/scrollViewWithChildExpandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../shared/theme/tema.dart';
+import '../utils/strings_interface.dart';
+import '../widgets/avatar.dart';
 import 'perfil_controller.dart';
 
 class PerfilPage extends StatefulWidget {
@@ -15,24 +16,22 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
 
   ThemeData get tema => Theme.of(context);
 
-  ///Tom mais escuro. Usado no "bem cindo" e no texto do botão de login com o Google.
-  Color get textColor1 => tema.colorScheme.onSurface.withOpacity(0.6);
+  ///Estilo do texto dos rótulos do formulário.
+  TextStyle get textStyleLabel => TextStyle(fontSize: 16 * escala);
 
-  ///Tom mais claro. Usado na mensagem e no texto do botão de login anônimo.
-  Color get textColor2 => textColor1.withOpacity(0.5);
-
-  ///Estilo do texto do "bem vindo".
-  TextStyle get textStyleH1 => tema.textTheme.bodyText1.copyWith(
-        fontSize: 24 * escala,
-        color: textColor1,
-      );
-
-  ///Estilo do texto da mensagem.
-  TextStyle get textStyleH2 => textStyleH1.copyWith(color: textColor2);
+  ///Key que permitirá o acessado ao formulário.
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.check),
+        onPressed: () {
+          //if (_formKey.currentState.validate()) _formKey.currentState.save();
+          //controller.user.urlAvatar = controller.user.urlAvatar.toString();
+        },
+      ),
       body: Container(
         //padding: EdgeInsetsDirectional.only(bottom: MediaQuery.of(context).size.height * 0.2),
         color: tema.colorScheme.primary.withOpacity(0.02),
@@ -45,37 +44,84 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
             ),
 
             ///Corpo da página.
-            ScrollViewWithChildExpandable(
-              child: Column(
-                children: [
-                  ///"Bem vindo" e mensagem.
-                  /* Expanded(
-                    flex: 3,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: ,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(32.0, 48.0, 32.0, 16.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            //Foto do perfil.
+                            Center(
+                              child: _avatar(),
+                            ),
+                            //Email do usuário.
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8.0, bottom: 48.0),
+                              child: Center(
+                                child: Text(
+                                  controller.user.email ?? "",
+                                  style: textStyleLabel,
+                                ),
+                              ),
+                            ),
+                            //Nome do usuário.
+                            _textName(),
+                          ],
+                        ),
+                      ),
                     ),
-                  ), */
-
-                  ///Botão de login com o Google.
-                  /* Align(
-                    alignment: Alignment.bottomCenter,
-                    child: ,
-                  ), */
-
-                  ///Botão de autenticação anônima.
-                  /* Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ,
-                    ),
-                  ), */
-                ],
+                    const BackButton(),
+                  ],
+                ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  TextFormField _textName() {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: NOME_LABEL_TEXT,
+        labelStyle: textStyleLabel,
+        //icon: Icon(Icons.person),
+        border: const OutlineInputBorder(),
+        hintText: NOME_HINT_TEXT,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        contentPadding: EdgeInsets.all(0),
+        prefixIcon: Icon(Icons.person),
+      ),
+      initialValue: controller.user.name ?? "",
+      validator: (valor) => controller.nameValidator(valor),
+      onSaved: (valor) => controller.name = valor,
+    );
+  }
+
+  Stack _avatar() {
+    return Stack(
+      alignment: AlignmentDirectional.topEnd,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Avatar(
+            controller.user,
+            backgroundColor: Colors.black12,
+            radius: 48.0,
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: controller.setAvatar,
+        )
+      ],
     );
   }
 }

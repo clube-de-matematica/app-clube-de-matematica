@@ -12,7 +12,7 @@ class AuthRepository {
   ///AINDA É PRECISO DEFINIR OS ESCOPOS DO OAUTH.
   final _googleSignIn = GoogleSignIn();
 
-  AuthRepository(FirebaseAuth auth): _auth = auth {
+  AuthRepository(FirebaseAuth auth) : _auth = auth {
     /* try {
       getUserAnonymous();
     } on MyExceptionAuthentication catch (e) {
@@ -24,8 +24,17 @@ class AuthRepository {
   ///Retorna o usuário atual.
   User get currentUser => _auth.currentUser;
 
+  ///Retorna o nome do usuário atual.
+  String get currentUserName => currentUser.displayName;
+
+  ///Retorna o Email do usuário atual.
+  String get currentUserEmail => currentUser.email;
+
+  ///Retorna a URL da foto do usuário atual.
+  String get currentUserAvatarUrl => currentUser.photoURL;
+
   ///Cria um usuário anônimo de forma assincrona.
-  ///Se já houver um usuário anônimo conectado, esse usuário será retornado. 
+  ///Se já houver um usuário anônimo conectado, esse usuário será retornado.
   ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
   ///Retorna `true` se o processo for bem sucedido.
   Future<bool> signInAnonymously() async {
@@ -38,7 +47,7 @@ class AuthRepository {
       assert(user.uid == currentUser.uid);
 
       return user.uid == currentUser.uid;
-    } on FirebaseAuthException catch  (error) {
+    } on FirebaseAuthException catch (error) {
       throw MyExceptionAuthRepository(error);
     }
   }
@@ -51,17 +60,23 @@ class AuthRepository {
 //await Future.delayed(Duration(seconds: 20));
     try {
       ///Abrir o pop-up da UI do sistema solicitando uma conta do Google.
-      final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+      final GoogleSignInAccount googleSignInAccount =
+          await _googleSignIn.signIn();
+
       ///Dados de autenticação da conta.
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
+
       ///Criar uma credencial do Firebase Auth com os dados de autenticação.
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
+
       ///Solicitar a autenticação para o Firebase Auth.
-      final UserCredential authResult = await _auth.signInWithCredential(credential);
+      final UserCredential authResult =
+          await _auth.signInWithCredential(credential);
+
       ///Usuário autenticado.
       final User user = authResult.user;
 
@@ -70,13 +85,13 @@ class AuthRepository {
       assert(user.uid == currentUser.uid);
 
       return user.uid == currentUser.uid;
-    } on FirebaseAuthException catch  (error) {
+    } on FirebaseAuthException catch (error) {
       throw MyExceptionAuthRepository(error);
     }
   }
 
   ///Fazer logout da conta Google.
-  Future<void> signOutGoogle() async{
+  Future<void> signOutGoogle() async {
     await _googleSignIn.signOut();
   }
 
@@ -96,10 +111,11 @@ enum TipoErroAuthentication {
 const _MSG_USUARIO_NAO_ALTENTICADO = "Usuário não autenticado.";
 
 class MyExceptionAuthRepository extends MyException {
-  MyExceptionAuthRepository([Exception error, String detalhes]): 
-  super(_MSG_USUARIO_NAO_ALTENTICADO, error, detalhes);
+  MyExceptionAuthRepository([Exception error, String detalhes])
+      : super(_MSG_USUARIO_NAO_ALTENTICADO, error, detalhes);
 
-  final TipoErroAuthentication type = TipoErroAuthentication.unauthenticatedUser;
+  final TipoErroAuthentication type =
+      TipoErroAuthentication.unauthenticatedUser;
 
   @override
   String toString() {
