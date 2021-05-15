@@ -1,7 +1,8 @@
 ///Contém o nível da prova do item e uma lista com todas as instâncias de [Nivel].
+
 class Nivel {
   ///Todas as instâncias criadas.
-  static final List<Nivel> instancias = List<Nivel>();
+  static final List<Nivel> instancias = <Nivel>[];
 
   ///Um inteiro que representa o nível da prova.
   final int valor;
@@ -16,14 +17,11 @@ class Nivel {
     return instancia;
   }
 
-  ///Caso haja em [instancias] uma instância correspondente a [valor], 
+  ///Caso haja em [instancias] uma instância correspondente a [valor],
   ///ela será retornada, caso contrário será criada uma nova.
   factory Nivel(int valor) {
-    assert(valor != null);
-    return instancias.firstWhere(
-      (element) => element.valor == valor, 
-      orElse: () => _novaInstancia(valor)
-    );
+    return instancias.firstWhere((element) => element.valor == valor,
+        orElse: () => _novaInstancia(valor));
   }
 
   @override
@@ -36,5 +34,7 @@ class Nivel {
   bool operator ==(Object other) {
     return other is Nivel && this.valor == other.valor;
   }
-}
 
+  @override
+  int get hashCode => super.hashCode;
+}

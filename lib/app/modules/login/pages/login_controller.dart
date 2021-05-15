@@ -1,10 +1,11 @@
-import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../../shared/repositories/firebase/auth_repository.dart';
+import '../../perfil/models/userapp.dart';
 import '../../perfil/utils/rotas_perfil.dart';
 import '../../quiz/shared/utils/rotas_quiz.dart';
-import '../../../shared/repositories/firebase/auth_repository.dart';
+import '../utils/assets_login.dart';
 
 part 'login_controller.g.dart';
 
@@ -29,7 +30,6 @@ abstract class _LoginControllerBase with Store {
   ///Atibui [metono] a [selectedMethod].
   @action
   void _setSelectedMethod(Login metodo) {
-    assert(metodo != null);
     selectedMethod = metodo;
   }
 
@@ -40,7 +40,6 @@ abstract class _LoginControllerBase with Store {
   ///Atibui [valor] a [loading].
   @action
   void _setLoading(bool valor) {
-    assert(valor != null);
     loading = valor;
   }
 
@@ -79,8 +78,7 @@ abstract class _LoginControllerBase with Store {
   }
 
   ///Retorna o caminho relativo para o logo do botão para conectar-se com a conta Google.
-  String get assetPathIconGoogle =>
-      "lib/app/modules/login/assets/google_logo.png";
+  String get assetPathIconGoogle => LoginAssets.GOOGLE_LOGO;
 
   ///Retorna `true` se houver um usuário amônimo conectado.
   //bool get loggedAnonymously => auth.loggedAnonymously;

@@ -28,8 +28,8 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () {
-          //if (_formKey.currentState.validate()) _formKey.currentState.save();
-          //controller.user.urlAvatar = controller.user.urlAvatar.toString();
+          if (_formKey.currentState != null)
+            controller.save(_formKey.currentState!);
         },
       ),
       body: Container(

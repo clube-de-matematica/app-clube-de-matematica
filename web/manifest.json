@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Possibilita a criação de clubes de matemática, onde o administrador pode encaminhar questões das provas da OBMEP aos membros do clube.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

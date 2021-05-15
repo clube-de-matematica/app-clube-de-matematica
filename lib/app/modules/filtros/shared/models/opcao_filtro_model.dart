@@ -1,7 +1,7 @@
 import 'package:mobx/mobx.dart';
 
-import 'filtros_model.dart';
 import '../../../quiz/shared/models/assunto_model.dart';
+import 'filtros_model.dart';
 
 part 'opcao_filtro_model.g.dart';
 
@@ -16,6 +16,7 @@ abstract class _OpcaoFiltroBase with Store {
   final opcao;
 
   @observable
+
   ///Se `true` indica que esta opção está selecionada.
   bool _isSelected = false;
   @computed
@@ -24,22 +25,24 @@ abstract class _OpcaoFiltroBase with Store {
   _OpcaoFiltroBase(this.opcao, this.tipo);
 
   @action
-  ///Se [forcAdd] é `true`, adiciona a opcao ao filtro correspondente e define [_isSelected] 
-  ///como `true`. Se [forcRemove] é `true`, remove a opcao do filtro correspondente e define 
+
+  ///Se [forcAdd] é `true`, adiciona a opcao ao filtro correspondente e define [_isSelected]
+  ///como `true`. Se [forcRemove] é `true`, remove a opcao do filtro correspondente e define
   ///[_isSelected] como `false`.
   ///Por padrão, se [_isSelected] é `true` remove a opcao do filtro correspondente.
   ///Se é `false` adiciona. Em seguida alterna o valor de [_isSelected].
-  void changeIsSelected(Filtros filtros, {bool forcAdd = false, bool forcRemove = false}) {
+  void changeIsSelected(Filtros filtros,
+      {bool forcAdd = false, bool forcRemove = false}) {
     if (forcAdd) {
-      filtros.add(this);
+      filtros.add(this as OpcaoFiltro);
       _isSelected = true;
-    }
-    else if (forcRemove) {
-      filtros.remove(this);
+    } else if (forcRemove) {
+      filtros.remove(this as OpcaoFiltro);
       _isSelected = false;
-    }
-    else {
-      _isSelected ? filtros.remove(this) : filtros.add(this);
+    } else {
+      _isSelected
+          ? filtros.remove(this as OpcaoFiltro)
+          : filtros.add(this as OpcaoFiltro);
       _isSelected = !_isSelected;
     }
   }
@@ -49,6 +52,9 @@ abstract class _OpcaoFiltroBase with Store {
   bool operator ==(Object other) {
     return other is OpcaoFiltro && this.opcao == other.opcao;
   }
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 ///******************************************************************************************
@@ -67,18 +73,22 @@ abstract class _OpcaoFiltroAssuntoBase extends OpcaoFiltro with Store {
   bool operator ==(Object other) {
     return other is OpcaoFiltroAssunto && this.opcao == other.opcao;
   }
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 ///******************************************************************************************
 ///[opcaoFiltro] para as unidades dos assuntos.
 ///Inclui a propriedade [assuntos] que é a lista de opções de assuntos para a unidade.
-class OpcaoFiltroAssuntoUnidade = _OpcaoFiltroAssuntoUnidadeBase 
+class OpcaoFiltroAssuntoUnidade = _OpcaoFiltroAssuntoUnidadeBase
     with _$OpcaoFiltroAssuntoUnidade;
 
 abstract class _OpcaoFiltroAssuntoUnidadeBase extends OpcaoFiltro with Store {
-  _OpcaoFiltroAssuntoUnidadeBase(Assunto opcao, {List<OpcaoFiltroAssunto> assuntos}) 
-      : this.assuntos = assuntos ?? List<OpcaoFiltroAssunto>(), 
-      super(opcao, TiposFiltro.assunto);
+  _OpcaoFiltroAssuntoUnidadeBase(Assunto opcao,
+      {List<OpcaoFiltroAssunto>? assuntos})
+      : this.assuntos = assuntos ?? <OpcaoFiltroAssunto>[],
+        super(opcao, TiposFiltro.assunto);
 
   ///Opção selecionada em [FiltroOpcoesPage].
   ///Apenas para que fique tipada como [Assinto].
@@ -88,11 +98,15 @@ abstract class _OpcaoFiltroAssuntoUnidadeBase extends OpcaoFiltro with Store {
   final List<OpcaoFiltroAssunto> assuntos;
 
   @computed
+
   ///Retorna `true` se todos os assuntos disponíveis para a unidade estiverem selecionados.
-  bool get isSelectedAllAsuntos => 
-      assuntos.isNotEmpty && numAsuntosSelected == assuntos.length ? true : false;
+  bool get isSelectedAllAsuntos =>
+      assuntos.isNotEmpty && numAsuntosSelected == assuntos.length
+          ? true
+          : false;
 
   @computed
+
   ///Retorna o número de assuntos selecionados dentre os disponíveis para a unidade.
   int get numAsuntosSelected {
     int contador = 0;
@@ -103,23 +117,27 @@ abstract class _OpcaoFiltroAssuntoUnidadeBase extends OpcaoFiltro with Store {
   }
 
   @override
-  ///Se a propriedade [isSelected] é `false`, define-a como `true` para a unidade e para 
+
+  ///Se a propriedade [isSelected] é `false`, define-a como `true` para a unidade e para
   ///todos os assuntos disponíveis para ela, caso contrário, denine como `false`.
-  void changeIsSelected(Filtros filtros, {bool forcAdd = false, bool forcRemove = false}) {
+  void changeIsSelected(Filtros filtros,
+      {bool forcAdd = false, bool forcRemove = false}) {
     assuntos.forEach((assunto) {
-      if (isSelected) assunto.changeIsSelected(filtros, forcRemove: true);
-      else assunto.changeIsSelected(filtros, forcAdd: true);
+      if (isSelected)
+        assunto.changeIsSelected(filtros, forcRemove: true);
+      else
+        assunto.changeIsSelected(filtros, forcAdd: true);
     });
     super.changeIsSelected(filtros);
   }
 
-  ///Deve ser chamado semple que um [OpcaoFiltroAssunto] de [assuntos] tiver sua propriedade 
+  ///Deve ser chamado semple que um [OpcaoFiltroAssunto] de [assuntos] tiver sua propriedade
   ///`isSelected` modificada externamente a essa classe.
   void assuntoChanged(Filtros filtros) {
-    if (isSelectedAllAsuntos && !isSelected) 
-        super.changeIsSelected(filtros, forcAdd: true);
-    if (numAsuntosSelected == assuntos.length -1 && isSelected) 
-        super.changeIsSelected(filtros, forcRemove: true);
+    if (isSelectedAllAsuntos && !isSelected)
+      super.changeIsSelected(filtros, forcAdd: true);
+    if (numAsuntosSelected == assuntos.length - 1 && isSelected)
+      super.changeIsSelected(filtros, forcRemove: true);
   }
 
   ///Sobrescrever o operador de igualdade.
@@ -127,4 +145,7 @@ abstract class _OpcaoFiltroAssuntoUnidadeBase extends OpcaoFiltro with Store {
   bool operator ==(Object other) {
     return other is OpcaoFiltroAssuntoUnidade && this.opcao == other.opcao;
   }
+
+  @override
+  int get hashCode => super.hashCode;
 }

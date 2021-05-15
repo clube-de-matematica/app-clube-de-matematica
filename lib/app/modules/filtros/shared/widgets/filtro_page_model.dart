@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import 'filtro_appbar.dart';
-import 'filtro_chip_contador.dart';
-import 'filtros_selecionados.dart';
+import '../../../../shared/widgets/botao_primario.dart';
 import '../models/filtro_controller_model.dart';
 import '../models/filtros_model.dart';
 import '../utils/strings_interface.dart';
-import '../../../../shared/widgets/botao_primario.dart';
+import 'filtro_appbar.dart';
+import 'filtro_chip_contador.dart';
+import 'filtros_selecionados.dart';
 
 ///O [Widget] usado como modelo nas páginas de filtro.
 ///Contém uma barra superior, outra inferior e o campo para exibir os filtros selecionados.
 class FiltroPageModel extends StatelessWidget {
   const FiltroPageModel({
-    Key key,
-    @required this.controller,
-    @required this.body, 
+    Key? key,
+    required this.controller,
+    required this.body,
     this.tipo,
   }) : super(key: key);
 
-  ///Se `null`, indica que este widget foi chamado pela página [FiltroTiposPage], nos demais 
+  ///Se `null`, indica que este widget foi chamado pela página [FiltroTiposPage], nos demais
   ///casos, indica que este widget foi chamado pela página [FiltroOpcoesPage].
-  final TiposFiltro tipo;
+  final TiposFiltro? tipo;
 
   ///Pode ser um [FiltroController] ou um [FiltroOpcoesController].
   final FiltroController controller;
@@ -45,16 +45,14 @@ class FiltroPageModel extends StatelessWidget {
               List<Widget> chips = [];
               controller.allFilters.forEach((_tipo, opcoes) {
                 if (tipo == null || tipo == _tipo)
-                  opcoes.forEach( 
-                    ///O [TiposFiltro] passado no parâmetro deve ser [_tipo], pois 
-                    ///[tipo] pode ser nulo.
-                    (element) => chips.add(
-                      InputChip(
-                        label: Text(element.opcao.toString()), 
-                        onDeleted: () => element.changeIsSelected(controller.filtrosTemp)
-                      )
-                    )
-                  );
+                  opcoes.forEach(
+
+                      ///O [TiposFiltro] passado no parâmetro deve ser [_tipo], pois
+                      ///[tipo] pode ser nulo.
+                      (element) => chips.add(InputChip(
+                          label: Text(element.opcao.toString()),
+                          onDeleted: () => element
+                              .changeIsSelected(controller.filtrosTemp))));
               });
               return Wrap(children: chips, spacing: 8);
             })
@@ -75,23 +73,22 @@ class FiltroPageModel extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Expanded(child: Observer(builder: (_) {
-              return OutlinedButton(
-                child: const Text(FILTRO_TEXTO_BOTAO_LIMPAR),
-                onPressed: controller.ativarLimpar ? controller.limpar : null,
-              );
-            })),
-            const SizedBox(width: 10),
-            Expanded(child: Observer(builder: (_) {
-              return BotaoPrimario(
-                label: FILTRO_TEXTO_BOTAO_APLICAR,
-                onPressed: controller.ativarAplicar ? controller.aplicar : null
-              );
-            }))
-          ]
-        ),
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Expanded(child: Observer(builder: (_) {
+                return OutlinedButton(
+                  child: const Text(FILTRO_TEXTO_BOTAO_LIMPAR),
+                  onPressed: controller.ativarLimpar ? controller.limpar : null,
+                );
+              })),
+              const SizedBox(width: 10),
+              Expanded(child: Observer(builder: (_) {
+                return BotaoPrimario(
+                    label: FILTRO_TEXTO_BOTAO_APLICAR,
+                    onPressed:
+                        controller.ativarAplicar ? controller.aplicar : null);
+              }))
+            ]),
       ),
     );
   }

@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:clubedematematica/app/shared/repositories/local_storage_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../shared/extensions.dart';
-import 'dart:developer' as dev;
+import '../../../shared/models/exceptions/my_exception.dart';
+import '../../../shared/repositories/local_storage_repository.dart';
 
 part 'userapp.g.dart';
 
@@ -24,10 +24,10 @@ const URL_AVATAR = "urlAvatar";
 ///Modelo para o usuário do App.
 class UserApp extends _UserAppBase with _$UserApp {
   UserApp({
-    String name,
-    String email,
-    String pathAvatar,
-    String urlAvatar,
+    String? name,
+    String? email,
+    String? pathAvatar,
+    String? urlAvatar,
   }) : super(
           name: name,
           email: email,
@@ -47,22 +47,23 @@ class UserApp extends _UserAppBase with _$UserApp {
 abstract class _UserAppBase extends ChangeNotifier with Store {
   ///Nome do usuário.
   @observable
-  String _name;
+  String? _name;
 
   ///Email do usuário.
-  String _email;
+  String? _email;
 
   ///Path da imágem do avatar do usuário.
-  String _pathAvatar;
+  ///Para a Web é uma URL.
+  String? _pathAvatar;
 
   ///URL da imágem do avatar do usuário.
-  String _urlAvatar;
+  String? _urlAvatar;
 
   _UserAppBase({
-    String name,
-    String email,
-    String pathAvatar,
-    String urlAvatar,
+    String? name,
+    String? email,
+    String? pathAvatar,
+    String? urlAvatar,
   }) {
     this._name = name;
     this._email = email;
@@ -75,15 +76,15 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
 
   ///Nome do usuário.
   @computed
-  String get name => _name;
+  String? get name => _name;
 
   ///Nome do usuário.
-  set name(String name) => _setName(name);
+  set name(String? name) => _setName(name);
 
   ///Definir o nome do usuário.
   @action
-  void _setName(String name) {
-    final condition = name != null && name.isNotEmpty;
+  void _setName(String? name) {
+    final condition = name?.isNotEmpty ?? true;
     assert(condition);
     if (condition) {
       _name = name;
@@ -92,11 +93,11 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   }
 
   ///Email do usuário.
-  String get email => _email;
+  String? get email => _email;
 
   ///Email do usuário.
-  set email(String email) {
-    final condition = email != null && email.isNotEmpty;
+  set email(String? email) {
+    final condition = email?.isNotEmpty ?? true;
     assert(condition);
     if (condition) {
       _email = email;
@@ -105,32 +106,34 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   }
 
   ///Path da imágem do avatar do usuário.
-  String get pathAvatar => _pathAvatar;
+  ///Para a Web é uma URL.
+  String? get pathAvatar => _pathAvatar;
 
   ///Path da imágem do avatar do usuário.
-  set pathAvatar(String pathAvatar) {
-    final condition = pathAvatar != null && pathAvatar.isNotEmpty;
+  ///Para a Web é uma URL.
+  set pathAvatar(String? pathAvatar) {
+    final condition = pathAvatar?.isNotEmpty ?? true;
     assert(condition);
     if (condition) {
-dev.debugger();
-      _saveImageAvatar(pathAvatar).then((file) {
-dev.debugger();
-        if (file != null)
-          _pathAvatar = file.path;
-        else
-          _pathAvatar = pathAvatar;
-dev.debugger();
-        notifyListeners();
-      });
+      if (kIsWeb)
+        _pathAvatar = pathAvatar;
+      else
+        _saveImageAvatar(pathAvatar!).then((file) {
+          if (file != null)
+            _pathAvatar = file.path;
+          else
+            _pathAvatar = pathAvatar;
+        });
+      notifyListeners();
     }
   }
 
   ///URL da imágem do avatar do usuário.
-  String get urlAvatar => _urlAvatar;
+  String? get urlAvatar => _urlAvatar;
 
   ///URL da imágem do avatar do usuário.
-  set urlAvatar(String urlAvatar) {
-    final condition = urlAvatar != null && urlAvatar.isNotEmpty;
+  set urlAvatar(String? urlAvatar) {
+    final condition = urlAvatar?.isNotEmpty ?? true;
     assert(condition);
     if (condition) {
       _urlAvatar = urlAvatar;
@@ -138,19 +141,41 @@ dev.debugger();
     }
   }
 
+  ///Apenas para Android e IOS.
+  ///Path do diretório do arquivos da imagem do avatar do usuário.
+  static const _DIR_AVATAR =
+      LocalStorageRepository.DIR_PROFILE_PHOTOS_RELATIVE_PATH;
+
+  ///Apenas para Android e IOS.
   ///Salva o arquivo da imagem do avatar do usuário no diretório do aplicativo.
   ///[path] é o path da origem do arquivo.
-  Future<File> _saveImageAvatar(String path) async {
-    assert(path != null);
-    final newRelativePath =
-        LocalStorageRepository.DIR_PROFILE_PHOTOS_RELATIVE_PATH +
-            _AVATAR_IMAGE_NAME +
-            File(path).extension();
-dev.debugger();
-    return LocalStorageRepository.copyFile(
-      path: path,
-      newRelativePath: newRelativePath,
-    );
+  Future<File?> _saveImageAvatar(String path) async {
+    if (kIsWeb)
+      throw MyException(
+          "Salvar localmente a imagem do usúário não está disponível na verção web.");
+    else {
+      final newRelativePath =
+          _DIR_AVATAR + _AVATAR_IMAGE_NAME + File(path).extension();
+      _deleteImageAvatar();
+      return LocalStorageRepository.copyFile(
+        path: path,
+        newRelativePath: newRelativePath,
+      );
+    }
+  }
+
+  ///Apenas para Android e IOS.
+  ///Se existir, exclui o arquivo com a imágem usada no avatar.
+  ///Retorna, assincronamente, `false` se o arquivo não for encontrado ou se ocorrer um erro.
+  Future<bool> _deleteImageAvatar() async {
+    if (kIsWeb)
+      throw MyException(
+          "Deletar localmente a imagem do usúário não está disponível na verção web.");
+    else {
+      final images = await LocalStorageRepository.find(
+          relativePath: _DIR_AVATAR + _AVATAR_IMAGE_NAME + ".*");
+      return LocalStorageRepository.delete(fileList: images);
+    }
   }
 
   Map<String, dynamic> toJson() {

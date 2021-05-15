@@ -1,96 +1,113 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../models/exceptions/my_exception.dart';
-
 import 'auth_repository.dart';
 
 ///Gerencia a conexão com o Firebase Strorage.
 class StorageRepository {
+  static const _className = "StorageRepository";
   final FirebaseStorage storage;
   final AuthRepository _authRepository;
 
-  StorageRepository(this.storage, AuthRepository authRepository): 
-  _authRepository = authRepository;
+  StorageRepository(this.storage, AuthRepository authRepository)
+      : _authRepository = authRepository;
 
   ///Retorna o arquivo referenciado após fazer o download e salvar em [fileTemp].
   ///Se ocorrer um erro ele será repassado e precisa ser tratado na sequência da pilha.
-  Future<File> downloadFile(StorageReference ref, File fileTemp) async {
-    ///Garantir que os atributos não sejam nulos.
-    assert (ref != null && fileTemp != null);
+  Future<File> downloadFile(Reference ref, File fileTemp) async {
     ///Verificar se há algum usuário logado.
-    if (!_authRepository.loggedAnonymously) throw MyExceptionAuthRepository();
+    if (!_authRepository.logged)
+      throw MyExceptionAuthRepository(
+          originClass: _className,
+          originField: "downloadFile()",
+          type: TypeErroAuthentication.unauthenticatedUser);
+
     ///Fazer o download e salvar em [fileTemp].
-    return ref.writeToFile(fileTemp).future
+    return ref
+        .writeToFile(fileTemp)
+
         ///Retornar [fileTemp] após o download bem sucedido.
         .then<File>((_) => fileTemp)
+
         ///Repassar o erro, caso ocorra.
         .catchError((error) => throw MyExceptionStorageRepository(
-          error: error, 
-          detalhes: "{Origem: ${ref.path}, \nDestino: ${fileTemp.path}}",
-          type: TypeErroStorageRepository.downloadFile
-        ));
+            error: error,
+            originField: "downloadFile()",
+            fieldDetails:
+                "{Origem: ${ref.fullPath}, \nDestino: ${fileTemp.path}}",
+            type: TypeErroStorageRepository.downloadFile));
   }
 
   ///Retorna assincronamente uma URL para download do arquivo no Firebase Storage.
   ///Se ocorrer um erro ele será repassado e precisa ser tratado na sequência da pilha.
-  Future getUrlInDb(StorageReference ref) async {
-    ///Garantir que o parâmetro não seja nulo.
-    assert (ref != null);
+  Future<String> getUrlInDb(Reference ref) async {
     ///Verificar se há algum usuário logado.
-    if (!_authRepository.loggedAnonymously) throw MyExceptionAuthRepository();
+    if (!_authRepository.logged)
+      throw MyExceptionAuthRepository(
+          originClass: _className,
+          originField: "getUrlInDb()",
+          type: TypeErroAuthentication.unauthenticatedUser);
     try {
       ///Buscar a URL.
       return ref.getDownloadURL();
     } on FirebaseException catch (error) {
       //Repassar o erro, caso ocorra.
       throw MyExceptionStorageRepository(
-        error: error, 
-        detalhes: "{Referência do arquivo: ${ref.path}}",
-        type: TypeErroStorageRepository.getUrlInDb
-      );
+          error: error,
+          originField: "getUrlInDb()",
+          fieldDetails: "{Referência do arquivo: ${ref.fullPath}}",
+          type: TypeErroStorageRepository.getUrlInDb);
     }
   }
 
   ///Busca os metadados do arquivo em [ref].
   ///Se ocorrer um erro ele será repassado e precisa ser tratado na sequência da pilha.
-  Future<StorageMetadata> getMetadados(StorageReference ref) async {
-    ///Garantir que o parâmetro não seja nulo.
-    assert (ref != null);
+  Future<FullMetadata> getMetadados(Reference ref) async {
     ///Verificar se há algum usuário logado.
-    if (!_authRepository.loggedAnonymously) throw MyExceptionAuthRepository();
+    if (!_authRepository.logged)
+      throw MyExceptionAuthRepository(
+          originClass: _className,
+          originField: "getMetadados()",
+          type: TypeErroAuthentication.unauthenticatedUser);
     try {
       ///Buscar os metadados.
       return ref.getMetadata();
     } on FirebaseException catch (error) {
       throw MyExceptionStorageRepository(
-        error: error, 
-        detalhes: "{Referência do arquivo: ${ref.path}}",
-        type: TypeErroStorageRepository.getMetadata
-      );
+          error: error,
+          originField: "getMetadados()",
+          fieldDetails: "{Referência do arquivo: ${ref.fullPath}}",
+          type: TypeErroStorageRepository.getMetadata);
     }
   }
 
   ///Faz o upload de [file] em [ref] no Firebase Storage.
   ///Se ocorrer um erro ele será repassado e precisa ser tratado na sequência da pilha.
-  Future<bool> uploadFile(StorageReference ref, File file, [StorageMetadata metadata]) async {
-    ///Garantir que os parâmetros não sejam nulos.
-    assert(ref != null && file != null);
+  Future<bool> uploadFile(Reference ref, File file,
+      [SettableMetadata? metadata]) async {
     ///Verificar se há algum usuário logado.
-    if (!_authRepository.loggedAnonymously) throw MyExceptionAuthRepository();
-    return ref.putFile(file, metadata).onComplete
+    if (!_authRepository.logged)
+      throw MyExceptionAuthRepository(
+          originClass: _className,
+          originField: "uploadFile()",
+          type: TypeErroAuthentication.unauthenticatedUser);
+    return ref
+        .putFile(file, metadata)
+
         ///Retornar `true` após o upload bem sucedido.
         .then<bool>((_) => true)
+
         ///Repassar o erro, caso ocorra.
         .catchError((error) => throw MyExceptionStorageRepository(
-          error: error, 
-          detalhes: "{Origem: ${file.path}, \nDestino: ${ref.path}}",
-              //"${metadata == null ? "" : "\nMetadados: " + metadata.toString()}}",
-          type: TypeErroStorageRepository.uploadFile
-        ));
+            error: error,
+            originField: "uploadFile()",
+            fieldDetails: "{Origem: ${file.path}, \nDestino: ${ref.fullPath}"
+                "${metadata == null ? "" : ', \nMetadados: ' + metadata.toString()}}",
+            type: TypeErroStorageRepository.uploadFile));
   }
-
 }
 
 ///Uma enumeração para todos os tipos de erro [MyExceptionStorageRepository].
@@ -99,44 +116,46 @@ class StorageRepository {
 ///[getMetadata]: [_MSG_ERRO_DOWNLOAD_METADATA].
 ///[uploadFile]: [_MSG_ERRO_UPLOAD_FILE].
 enum TypeErroStorageRepository {
-  downloadFile, getUrlInDb, getMetadata, uploadFile
+  downloadFile,
+  getUrlInDb,
+  getMetadata,
+  uploadFile
 }
 
 ///Mensagem para o erro [TypeErroStorageRepository.downloadFile].
-const _MSG_ERRO_DOWNLOAD_FILE = "Ocorreu um erro ao fazer o download do arquivo.";
+const _MSG_ERRO_DOWNLOAD_FILE =
+    "Ocorreu um erro ao fazer o download do arquivo.";
+
 ///Mensagem para o erro [TypeErroStorageRepository.getUrlInDb].
-const _MSG_ERRO_DOWNLOAD_URL = "Ocorreu um erro ao solicitar a URL de download.";
+const _MSG_ERRO_DOWNLOAD_URL =
+    "Ocorreu um erro ao solicitar a URL de download.";
+
 ///Mensagem para o erro [TypeErroStorageRepository.getMetadata].
-const _MSG_ERRO_DOWNLOAD_METADATA = "Ocorreu um erro ao fazer o download dos metadados do arquivo.";
+const _MSG_ERRO_DOWNLOAD_METADATA =
+    "Ocorreu um erro ao fazer o download dos metadados do arquivo.";
+
 ///Mensagem para o erro [TypeErroStorageRepository.uploadFile].
 const _MSG_ERRO_UPLOAD_FILE = "Ocorreu um erro ao fazer o download do arquivo.";
 
 class MyExceptionStorageRepository extends MyException {
-  final TypeErroStorageRepository type;
-
-  MyExceptionStorageRepository._(
-    {String message, 
-    Exception error,
-    String detalhes,
-    this.type}) : super(message, error, detalhes);
-
-  factory MyExceptionStorageRepository(
-    {String message, 
-    Exception error,
-    String detalhes,
-    TypeErroStorageRepository type}
-  ) {
-    if (type != null) message = _getMessage(type);
-    return MyExceptionStorageRepository._(
-      message: message, 
-      error: error, 
-      detalhes: detalhes, 
-      type: type
-    );
-  }
+  MyExceptionStorageRepository({
+    String? message,
+    Object? error,
+    String? originField,
+    String? fieldDetails,
+    String? causeError,
+    TypeErroStorageRepository? type,
+  }) : super(
+          (type == null) ? null : _getMessage(type),
+          error: error,
+          originClass: StorageRepository._className,
+          originField: originField,
+          fieldDetails: fieldDetails,
+          causeError: causeError,
+        );
 
   ///Retorna a mensagem correspondente ao tipo do erro em [type].
-  static String _getMessage(TypeErroStorageRepository type){
+  static String? _getMessage(TypeErroStorageRepository type) {
     switch (type) {
       case TypeErroStorageRepository.downloadFile:
         return _MSG_ERRO_DOWNLOAD_FILE;
@@ -150,18 +169,7 @@ class MyExceptionStorageRepository extends MyException {
         return null;
     }
   }
-
-  @override
-  String toString() {
-    return "MyExceptionStorageRepository (${super.toString()})";
-  }
 }
-
-
-
-
-
-
 
 /* 
   reconstruirDb() async {

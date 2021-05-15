@@ -1,5 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+
 part of 'imagem_item_repository.dart';
 
 // **************************************************************************
@@ -38,7 +39,7 @@ mixin _$ImagemItemRepository on _ImagemItemRepositoryBase, Store {
     }
   }
 
-  @override
+  /* @override
   ImagemItem _getImagemByNome(String nome) {
     final _$actionInfo = _$_ImagemItemRepositoryBaseActionController
         .startAction(name: '_ImagemItemRepositoryBase._getImagemByNome');
@@ -47,7 +48,7 @@ mixin _$ImagemItemRepository on _ImagemItemRepositoryBase, Store {
     } finally {
       _$_ImagemItemRepositoryBaseActionController.endAction(_$actionInfo);
     }
-  }
+  } */
 
   @override
   String toString() {

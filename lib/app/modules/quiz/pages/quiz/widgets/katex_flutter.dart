@@ -1,47 +1,52 @@
-// Esta classe foi criada com base em "katex_flutter.dart" do pacote "katex_flutter: ^4.0.2+26"
-import 'package:catex/catex.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
 
-/// The basic WebView for displaying the created HTML String
-class KaTeX {
-  // a Text used for the rendered code as well as for the style
-  final Text laTeXCode;
+/// Esta classe foi criada com base em "katex_flutter.dart" do pacote "katex_flutter: ^4.0.2+26"
+class KaTeX extends StatelessWidget {
+  /// a Text used for the rendered code as well as for the style
+  final String laTeXCode;
 
-  // The delimiter to be used for inline LaTeX
+  /// The delimiter to be used for inline LaTeX
   final String delimiter;
 
-  // The delimiter to be used for Display (centered, "important") LaTeX
+  /// The delimiter to be used for Display (centered, "important") LaTeX
   final String displayDelimiter;
 
   ////////////////SAMY/////////////////
-  List<InlineSpan> _blocosDoTexto = List();
+  ///Estilo do texto.
+  final TextStyle? style;
 
-  bool _temLaTex;
+  final List<InlineSpan> _blocosDoTexto = <InlineSpan>[];
 
+  ///Se `true`, indica que [laTeXCode] contém texto LaTex.
+  late final bool _temLaTex;
+
+  ///Uma lista com as partes de [laTeXCode].
   List<InlineSpan> get blocosDoTexto => _blocosDoTexto;
 
+  ///Se `true`, indica que [laTeXCode] contém texto LaTex.
   bool get temLaTex => _temLaTex;
   ////////////////SAMY/////////////////
 
-  KaTeX(
-      {Key key,
-      @required this.laTeXCode,
-      this.delimiter = r'$',
-      this.displayDelimiter = r'$$'}){
-    // Fetching the Widget's LaTeX code as well as it's [TextStyle]
-    final String laTeXCode = this.laTeXCode.data;
-
+  KaTeX({
+    Key? key,
+    required this.laTeXCode,
+    this.delimiter = r'$',
+    this.displayDelimiter = r'$$',
+    this.style,
+  }) {
     // Building [RegExp] to find any Math part of the LaTeX code by looking for the specified delimiters
     final String delimiter = this.delimiter.replaceAll(r'$', r'\$');
-    final String displayDelimiter = this.displayDelimiter.replaceAll(r'$', r'\$');
+    final String displayDelimiter =
+        this.displayDelimiter.replaceAll(r'$', r'\$');
 
     final String rawRegExp =
-      '(($delimiter)([^$delimiter]*[^\\\\\\$delimiter])($delimiter)|($displayDelimiter)([^$displayDelimiter]*[^\\\\\\$displayDelimiter])($displayDelimiter))';
+        '(($delimiter)([^$delimiter]*[^\\\\\\$delimiter])($delimiter)|($displayDelimiter)([^$displayDelimiter]*[^\\\\\\$displayDelimiter])($displayDelimiter))';
     List<RegExpMatch> matches =
-      RegExp(rawRegExp, dotAll: true).allMatches(laTeXCode).toList();
+        RegExp(rawRegExp, dotAll: true).allMatches(laTeXCode).toList();
 
     // Registrar se há alguma codificação LaTex
-    if (matches.isNotEmpty) _temLaTex = true;
+    _temLaTex = matches.isNotEmpty;
 
     int lastTextEnd = 0;
 
@@ -55,17 +60,15 @@ class KaTeX {
       if (laTeXMatch.group(3) != null)
         _blocosDoTexto.add(WidgetSpan(
             alignment: PlaceholderAlignment.middle,
-            child: CaTeX(laTeXMatch.group(3).trim())));
-      else
+            child: Math.tex(laTeXMatch.group(3)!.trim())));
+      else if (laTeXMatch.group(6) != null)
         _blocosDoTexto.addAll([
           TextSpan(text: '\n'),
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
             child: DefaultTextStyle.merge(
-                child: CaTeX(laTeXMatch.group(6).trim())),
-            /*style: Theme.of(context).textTheme.headline4.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: Theme.of(context).textTheme.bodyText1.fontSize * 2)*/
+                child: Math.tex(laTeXMatch.group(6)!.trim())),
+            style: style,
           ),
           TextSpan(text: '\n')
         ]);
@@ -76,16 +79,13 @@ class KaTeX {
     if (lastTextEnd < laTeXCode.length) {
       _blocosDoTexto.add(TextSpan(text: laTeXCode.substring(lastTextEnd)));
     }
-
-    ////////////////SAMY/////////////////
-    this._blocosDoTexto = _blocosDoTexto;
-    ////////////////SAMY/////////////////
   }
 
-  Text montar(List<InlineSpan> blocosDoTexto, TextStyle style){
-    return Text.rich(TextSpan(
-      children: blocosDoTexto,
-      style: style
-    ));
-  }
+  Text _montar(List<InlineSpan> blocosDoTexto, {TextStyle? style}) => Text.rich(
+        TextSpan(children: blocosDoTexto),
+        style: style,
+      );
+
+  @override
+  Widget build(BuildContext context) => _montar(blocosDoTexto, style: style);
 }

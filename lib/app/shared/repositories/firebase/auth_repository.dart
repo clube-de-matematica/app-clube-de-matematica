@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import 'dart:developer' as dev;
-
 import '../../models/exceptions/my_exception.dart';
 
 ///Gerencia processos de autenticação com o Firebase Auth.
 class AuthRepository {
+  static const _className = "AuthRepository";
   final FirebaseAuth _auth;
 
   ///AINDA É PRECISO DEFINIR OS ESCOPOS DO OAUTH.
@@ -22,16 +21,22 @@ class AuthRepository {
   }
 
   ///Retorna o usuário atual.
-  User get currentUser => _auth.currentUser;
+  User? get currentUser => _auth.currentUser;
 
   ///Retorna o nome do usuário atual.
-  String get currentUserName => currentUser.displayName;
+  String? get currentUserName => currentUser?.displayName;
 
   ///Retorna o Email do usuário atual.
-  String get currentUserEmail => currentUser.email;
+  String? get currentUserEmail => currentUser?.email;
 
   ///Retorna a URL da foto do usuário atual.
-  String get currentUserAvatarUrl => currentUser.photoURL;
+  String? get currentUserAvatarUrl => currentUser?.photoURL;
+
+  ///Retorna `true` se houver um usuário conectado.
+  bool get logged => currentUser != null;
+
+  ///Retorna `true` se houver um usuário amônimo conectado.
+  bool get loggedAnonymously => currentUser?.isAnonymous ?? false;
 
   ///Cria um usuário anônimo de forma assincrona.
   ///Se já houver um usuário anônimo conectado, esse usuário será retornado.
@@ -39,16 +44,21 @@ class AuthRepository {
   ///Retorna `true` se o processo for bem sucedido.
   Future<bool> signInAnonymously() async {
     try {
-      if (logged) _auth.signOut();
-      final user = (await _auth.signInAnonymously()).user;
+      if (loggedAnonymously) return true;
+      if (logged) await _auth.signOut();
+      final User? user = (await _auth.signInAnonymously()).user;
+
+      if (user == null) return false;
 
       assert(user.isAnonymous);
-      assert(await user.getIdToken() != null);
-      assert(user.uid == currentUser.uid);
+      assert(user.uid == currentUser?.uid);
 
-      return user.uid == currentUser.uid;
+      return user.uid == currentUser?.uid;
     } on FirebaseAuthException catch (error) {
-      throw MyExceptionAuthRepository(error);
+      throw MyExceptionAuthRepository(
+        error: error,
+        originField: "signInAnonymously()",
+      );
     }
   }
 
@@ -56,12 +66,12 @@ class AuthRepository {
   ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
   ///Retorna `true` se o processo for bem sucedido.
   Future<bool> signInWithGoogle() async {
-//dev.debugger();
 //await Future.delayed(Duration(seconds: 20));
     try {
       ///Abrir o pop-up da UI do sistema solicitando uma conta do Google.
-      final GoogleSignInAccount googleSignInAccount =
+      final GoogleSignInAccount? googleSignInAccount =
           await _googleSignIn.signIn();
+      if (googleSignInAccount == null) return false;
 
       ///Dados de autenticação da conta.
       final GoogleSignInAuthentication googleSignInAuthentication =
@@ -78,15 +88,18 @@ class AuthRepository {
           await _auth.signInWithCredential(credential);
 
       ///Usuário autenticado.
-      final User user = authResult.user;
+      final User? user = authResult.user;
+      if (user == null) return false;
 
       assert(!user.isAnonymous);
-      assert(await user.getIdToken() != null);
-      assert(user.uid == currentUser.uid);
+      assert(user.uid == currentUser?.uid);
 
-      return user.uid == currentUser.uid;
+      return user.uid == currentUser?.uid;
     } on FirebaseAuthException catch (error) {
-      throw MyExceptionAuthRepository(error);
+      throw MyExceptionAuthRepository(
+        error: error,
+        originField: "signInWithGoogle()",
+      );
     }
   }
 
@@ -94,31 +107,41 @@ class AuthRepository {
   Future<void> signOutGoogle() async {
     await _googleSignIn.signOut();
   }
-
-  ///Retorna `true` se houver um usuário amônimo conectado.
-  bool get loggedAnonymously => logged && _auth.currentUser.isAnonymous;
-
-  ///Retorna `true` se houver um usuário conectado.
-  bool get logged => _auth.currentUser != null;
 }
 
 ///Uma enumeração para todos os tipos de erro [MyExceptionAuthRepository].
 ///[unauthenticatedUser]: [_MSG_USUARIO_NAO_ALTENTICADO].
-enum TipoErroAuthentication {
+enum TypeErroAuthentication {
   unauthenticatedUser,
 }
+
+const _MSG_PADRAO_ERRO = "Erro de autenticação.";
 
 const _MSG_USUARIO_NAO_ALTENTICADO = "Usuário não autenticado.";
 
 class MyExceptionAuthRepository extends MyException {
-  MyExceptionAuthRepository([Exception error, String detalhes])
-      : super(_MSG_USUARIO_NAO_ALTENTICADO, error, detalhes);
+  MyExceptionAuthRepository({
+    String message = _MSG_PADRAO_ERRO,
+    Object? error,
+    String? originField,
+    String? fieldDetails,
+    String? causeError,
+    TypeErroAuthentication? type,
+    String originClass = AuthRepository._className,
+  }) : super(
+          (type == null) ? _MSG_PADRAO_ERRO : _getMessage(type),
+          error: error,
+          originClass: originClass,
+          originField: originField,
+          fieldDetails: fieldDetails,
+          causeError: causeError,
+        );
 
-  final TipoErroAuthentication type =
-      TipoErroAuthentication.unauthenticatedUser;
-
-  @override
-  String toString() {
-    return "MyExceptionAuthRepository (${super.toString()})";
+  ///Retorna a mensagem correspondente ao tipo do erro em [type].
+  static String _getMessage(TypeErroAuthentication type) {
+    switch (type) {
+      case TypeErroAuthentication.unauthenticatedUser:
+        return _MSG_USUARIO_NAO_ALTENTICADO;
+    }
   }
 }

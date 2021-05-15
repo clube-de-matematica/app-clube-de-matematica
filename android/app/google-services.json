@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "760657363926-ubhippgii7d920urpvds10fp6cg94tc2.apps.googleusercontent.com",
+          "client_id": "760657363926-1gt52lcdk9n2jp4heo7aj2evs9srldgp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.sslourenco.clubedematematica",
-            "certificate_hash": "492b2b9948e9739f89fa660692345b95399c3571"
+            "certificate_hash": "a8e2e8294bc43039faa5b8ecbd619100bc452ead"
           }
         },
         {

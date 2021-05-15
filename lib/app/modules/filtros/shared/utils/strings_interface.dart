@@ -25,6 +25,6 @@ const FILTRO_TEXTO_TIPO_ANO = "Anos";
 const FILTRO_TEXTO_TIPO_NIVEL = "Nível da Prova";
 
 ///Título da página para filtrar por nível de dificuldade da prova (baixa, média ou alta).
-///Título do indicador de filtro por nível de dificuldade da prova (baixa, média ou alta) 
+///Título do indicador de filtro por nível de dificuldade da prova (baixa, média ou alta)
 ///na página inicial de filtros.
 const FILTRO_TEXTO_TIPO_DIFICULDADE = "Nível de Dificuldade";

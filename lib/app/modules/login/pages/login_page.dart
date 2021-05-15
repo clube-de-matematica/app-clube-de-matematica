@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'login_controller.dart';
-import '../utils/strings_interface.dart';
 import '../../../shared/theme/tema.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
+import '../utils/strings_interface.dart';
+import 'login_controller.dart';
 
 ///Página de login.
 class LoginPage extends StatefulWidget {
@@ -25,13 +25,13 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   Color get textColor2 => textColor1.withOpacity(0.5);
 
   ///Estilo do texto do "bem vindo".
-  TextStyle get textStyleH1 => tema.textTheme.bodyText1.copyWith(
+  TextStyle? get textStyleH1 => tema.textTheme.bodyText1?.copyWith(
         fontSize: 24 * escala,
         color: textColor1,
       );
 
   ///Estilo do texto da mensagem.
-  TextStyle get textStyleH2 => textStyleH1.copyWith(color: textColor2);
+  TextStyle? get textStyleH2 => textStyleH1?.copyWith(color: textColor2);
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +121,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                 onEnd: () {},
                 child: Text(
                   LOGIN_TEXT_BUTTON_USER_ANONYMOUS,
-                  style: tema.textTheme.bodyText1.copyWith(
+                  style: tema.textTheme.bodyText1?.copyWith(
                     decoration: TextDecoration.underline,
                     decorationThickness: 0.75,
                     color: textColor2,
@@ -161,7 +161,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
     return Observer(
       builder: (_) {
         final avatarSize = 10.0 * escala < 10.0
-            ? 10
+            ? 10.0
             : 10.0 * escala > 25.0
                 ? 25.0
                 : 10.0 * escala;
@@ -197,7 +197,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                       fit: FlexFit.loose,
                       child: Text(
                         LOGIN_TEXT_BUTTON_USER_GOOGLE,
-                        style: tema.textTheme.bodyText1.copyWith(
+                        style: tema.textTheme.bodyText1?.copyWith(
                           fontWeight: FontWeight.w500,
                           color: textColor1,
                           fontSize: escala * 18,
@@ -236,17 +236,17 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   ///estiver conectado anonimamente.
   ///Retorna `true` se o usuário confirmar que deseja continuar conectado anonimamente.
   Future<bool> _gerarDialogoConfirmarLoginAnonymously() async {
-    return showDialog<bool>(
+    final result = await showDialog<bool>(
       barrierDismissible: false,
       context: context,
       builder: (context) {
         return AlertDialog(
-          titleTextStyle: tema.textTheme.bodyText1.copyWith(
+          titleTextStyle: tema.textTheme.bodyText1?.copyWith(
             fontSize: 18 * escala,
             color: textColor1,
             fontWeight: FontWeight.w500,
           ),
-          contentTextStyle: tema.textTheme.bodyText1.copyWith(
+          contentTextStyle: tema.textTheme.bodyText1?.copyWith(
             fontSize: 16 * escala,
             color: textColor2,
           ),
@@ -275,6 +275,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         );
       },
     );
+    return result ?? false;
   }
 
   ///Abre um popup informando que houve um erro durante a autenticação.
@@ -284,12 +285,12 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          titleTextStyle: tema.textTheme.bodyText1.copyWith(
+          titleTextStyle: tema.textTheme.bodyText1?.copyWith(
             fontSize: 18 * escala,
             color: textColor1,
             fontWeight: FontWeight.w500,
           ),
-          contentTextStyle: tema.textTheme.bodyText1.copyWith(
+          contentTextStyle: tema.textTheme.bodyText1?.copyWith(
             fontSize: 16 * escala,
             color: textColor2,
           ),

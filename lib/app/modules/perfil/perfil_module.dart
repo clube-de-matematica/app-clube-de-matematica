@@ -4,15 +4,15 @@ import 'models/userapp.dart';
 import 'page/perfil_controller.dart';
 import 'page/perfil_page.dart';
 
-class PerfilModule extends ChildModule {
+class PerfilModule extends Module {
   @override
   List<Bind> get binds => [
-    //Controles
-    Bind((i) => PerfilController(i.get<UserApp>())),
-  ];
+        //Controles
+        Bind((i) => PerfilController(i.get<UserApp>())),
+      ];
 
   @override
-  List<ModularRouter> get routers => [
-    ModularRouter(Modular.initialRoute, child: (_, __) => PerfilPage()),
-  ];
+  List<ModularRoute> get routes => [
+        ChildRoute(Modular.initialRoute, child: (_, __) => PerfilPage()),
+      ];
 }

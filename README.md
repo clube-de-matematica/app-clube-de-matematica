@@ -1,7 +1,5 @@
 # clubedematematica
 
-Clube de Matemática.
-
 Possibilita a criação de clubes de matemática, onde o administrador pode encaminhar questões das provas da OBMEP aos membros do clube.
 
 ## Getting Started

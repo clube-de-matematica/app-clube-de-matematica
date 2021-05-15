@@ -1,58 +1,52 @@
-import 'package:flutter/foundation.dart';
-
 import '../utils/strings_db_remoto.dart';
 
-///Esta classe está configurada para, usando o padrão singleton, não criar duas instâncias 
+///Esta classe está configurada para, usando o padrão singleton, não criar duas instâncias
 ///com o mesmo título.
 class Assunto {
   ///Lista de todas as instâncias criadas.
-  static List<Assunto> _instancias = List<Assunto>();
+  static List<Assunto> _instancias = <Assunto>[];
+
   ///Hierarquia de assuntos acima do assunto em [titulo].
   final List<String> arvore;
+
   ///O título do assunto.
   final String titulo;
-  ///Posição (iniciando em zero) do assunto em uma hierarquia completa ([arvore] mais 
+
+  ///Posição (iniciando em zero) do assunto em uma hierarquia completa ([arvore] mais
   ///[titulo]). O índice zero indica que o assunto é uma unidade.
-  final int indiceHierarquia;
-  ///Assunto no índice zero da hierarquia [arvore]. 
-  ///Se [arvore] for `null` ou vazio temos [unidade] = [titulo].
-  final String unidade;
+  int get indiceHierarquia => arvore.length;
 
-  Assunto._interno({@required List<String> arvore, @required this.titulo})
-    : this.arvore = arvore, 
-    this.indiceHierarquia = (arvore == null ? 0 : arvore.length),
-    this.unidade = (arvore == null ? titulo : arvore[0]),
-    assert(titulo != null);
+  ///Assunto no índice zero da hierarquia [arvore].
+  ///Se [arvore] for vazio temos [unidade] = [titulo].
+  String get unidade => arvore.isEmpty ? titulo : arvore[0];
 
-  factory Assunto({@required List<String> arvore, @required String titulo}) {
-    assert(titulo != null);
-    ///Retorna o primeiro elemento que satisfaz `element.titulo == titulo`.
-    ///Se nenhum elemento satisfizer `element.titulo == titulo`, o resultado da chamada da 
-    ///função `orElse` será retornado.
-    ///A função `orElse` cria uma nova instância de [Assunto], adiciona em [_instancias] e 
-    ///retorna essa instância.
+  Assunto._interno({required this.arvore, required this.titulo}) {
+    _instancias.add(this);
+  }
+
+  ///Retorna o primeiro elemento que satisfaz `element.titulo == titulo`.
+  ///Se nenhum elemento satisfizer `element.titulo == titulo`, o resultado da chamada da
+  ///função `orElse` será retornado.
+  ///A função `orElse` retorna uma nova instância de [Assunto]. Essa instância é adiciona em [_instancias].
+  factory Assunto({required List<String> arvore, required String titulo}) {
     return _instancias.firstWhere(
-      (element) => element.titulo == titulo, 
-      orElse: () {
-        if (arvore != null && arvore.length == 0) arvore = null;
-        final assunto = Assunto._interno(arvore: arvore, titulo: titulo);
-        _instancias.add(assunto);
-        return assunto;
-      }
+      (element) => element.titulo == titulo,
+      orElse: () => Assunto._interno(arvore: arvore, titulo: titulo),
     );
   }
 
   factory Assunto.fromJson(Map<String, dynamic> json) {
-    List<String> arvore;
-    if (json.containsKey(DB_FIRESTORE_DOC_ASSUNTO_ARVORE)) {
-      ///`json[DB_DOC_ASSUNTO_ARVORE]` é um `List<dynamic>`.
-      ///`cast<String>()` informa que é um `List<String>`. Ocorrerá um erro se algum dos valores 
-      ///não for `String`.
-      arvore = json[DB_FIRESTORE_DOC_ASSUNTO_ARVORE].cast<String>();
-    }
+    final bool isNotUnidade = json.containsKey(DB_FIRESTORE_DOC_ASSUNTO_ARVORE);
+
+    ///`json[DB_FIRESTORE_DOC_ASSUNTO_ARVORE]` é um `List<dynamic>`.
+    ///`cast<String>()` informa que é um `List<String>`. Ocorrerá um erro se algum dos valores
+    ///não for `String`.
+    List<String> arvore = isNotUnidade
+        ? json[DB_FIRESTORE_DOC_ASSUNTO_ARVORE].cast<String>()
+        : <String>[];
     return Assunto(
-      arvore: arvore, 
-      titulo: json[DB_FIRESTORE_DOC_ASSUNTO_TITULO]
+      arvore: arvore,
+      titulo: json[DB_FIRESTORE_DOC_ASSUNTO_TITULO],
     );
   }
 
@@ -79,4 +73,7 @@ class Assunto {
   bool operator ==(Object other) {
     return other is Assunto && this.titulo == other.titulo;
   }
+
+  @override
+  int get hashCode => super.hashCode;
 }

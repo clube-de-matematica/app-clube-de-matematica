@@ -30,65 +30,65 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
     return Scaffold(
       appBar: QuizAppBar(controller),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        child: Column(
-          children: <Widget>[
-            ///Contém um indicador do número de questões à esquerda e, à direita,
-            ///um botão para exibir as opções disponíveis para a questão.
-            QuizBarOpcoesItem(controller),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Column(
+            children: <Widget>[
+              ///Contém um indicador do número de questões à esquerda e, à direita,
+              ///um botão para exibir as opções disponíveis para a questão.
+              QuizBarOpcoesItem(controller),
 
-            ///Linha divisória.
-            const Divider(height: double.minPositive),
+              ///Linha divisória.
+              const Divider(height: double.minPositive),
 
-            ///O `FutureBuilder` aguardará até que os itens sejam carregados.
-            FutureBuilder(
-              future: controller.initialized,
-              builder: (_, snapshot) {
-                if (snapshot.hasError) {
-                  return const Text(APP_MSG_ERRO_INESPERADO);
-                } else if (snapshot.hasData) {
-                  return Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(top: 8, bottom: 72),
-                      child: Observer(builder: (_) {
-                        return Column(
-                          children: controller.itensFiltrados.isEmpty
-                              ? _ifItensFiltradosIsEmpty()
-                              : _ifItensFiltradosIsNotEmpty(),
-                        );
-                      }),
-                    ),
-                  );
-                } 
-                else return Container(
-                  padding: EdgeInsets.only(top: 100),
-                  child: const CircularProgressIndicator()
-                );
-              }
-            ),
-          ],
-        )
-      ),
+              ///O `FutureBuilder` aguardará até que os itens sejam carregados.
+              FutureBuilder(
+                  future: controller.initialized,
+                  builder: (_, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text(APP_MSG_ERRO_INESPERADO);
+                    } else if (snapshot.hasData) {
+                      return Expanded(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.only(top: 8, bottom: 72),
+                          child: Observer(builder: (_) {
+                            return Column(
+                              children: controller.itensFiltrados.isEmpty
+                                  ? _ifItensFiltradosIsEmpty()
+                                  : _ifItensFiltradosIsNotEmpty(),
+                            );
+                          }),
+                        ),
+                      );
+                    } else
+                      return Container(
+                          padding: EdgeInsets.only(top: 100),
+                          child: const CircularProgressIndicator());
+                  }),
+            ],
+          )),
       bottomNavigationBar: QuizBottomBar(controller),
       floatingActionButton: Observer(builder: (_) {
         final ativo = controller.podeConfirmar;
-        return !ativo ? const SizedBox() : FloatingActionButton.extended(
-          icon: const Icon(Icons.check),
-          label: const Text(QUIZ_TEXTO_BOTAO_CONFIRMAR),
-          onPressed: !ativo ? null
-              : () {
-                controller.confirmar();
-                /* Modular.get<AuthRepository>().signInWithGoogle().then((value) => 
+        return !ativo
+            ? const SizedBox()
+            : FloatingActionButton.extended(
+                icon: const Icon(Icons.check),
+                label: const Text(QUIZ_TEXTO_BOTAO_CONFIRMAR),
+                onPressed: !ativo
+                    ? null
+                    : () {
+                        controller.confirmar();
+                        /* Modular.get<AuthRepository>().signInWithGoogle().then((value) => 
                       print(value)); */
-                //Modular.get<AuthRepository>().signOutGoogle();
-                //controller.avancar();
-                /* Modular.get<AssuntosRepository>().carregarAssuntos().then(
+                        //Modular.get<AuthRepository>().signOutGoogle();
+                        //controller.avancar();
+                        /* Modular.get<AssuntosRepository>().carregarAssuntos().then(
                     (value) => controller.itensRepository.carregarItens()
                   ); */
-                //Modular.get<FirestoreRepository>().corrigir();
-                //Modular.get<StorageRepository>().reconstruirDb();
-              },
-        );
+                        //Modular.get<FirestoreRepository>().corrigir();
+                        //Modular.get<StorageRepository>().reconstruirDb();
+                      },
+              );
       }),
     );
   }

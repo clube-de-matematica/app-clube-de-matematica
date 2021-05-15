@@ -1,12 +1,14 @@
+import 'package:clubedematematica/app/shared/models/exceptions/my_exception.dart';
+
 import '../utils/strings_db_remoto.dart';
 
 ///Os níveis de dificuldade disponíneis são: [baixa], [media], [alta].
-enum NiveisDificuldade{baixa, media, alta}
+enum NiveisDificuldade { baixa, media, alta }
 
 ///Contém as propriedade do nível de dificuldade do item.
 class Dificuldade {
   ///Todas as instâncias criadas.
-  static final List<Dificuldade> instancias = List<Dificuldade>();
+  static final List<Dificuldade> instancias = <Dificuldade>[];
 
   final NiveisDificuldade dificuldade;
 
@@ -20,35 +22,39 @@ class Dificuldade {
     return instancia;
   }
 
-  ///Caso haja em [instancias] uma instância correspondente a [dificuldade], 
+  ///Caso haja em [instancias] uma instância correspondente a [dificuldade],
   ///ela será retornada, caso contrário será criada uma nova.
   factory Dificuldade(NiveisDificuldade dificuldade) {
-    assert(dificuldade != null);
     return instancias.firstWhere(
-      (element) => element.dificuldade == dificuldade, 
-      orElse: () => _novaInstancia(dificuldade)
-    );
+        (element) => element.dificuldade == dificuldade,
+        orElse: () => _novaInstancia(dificuldade));
   }
 
-  ///Caso haja em [instancias] uma instância correspondente a [string], 
+  ///Caso haja em [instancias] uma instância correspondente a [string],
   ///ela será retornada, caso contrário será criada uma nova.
   factory Dificuldade.fromString(String string) {
-    assert(string != null);
     final dificuldade = _fromString(string);
     return instancias.firstWhere(
-      (element) => element.dificuldade == dificuldade, 
-      orElse: () => _novaInstancia(dificuldade)
-    );
+        (element) => element.dificuldade == dificuldade,
+        orElse: () => _novaInstancia(dificuldade));
   }
 
   ///Retorna um [NiveisDificuldade] a partir da string que o representa.
-  static NiveisDificuldade _fromString(String string){
-    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_BAIXA) 
-        return NiveisDificuldade.baixa;
-    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_MEDIA) 
-        return NiveisDificuldade.media;
-    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_ALTA) 
-        return NiveisDificuldade.alta;
+  // ignore: missing_return
+  static NiveisDificuldade _fromString(String string) {
+    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_BAIXA)
+      return NiveisDificuldade.baixa;
+    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_MEDIA)
+      return NiveisDificuldade.media;
+    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_ALTA)
+      return NiveisDificuldade.alta;
+    else
+      throw MyException(
+        "String inválida!",
+        originClass: "Dificuldade",
+        originField: "_fromString()",
+        fieldDetails: "string == $string",
+      );
   }
 
   @override
@@ -60,8 +66,6 @@ class Dificuldade {
         return DB_FIRESTORE_DOC_ITEM_DIFICULDADE_MEDIA;
       case NiveisDificuldade.alta:
         return DB_FIRESTORE_DOC_ITEM_DIFICULDADE_ALTA;
-      default:
-        return null;
     }
   }
 
@@ -70,5 +74,7 @@ class Dificuldade {
   bool operator ==(Object other) {
     return other is Dificuldade && this.dificuldade == other.dificuldade;
   }
-}
 
+  @override
+  int get hashCode => super.hashCode;
+}

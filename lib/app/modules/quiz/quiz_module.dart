@@ -12,26 +12,27 @@ import 'shared/repositories/imagem_item_repository.dart';
 import 'shared/repositories/itens_repository.dart';
 
 ///Um submódulo do módulo principal [ClubeDeMatematicaModule].
-class QuizModule extends ChildModule {
+class QuizModule extends Module {
   @override
   //Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
-    Bind((i) => Filtros()),
-    
-    //Controles
-    Bind((i) => QuizController(i.get<ImagemItemRepository>(), i.get<Filtros>())),
+        Bind((i) => Filtros()),
 
-    //Repositórios
-    Bind((i) => ItensRepository(i.get<FirestoreRepository>(), i.get<AssuntosRepository>())),
-    Bind((i) => AssuntosRepository(i.get<FirestoreRepository>())),
-    Bind((i) => ImagemItemRepository(i.get<StorageRepository>())),
-  ];
+        //Controles
+        Bind((i) =>
+            QuizController(i.get<ImagemItemRepository>(), i.get<Filtros>())),
+
+        //Repositórios
+        Bind((i) => ItensRepository(
+            i.get<FirestoreRepository>(), i.get<AssuntosRepository>())),
+        Bind((i) => AssuntosRepository(i.get<FirestoreRepository>())),
+        Bind((i) => ImagemItemRepository(i.get<StorageRepository>())),
+      ];
 
   @override
   //Lista de rotas.
-  List<ModularRouter> get routers => [
-    ModularRouter(Modular.initialRoute, child: (_, __) => QuizPage()),
-    ModularRouter(ROTA_MODULO_FILTROS, module: FiltrosModule()),
-  ];
-  
+  List<ModularRoute> get routes => [
+        ChildRoute(Modular.initialRoute, child: (_, __) => QuizPage()),
+        ModuleRoute(ROTA_MODULO_FILTROS, module: FiltrosModule()),
+      ];
 }

@@ -1,31 +1,42 @@
-import 'package:clubedematematica/app/shared/theme/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'expansion_tile_personalizado.dart';
+import '../../../../shared/theme/tema.dart';
 import '../utils/strings_interface.dart';
+import 'expansion_tile_personalizado.dart';
 
 ///Contém um [InputChip] para cada filtro selecionado.
 class FiltrosSelecionados extends StatelessWidget {
-  FiltrosSelecionados({Key key, @required this.children, this.trailing})
-      :assert(children != null), super(key: key);
-  final Widget trailing;
+  FiltrosSelecionados({Key? key, required this.children, this.trailing})
+      : super(key: key);
+  final Widget? trailing;
   final List<Widget> children;
 
-  Color get corTitulo => Modular.get<MeuTema>().temaClaro.colorScheme
-      .onPrimary.withOpacity(0.8);
+  Color get textColor =>
+      Modular.get<MeuTema>().temaClaro.colorScheme.onPrimary.withOpacity(0.8);
 
-  TextStyle get textStyle => Modular.get<MeuTema>().temaClaro.textTheme.bodyText1
-    .copyWith(color: corTitulo);
+  Color get backgroundColor =>
+      Modular.get<MeuTema>().temaClaro.colorScheme.primary;
+
+  TextStyle? get textStyle => Modular.get<MeuTema>()
+      .temaClaro
+      .textTheme
+      .bodyText1
+      ?.copyWith(color: textColor);
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTilePersonalizado(
-      corTitulo: Theme.of(context).colorScheme.primary,
-      titleTextColor: corTitulo,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      iconColor: textColor.withOpacity(
+          textColor.opacity + 0.1 < 1.0 ? textColor.opacity + 0.1 : 1.0),
+      collapsedIconColor: textColor,
+      textColor: textColor.withOpacity(
+          textColor.opacity + 0.1 < 1.0 ? textColor.opacity + 0.1 : 1.0),
+      collapsedTextColor: textColor,
+      backgroundColor: backgroundColor,
+      collapsedBackgroundColor: backgroundColor,
       title: Text(
-        FILTRO_TEXTO_SECAO_FILROS_SELECINADO, 
+        FILTRO_TEXTO_SECAO_FILROS_SELECINADO,
         //style: textStyle,
       ),
       children: children,

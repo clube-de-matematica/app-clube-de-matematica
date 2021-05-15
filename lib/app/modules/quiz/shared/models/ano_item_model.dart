@@ -1,7 +1,9 @@
 ///Contém o ano de aplicação do item e uma lista com todas as instâncias de [Ano].
+
 class Ano {
   ///Todas as instâncias criadas.
-  static final List<Ano> instancias = List<Ano>();
+  static final List<Ano> instancias = <Ano>[];
+
   ///Um inteiro que representa o ano de aplicação da prova.
   final int valor;
 
@@ -15,14 +17,11 @@ class Ano {
     return instancia;
   }
 
-  ///Caso haja em [instancias] uma instância correspondente a [valor], 
+  ///Caso haja em [instancias] uma instância correspondente a [valor],
   ///ela será retornada, caso contrário será criada uma nova.
   factory Ano(int valor) {
-    assert(valor != null);
-    return instancias.firstWhere(
-      (element) => element.valor == valor, 
-      orElse: () => _novaInstancia(valor)
-    );
+    return instancias.firstWhere((element) => element.valor == valor,
+        orElse: () => _novaInstancia(valor));
   }
 
   @override
@@ -35,5 +34,7 @@ class Ano {
   bool operator ==(Object other) {
     return other is Ano && this.valor == other.valor;
   }
-}
 
+  @override
+  int get hashCode => super.hashCode;
+}

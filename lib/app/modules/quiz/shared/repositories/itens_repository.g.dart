@@ -9,7 +9,7 @@ part of 'itens_repository.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$ItensRepository on _ItensRepositoryBase, Store {
-  Computed<List<Item>> _$itensComputed;
+  Computed<List<Item>>? _$itensComputed;
 
   @override
   List<Item> get itens =>
@@ -44,7 +44,7 @@ mixin _$ItensRepository on _ItensRepositoryBase, Store {
       AsyncAction('_ItensRepositoryBase._carregarItemReferenciado');
 
   @override
-  Future<Item> _carregarItemReferenciado(
+  Future<Item?> _carregarItemReferenciado(
       QuerySnapshot dbItensSnapshot, Map<String, dynamic> itemReferenciador) {
     return _$_carregarItemReferenciadoAsyncAction.run(() =>
         super._carregarItemReferenciado(dbItensSnapshot, itemReferenciador));

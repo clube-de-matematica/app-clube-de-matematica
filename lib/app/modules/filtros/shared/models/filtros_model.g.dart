@@ -1,5 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+
 part of 'filtros_model.dart';
 
 // **************************************************************************
@@ -9,28 +10,28 @@ part of 'filtros_model.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$Filtros on _FiltrosBase, Store {
-  Computed<Map<TiposFiltro, Set<OpcaoFiltro>>> _$allFiltersComputed;
+  Computed<Map<TiposFiltro, Set<OpcaoFiltro>>>? _$allFiltersComputed;
 
   @override
   Map<TiposFiltro, Set<OpcaoFiltro>> get allFilters => (_$allFiltersComputed ??=
           Computed<Map<TiposFiltro, Set<OpcaoFiltro>>>(() => super.allFilters,
               name: '_FiltrosBase.allFilters'))
       .value;
-  Computed<int> _$totalSelecinadoComputed;
+  Computed<int>? _$totalSelecinadoComputed;
 
   @override
   int get totalSelecinado =>
       (_$totalSelecinadoComputed ??= Computed<int>(() => super.totalSelecinado,
               name: '_FiltrosBase.totalSelecinado'))
           .value;
-  Computed<List<Item>> _$allItensComputed;
+  Computed<List<Item>>? _$allItensComputed;
 
   @override
   List<Item> get allItens =>
       (_$allItensComputed ??= Computed<List<Item>>(() => super.allItens,
               name: '_FiltrosBase.allItens'))
           .value;
-  Computed<List<Item>> _$itensFiltradosComputed;
+  Computed<List<Item>>? _$itensFiltradosComputed;
 
   @override
   List<Item> get itensFiltrados => (_$itensFiltradosComputed ??=

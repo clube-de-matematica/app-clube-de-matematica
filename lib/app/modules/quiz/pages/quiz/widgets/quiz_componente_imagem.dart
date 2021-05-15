@@ -6,10 +6,7 @@ import '../../../shared/models/imagem_item_model.dart';
 
 ///Estrutura que conterá uma imagem do enunciado ou da alternativa.
 class QuizComponenteImagem extends StatelessWidget {
-  const QuizComponenteImagem(
-    this.imagem, 
-    {Key key}
-  ) : super(key: key);
+  const QuizComponenteImagem(this.imagem, {Key? key}) : super(key: key);
 
   final ImagemItem imagem;
 
@@ -20,8 +17,8 @@ class QuizComponenteImagem extends StatelessWidget {
         margin: const EdgeInsets.only(top: 8, bottom: 8),
         duration: const Duration(milliseconds: 500),
         child: Image(
-          image: imagem.provider ?? MemoryImage(kTransparentImage), 
-          width: imagem.width, 
+          image: imagem.provider ?? MemoryImage(kTransparentImage),
+          width: imagem.width,
           height: imagem.height,
         ),
         /* 
