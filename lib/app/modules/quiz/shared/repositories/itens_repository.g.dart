@@ -45,7 +45,8 @@ mixin _$ItensRepository on _ItensRepositoryBase, Store {
 
   @override
   Future<Item?> _carregarItemReferenciado(
-      QuerySnapshot dbItensSnapshot, Map<String, dynamic> itemReferenciador) {
+      QuerySnapshot<Object?> dbItensSnapshot,
+      Map<String, dynamic> itemReferenciador) {
     return _$_carregarItemReferenciadoAsyncAction.run(() =>
         super._carregarItemReferenciado(dbItensSnapshot, itemReferenciador));
   }

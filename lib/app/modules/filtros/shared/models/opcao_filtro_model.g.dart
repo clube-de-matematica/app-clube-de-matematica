@@ -1,6 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-
 part of 'opcao_filtro_model.dart';
 
 // **************************************************************************

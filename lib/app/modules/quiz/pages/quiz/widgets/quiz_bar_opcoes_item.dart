@@ -3,9 +3,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../shared/theme/tema.dart';
+import '../../../shared/models/opcoesItem.dart';
 import '../../../shared/utils/strings_interface.dart';
 import '../quiz_controller.dart';
-import 'quiz_dialogo_opcoes_item.dart';
 
 ///Cria uma barra contendo, à esquerda, um indicador de andamento na lista de questões,
 ///e, à direita, um botão para exibir um diálogo com as opções disponíveis para a questão.
@@ -19,6 +19,20 @@ class QuizBarOpcoesItem extends StatelessWidget {
 
   TextStyle? get textStyle =>
       Modular.get<MeuTema>().temaClaro.textTheme.bodyText2;
+
+  ///As opções do popup de opções do item.
+  static const _popupMenuItens = <PopupMenuItem<OpcoesItem>>[
+    PopupMenuItem<OpcoesItem>(
+      value: OpcoesItem.filter,
+      child: ListTile(
+        leading: const Icon(
+          Icons.filter_list,
+          //color: Colors.white,
+        ),
+        title: const Text(QUIZ_OPCAO_ITEM_FILTRAR),
+      ),
+    )
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +51,7 @@ class QuizBarOpcoesItem extends StatelessWidget {
                 : const Text(""),
           );
         }),
-        TextButton(
-          style: TextButton.styleFrom(
-            textStyle: textStyle,
-            primary: textStyle?.color,
-            padding: const EdgeInsets.only(left: 16),
-            visualDensity: VisualDensity.compact,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-          ),
+        PopupMenuButton<OpcoesItem>(
           child: Row(
             children: <Widget>[
               Text(QUIZ_OPCOES_ITEM),
@@ -56,19 +62,10 @@ class QuizBarOpcoesItem extends StatelessWidget {
               ),
             ],
           ),
-          onPressed: () => _showDialogoOpcoesItem(context)
-              .then((opcao) => controller.setOpcaoItem(opcao)),
+          onSelected: (opcao) => controller.setOpcaoItem(opcao),
+          itemBuilder: (_) => _popupMenuItens,
         ),
       ],
     );
-  }
-
-  ///Exibe um diálogo com as opções para o item.
-  Future<int?> _showDialogoOpcoesItem(BuildContext context) async {
-    return await showDialog<int>(
-        context: context,
-        builder: (context) {
-          return QuizDialogoOpcoesItem();
-        });
   }
 }

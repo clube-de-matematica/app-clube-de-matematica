@@ -5,11 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../../filtros/filtros_module.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
-import '../../../filtros/shared/utils/rotas_filtros.dart';
 import '../../shared/models/alternativa_item_model.dart';
 import '../../shared/models/imagem_item_model.dart';
 import '../../shared/models/item_model.dart';
+import '../../shared/models/opcoesItem.dart';
 import '../../shared/repositories/imagem_item_repository.dart';
 import '../../shared/utils/assets_quiz.dart';
 import '../../shared/utils/strings_db_remoto.dart';
@@ -190,9 +191,10 @@ abstract class _QuizControllerBase with Store {
   }
 
   ///Retorna a opção escolhida pelo usuário dentre as opções disponíveis para o item.
-  Future<void> setOpcaoItem(int? opcao) async {
+  Future<void> setOpcaoItem(OpcoesItem opcao) async {
     switch (opcao) {
-      case 1:
+      case OpcoesItem.none:
+      case OpcoesItem.filter:
         await onTapFiltrar();
     }
   }
@@ -204,9 +206,9 @@ abstract class _QuizControllerBase with Store {
     ///módulo atual.
     ///Se o retorno de `pushNamed` for `true`, significa que o botão "Aplicar" de uma das
     ///páginas de  filtro foi pressionado.
-    final retorno =
-        await Modular.to.pushNamed<bool>(ROTA_PAGINA_FILTROS_TIPOS_PATH) ??
-            false;
+    final retorno = await Modular.to
+            .pushNamed<bool>(FiltrosModule.kAbsoluteRouteFiltroTiposPage) ??
+        false;
     if (retorno) _setIndice(0, force: true);
     return retorno;
   }

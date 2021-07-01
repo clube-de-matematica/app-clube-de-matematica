@@ -3,8 +3,11 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../shared/theme/tema.dart';
+import '../../../shared/widgets/myBottomSheet.dart';
+import '../../../shared/widgets/myWillPopScope.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
 import '../utils/strings_interface.dart';
+import '../widgets/login_with_google_button.dart';
 import 'login_controller.dart';
 
 ///Página de login.
@@ -36,79 +39,94 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        //padding: EdgeInsetsDirectional.only(bottom: MediaQuery.of(context).size.height * 0.2),
-        color: tema.colorScheme.primary.withOpacity(0.02),
-        child: Column(
-          children: [
-            ///`Container` com a altura da barra de status.
-            Container(
-              height: MediaQuery.of(context).padding.top,
-              color: tema.colorScheme.primary,
-            ),
+      body: MyWillPopScope(
+        child: Container(
+          //padding: EdgeInsetsDirectional.only(bottom: MediaQuery.of(context).size.height * 0.2),
+          color: Colors.blueGrey[50],
+          child: Column(
+            children: [
+              ///`Container` com a altura da barra de status.
+              Container(
+                height: MediaQuery.of(context).padding.top,
+                color: tema.colorScheme.primary,
+              ),
 
-            ///Corpo da página.
-            ScrollViewWithChildExpandable(
-              child: Column(
-                children: [
-                  ///"Bem vindo" e mensagem.
-                  Expanded(
-                    flex: 3,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              LOGIN_MSG_BEM_VINDO + "\n",
-                              style: textStyleH1,
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              LOGIN_MSG_SOB_BEM_VINDO,
-                              style: textStyleH2,
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+              ///Corpo da página.
+              ScrollViewWithChildExpandable(
+                child: Column(
+                  children: [
+                    ///"Bem vindo" e mensagem.
+                    Expanded(
+                      flex: 3,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                LOGIN_MSG_BEM_VINDO + "\n",
+                                style: textStyleH1,
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                LOGIN_MSG_SOB_BEM_VINDO,
+                                style: textStyleH2,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  ///Botão de login com o Google.
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: _buttonLoginWithGoogle(),
-                  ),
+                    Expanded(child: const SizedBox()),
 
-                  ///Botão de autenticação anônima.
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: _buttonLoginAnonymously(),
+                    ///Botão de login com o Google.
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: LoginWithGoogleButton(
+                        margin: EdgeInsets.all(16.0),
+                        onPressed: () async {
+                          if (!controller.loading) {
+                            final autenticado =
+                                await controller.onTapLoginWithGoogle();
+                            if (!autenticado) {
+                              _buildBottomSheetErroLogin().showModal(context);
+                            }
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                ],
+
+                    ///Botão de autenticação anônima.
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: _buildButtonLoginAnonymously(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   ///Retorna o botão de autenticação anônima.
-  Widget _buttonLoginAnonymously() {
+  Widget _buildButtonLoginAnonymously() {
     return Observer(
-      builder: (_) {
+      builder: (context) {
         final clicked =
             controller.loading && controller.selectedMethod == Login.anonymous;
         return TextButton(
           style: TextButton.styleFrom(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.symmetric(horizontal: 16.0),
           ),
@@ -140,178 +158,75 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                     ),
             ],
           ),
-          onPressed: controller.loading
-              //Desativar.
-              ? null
-              //Ativar
-              : () async {
-                  if (await _gerarDialogoConfirmarLoginAnonymously()) {
-                    final autenticado =
-                        await controller.onTapLoginAnonymously();
-                    if (!autenticado) _gerarDialogoErroLogin();
-                  }
-                },
+          onPressed: () async {
+            if (!controller.loading) {
+              final result = await _buildBottomSheetConfirmarLoginAnonymously()
+                  .showModal<bool>(context);
+              if (result ?? false) {
+                final autenticado = await controller.onTapLoginAnonymously();
+                if (!autenticado) {
+                  _buildBottomSheetErroLogin().showModal(context);
+                }
+              }
+            }
+          },
         );
       },
     );
   }
 
-  ///Retorna o botão de login com o Google.
-  Widget _buttonLoginWithGoogle() {
-    return Observer(
-      builder: (_) {
-        final avatarSize = 10.0 * escala < 10.0
-            ? 10.0
-            : 10.0 * escala > 25.0
-                ? 25.0
-                : 10.0 * escala;
-        final clicked =
-            controller.loading && controller.selectedMethod == Login.google;
-        return ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Colors.white,
-            onPrimary: tema.colorScheme.primary,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-          ),
-          child: Stack(
-            alignment: AlignmentDirectional.center,
-            children: [
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
-                opacity: clicked ? 0.0 : 1.0,
-                onEnd: () {},
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: avatarSize,
-                      backgroundImage:
-                          AssetImage(controller.assetPathIconGoogle),
-                      backgroundColor: Colors.transparent,
-                    ),
-                    const SizedBox(width: 8.0),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: Text(
-                        LOGIN_TEXT_BUTTON_USER_GOOGLE,
-                        style: tema.textTheme.bodyText1?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: textColor1,
-                          fontSize: escala * 18,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              !clicked
-                  ? const SizedBox()
-                  : const SizedBox(
-                      width: 16.0,
-                      height: 16.0,
-                      child: Center(
-                        child:
-                            const CircularProgressIndicator(strokeWidth: 2.0),
-                      ),
-                    ),
-            ],
-          ),
-          onPressed: controller.loading
-              //Desativar.
-              ? () {}
-              //Ativar
-              : () async {
-                  final autenticado = await controller.onTapLoginWithGoogle();
-                  if (!autenticado) _gerarDialogoErroLogin();
-                },
-        );
-      },
-    );
-  }
-
-  ///Abre um popup informando os recursos que não estarão disponíveis enquanto o usuário
+  ///Abre uma página inferior informando os recursos que não estarão disponíveis enquanto o usuário
   ///estiver conectado anonimamente.
-  ///Retorna `true` se o usuário confirmar que deseja continuar conectado anonimamente.
-  Future<bool> _gerarDialogoConfirmarLoginAnonymously() async {
-    final result = await showDialog<bool>(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          titleTextStyle: tema.textTheme.bodyText1?.copyWith(
-            fontSize: 18 * escala,
-            color: textColor1,
-            fontWeight: FontWeight.w500,
-          ),
-          contentTextStyle: tema.textTheme.bodyText1?.copyWith(
-            fontSize: 16 * escala,
-            color: textColor2,
-          ),
-          title: const Text(
-            LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TITLE,
-            textAlign: TextAlign.justify,
-          ),
-          content: SingleChildScrollView(
-            child: const Text(
-              LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_MSG,
-              textAlign: TextAlign.justify,
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text(
-                  LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL),
-              onPressed: () => Navigator.pop<bool>(context, false),
-            ),
-            TextButton(
-              child: const Text(
-                  LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CONFIRM),
-              onPressed: () => Navigator.pop<bool>(context, true),
-            ),
-          ],
-        );
-      },
+  ///Ao ser fechada, retorna `true` se o usuário confirmar que deseja continuar conectado anonimamente.
+  MyBottomSheet _buildBottomSheetConfirmarLoginAnonymously() {
+    return MyBottomSheet(
+      content: const Text(
+        LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_MSG,
+        textAlign: TextAlign.justify,
+      ),
+      actions: [
+        TextButton(
+          child: const Text(
+              LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL),
+          onPressed: () => Navigator.pop<bool>(context, false),
+        ),
+        TextButton(
+          child: const Text(
+              LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CONFIRM),
+          onPressed: () => Navigator.pop<bool>(context, true),
+        ),
+      ],
     );
-    return result ?? false;
   }
 
-  ///Abre um popup informando que houve um erro durante a autenticação.
-  Future<void> _gerarDialogoErroLogin() async {
-    await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          titleTextStyle: tema.textTheme.bodyText1?.copyWith(
-            fontSize: 18 * escala,
-            color: textColor1,
-            fontWeight: FontWeight.w500,
-          ),
-          contentTextStyle: tema.textTheme.bodyText1?.copyWith(
-            fontSize: 16 * escala,
-            color: textColor2,
-          ),
-          title: const Text(
-            LOGIN_DIALOG_CONFIRM_ERRO_LOGIN_TITLE,
-            textAlign: TextAlign.justify,
-          ),
-          content: SingleChildScrollView(
-            child: const Text(
-              LOGIN_DIALOG_CONFIRM_ERRO_LOGIN_MSG,
-              textAlign: TextAlign.justify,
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text(LOGIN_DIALOG_ERRO_LOGIN_TEXT_BUTTON_CLOSE),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        );
-      },
+  ///Abre uma página inferior informando que houve um erro durante a autenticação.
+  MyBottomSheet _buildBottomSheetErroLogin() {
+    return MyBottomSheet(
+      titleTextStyle: tema.textTheme.bodyText1?.copyWith(
+        fontSize: 18 * escala,
+        color: textColor1,
+        fontWeight: FontWeight.w500,
+      ),
+      contentTextStyle: tema.textTheme.bodyText1?.copyWith(
+        fontSize: 16 * escala,
+        color: textColor2,
+      ),
+      title: const Text(
+        LOGIN_DIALOG_CONFIRM_ERRO_LOGIN_TITLE,
+        textAlign: TextAlign.justify,
+      ),
+      content: SingleChildScrollView(
+        child: const Text(
+          LOGIN_DIALOG_CONFIRM_ERRO_LOGIN_MSG,
+          textAlign: TextAlign.justify,
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: const Text(LOGIN_DIALOG_ERRO_LOGIN_TEXT_BUTTON_CLOSE),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 }

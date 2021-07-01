@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'modules/login/utils/rotas_login.dart';
+import 'modules/login/login_module.dart';
+import 'modules/quiz/quiz_module.dart';
+import 'shared/repositories/firebase/auth_repository.dart';
 import 'shared/theme/tema.dart';
 import 'shared/utils/constantes.dart';
 
@@ -13,17 +15,9 @@ class ClubeDeMatematicaWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
       theme: Modular.get<MeuTema>().temaClaro,
-      initialRoute:
-          /* Modular.get<AuthRepository>().logged
-          ? ROTA_PAGINA_QUIZ_PATH
-          : */
-          ROTA_PAGINA_LOGIN_PATH,
-
-      ///Tranferir o gerenciamento de rotas para o `Modular`.
-      ///Para chamar as rotas não será mais necessário um `BuildContext`.
-      //initialRoute: "/",
-      //navigatorKey: Modular.navigatorKey,
-      //onGenerateRoute: Modular.generateRoute,
+      initialRoute:Modular.get<AuthRepository>().logged
+          ? QuizModule.kAbsoluteRouteQuizPage
+          : LoginModule.kAbsoluteRouteLoginPage,
     ).modular();
   }
 }

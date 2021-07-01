@@ -15,7 +15,7 @@ class FirestoreRepository {
   ///Retorna os dados da coleção [collection] no banco de dados.
   Future<QuerySnapshot> getCollection(CollectionReference collection,
       {onError(error)?}) async {
-    if (!_authRepository.logged)
+    if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
           originClass: _className,
           originField: "getCollection()",
@@ -44,7 +44,7 @@ class FirestoreRepository {
   Future<bool> setDocumentIfNotExist(
       DocumentReference ref, Map<String, dynamic> data,
       {Function()? onExist, Function()? onSuccess, onError(error)?}) async {
-    if (!_authRepository.logged)
+    if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
           originClass: _className,
           originField: "setDocumentIfNotExist()",

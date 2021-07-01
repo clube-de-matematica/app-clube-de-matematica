@@ -5,12 +5,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import 'clube_de_matematica_controller.dart';
 import 'modules/login/login_module.dart';
-import 'modules/login/utils/rotas_login.dart';
 import 'modules/perfil/models/userapp.dart';
 import 'modules/perfil/perfil_module.dart';
-import 'modules/perfil/utils/rotas_perfil.dart';
 import 'modules/quiz/quiz_module.dart';
-import 'modules/quiz/shared/utils/rotas_quiz.dart';
 import 'shared/repositories/firebase/auth_repository.dart';
 import 'shared/repositories/firebase/firestore_repository.dart';
 import 'shared/repositories/firebase/storage_repository.dart';
@@ -22,7 +19,11 @@ class ClubeDeMatematicaModule extends Module {
   //Como este é o módulo plincipal (MainModule), ela estará disponível para todo o app.
   List<Bind> get binds => [
         Bind((i) => MeuTema()),
-        Bind((i) => UserApp()),
+        Bind((i) => UserApp(
+              name: i.get<AuthRepository>().currentUserName,
+              email: i.get<AuthRepository>().currentUserEmail,
+              urlAvatar: i.get<AuthRepository>().currentUserAvatarUrl,
+            )),
 
         //Controles
         Bind((i) => ClubeDeMatematicaController()),
@@ -44,8 +45,8 @@ class ClubeDeMatematicaModule extends Module {
   //Lista de rotas.
   List<ModularRoute> get routes => [
         ModuleRoute(Modular.initialRoute, module: LoginModule()),
-        ModuleRoute(ROTA_MODULO_LOGIN_PATH, module: LoginModule()),
-        ModuleRoute(ROTA_MODULO_PERFIL_PATH, module: PerfilModule()),
-        ModuleRoute(ROTA_MODULO_QUIZ_PATH, module: QuizModule()),
+        ModuleRoute(LoginModule.kAbsoluteRouteModule, module: LoginModule()),
+        ModuleRoute(PerfilModule.kAbsoluteRouteModule, module: PerfilModule()),
+        ModuleRoute(QuizModule.kAbsoluteRouteModule, module: QuizModule()),
       ];
 }

@@ -1,15 +1,27 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../shared/repositories/firebase/auth_repository.dart';
 import '../perfil/models/userapp.dart';
 import 'pages/login_controller.dart';
 import 'pages/login_page.dart';
 
 class LoginModule extends Module {
+  ///Rota relativa.
+  static const kRelativeRouteModule = "/login";
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteModule = kRelativeRouteModule;
+
+  ///Rota relativa.
+  static const kRelativeRouteLoginPage = "/";
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteLoginPage =
+      kAbsoluteRouteModule + kRelativeRouteLoginPage;
+
   @override
   List<Bind> get binds => [
         //Controles
-        Bind((i) => LoginController(i.get<AuthRepository>(), i.get<UserApp>())),
+        Bind((i) => LoginController(i.get<UserApp>())),
       ];
 
   @override

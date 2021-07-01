@@ -19,7 +19,7 @@ class StorageRepository {
   ///Se ocorrer um erro ele será repassado e precisa ser tratado na sequência da pilha.
   Future<File> downloadFile(Reference ref, File fileTemp) async {
     ///Verificar se há algum usuário logado.
-    if (!_authRepository.logged)
+    if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
           originClass: _className,
           originField: "downloadFile()",
@@ -45,7 +45,7 @@ class StorageRepository {
   ///Se ocorrer um erro ele será repassado e precisa ser tratado na sequência da pilha.
   Future<String> getUrlInDb(Reference ref) async {
     ///Verificar se há algum usuário logado.
-    if (!_authRepository.logged)
+    if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
           originClass: _className,
           originField: "getUrlInDb()",
@@ -67,7 +67,7 @@ class StorageRepository {
   ///Se ocorrer um erro ele será repassado e precisa ser tratado na sequência da pilha.
   Future<FullMetadata> getMetadados(Reference ref) async {
     ///Verificar se há algum usuário logado.
-    if (!_authRepository.logged)
+    if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
           originClass: _className,
           originField: "getMetadados()",
@@ -89,7 +89,7 @@ class StorageRepository {
   Future<bool> uploadFile(Reference ref, File file,
       [SettableMetadata? metadata]) async {
     ///Verificar se há algum usuário logado.
-    if (!_authRepository.logged)
+    if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
           originClass: _className,
           originField: "uploadFile()",

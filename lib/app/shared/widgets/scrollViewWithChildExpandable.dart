@@ -10,12 +10,14 @@ class ScrollViewWithChildExpandable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: CustomScrollView(slivers: [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: child,
-        ),
-      ]),
+      child: CustomScrollView(
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: child,
+          ),
+        ],
+      ),
     );
   }
 }

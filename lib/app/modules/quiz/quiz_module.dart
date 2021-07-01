@@ -4,7 +4,6 @@ import '../../shared/repositories/firebase/firestore_repository.dart';
 import '../../shared/repositories/firebase/storage_repository.dart';
 import '../filtros/filtros_module.dart';
 import '../filtros/shared/models/filtros_model.dart';
-import '../filtros/shared/utils/rotas_filtros.dart';
 import 'pages/quiz/quiz_controller.dart';
 import 'pages/quiz/quiz_page.dart';
 import 'shared/repositories/assuntos_repository.dart';
@@ -13,6 +12,19 @@ import 'shared/repositories/itens_repository.dart';
 
 ///Um submódulo do módulo principal [ClubeDeMatematicaModule].
 class QuizModule extends Module {
+  ///Rota relativa.
+  static const kRelativeRouteModule = "/quiz";
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteModule = kRelativeRouteModule;
+
+  ///Rota relativa.
+  static const kRelativeRouteQuizPage = "/";
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteQuizPage =
+      kAbsoluteRouteModule + kRelativeRouteQuizPage;
+
   @override
   //Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
@@ -33,6 +45,6 @@ class QuizModule extends Module {
   //Lista de rotas.
   List<ModularRoute> get routes => [
         ChildRoute(Modular.initialRoute, child: (_, __) => QuizPage()),
-        ModuleRoute(ROTA_MODULO_FILTROS, module: FiltrosModule()),
+        ModuleRoute(FiltrosModule.kRelativeRouteModule, module: FiltrosModule()),
       ];
 }

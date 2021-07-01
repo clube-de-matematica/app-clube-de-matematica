@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/tema.dart';
 import '../../../../shared/utils/string_interface.dart';
+import '../../../../shared/widgets/myDrawer.dart';
 import '../../shared/utils/strings_interface.dart';
 import 'quiz_controller.dart';
 import 'widgets/quiz_alternativas.dart';
@@ -24,10 +27,11 @@ class QuizPage extends StatefulWidget {
 ///[controller] junto com o de [_QuizPageState].
 class _QuizPageState extends ModularState<QuizPage, QuizController> {
   ThemeData get tema => Modular.get<MeuTema>().temaClaro;
+  TextStyle? get textStyle => tema.textTheme.bodyText1;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MyDrawer(
       appBar: QuizAppBar(controller),
       body: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -79,12 +83,12 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                     : () {
                         controller.confirmar();
                         /* Modular.get<AuthRepository>().signInWithGoogle().then((value) => 
-                      print(value)); */
+                        print(value)); */
                         //Modular.get<AuthRepository>().signOutGoogle();
                         //controller.avancar();
                         /* Modular.get<AssuntosRepository>().carregarAssuntos().then(
-                    (value) => controller.itensRepository.carregarItens()
-                  ); */
+                      (value) => controller.itensRepository.carregarItens()
+                    ); */
                         //Modular.get<FirestoreRepository>().corrigir();
                         //Modular.get<StorageRepository>().reconstruirDb();
                       },
@@ -114,7 +118,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
     return <Widget>[
       Text(
         QUIZ_MSG_ITENS_NAO_ENCONTRADOS,
-        style: tema.textTheme.bodyText1,
+        style: textStyle,
         textAlign: TextAlign.justify,
       ),
       TextButton(

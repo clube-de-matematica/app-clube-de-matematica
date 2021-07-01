@@ -15,22 +15,16 @@ const LOGIN_TEXT_BUTTON_USER_ANONYMOUS = "Fazer isso mais tarde";
 ///Título do botão para conectar-se com a conta do Google.
 const LOGIN_TEXT_BUTTON_USER_GOOGLE = "Entrar com o Google";
 
-///Título do popup de confirmação para conectar-se anonimamente.
-const LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TITLE =
-    "Você escolheu utilizar o aplicativo anonimamente";
-
-///Mensagem do popup de confirmação para conectar-se anonimamente.
+///Mensagem de confirmação para conectar-se anonimamente.
 const LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_MSG =
-    "Isso ainda lhe permitirá acesso completo ao banco de questões, no entanto, você "
-    "não poderá aproveitar as vantagens de criar ou participar de Clubes de Matemática."
-    "\n\n"
-    "Continuar conectado anonimamente?";
+    "Sem fazer login você ainda terá acesso completo ao banco de questões, no entanto, "
+    "não poderá aproveitar as vantagens de criar ou participar de Clubes de Matemática.";
 
 ///Título do botão para confirmação no popup de confirmação para conectar-se anonimamente.
-const LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CONFIRM = "SIM";
+const LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CONFIRM = "CONTINUAR";
 
 ///Título do botão para cancelamento no popup de confirmação para conectar-se anonimamente.
-const LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL = "NÃO";
+const LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL = "CANCELAR";
 
 ///Título do popup de notificação de erro.
 const LOGIN_DIALOG_CONFIRM_ERRO_LOGIN_TITLE = "Erro de altenticação";

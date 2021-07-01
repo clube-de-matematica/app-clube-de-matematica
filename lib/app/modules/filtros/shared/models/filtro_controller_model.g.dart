@@ -1,6 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-
 part of 'filtro_controller_model.dart';
 
 // **************************************************************************

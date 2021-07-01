@@ -5,6 +5,19 @@ import 'page/perfil_controller.dart';
 import 'page/perfil_page.dart';
 
 class PerfilModule extends Module {
+  ///Rota relativa.
+  static const kRelativeRouteModule = "/perfil";
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteModule = kRelativeRouteModule;
+
+  ///Rota relativa.
+  static const kRelativeRoutePerfilPage = "/";
+
+  ///Rota absoluta.
+  static const kAbsoluteRoutePerfilPage =
+      kAbsoluteRouteModule + kRelativeRoutePerfilPage;
+
   @override
   List<Bind> get binds => [
         //Controles

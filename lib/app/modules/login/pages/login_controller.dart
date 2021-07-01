@@ -3,8 +3,8 @@ import 'package:mobx/mobx.dart';
 
 import '../../../shared/repositories/firebase/auth_repository.dart';
 import '../../perfil/models/userapp.dart';
-import '../../perfil/utils/rotas_perfil.dart';
-import '../../quiz/shared/utils/rotas_quiz.dart';
+import '../../perfil/perfil_module.dart';
+import '../../quiz/quiz_module.dart';
 import '../utils/assets_login.dart';
 
 part 'login_controller.g.dart';
@@ -15,13 +15,9 @@ enum Login { google, anonymous, none }
 class LoginController = _LoginControllerBase with _$LoginController;
 
 abstract class _LoginControllerBase with Store {
-  final AuthRepository auth;
   final UserApp user;
 
-  _LoginControllerBase(
-    this.auth,
-    this.user,
-  );
+  _LoginControllerBase(this.user);
 
   ///Indica o método de login escolhido pelo usuário.
   @observable
@@ -49,12 +45,11 @@ abstract class _LoginControllerBase with Store {
     _setSelectedMethod(Login.google);
     _setLoading(true);
 
-    final autenticado = await auth.signInWithGoogle();
-    user
-      ..name = auth.currentUserName
-      ..email = auth.currentUserEmail
-      ..urlAvatar = auth.currentUserAvatarUrl;
-    if (autenticado) Modular.to.pushNamed(ROTA_PAGINA_PERFIL_PATH);
+    final autenticado = await user.signInWithGoogle();
+    if (autenticado) {
+      Modular.to.pushNamedAndRemoveUntil(
+          PerfilModule.kAbsoluteRoutePerfilPage, (_) => false);
+    }
 
     _setLoading(false);
     _setSelectedMethod(Login.none);
@@ -68,8 +63,14 @@ abstract class _LoginControllerBase with Store {
     _setSelectedMethod(Login.anonymous);
     _setLoading(true);
 
-    final autenticado = await auth.signInAnonymously();
-    if (autenticado) Modular.to.pushReplacementNamed(ROTA_PAGINA_QUIZ_PATH);
+    bool autenticado;
+    try {
+      autenticado = await user.signInAnonymously();
+    } on MyExceptionAuthRepository catch (_) {
+      autenticado = false;
+    }
+    if (autenticado)
+      Modular.to.pushReplacementNamed(QuizModule.kAbsoluteRouteQuizPage);
 
     _setLoading(false);
     _setSelectedMethod(Login.none);
@@ -78,11 +79,5 @@ abstract class _LoginControllerBase with Store {
   }
 
   ///Retorna o caminho relativo para o logo do botão para conectar-se com a conta Google.
-  String get assetPathIconGoogle => LoginAssets.GOOGLE_LOGO;
-
-  ///Retorna `true` se houver um usuário amônimo conectado.
-  //bool get loggedAnonymously => auth.loggedAnonymously;
-
-  ///Retorna `true` se houver um usuário conectado.
-  //bool get logged => auth.logged;
+  String get assetPathIconGoogle => LoginAssets.kGoogleLogo;
 }

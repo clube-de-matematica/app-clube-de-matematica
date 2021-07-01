@@ -1,9 +1,9 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../filtros_module.dart';
 import '../../shared/models/filtro_controller_model.dart';
 import '../../shared/models/filtros_model.dart';
-import '../../shared/utils/rotas_filtros.dart';
 import '../../shared/utils/strings_interface.dart';
 
 part 'filtro_tipos_controller.g.dart';
@@ -24,7 +24,7 @@ abstract class _FiltroTiposControllerBase extends FiltroController with Store {
     ///Se o retorno de `pushNamed` for `true`, significa que o botão "Aplicar" da página de
     ///opções de filtro foi pressionado.
     final retorno = (await Modular.to.pushNamed<bool>(
-            ROTA_PAGINA_FILTROS_OPCOES_PATH,
+            FiltrosModule.kAbsoluteRouteFiltroOpcoesPage,
             arguments: tipo)) ??
         false;
     if (retorno) Modular.to.pop(true);

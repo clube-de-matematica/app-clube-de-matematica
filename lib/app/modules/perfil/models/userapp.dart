@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:clubedematematica/app/shared/repositories/firebase/auth_repository.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../shared/extensions.dart';
@@ -59,6 +62,18 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   ///URL da imágem do avatar do usuário.
   String? _urlAvatar;
 
+  ///A instância de [AuthRepository].
+  AuthRepository get _auth => Modular.get<AuthRepository>();
+
+  ///Retorna `true` se houver um usuário amônimo conectado.
+  bool get isAnonymous => _auth.isAnonymous;
+
+  ///Retorna `true` se houver um usuário logado.
+  bool get logged => _auth.logged;
+
+  ///Retorna true se houver um usuário conectado (anônimo ou logado).
+  bool get connected => _auth.connected;
+
   _UserAppBase({
     String? name,
     String? email,
@@ -69,6 +84,50 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     this._email = email;
     this._pathAvatar = pathAvatar;
     this._urlAvatar = urlAvatar;
+  }
+
+  ///Define [_name], [_email], [_urlAvatar] e [_pathAvatar] para `null`.
+  Future<void> _reset() async {
+    _name = null;
+    _email = null;
+    _urlAvatar = null;
+    await _deleteImageAvatar();
+    _pathAvatar = null;
+    notifyListeners();
+  }
+
+  ///Cria um usuário anônimo de forma assincrona.
+  ///Se já houver um usuário anônimo conectado, esse usuário será retornado.
+  ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
+  ///Retorna `true` se o processo for bem sucedido.
+  FutureOr<bool> signInAnonymously() async {
+    final autenticado = await _auth.signInAnonymously();
+    if (autenticado) await _reset();
+    return autenticado;
+  }
+
+  ///Solicitar login com uma cota Google.
+  ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
+  ///Retorna `true` se o processo for bem sucedido.
+  FutureOr<bool> signInWithGoogle([bool replaceUser = false]) async {
+    final autenticado = await _auth.signInWithGoogle(replaceUser);
+    if (autenticado) {
+      _name = _auth.currentUserName;
+      _email = _auth.currentUserEmail;
+      _urlAvatar = _auth.currentUserAvatarUrl;
+      notifyListeners();
+    } else {
+      signOut();
+    }
+    return autenticado;
+  }
+
+  ///Fazer logout da conta Google.
+  Future<void> signOut() async {
+    await Future.wait([
+      _auth.signOut(),
+      _reset(),
+    ]);
   }
 
   ///O nome do arquivo da imagem do avatar do usuário sem a extensão.
@@ -117,14 +176,17 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     if (condition) {
       if (kIsWeb)
         _pathAvatar = pathAvatar;
-      else
-        _saveImageAvatar(pathAvatar!).then((file) {
-          if (file != null)
-            _pathAvatar = file.path;
-          else
-            _pathAvatar = pathAvatar;
-        });
-      notifyListeners();
+      else {
+        if (pathAvatar != null) {
+          _saveImageAvatar(pathAvatar).then((file) {
+            if (file != null)
+              _pathAvatar = file.path;
+            else
+              _pathAvatar = pathAvatar;
+            notifyListeners();
+          });
+        }
+      }
     }
   }
 
@@ -149,6 +211,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   ///Apenas para Android e IOS.
   ///Salva o arquivo da imagem do avatar do usuário no diretório do aplicativo.
   ///[path] é o path da origem do arquivo.
+  ///Retorna `null` se o arquivo em [path] não for salvo com sucesso.
   Future<File?> _saveImageAvatar(String path) async {
     if (kIsWeb)
       throw MyException(
@@ -180,10 +243,10 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data[NOME] = this._name;
-    data[EMAIL] = this._email;
-    data[PATH_AVATAR] = this._pathAvatar;
-    data[URL_AVATAR] = this._urlAvatar;
+    data[NOME] = this._name ?? "";
+    data[EMAIL] = this._email ?? "";
+    data[PATH_AVATAR] = this._pathAvatar ?? "";
+    data[URL_AVATAR] = this._urlAvatar ?? "";
     return data;
   }
 
