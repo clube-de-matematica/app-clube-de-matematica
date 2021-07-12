@@ -5,6 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../modules/perfil/models/userapp.dart';
 import '../../modules/perfil/perfil_module.dart';
 import '../../modules/perfil/widgets/avatar.dart';
+import '../repositories/firebase/auth_repository.dart';
 import 'myWillPopScope.dart';
 
 ///Um [Scaffold] com o [Drawer] do aplicativo.
@@ -73,7 +74,7 @@ class _MyDrawerState extends State<MyDrawer> {
     final VoidCallback loadProfile = () async {
       bool result = true;
       if (widget.user.isAnonymous) {
-        result = await widget.user.signInWithGoogle();
+        result = (await widget.user.signInWithGoogle()) == StatusSignIn.success;
       }
       if (result) {
         Navigator.of(context).pushNamed(PerfilModule.kAbsoluteRoutePerfilPage);
@@ -204,6 +205,7 @@ class _MyDrawerState extends State<MyDrawer> {
                 inherit: false,
                 color: iconColor,
                 fontSize: iconSize == null ? null : iconSize - 8,
+                fontFamily: "Courgette",
                 //fontFamily: icon!.fontFamily,
                 //package: icon!.fontPackage,
               ),

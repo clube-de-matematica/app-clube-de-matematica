@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:transparent_image/transparent_image.dart';
 
+import '../../../../../shared/widgets/myShimmer.dart';
 import '../../../shared/models/imagem_item_model.dart';
 
 ///Estrutura que conterá uma imagem do enunciado ou da alternativa.
@@ -12,16 +12,33 @@ class QuizComponenteImagem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final placeHolder = MyShimmer(
+      width: imagem.width,
+      height: imagem.height,
+    );
     return Observer(builder: (_) {
-      return AnimatedContainer(
-        margin: const EdgeInsets.only(top: 8, bottom: 8),
-        duration: const Duration(milliseconds: 500),
-        child: Image(
-          image: imagem.provider ?? MemoryImage(kTransparentImage),
+      //imagem.provider é observável.
+      if (imagem.provider == null) {
+        return placeHolder;
+      } else {
+        return Image(
+          image: imagem.provider!,
           width: imagem.width,
           height: imagem.height,
-        ),
-        /* 
+          frameBuilder: (_, child, frame, wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded) {
+              return child;
+            } else {
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                child: frame != null ? child : placeHolder,
+              );
+            }
+          },
+        );
+      }
+
+      /* 
         ProgressiveImage(
           placeholder: MemoryImage(kTransparentImage), 
           thumbnail: MemoryImage(kTransparentImage), 
@@ -35,7 +52,6 @@ class QuizComponenteImagem extends StatelessWidget {
           height: item.imagensEnunciado[contador].height,
         ), 
         */
-      );
     });
   }
 }

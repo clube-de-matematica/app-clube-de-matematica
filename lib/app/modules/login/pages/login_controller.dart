@@ -31,37 +31,39 @@ abstract class _LoginControllerBase with Store {
 
   ///Se `true`, indica que o login está em andamento.
   @observable
-  bool loading = false;
+  bool isLoading = false;
 
-  ///Atibui [valor] a [loading].
+  ///Atibui [valor] a [isLoading].
   @action
-  void _setLoading(bool valor) {
-    loading = valor;
+  void _setIsLoading(bool valor) {
+    isLoading = valor;
   }
 
   ///Autenticar com a conta do Google.
   ///Retorna true se o processo for bem sucedido.
-  Future<bool> onTapLoginWithGoogle() async {
+  ///Retorna `null` se ocorrer algum erro.
+  Future<bool?> onTapLoginWithGoogle() async {
     _setSelectedMethod(Login.google);
-    _setLoading(true);
+    _setIsLoading(true);
 
-    final autenticado = await user.signInWithGoogle();
-    if (autenticado) {
+    final result = await user.signInWithGoogle();
+    final authenticated = result == StatusSignIn.success;
+    if (authenticated) {
       Modular.to.pushNamedAndRemoveUntil(
           PerfilModule.kAbsoluteRoutePerfilPage, (_) => false);
     }
 
-    _setLoading(false);
+    _setIsLoading(false);
     _setSelectedMethod(Login.none);
-
-    return autenticado;
+    if (result == StatusSignIn.error) return null;
+    return authenticated;
   }
 
   ///Autenticar anonimamente.
   ///Retorna true se o processo for bem sucedido.
   Future<bool> onTapLoginAnonymously() async {
     _setSelectedMethod(Login.anonymous);
-    _setLoading(true);
+    _setIsLoading(true);
 
     bool autenticado;
     try {
@@ -72,7 +74,7 @@ abstract class _LoginControllerBase with Store {
     if (autenticado)
       Modular.to.pushReplacementNamed(QuizModule.kAbsoluteRouteQuizPage);
 
-    _setLoading(false);
+    _setIsLoading(false);
     _setSelectedMethod(Login.none);
 
     return autenticado;

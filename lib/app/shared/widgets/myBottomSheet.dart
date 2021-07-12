@@ -107,7 +107,7 @@ class MyBottomSheet extends StatelessWidget {
     Widget? actionsWidget;
     if (title != null) {
       final EdgeInsets defaultTitlePadding =
-          EdgeInsets.fromLTRB(24.0, 24.0, 24.0, content == null ? 20.0 : 0.0);
+          EdgeInsets.fromLTRB(24.0, 14.0, 24.0, content == null ? 20.0 : 0.0);
       final EdgeInsets effectiveTitlePadding =
           titlePadding?.resolve(textDirection) ?? defaultTitlePadding;
       titleWidget = Padding(
@@ -174,9 +174,25 @@ class MyBottomSheet extends StatelessWidget {
       );
     }
 
+    final anchor = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(
+          width: 48.0,
+          child: const Divider(
+            height: 10.0,
+            thickness: 3.0,
+          ),
+        ),
+      ],
+    );
+
+    final divider = const Divider(height: 1.0);
+
     List<Widget> columnChildren;
     if (scrollable) {
       columnChildren = <Widget>[
+        if (title != null || content != null) anchor,
         if (title != null || content != null)
           Flexible(
             child: SingleChildScrollView(
@@ -190,14 +206,15 @@ class MyBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-        if (actions != null) const Divider(),
+        if (actions != null) divider,
         if (actions != null) actionsWidget!,
       ];
     } else {
       columnChildren = <Widget>[
+        if (title != null || content != null) anchor,
         if (title != null) titleWidget!,
         if (content != null) Flexible(child: contentWidget!),
-        if (actions != null) const Divider(),
+        if (actions != null) divider,
         if (actions != null) actionsWidget!,
       ];
     }

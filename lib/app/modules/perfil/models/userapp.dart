@@ -108,10 +108,9 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
 
   ///Solicitar login com uma cota Google.
   ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
-  ///Retorna `true` se o processo for bem sucedido.
-  FutureOr<bool> signInWithGoogle([bool replaceUser = false]) async {
-    final autenticado = await _auth.signInWithGoogle(replaceUser);
-    if (autenticado) {
+  Future<StatusSignIn> signInWithGoogle([bool replaceUser = false]) async {
+    final result = await _auth.signInWithGoogle(replaceUser);
+    if (result == StatusSignIn.success) {
       _name = _auth.currentUserName;
       _email = _auth.currentUserEmail;
       _urlAvatar = _auth.currentUserAvatarUrl;
@@ -119,7 +118,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     } else {
       signOut();
     }
-    return autenticado;
+    return result;
   }
 
   ///Fazer logout da conta Google.

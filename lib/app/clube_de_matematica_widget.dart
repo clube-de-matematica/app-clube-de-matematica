@@ -11,6 +11,7 @@ import 'shared/utils/constantes.dart';
 class ClubeDeMatematicaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+  //throw "Testando o envio de relatório de erro.";
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: APP_NOME,

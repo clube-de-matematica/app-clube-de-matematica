@@ -89,10 +89,10 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                       child: LoginWithGoogleButton(
                         margin: EdgeInsets.all(16.0),
                         onPressed: () async {
-                          if (!controller.loading) {
+                          if (!controller.isLoading) {
                             final autenticado =
                                 await controller.onTapLoginWithGoogle();
-                            if (!autenticado) {
+                            if (autenticado == null) {
                               _buildBottomSheetErroLogin().showModal(context);
                             }
                           }
@@ -121,8 +121,8 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   Widget _buildButtonLoginAnonymously() {
     return Observer(
       builder: (context) {
-        final clicked =
-            controller.loading && controller.selectedMethod == Login.anonymous;
+        final clicked = controller.isLoading &&
+            controller.selectedMethod == Login.anonymous;
         return TextButton(
           style: TextButton.styleFrom(
             shape:
@@ -159,7 +159,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
             ],
           ),
           onPressed: () async {
-            if (!controller.loading) {
+            if (!controller.isLoading) {
               final result = await _buildBottomSheetConfirmarLoginAnonymously()
                   .showModal<bool>(context);
               if (result ?? false) {
@@ -212,18 +212,18 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         color: textColor2,
       ),
       title: const Text(
-        LOGIN_DIALOG_CONFIRM_ERRO_LOGIN_TITLE,
+        LOGIN_DIALOG_ERROR_TITLE,
         textAlign: TextAlign.justify,
       ),
       content: SingleChildScrollView(
         child: const Text(
-          LOGIN_DIALOG_CONFIRM_ERRO_LOGIN_MSG,
+          LOGIN_DIALOG_ERROR_MSG,
           textAlign: TextAlign.justify,
         ),
       ),
       actions: [
         TextButton(
-          child: const Text(LOGIN_DIALOG_ERRO_LOGIN_TEXT_BUTTON_CLOSE),
+          child: const Text(LOGIN_DIALOG_ERROR_TEXT_BUTTON_CLOSE),
           onPressed: () => Navigator.pop(context),
         ),
       ],

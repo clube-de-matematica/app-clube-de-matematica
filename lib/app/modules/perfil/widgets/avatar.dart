@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clubedematematica/app/shared/widgets/myShimmer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -54,17 +55,45 @@ class Avatar extends StatelessWidget {
       builder: (_, __) {
         return CircleAvatar(
           radius: radius,
-          backgroundImage: _getImage(user),
           backgroundColor:
               backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
-          child: _getImage(user) != null
-              ? null
-              : Icon(
-                  Icons.person,
-                  size: 1.5 * (radius ?? 30.0),
-                ),
+          child: _buildChild(),
         );
       },
     );
+  }
+
+  Widget _buildChild() {
+    final provider = _getImage(user);
+    late final icon = Icon(
+      Icons.person,
+      size: 1.5 * (radius ?? 30.0),
+    );
+    if (provider != null) {
+      return ClipOval(
+        child: Image(
+          image: provider,
+          errorBuilder: (_, __, ___) => icon,
+          frameBuilder: (_, child, frame, wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded) {
+              return child;
+            } else {
+              final size = radius == null ? null : radius! * 2;
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                child: frame != null
+                    ? child
+                    : MyShimmer(
+                        height: size,
+                        width: size,
+                      ),
+              );
+            }
+          },
+        ),
+      );
+    } else {
+      return icon;
+    }
   }
 }

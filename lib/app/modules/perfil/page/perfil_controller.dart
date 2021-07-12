@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../shared/repositories/firebase/auth_repository.dart';
 import '../../login/login_module.dart';
 import '../../quiz/quiz_module.dart';
 import '../models/userapp.dart';
@@ -65,7 +66,7 @@ class PerfilController {
   }
 
   ///Entrar com outra conta do Google.
-  Future<bool> signInWithAnotherAccount() async {
+  Future<StatusSignIn> signInWithAnotherAccount() async {
     return user.signInWithGoogle(true);
   }
 

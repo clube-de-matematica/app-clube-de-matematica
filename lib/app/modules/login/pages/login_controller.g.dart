@@ -25,18 +25,18 @@ mixin _$LoginController on _LoginControllerBase, Store {
     });
   }
 
-  final _$loadingAtom = Atom(name: '_LoginControllerBase.loading');
+  final _$isLoadingAtom = Atom(name: '_LoginControllerBase.isLoading');
 
   @override
-  bool get loading {
-    _$loadingAtom.reportRead();
-    return super.loading;
+  bool get isLoading {
+    _$isLoadingAtom.reportRead();
+    return super.isLoading;
   }
 
   @override
-  set loading(bool value) {
-    _$loadingAtom.reportWrite(value, super.loading, () {
-      super.loading = value;
+  set isLoading(bool value) {
+    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
+      super.isLoading = value;
     });
   }
 
@@ -55,11 +55,11 @@ mixin _$LoginController on _LoginControllerBase, Store {
   }
 
   @override
-  void _setLoading(bool valor) {
+  void _setIsLoading(bool valor) {
     final _$actionInfo = _$_LoginControllerBaseActionController.startAction(
-        name: '_LoginControllerBase._setLoading');
+        name: '_LoginControllerBase._setIsLoading');
     try {
-      return super._setLoading(valor);
+      return super._setIsLoading(valor);
     } finally {
       _$_LoginControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -69,7 +69,7 @@ mixin _$LoginController on _LoginControllerBase, Store {
   String toString() {
     return '''
 selectedMethod: ${selectedMethod},
-loading: ${loading}
+isLoading: ${isLoading}
     ''';
   }
 }

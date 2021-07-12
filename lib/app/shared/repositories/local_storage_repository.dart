@@ -13,6 +13,12 @@ import '../models/exceptions/my_exception.dart';
 abstract class LocalStorageRepository {
   static get _className => "LocalStorageRepository";
 
+  ///O nome do diretório de logs.
+  static const DIR_LOG = "Log";
+
+  ///O path do diretório de logs relativo a [appDocDir].
+  static const DIR_LOG_RELATIVE_PATH = DIR_LOG + "/";
+
   ///O nome do diretório de mídias.
   static const DIR_MEDIA = "Media";
 
@@ -37,10 +43,11 @@ abstract class LocalStorageRepository {
         originField: "get appDocDir",
       );
 
-    if (Platform.isAndroid)
-      return (await getExternalStorageDirectory()) ??
-          await getApplicationDocumentsDirectory();
-    else
+    if (Platform.isAndroid) {
+      final a = (await getExternalStorageDirectory());
+      final b=    await getApplicationDocumentsDirectory();
+      return a??b;
+    } else
       return getApplicationDocumentsDirectory();
   }
 

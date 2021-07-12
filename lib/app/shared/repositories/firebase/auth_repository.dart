@@ -1,7 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../models/debug.dart';
 import '../../models/exceptions/my_exception.dart';
+
+/// Estado da solicitação de login.
+enum StatusSignIn {
+  /// Nenhuma solicitação de autenticação em andamento.
+  none,
+
+  /// Solicitação de autenticação em andamento.
+  inProgress,
+
+  /// Solicitação de autenticação concluída com sucesso.
+  success,
+
+  /// Solicitação de autenticação cancelada pelo usuário.
+  canceled,
+
+  /// Houve um erro na solicitação de autenticação.
+  error,
+}
 
 ///Gerencia processos de autenticação com o Firebase Auth.
 class AuthRepository {
@@ -66,9 +86,9 @@ class AuthRepository {
   }
 
   ///Solicitar login com uma cota Google.
-  ///Retorna `true` se o processo for bem sucedido.
-  Future<bool> signInWithGoogle([bool replaceUser = false]) async {
+  Future<StatusSignIn> signInWithGoogle([bool replaceUser = false]) async {
     //await Future.delayed(Duration(seconds: 20));
+    late final AuthCredential credential;
     try {
       if (replaceUser && logged) signOut();
 
@@ -78,36 +98,89 @@ class AuthRepository {
       //_googleSignIn.signIn() retorna um Future que resolve para a mesma instância do usuário.
       final GoogleSignInAccount? googleSignInAccount =
           await _googleSignIn.signIn();
-      if (googleSignInAccount == null) return false;
+
+      //Se a interface de login for abortada.
+      if (googleSignInAccount == null) return StatusSignIn.canceled;
 
       //Dados de autenticação da conta.
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
 
       //Criar uma credencial do Firebase Auth com os dados de autenticação.
-      final AuthCredential credential = GoogleAuthProvider.credential(
+      credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
+    } on PlatformException catch (er) {
+      switch (er.code) {
+        //Quando ocorre um erro de rede.
+        case GoogleSignIn.kNetworkError:
+          {
+            assert(Debug.printBetweenLine(
+                "GoogleSignIn.kNetworkError em AuthRepository.signInWithGoogle"));
+            return StatusSignIn.error;
+          }
 
+        //Quando ocorre um erro desconhecido.
+        case GoogleSignIn.kSignInFailedError:
+          {
+            assert(Debug.printBetweenLine(
+                "GoogleSignIn.kSignInFailedError em AuthRepository.signInWithGoogle"));
+            return StatusSignIn.error;
+          }
+
+        //Quando a interface de login for abortada.
+        //Este erro já é tratado dentro de PlatformException.signIn(), ocasião em que
+        //retorna null.
+        case GoogleSignIn.kSignInCanceledError:
+          {
+            assert(Debug.printBetweenLine(
+                "GoogleSignIn.kSignInCanceledError em AuthRepository.signInWithGoogle"));
+            return StatusSignIn.canceled;
+          }
+
+        //Quando não há usuário autenticado.
+        //Este erro pode ocorrer em PlatformException.signInSilently().
+        case GoogleSignIn.kSignInRequiredError:
+          {
+            assert(Debug.printBetweenLine(
+                "GoogleSignIn.kSignInRequiredError em AuthRepository.signInWithGoogle"));
+            return StatusSignIn.error;
+          }
+
+        default:
+          rethrow;
+      }
+    }
+
+    late final UserCredential authResult;
+    late final User? user;
+    try {
       //Solicitar a autenticação para o Firebase Auth.
-      final UserCredential authResult =
-          await _auth.signInWithCredential(credential);
+      authResult = await _auth.signInWithCredential(credential);
 
       //Usuário autenticado.
-      final User? user = authResult.user;
-      if (user == null) return false;
-
-      assert(!user.isAnonymous);
-      assert(user.uid == currentUser?.uid);
-
-      return user.uid == currentUser?.uid;
-    } on FirebaseAuthException catch (error) {
-      throw MyExceptionAuthRepository(
-        error: error,
-        originField: "signInWithGoogle()",
-      );
+      user = authResult.user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        // handle the error here
+      } else if (e.code == 'invalid-credential') {
+        // handle the error here
+      } else {
+        rethrow;
+      }
+    } catch (_) {
+      rethrow;
     }
+    if (user == null) return StatusSignIn.error;
+
+    assert(!user.isAnonymous);
+    assert(user.uid == currentUser?.uid);
+
+    if (user.uid == currentUser?.uid)
+      return StatusSignIn.success;
+    else
+      return StatusSignIn.error;
   }
 
   ///Desconecta o usuário em [_googleSignIn] (definindo `_googleSignIn.currentUser` para `null`).
