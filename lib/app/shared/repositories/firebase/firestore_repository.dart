@@ -1,137 +1,163 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/exceptions/my_exception.dart';
+import '../../../modules/quiz/shared/utils/strings_db_remoto.dart';
+import '../../models/debug.dart';
+import '../interface_db_repository.dart';
 import 'auth_repository.dart';
 
 ///Gerencia a conexão com o Firebase Firestore.
-class FirestoreRepository {
-  static const _className = "FirestoreRepository";
+class FirestoreRepository implements IDbRepository {
+  static const _debugName = "FirestoreRepository";
   final FirebaseFirestore firestore;
   final AuthRepository _authRepository;
 
   FirestoreRepository(this.firestore, AuthRepository authRepository)
       : _authRepository = authRepository;
 
-  ///Retorna os dados da coleção [collection] no banco de dados.
-  Future<QuerySnapshot> getCollection(CollectionReference collection,
-      {onError(error)?}) async {
-    if (!_authRepository.connected)
+  @override
+  String get pathAssuntos =>
+      firestore.collection(DB_FIRESTORE_COLEC_ASSUNTOS).path;
+
+  @override
+  String get pathItens => firestore.collection(DB_FIRESTORE_COLEC_ITENS).path;
+
+  /// Retorna um objeto [CollectionReference] associado ao [path].
+  CollectionReference<Map<String, dynamic>> _getCollectionRef(String path) =>
+      firestore.collection(path);
+
+  @override
+  Future<DataCollection> getCollection(
+    String path, {
+    FutureOr<DataCollection> onError(Object error)?,
+  }) async {
+    assert(Debug.print("[INFO] Chamando FirestoreRepository.getCollection..."));
+    final collection = _getCollectionRef(path);
+    
+    assert(Debug.print("[INFO] Verificando altenticação..."));
+    if (!_authRepository.connected) {
+      assert(Debug.print("[ERROR] Usuário não altenticado."));
       throw MyExceptionAuthRepository(
-          originClass: _className,
-          originField: "getCollection()",
-          type: TypeErroAuthentication.unauthenticatedUser);
-    else
+        originClass: _debugName,
+        originField: "getCollection()",
+        type: TypeErroAuthentication.unauthenticatedUser,
+      );
+    } else {
       try {
-        return collection.get();
+        assert(
+            Debug.print("[INFO] Solicitando os dados da coleção \"$path\"..."));
+        return (await collection.get()).docs.map((e) => e.data()).toList();
       } catch (error) {
-        if (onError != null) return onError(error);
-        throw MyExceptionFirestoreRepository(
-            error: error,
-            originField: "getCollection()",
-            fieldDetails: "{collection: ${collection.path}}",
-            type: TypeErroFirestoreRepository.getCollection);
+        assert(Debug.print(
+            "[ERROR] Erro ao solicitar os dados da coleção \"$path\"."));
+        if (onError != null) {
+          assert(Debug.print("[INFO] Chamando a função \"$onError\"..."));
+          return onError(error);
+        } else {
+          rethrow;
+        }
       }
+    }
   }
 
-  ///Salvar [data] em [ref] se ainda não existir um documento em [ref].
-  ///Se fornecida, [onExist] será executada quando já existir um documento em [ref].
-  ///Se fornecida, [onSuccess] será executada quando o documento for inserido com exito.
-  ///Se fornecida, [onError] será executada quando ocorrer um erro na transação.
-  ///################################################################################
-  ///Ainda é necessário testar se as funções [onError], [onSuccess] e [onExist] estão
-  ///sendo executadas corretamente.
-  ///################################################################################
-  Future<bool> setDocumentIfNotExist(
-      DocumentReference ref, Map<String, dynamic> data,
-      {Function()? onExist, Function()? onSuccess, onError(error)?}) async {
-    if (!_authRepository.connected)
+  @override
+  Future<DataDocument> getDoc(
+    String collectionPath,
+    String id, {
+    FutureOr<DataDocument> onError(Object error)?,
+  }) async {
+    assert(Debug.print("[INFO] Chamando FirestoreRepository.getDoc..."));
+    final docRef = _getCollectionRef(collectionPath).doc(id);
+
+    assert(Debug.print("[INFO] Verificando altenticação..."));
+    if (!_authRepository.connected) {
+      assert(Debug.print("[ERROR] Usuário não altenticado."));
       throw MyExceptionAuthRepository(
-          originClass: _className,
-          originField: "setDocumentIfNotExist()",
-          type: TypeErroAuthentication.unauthenticatedUser);
-    return firestore.runTransaction<bool>((transaction) async {
-      ///Fazer uma consulta para verificar se já existe um documento com a referência fornecida.
-      final snapshot = await transaction.get(ref);
-      if (snapshot.exists) {
-        if (onExist != null) {
-          onExist();
-          return false;
+        originClass: _debugName,
+        originField: "getCollection()",
+        type: TypeErroAuthentication.unauthenticatedUser,
+      );
+    } else {
+      try {
+        assert(Debug.print(
+            "[INFO] Solicitando os dados de \"${docRef.path}\"..."));
+        final snapshot = await docRef.get();
+        return snapshot.data() ?? DataDocument();
+      } catch (error) {
+        assert(Debug.print(
+            "[ERROR] Erro ao solicitar os dados de \"${docRef.path}\"."));
+        if (onError != null) {
+          assert(Debug.print("[INFO] Chamando a função \"$onError\"..."));
+          return onError(error);
+        } else {
+          rethrow;
         }
-        throw MyExceptionFirestoreRepository(
-            originField: "setDocumentIfNotExist()",
-            fieldDetails:
-                "{Referência: ${ref.path}, Documento não inserido: $data}",
-            causeError: "Documento já existente: ${snapshot.data()}",
-            type: TypeErroFirestoreRepository.setDocumentExisting);
-      } else {
-        transaction.set(ref, data);
-        return true;
       }
+    }
+  }
+
+  @override
+  String getDocId(ref) => (ref as DocumentReference).id;
+
+  Future<bool> setDocumentIfNotExist(
+    String collectionPath,
+    Map<String, dynamic> data, {
+    String? id,
+    FutureOr<bool> onExist()?,
+    VoidCallback? onSuccess,
+    FutureOr<bool> onError(Object error)?,
+  }) async {
+    assert(Debug.print(
+        "[INFO] Chamando FirestoreRepository.setDocumentIfNotExist..."));
+    assert(Debug.print("[INFO] Verificando altenticação..."));
+    if (!_authRepository.connected) {
+      assert(Debug.print("[ERROR] Usuário não altenticado."));
+      throw MyExceptionAuthRepository(
+        originClass: _debugName,
+        originField: "setDocumentIfNotExist()",
+        type: TypeErroAuthentication.unauthenticatedUser,
+      );
+    }
+    final _ref = _getCollectionRef(collectionPath).doc(id);
+    assert(Debug.print("[INFO] Iniciando transação..."));
+    return firestore.runTransaction<bool>((transaction) async {
+      assert(Debug.print(
+          "[INFO] Verificando de o documento \"${_ref.path}\" já existe..."));
+
+      if (id != null) {
+        ///Fazer uma consulta para verificar se já existe um documento com a referência fornecida.
+        final snapshot = await transaction.get(_ref);
+        if (snapshot.exists) {
+          assert(Debug.print(
+              "[INFO] O documento \"${snapshot.reference.path}\" já existe."));
+          if (onExist != null) {
+            assert(Debug.print("[INFO] Chamando a função \"$onExist\"..."));
+            return onExist();
+          } else {
+            return false;
+          }
+        }
+      }
+      assert(Debug.print("[INFO] Inserindo o documento \"${_ref.path}\"..."));
+      transaction.set(_ref, data);
+      return true;
     }).then((success) {
-      if (success && onSuccess != null) onSuccess();
+      assert(Debug.print("[INFO] Transação concluída com \"$success\"."));
+      if (success && onSuccess != null) {
+        assert(Debug.print("[INFO] Chamando a função \"$onSuccess\"..."));
+        onSuccess();
+      }
       return success;
     }).catchError((error) {
       if (onError != null) {
-        onError(error);
+        assert(Debug.print("[INFO] Chamando a função \"$onError\"..."));
+        return onError(error);
+      } else {
+        assert(Debug.print(error));
         return false;
       }
-      throw MyExceptionFirestoreRepository(
-          error: error,
-          originField: "setDocumentIfNotExist()",
-          fieldDetails:
-              "{Referência: ${ref.path}, Documento não inserido: $data}",
-          type: TypeErroFirestoreRepository.setDocument);
     });
-  }
-}
-
-///Uma enumeração para todos os tipos de erro [MyExceptionFirestoreRepository].
-///[getCollection]: [_MSG_ERRO_GET_COLLECTION].
-///[setDocumentExisting]: [_MSG_ERRO_SET_DOCUMENT_EXIST].
-///[setDocument]: [_MSG_ERRO_SET_DOCUMENT].
-enum TypeErroFirestoreRepository {
-  getCollection,
-  setDocumentExisting,
-  setDocument,
-}
-
-///Mensagem para o erro [TypeErroFirestoreRepository.getCollection].
-const _MSG_ERRO_GET_COLLECTION = "Falha ao buscar a coleção no banco de dados.";
-
-///Mensagem para o erro [TypeErroFirestoreRepository.setDocumentExisting].
-const _MSG_ERRO_SET_DOCUMENT_EXIST =
-    "Operação abortada. Já existe um documento na referência fornecida.";
-
-///Mensagem para o erro [TypeErroFirestoreRepository.getCollection].
-const _MSG_ERRO_SET_DOCUMENT =
-    "Falha ao inserir o documento no banco de dados.";
-
-class MyExceptionFirestoreRepository extends MyException {
-  MyExceptionFirestoreRepository({
-    String? message,
-    Object? error,
-    String? originField,
-    String? fieldDetails,
-    String? causeError,
-    TypeErroFirestoreRepository? type,
-  }) : super(
-          (type == null) ? null : _getMessage(type),
-          error: error,
-          originClass: FirestoreRepository._className,
-          originField: originField,
-          fieldDetails: fieldDetails,
-          causeError: causeError,
-        );
-
-  ///Retorna a mensagem correspondente ao tipo do erro em [type].
-  static String _getMessage(TypeErroFirestoreRepository type) {
-    switch (type) {
-      case TypeErroFirestoreRepository.getCollection:
-        return _MSG_ERRO_GET_COLLECTION;
-      case TypeErroFirestoreRepository.setDocumentExisting:
-        return _MSG_ERRO_SET_DOCUMENT_EXIST;
-      case TypeErroFirestoreRepository.setDocument:
-        return _MSG_ERRO_SET_DOCUMENT;
-    }
   }
 }
