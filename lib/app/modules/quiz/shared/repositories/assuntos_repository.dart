@@ -2,8 +2,8 @@ import 'dart:async';
 
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/repositories/interface_db_repository.dart';
+import '../../../../shared/utils/strings_db.dart';
 import '../models/assunto_model.dart';
-import '../utils/strings_db_remoto.dart';
 
 ///Responsável por intermediar a relação entre o aplicativo e o banco de dados no que se
 ///refere aos assuntos.
@@ -19,9 +19,6 @@ class AssuntosRepository {
   }
 
   final IDbRepository dbRepository;
-
-  /// O caminho para a coleção (ou tabela) de assuntos.
-  String get collectionPath => dbRepository.pathAssuntos;
 
   ///Retorna uma lista com os assuntos já carregados.
   List<Assunto> get assuntosCarregados => Assunto.instancias;
@@ -49,10 +46,10 @@ class AssuntosRepository {
     _isLoading = true;
     DataCollection resultado;
     try {
-      resultado = await dbRepository.getCollection(collectionPath);
+      resultado = await dbRepository.getCollection(CollectionType.assuntos);
     } catch (e) {
       assert(Debug.printBetweenLine(
-          "Erro a buscar os dados da coleção $collectionPath."));
+          "Erro a buscar os dados da coleção ${CollectionType.assuntos.name}."));
       assert(Debug.print(e));
       _isLoading = false;
       return List<Assunto>.empty();
@@ -66,12 +63,12 @@ class AssuntosRepository {
         ///Se o assunto não for uma unidade será criado um [Assunto] com o título do topo
         ///da hierarquia de assuntos. Caso contrário, primeiramente será criado um [Assunto]
         ///para a unidade - nesse caso a arvore será uma lista vazia.
-        if (data.containsKey(DB_FIRESTORE_DOC_ASSUNTO_ARVORE)) {
+        if (data.containsKey(DbConst.kDbDataAssuntoKeyArvore)) {
           Assunto(
               arvore: List<String>.empty(),
 
               ///`map[DB_DOC_ASSUNTO_ARVORE]` vem como [List<dynamic>].
-              titulo: data[DB_FIRESTORE_DOC_ASSUNTO_ARVORE][0]
+              titulo: data[DbConst.kDbDataAssuntoKeyArvore][0]
                   as String //Tipado para [String].
               );
         }
@@ -89,7 +86,7 @@ class AssuntosRepository {
   Future<bool> inserirAssunto(Assunto assunto) async {
     try {
       return await dbRepository.setDocumentIfNotExist(
-          collectionPath, assunto.toJson());
+          CollectionType.assuntos, assunto.toJson());
     } catch (e) {
       assert(Debug.printBetweenLine("Erro ao inserir o assunto $assunto."));
       assert(Debug.print(e));

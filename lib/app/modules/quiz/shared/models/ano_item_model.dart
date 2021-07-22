@@ -36,5 +36,5 @@ class Ano {
   }
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => valor.hashCode;
 }

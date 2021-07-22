@@ -1,5 +1,4 @@
 ///Contém o nível da prova do item e uma lista com todas as instâncias de [Nivel].
-
 class Nivel {
   ///Todas as instâncias criadas.
   static final List<Nivel> instancias = <Nivel>[];
@@ -36,5 +35,5 @@ class Nivel {
   }
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => valor.hashCode;
 }

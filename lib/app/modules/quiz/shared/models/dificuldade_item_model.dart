@@ -1,6 +1,5 @@
-import 'package:clubedematematica/app/shared/models/exceptions/my_exception.dart';
-
-import '../utils/strings_db_remoto.dart';
+import '../../../../shared/models/exceptions/my_exception.dart';
+import '../../../../shared/utils/strings_db.dart';
 
 ///Os níveis de dificuldade disponíneis são: [baixa], [media], [alta].
 enum NiveisDificuldade { baixa, media, alta }
@@ -42,11 +41,11 @@ class Dificuldade {
   ///Retorna um [NiveisDificuldade] a partir da string que o representa.
   // ignore: missing_return
   static NiveisDificuldade _fromString(String string) {
-    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_BAIXA)
+    if (string == DbConst.kDbDataItemKeyDificuldadeValBaixa)
       return NiveisDificuldade.baixa;
-    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_MEDIA)
+    if (string == DbConst.kDbDataItemKeyDificuldadeValMedia)
       return NiveisDificuldade.media;
-    if (string == DB_FIRESTORE_DOC_ITEM_DIFICULDADE_ALTA)
+    if (string == DbConst.kDbDataItemKeyDificuldadeValAlta)
       return NiveisDificuldade.alta;
     else
       throw MyException(
@@ -61,11 +60,11 @@ class Dificuldade {
   String toString() {
     switch (this.dificuldade) {
       case NiveisDificuldade.baixa:
-        return DB_FIRESTORE_DOC_ITEM_DIFICULDADE_BAIXA;
+        return DbConst.kDbDataItemKeyDificuldadeValBaixa;
       case NiveisDificuldade.media:
-        return DB_FIRESTORE_DOC_ITEM_DIFICULDADE_MEDIA;
+        return DbConst.kDbDataItemKeyDificuldadeValMedia;
       case NiveisDificuldade.alta:
-        return DB_FIRESTORE_DOC_ITEM_DIFICULDADE_ALTA;
+        return DbConst.kDbDataItemKeyDificuldadeValAlta;
     }
   }
 
@@ -76,5 +75,5 @@ class Dificuldade {
   }
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => dificuldade.hashCode;
 }

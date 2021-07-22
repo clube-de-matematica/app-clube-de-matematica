@@ -8,7 +8,17 @@ import 'auth_repository.dart';
 
 ///Gerencia a conexão com o Firebase Strorage.
 class StorageRepository {
-  static const _className = "StorageRepository";
+  static const _debugName = "StorageRepository";
+
+  /// Caminho do diretório das imágens dos itens a partir da raiz do Firebase Storage.
+  static const kRelativePathImages = "itens/imagens";
+
+  /// Chave do campo que contém a largura da imágem no `Map` dos seus metadados.
+  static const kKeyToImageWidthInMetadata = "width";
+
+  /// Chave do campo que contém a altura da imágem no `Map` dos seus metadados.
+  static const kKeyToImageHeightInMetadata = "height";
+
   final FirebaseStorage storage;
   final AuthRepository _authRepository;
 
@@ -21,7 +31,7 @@ class StorageRepository {
     ///Verificar se há algum usuário logado.
     if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
-          originClass: _className,
+          originClass: _debugName,
           originField: "downloadFile()",
           type: TypeErroAuthentication.unauthenticatedUser);
 
@@ -47,7 +57,7 @@ class StorageRepository {
     ///Verificar se há algum usuário logado.
     if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
-          originClass: _className,
+          originClass: _debugName,
           originField: "getUrlInDb()",
           type: TypeErroAuthentication.unauthenticatedUser);
     try {
@@ -69,7 +79,7 @@ class StorageRepository {
     ///Verificar se há algum usuário logado.
     if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
-          originClass: _className,
+          originClass: _debugName,
           originField: "getMetadados()",
           type: TypeErroAuthentication.unauthenticatedUser);
     try {
@@ -91,7 +101,7 @@ class StorageRepository {
     ///Verificar se há algum usuário logado.
     if (!_authRepository.connected)
       throw MyExceptionAuthRepository(
-          originClass: _className,
+          originClass: _debugName,
           originField: "uploadFile()",
           type: TypeErroAuthentication.unauthenticatedUser);
     return ref
@@ -148,7 +158,7 @@ class MyExceptionStorageRepository extends MyException {
   }) : super(
           (type == null) ? null : _getMessage(type),
           error: error,
-          originClass: StorageRepository._className,
+          originClass: StorageRepository._debugName,
           originField: originField,
           fieldDetails: fieldDetails,
           causeError: causeError,

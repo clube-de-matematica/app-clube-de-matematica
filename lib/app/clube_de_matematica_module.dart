@@ -19,21 +19,31 @@ class ClubeDeMatematicaModule extends Module {
   //Como este é o módulo plincipal (MainModule), ela estará disponível para todo o app.
   List<Bind> get binds => [
         Bind((i) => MeuTema()),
-        Bind((i) => UserApp(
-              name: i.get<AuthRepository>().currentUserName,
-              email: i.get<AuthRepository>().currentUserEmail,
-              urlAvatar: i.get<AuthRepository>().currentUserAvatarUrl,
-            )),
+        Bind(
+          (i) => UserApp(
+            name: i.get<AuthRepository>().currentUserName,
+            email: i.get<AuthRepository>().currentUserEmail,
+            urlAvatar: i.get<AuthRepository>().currentUserAvatarUrl,
+          ),
+        ),
 
         //Controles
         Bind((i) => ClubeDeMatematicaController()),
 
         //Repositórios
         Bind((i) => AuthRepository(i.get<FirebaseAuth>())),
-        Bind((i) => FirestoreRepository(
-            i.get<FirebaseFirestore>(), i.get<AuthRepository>())),
-        Bind((i) => StorageRepository(
-            i.get<FirebaseStorage>(), i.get<AuthRepository>())),
+        Bind(
+          (i) => FirestoreRepository(
+            i.get<FirebaseFirestore>(),
+            i.get<AuthRepository>(),
+          ),
+        ),
+        Bind(
+          (i) => StorageRepository(
+            i.get<FirebaseStorage>(),
+            i.get<AuthRepository>(),
+          ),
+        ),
 
         //Firebase
         Bind((i) => FirebaseFirestore.instance),

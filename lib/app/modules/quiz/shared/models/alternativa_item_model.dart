@@ -1,5 +1,5 @@
 import '../../../../shared/models/exceptions/my_exception.dart';
-import '../utils/strings_db_remoto.dart';
+import '../../../../shared/utils/strings_db.dart';
 import 'imagem_item_model.dart';
 
 ///Tipos de alternativas.
@@ -24,25 +24,24 @@ class Alternativa {
 
   ///Retorna uma Instância de [Alternativa] a partir de um `Map<String, dynamic>`.
   factory Alternativa.fromJson(Map<String, dynamic> json) => Alternativa(
-        alternativa: json[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_ALTERNATIVA],
-        tipo:
-            parseTypeAlternativa(json[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO]),
-        valorSeTexto: json[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO] ==
-                DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO_TEXTO
-            ? json[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_VALOR]
+        alternativa: json[DbConst.kDbDataAlternativaKeyAlternativa],
+        tipo: parseTypeAlternativa(json[DbConst.kDbDataAlternativaKeyTipo]),
+        valorSeTexto: json[DbConst.kDbDataAlternativaKeyTipo] ==
+                DbConst.kDbDataAlternativaKeyTipoValTexto
+            ? json[DbConst.kDbDataAlternativaKeyValor]
             : null,
-        valorSeImagem: json[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO] ==
-                DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO_IMAGEM
+        valorSeImagem: json[DbConst.kDbDataAlternativaKeyTipo] ==
+                DbConst.kDbDataAlternativaKeyTipoValImagem
             ? ImagemItem.fromJson(
-                json[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_VALOR])
+                json[DbConst.kDbDataAlternativaKeyValor])
             : null,
       );
 
   ///Retorna um [TypeAlternativa] com base em [tipo].
   static TypeAlternativa parseTypeAlternativa(String tipo) {
-    if (tipo == DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO_TEXTO)
+    if (tipo == DbConst.kDbDataAlternativaKeyTipoValTexto)
       return TypeAlternativa.texto;
-    if (tipo == DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO_IMAGEM)
+    if (tipo == DbConst.kDbDataAlternativaKeyTipoValImagem)
       return TypeAlternativa.imagem;
     throw MyException(
       "String inválida!",
@@ -56,9 +55,9 @@ class Alternativa {
   String tipoToString(TypeAlternativa tipo) {
     switch (tipo) {
       case TypeAlternativa.texto:
-        return DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO_TEXTO;
+        return DbConst.kDbDataAlternativaKeyTipoValTexto;
       case TypeAlternativa.imagem:
-        return DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO_IMAGEM;
+        return DbConst.kDbDataAlternativaKeyTipoValImagem;
     }
   }
 
@@ -75,9 +74,9 @@ class Alternativa {
   ///Retorna um json com os dados da alternativa.
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_ALTERNATIVA] = this.alternativa;
-    data[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_TIPO] = tipoToString(this.tipo);
-    data[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS_VALOR] =
+    data[DbConst.kDbDataAlternativaKeyAlternativa] = this.alternativa;
+    data[DbConst.kDbDataAlternativaKeyTipo] = tipoToString(this.tipo);
+    data[DbConst.kDbDataAlternativaKeyValor] =
         isTipoTexto ? this.valorSeTexto : valorSeImagem!.toJson();
     return data;
   }

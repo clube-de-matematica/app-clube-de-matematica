@@ -1,7 +1,7 @@
 import 'package:flutter/painting.dart';
 import 'package:mobx/mobx.dart';
 
-import '../utils/strings_db_remoto.dart';
+import '../../../../shared/utils/strings_db.dart';
 
 part 'imagem_item_model.g.dart';
 
@@ -17,15 +17,15 @@ abstract class _ImagemItemBase with Store {
 
   // ignore: unused_element
   _ImagemItemBase.fromJson(Map<String, dynamic> json)
-      : nome = json[DB_FIRESTORE_DOC_ITEM_IMAGENS_NOME],
-        width = json[DB_FIRESTORE_DOC_ITEM_IMAGENS_LARGURA] as double,
-        height = json[DB_FIRESTORE_DOC_ITEM_IMAGENS_ALTURA] as double;
+      : nome = json[DbConst.kDbDataImagemKeyNome],
+        width = json[DbConst.kDbDataImagemKeyLargura] as double,
+        height = json[DbConst.kDbDataImagemKeyAltura] as double;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data[DB_FIRESTORE_DOC_ITEM_IMAGENS_NOME] = this.nome;
-    data[DB_FIRESTORE_DOC_ITEM_IMAGENS_LARGURA] = this.width;
-    data[DB_FIRESTORE_DOC_ITEM_IMAGENS_ALTURA] = this.height;
+    data[DbConst.kDbDataImagemKeyNome] = this.nome;
+    data[DbConst.kDbDataImagemKeyLargura] = this.width;
+    data[DbConst.kDbDataImagemKeyAltura] = this.height;
     return data;
   }
 

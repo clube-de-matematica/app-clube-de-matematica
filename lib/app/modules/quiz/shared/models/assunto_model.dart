@@ -1,4 +1,6 @@
-import '../utils/strings_db_remoto.dart';
+import 'dart:ui';
+
+import '../../../../shared/utils/strings_db.dart';
 
 ///Esta classe está configurada para, usando o padrão singleton, não criar duas instâncias
 ///com o mesmo título.
@@ -36,17 +38,17 @@ class Assunto {
   }
 
   factory Assunto.fromJson(Map<String, dynamic> json) {
-    final bool isNotUnidade = json.containsKey(DB_FIRESTORE_DOC_ASSUNTO_ARVORE);
+    final bool isNotUnidade = json.containsKey(DbConst.kDbDataAssuntoKeyArvore);
 
-    ///`json[DB_FIRESTORE_DOC_ASSUNTO_ARVORE]` é um `List<dynamic>`.
+    ///`json[DbConst.kDbMapAssuntoKeyArvore]` é um `List<dynamic>`.
     ///`cast<String>()` informa que é um `List<String>`. Ocorrerá um erro se algum dos valores
     ///não for `String`.
     List<String> arvore = isNotUnidade
-        ? json[DB_FIRESTORE_DOC_ASSUNTO_ARVORE].cast<String>()
+        ? json[DbConst.kDbDataAssuntoKeyArvore].cast<String>()
         : <String>[];
     return Assunto(
       arvore: arvore,
-      titulo: json[DB_FIRESTORE_DOC_ASSUNTO_TITULO],
+      titulo: json[DbConst.kDbDataAssuntoKeyTitulo],
     );
   }
 
@@ -58,8 +60,8 @@ class Assunto {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    if (!isUnidade) data[DB_FIRESTORE_DOC_ASSUNTO_ARVORE] = this.arvore;
-    data[DB_FIRESTORE_DOC_ASSUNTO_TITULO] = this.titulo;
+    if (!isUnidade) data[DbConst.kDbDataAssuntoKeyArvore] = this.arvore;
+    data[DbConst.kDbDataAssuntoKeyTitulo] = this.titulo;
     return data;
   }
 
@@ -75,5 +77,5 @@ class Assunto {
   }
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => hashValues(arvore, titulo);
 }

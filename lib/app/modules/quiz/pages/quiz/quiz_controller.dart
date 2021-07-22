@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../../../shared/utils/strings_db.dart';
 import '../../../filtros/filtros_module.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
 import '../../shared/models/alternativa_item_model.dart';
@@ -13,7 +14,6 @@ import '../../shared/models/item_model.dart';
 import '../../shared/models/opcoesItem.dart';
 import '../../shared/repositories/imagem_item_repository.dart';
 import '../../shared/utils/assets_quiz.dart';
-import '../../shared/utils/strings_db_remoto.dart';
 
 part 'quiz_controller.g.dart';
 
@@ -145,11 +145,11 @@ abstract class _QuizControllerBase with Store {
 
   ///Retorna `true` se [string] corresponder ao identificador de imágem em linha.
   bool isImageInLine(String string) =>
-      string == DB_FIRESTORE_DOC_ITEM_ENUNCIADO_IMAGEM_MESMA_LINHA;
+      string == DbConst.kDbStringImagemNaoDestacada;
 
   ///Retorna `true` se [string] corresponder ao identificador de imágem em nova linha.
   bool isImageNewLine(String string) =>
-      string == DB_FIRESTORE_DOC_ITEM_ENUNCIADO_IMAGEM_NOVA_LINHA;
+      string == DbConst.kDbStringImagemDestacada;
 
   ///Carregar os [ImageProvider] das imágens do item, caso ainda não tenham sido carregados.
   ///A reação `asyncWhen` é usada para esperar uma condição em um [Observable].

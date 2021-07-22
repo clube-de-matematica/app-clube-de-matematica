@@ -205,6 +205,19 @@ class AuthRepository {
   Future<void> _signOut() async {
     await _auth.signOut();
   }
+
+  /// Lançará uma exceção se não houver um usuário conectado.
+  void checkAuthentication(String originClass, String originField) {
+    assert(Debug.print("[INFO] Verificando altenticação..."));
+    if (!connected) {
+      assert(Debug.print("[ERROR] Usuário não altenticado."));
+      throw MyExceptionAuthRepository(
+        originClass: originClass,
+        originField: originField,
+        type: TypeErroAuthentication.unauthenticatedUser,
+      );
+    }
+  }
 }
 
 ///Uma enumeração para todos os tipos de erro [MyExceptionAuthRepository].

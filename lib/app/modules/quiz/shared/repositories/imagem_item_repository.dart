@@ -7,7 +7,6 @@ import 'package:mobx/mobx.dart';
 import '../../../../shared/repositories/firebase/storage_repository.dart';
 import '../../../../shared/repositories/local_storage_repository.dart';
 import '../models/imagem_item_model.dart';
-import '../utils/strings_db_remoto.dart';
 
 part 'imagem_item_repository.g.dart';
 
@@ -21,8 +20,9 @@ abstract class _ImagemItemRepositoryBase with Store {
   final Reference dirImagensInDb;
 
   _ImagemItemRepositoryBase(this.storageRepository)
-      : dirImagensInDb =
-            storageRepository.storage.ref().child(DB_STORAGE_ITENS_IMAGENS);
+      : dirImagensInDb = storageRepository.storage
+            .ref()
+            .child(StorageRepository.kRelativePathImages);
 
   ///Lista com as imágens já carregados.
   @observable

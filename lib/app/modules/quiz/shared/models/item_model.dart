@@ -1,5 +1,5 @@
 import '../../../../shared/models/exceptions/my_exception.dart';
-import '../utils/strings_db_remoto.dart';
+import '../../../../shared/utils/strings_db.dart';
 import 'alternativa_item_model.dart';
 import 'ano_item_model.dart';
 import 'assunto_model.dart';
@@ -7,17 +7,17 @@ import 'dificuldade_item_model.dart';
 import 'imagem_item_model.dart';
 import 'nivel_item_model.dart';
 
-///Key para o `id` do item referenciado.
-const ITEM_ID_REFERENCIA_KEY = "id_referencia";
-
-///Key para o `nivel` do item referenciado.
-const ITEM_NIVEL_REFERENCIA_KEY = "nivel_referencia";
-
-///Key para o `indice` do item referenciado.
-const ITEM_INDICE_REFERENCIA_KEY = "indice_referencia";
-
 ///Contém as propriedades de um item.
 class Item {
+  ///Key para o `id` do item referenciado.
+  static const kKeyIdReferencia = "id_referencia";
+
+  ///Key para o `nivel` do item referenciado.
+  static const kKeyNivelReferencia = "nivel_referencia";
+
+  ///Key para o `indice` do item referenciado.
+  static const kKeyIndiceReferencia = "indice_referencia";
+
   ///Se [isReferenciado] é verdadeiro, [id] será o id do item que fáz referência.
   final String id;
   final Ano ano;
@@ -78,7 +78,7 @@ class Item {
     final _assuntos = <Assunto>[];
     final _alternativas = <Alternativa>[];
 
-    json[DB_FIRESTORE_DOC_ITEM_ASSUNTOS].forEach((v) {
+    json[DbConst.kDbDataItemKeyAssuntos].forEach((v) {
       //Se o assunto não for encontrado ocorrerá um erro.
       _assuntos.add(assuntosCarreados.firstWhere(
         (element) => element.titulo == v,
@@ -93,30 +93,29 @@ class Item {
       ));
     });
 
-    json[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS].forEach((v) {
+    json[DbConst.kDbDataItemKeyAlternativas].forEach((v) {
       _alternativas.add(Alternativa.fromJson(v));
     });
 
     return Item(
-      id: json[DB_FIRESTORE_DOC_ITEM_ID],
-      ano: Ano(json[DB_FIRESTORE_DOC_ITEM_ANO]),
-      nivel: Nivel(json[DB_FIRESTORE_DOC_ITEM_NIVEL]),
-      indice: json[DB_FIRESTORE_DOC_ITEM_INDICE],
+      id: json[DbConst.kDbDataItemKeyId],
+      ano: Ano(json[DbConst.kDbDataItemKeyAno]),
+      nivel: Nivel(json[DbConst.kDbDataItemKeyNivel]),
+      indice: json[DbConst.kDbDataItemKeyIndice],
       assuntos: _assuntos,
       dificuldade:
-          Dificuldade.fromString(json[DB_FIRESTORE_DOC_ITEM_DIFICULDADE]),
-      enunciado: json[DB_FIRESTORE_DOC_ITEM_ENUNCIADO].cast<String>(),
+          Dificuldade.fromString(json[DbConst.kDbDataItemKeyDificuldade]),
+      enunciado: json[DbConst.kDbDataItemKeyEnunciado].cast<String>(),
       alternativas: _alternativas,
-      gabarito: json[DB_FIRESTORE_DOC_ITEM_GABARITO],
+      gabarito: json[DbConst.kDbDataItemKeyGabarito],
       imagensEnunciado: _getImagensEnunciado(json),
-      idReferencia: json.containsKey(ITEM_ID_REFERENCIA_KEY)
-          ? json[ITEM_ID_REFERENCIA_KEY]
+      idReferencia:
+          json.containsKey(kKeyIdReferencia) ? json[kKeyIdReferencia] : null,
+      nivelReferencia: json.containsKey(kKeyNivelReferencia)
+          ? Nivel(json[kKeyNivelReferencia])
           : null,
-      nivelReferencia: json.containsKey(ITEM_NIVEL_REFERENCIA_KEY)
-          ? Nivel(json[ITEM_NIVEL_REFERENCIA_KEY])
-          : null,
-      indiceReferencia: json.containsKey(ITEM_INDICE_REFERENCIA_KEY)
-          ? json[ITEM_INDICE_REFERENCIA_KEY]
+      indiceReferencia: json.containsKey(kKeyIndiceReferencia)
+          ? json[kKeyIndiceReferencia]
           : null,
     );
   }
@@ -126,8 +125,9 @@ class Item {
   ///[jsonItem] é o json retornado do banco de dados.
   static List<ImagemItem> _getImagensEnunciado(Map<String, dynamic> jsonItem) {
     final _imagensEnunciado = <ImagemItem>[];
-    if (jsonItem.containsKey(DB_FIRESTORE_DOC_ITEM_IMAGENS_ENUNCIADO)) {
-      jsonItem[DB_FIRESTORE_DOC_ITEM_IMAGENS_ENUNCIADO].forEach((imagemInfo) {
+    if (jsonItem.containsKey(DbConst.kDbDataItemKeyImagensEnunciado)) {
+      jsonItem[DbConst.kDbDataItemKeyImagensEnunciado]
+          .forEach((imagemInfo) {
         _imagensEnunciado.add(ImagemItem.fromJson(imagemInfo));
       });
     }
@@ -147,29 +147,29 @@ class Item {
       ///Para inserír no banco de dados é necessário adicionar
       ///`data[DB_DOC_QUESTAO_REFERENCIA] = (await FirebaseFirestore.instance).collection(DB_COLECAO_QUESTOES).doc(data[ITEM_ID_REFERENCIA_KEY])`
       ///e remover `data[ITEM_ID_REFERENCIA_KEY]` antes de enviar o `Map`.
-      data[ITEM_ID_REFERENCIA_KEY] = this.idReferencia;
-      data[DB_FIRESTORE_DOC_ITEM_ID] = this.id;
-      data[DB_FIRESTORE_DOC_ITEM_NIVEL] = this.nivel.valor;
-      data[DB_FIRESTORE_DOC_ITEM_INDICE] = this.indice;
+      data[kKeyIdReferencia] = this.idReferencia;
+      data[DbConst.kDbDataItemKeyId] = this.id;
+      data[DbConst.kDbDataItemKeyNivel] = this.nivel.valor;
+      data[DbConst.kDbDataItemKeyIndice] = this.indice;
       return data;
     } else {
-      data[DB_FIRESTORE_DOC_ITEM_ID] = this.id;
-      data[DB_FIRESTORE_DOC_ITEM_NIVEL] = this.nivel.valor;
-      data[DB_FIRESTORE_DOC_ITEM_INDICE] = this.indice;
-      data[DB_FIRESTORE_DOC_ITEM_ANO] = this.ano.valor;
+      data[DbConst.kDbDataItemKeyId] = this.id;
+      data[DbConst.kDbDataItemKeyNivel] = this.nivel.valor;
+      data[DbConst.kDbDataItemKeyIndice] = this.indice;
+      data[DbConst.kDbDataItemKeyAno] = this.ano.valor;
       if (this.assuntos.isNotEmpty) {
-        data[DB_FIRESTORE_DOC_ITEM_ASSUNTOS] =
+        data[DbConst.kDbDataItemKeyAssuntos] =
             this.assuntos.map((v) => v.titulo).toList();
       }
-      data[DB_FIRESTORE_DOC_ITEM_DIFICULDADE] = this.dificuldade.toString();
-      data[DB_FIRESTORE_DOC_ITEM_ENUNCIADO] = this.enunciado;
+      data[DbConst.kDbDataItemKeyDificuldade] = this.dificuldade.toString();
+      data[DbConst.kDbDataItemKeyEnunciado] = this.enunciado;
       if (this.alternativas.isNotEmpty) {
-        data[DB_FIRESTORE_DOC_ITEM_ALTERNATIVAS] =
+        data[DbConst.kDbDataItemKeyAlternativas] =
             this.alternativas.map((v) => v.toJson()).toList();
       }
-      data[DB_FIRESTORE_DOC_ITEM_GABARITO] = this.gabarito;
+      data[DbConst.kDbDataItemKeyGabarito] = this.gabarito;
       if (this.imagensEnunciado.isNotEmpty) {
-        data[DB_FIRESTORE_DOC_ITEM_IMAGENS_ENUNCIADO] =
+        data[DbConst.kDbDataItemKeyImagensEnunciado] =
             this.imagensEnunciado.map((v) => v.toJson()).toList();
       }
       return data;

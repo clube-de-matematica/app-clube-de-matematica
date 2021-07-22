@@ -3,8 +3,8 @@ import 'package:mobx/mobx.dart';
 
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/repositories/interface_db_repository.dart';
+import '../../../../shared/utils/strings_db.dart';
 import '../models/item_model.dart';
-import '../utils/strings_db_remoto.dart';
 import 'assuntos_repository.dart';
 
 part 'itens_repository.g.dart';
@@ -20,9 +20,6 @@ abstract class _ItensRepositoryBase with Store {
   _ItensRepositoryBase(this.dbRepository, this.assuntosRepository) {
     carregarItens();
   }
-
-  /// O caminho para a coleção (ou tabela) de itens.
-  String get collectionPath => dbRepository.pathItens;
 
   /// Lista com os itens já carregados.
   @observable
@@ -73,10 +70,10 @@ abstract class _ItensRepositoryBase with Store {
     DataCollection resultado;
     try {
       /// Aguardar o retorno dos itens.
-      resultado = await dbRepository.getCollection(collectionPath);
+      resultado = await dbRepository.getCollection(CollectionType.itens);
     } catch (e) {
       assert(Debug.printBetweenLine(
-          "Erro a buscar os dados da coleção $collectionPath."));
+          "Erro a buscar os dados da coleção ${CollectionType.itens.name}."));
       assert(Debug.print(e));
       return List<Item>.empty();
     }
@@ -88,8 +85,8 @@ abstract class _ItensRepositoryBase with Store {
     /// Carregar os itens.
     /// Não pode ser um `forEach`, pois precisa ser assincrono.
     for (var data in resultado) {
-      if (!_existeItem(data[DB_FIRESTORE_DOC_ITEM_ID])) {
-        if (data.containsKey(DB_FIRESTORE_DOC_ITEM_REFERENCIA)) {
+      if (!_existeItem(data[DbConst.kDbDataItemKeyId])) {
+        if (data.containsKey(DbConst.kDbDataItemKeyReferencia)) {
           await _carregarItemReferenciado(resultado, data);
         } else {
           /// Criar um `Item` com base no `map` e incluir na lista de itens carregados.
@@ -116,12 +113,8 @@ abstract class _ItensRepositoryBase with Store {
     /// Aguardar o carregamento dos assuntos. Não haverá atraso caso já tenham sido carregados.
     final assuntos = await assuntosRepository.assuntos;
     if (assuntos.isEmpty) return null;
-/* 
-    final DocumentReference ref =
-        itemReferenciador[DB_FIRESTORE_DOC_ITEM_REFERENCIA];
- */
-    final idRef = dbRepository
-        .getDocId(itemReferenciador[DB_FIRESTORE_DOC_ITEM_REFERENCIA]);
+    
+    final idRef = itemReferenciador[DbConst.kDbDataItemKeyReferencia];
 
     // Retornar o item se ele já estiver carregado.
     if (_existeItem(idRef)) {
@@ -132,30 +125,30 @@ abstract class _ItensRepositoryBase with Store {
       /// Criar uma cópia dos dados do item referenciado.
       final data = DataDocument.from(
         dbItensData.firstWhere(
-          (element) => element[DB_FIRESTORE_DOC_ITEM_ID] == idRef,
+          (element) => element[DbConst.kDbDataItemKeyId] == idRef,
         ),
       );
 
       /// Criar uma entrada para o id do item referenciado.
-      data[ITEM_ID_REFERENCIA_KEY] = data[DB_FIRESTORE_DOC_ITEM_ID];
+      data[Item.kKeyIdReferencia] = data[DbConst.kDbDataItemKeyId];
 
       /// Criar uma entrada para o índice do item referenciado.
-      data[ITEM_INDICE_REFERENCIA_KEY] = data[DB_FIRESTORE_DOC_ITEM_INDICE];
+      data[Item.kKeyIndiceReferencia] = data[DbConst.kDbDataItemKeyIndice];
 
       /// Criar uma entrada para o nível do item referenciado.
-      data[ITEM_NIVEL_REFERENCIA_KEY] = data[DB_FIRESTORE_DOC_ITEM_NIVEL];
+      data[Item.kKeyNivelReferencia] = data[DbConst.kDbDataItemKeyNivel];
 
       /// Atualizar com o id do item que referencia.
-      data[DB_FIRESTORE_DOC_ITEM_ID] =
-          itemReferenciador[DB_FIRESTORE_DOC_ITEM_ID];
+      data[DbConst.kDbDataItemKeyId] =
+          itemReferenciador[DbConst.kDbDataItemKeyId];
 
       /// Atualizar com o índice do item que referencia.
-      data[DB_FIRESTORE_DOC_ITEM_INDICE] =
-          itemReferenciador[DB_FIRESTORE_DOC_ITEM_INDICE];
+      data[DbConst.kDbDataItemKeyIndice] =
+          itemReferenciador[DbConst.kDbDataItemKeyIndice];
 
       /// Atualizar com o nível do item que referencia.
-      data[DB_FIRESTORE_DOC_ITEM_NIVEL] =
-          itemReferenciador[DB_FIRESTORE_DOC_ITEM_NIVEL];
+      data[DbConst.kDbDataItemKeyNivel] =
+          itemReferenciador[DbConst.kDbDataItemKeyNivel];
 
       final _item = Item.fromJson(data, assuntos);
       _addInItens(_item);
