@@ -5,9 +5,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/tema.dart';
-import '../../../../shared/utils/string_interface.dart';
+import '../../../../shared/utils/ui_strings.dart' as uiStringsApp;
 import '../../../../shared/widgets/myDrawer.dart';
-import '../../shared/utils/strings_interface.dart';
+import '../../shared/utils/ui_strings.dart';
 import 'quiz_controller.dart';
 import 'widgets/quiz_alternativas.dart';
 import 'widgets/quiz_appbar.dart';
@@ -49,7 +49,8 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                   future: controller.initialized,
                   builder: (_, snapshot) {
                     if (snapshot.hasError) {
-                      return const Text(APP_MSG_ERRO_INESPERADO);
+                      return const Text(
+                          uiStringsApp.UIStrings.APP_MSG_ERRO_INESPERADO);
                     } else if (snapshot.hasData) {
                       return Expanded(
                         child: SingleChildScrollView(
@@ -77,7 +78,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
             ? const SizedBox()
             : FloatingActionButton.extended(
                 icon: const Icon(Icons.check),
-                label: const Text(QUIZ_TEXTO_BOTAO_CONFIRMAR),
+                label: const Text(UIStrings.QUIZ_TEXTO_BOTAO_CONFIRMAR),
                 onPressed: !ativo
                     ? null
                     : () {
@@ -117,7 +118,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
   List<Widget> _ifItensFiltradosIsEmpty() {
     return <Widget>[
       Text(
-        QUIZ_MSG_ITENS_NAO_ENCONTRADOS,
+        UIStrings.QUIZ_MSG_ITENS_NAO_ENCONTRADOS,
         style: textStyle,
         textAlign: TextAlign.justify,
       ),
@@ -126,7 +127,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
           primary: tema.colorScheme.primary,
           padding: const EdgeInsets.only(top: 40),
         ),
-        child: const Text(QUIZ_TEXTO_BOTAO_FILTRAR),
+        child: const Text(UIStrings.QUIZ_TEXTO_BOTAO_FILTRAR),
         onPressed: () => controller.onTapFiltrar(),
       )
     ];

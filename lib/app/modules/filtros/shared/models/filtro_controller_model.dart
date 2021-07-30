@@ -2,7 +2,7 @@ import 'package:diacritic/diacritic.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../utils/strings_interface.dart';
+import '../utils/ui_strings.dart';
 import 'filtros_model.dart';
 import 'opcao_filtro_model.dart';
 
@@ -64,13 +64,13 @@ abstract class _FiltroControllerBase with Store {
   String tiposFiltroToString(TiposFiltro tipoFiltro) {
     switch (tipoFiltro) {
       case TiposFiltro.assunto:
-        return FILTRO_TEXTO_TIPO_ASSUNTO;
+        return UIStrings.FILTRO_TEXTO_TIPO_ASSUNTO;
       case TiposFiltro.nivel:
-        return FILTRO_TEXTO_TIPO_NIVEL;
+        return UIStrings.FILTRO_TEXTO_TIPO_NIVEL;
       case TiposFiltro.dificuldade:
-        return FILTRO_TEXTO_TIPO_DIFICULDADE;
+        return UIStrings.FILTRO_TEXTO_TIPO_DIFICULDADE;
       case TiposFiltro.ano:
-        return FILTRO_TEXTO_TIPO_ANO;
+        return UIStrings.FILTRO_TEXTO_TIPO_ANO;
       //default: return null;
     }
   }

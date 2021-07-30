@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../shared/theme/tema.dart';
-import '../../../shared/utils/strings_interface.dart';
+import '../../../shared/utils/ui_strings.dart';
 import '../quiz_controller.dart';
 
 ///A barra superior da página de quiz.
@@ -19,7 +19,7 @@ class QuizAppBar extends AppBar {
                     child: const Icon(Icons.more_vert)),
                 onPressed: null)
           ],
-          title: const Text(QUIZ_TEXTO_APPBAR),
+          title: const Text(UIStrings.QUIZ_TEXTO_APPBAR),
         );
 
   final QuizController controller;

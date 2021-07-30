@@ -9,7 +9,7 @@ import '../../../shared/repositories/firebase/auth_repository.dart';
 import '../../login/login_module.dart';
 import '../../quiz/quiz_module.dart';
 import '../models/userapp.dart';
-import '../utils/strings_interface.dart';
+import '../utils/ui_strings.dart';
 
 class PerfilController {
   final UserApp user;
@@ -27,8 +27,8 @@ class PerfilController {
   ///Retorna uma `String` com uma mensagem correspondente a um erro de validação para o nome digitado pelo usuário.
   ///Retorna `null` se o nome for válido.
   String? nameValidator(valor) {
-    if (valor.isEmpty) return VALIDACAO_NOME_MSG_CAMPO_OBRIGATORIO;
-    if (valor.trim().length < 3) return VALIDACAO_NOME_MSG_MIN_CARACTER;
+    if (valor.isEmpty) return UIStrings.kNameValidationMsgCampoObrigatotio;
+    if (valor.trim().length < 3) return UIStrings.kNameValidationMsgMinCaracter;
     return null;
   }
 
@@ -42,8 +42,8 @@ class PerfilController {
     final picker = ImagePicker();
 
     ///Observe que na plataforma da web `(kIsWeb == true)`, `File` não está disponível,
-    ///portanto, o `path` do `PickedFile` apontará para um recurso de rede.
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    ///portanto, o `path` do `pickedFile` apontará para um recurso de rede.
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _pathImageTemp = pickedFile.path;
       if (kIsWeb)
@@ -67,7 +67,12 @@ class PerfilController {
 
   ///Entrar com outra conta do Google.
   Future<StatusSignIn> signInWithAnotherAccount() async {
-    return user.signInWithGoogle(true);
+    final result = await user.signInWithGoogle(true);
+    if (result == StatusSignIn.canceled) {
+      Modular.to.pushNamedAndRemoveUntil(
+          LoginModule.kAbsoluteRouteLoginPage, (_) => false);
+    }
+    return result;
   }
 
   void save({
@@ -77,13 +82,25 @@ class PerfilController {
     formState.save();
     //Chamar uma nova rota e fechar todas as demais.
     if (user.connected) {
-      //Para que pushNamedAndRemoveUntil funcione foi necessário comentar um trecho
-      //de código no método _onPopPage de ModularRouterDelegate, a saber:
+      // TODO:
+      // Para que pushNamedAndRemoveUntil funcione foi necessário modificar
       /* 
-        if (route.isFirst) {
-          rebuildPages();
-          return false;
-        } 
+        Future<T?> pushNamedAndRemoveUntil<T extends Object?>(String newRouteName, bool Function(Route) predicate, {Object? arguments, bool forRoot = false}) {
+          popUntil(predicate);
+          return pushNamed<T>(newRouteName, arguments: arguments, forRoot: forRoot);
+        }
+
+        para
+
+        Future<T?> pushNamedAndRemoveUntil<T extends Object?>(String newRouteName, bool Function(Route) predicate, {Object? arguments, bool forRoot = false}) {
+          final isFoundedPages = _pages.where((page) => predicate(_CustomRoute(page)));
+          popUntil(predicate);
+          if (isFoundedPages.isEmpty) {
+            return pushReplacementNamed<T, Object?>(newRouteName, arguments: arguments, forRoot: forRoot);
+          } else {
+            return pushNamed<T>(newRouteName, arguments: arguments, forRoot: forRoot);
+          }
+        }
       */
       final pages = navigatorState.widget.pages;
       final previousPage = pages[pages.length > 1 ? pages.length - 2 : 0].name;

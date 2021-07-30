@@ -27,7 +27,7 @@ void main() async {
           ErrorHandler.oldOnError?.call(details);
 
           //Executar o comportamento personalizado.
-          if (!Debug.inDebugger || true) {
+          if (!Debug.inDebugger && true) {
             if (FirebaseCrashlytics.instance.isCrashlyticsCollectionEnabled) {
               FirebaseCrashlytics.instance.recordError(
                 details.exceptionAsString(),

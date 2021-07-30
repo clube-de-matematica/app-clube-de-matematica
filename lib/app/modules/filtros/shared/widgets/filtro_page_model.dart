@@ -4,7 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import '../../../../shared/widgets/botao_primario.dart';
 import '../models/filtro_controller_model.dart';
 import '../models/filtros_model.dart';
-import '../utils/strings_interface.dart';
+import '../utils/ui_strings.dart';
 import 'filtro_appbar.dart';
 import 'filtro_chip_contador.dart';
 import 'filtros_selecionados.dart';
@@ -77,14 +77,14 @@ class FiltroPageModel extends StatelessWidget {
             children: <Widget>[
               Expanded(child: Observer(builder: (_) {
                 return OutlinedButton(
-                  child: const Text(FILTRO_TEXTO_BOTAO_LIMPAR),
+                  child: const Text(UIStrings.FILTRO_TEXTO_BOTAO_LIMPAR),
                   onPressed: controller.ativarLimpar ? controller.limpar : null,
                 );
               })),
               const SizedBox(width: 10),
               Expanded(child: Observer(builder: (_) {
                 return BotaoPrimario(
-                    label: FILTRO_TEXTO_BOTAO_APLICAR,
+                    label: UIStrings.FILTRO_TEXTO_BOTAO_APLICAR,
                     onPressed:
                         controller.ativarAplicar ? controller.aplicar : null);
               }))

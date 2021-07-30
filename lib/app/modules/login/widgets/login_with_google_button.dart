@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../shared/widgets/button_progress_indicator.dart';
 import '../utils/assets_login.dart';
-import '../utils/strings_interface.dart';
+import '../utils/ui_strings.dart';
 
 class LoginWithGoogleButton extends StatefulWidget {
   ///Quando este botão for acionado, permanecerá em progresso até que [onPressed] seja
@@ -47,7 +47,7 @@ class _LoginWithGoogleButtonState extends State<LoginWithGoogleButton> {
           Flexible(
             fit: FlexFit.loose,
             child: Text(
-              LOGIN_TEXT_BUTTON_USER_GOOGLE,
+              UIStrings.LOGIN_TEXT_BUTTON_USER_GOOGLE,
               style: tema.textTheme.bodyText1?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: textColor1,

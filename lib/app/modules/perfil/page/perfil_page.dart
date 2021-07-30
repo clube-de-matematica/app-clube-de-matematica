@@ -2,24 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../shared/theme/tema.dart';
+import '../../../shared/widgets/myBottomSheet.dart';
 import '../../../shared/widgets/myWillPopScope.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
-import '../utils/strings_interface.dart';
+import '../utils/ui_strings.dart';
 import '../widgets/avatar.dart';
 import 'perfil_controller.dart';
 
-class Teste extends StatelessWidget {
-  const Teste({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-    );
-  }
-}
-
 class PerfilPage extends StatefulWidget {
+  const PerfilPage({Key? key}) : super(key: key);
+
   @override
   _PerfilPageState createState() => _PerfilPageState();
 }
@@ -101,15 +93,27 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                             //Empurrar os próximos componentes para o final da tela com um espaçamento mínimo de 80 px.
                             const Expanded(child: const SizedBox(height: 80.0)),
                             GestureDetector(
-                              onTap: controller.signInWithAnotherAccount,
-                              child: const Text('Usar outra conta'),
+                              onTap: () async {
+                                final confirm = await _confirmationBottomSheet(
+                                    context,
+                                    UIStrings.kAccountChangeConfirmationMsg);
+                                if (confirm)
+                                  controller.signInWithAnotherAccount();
+                              },
+                              child: const Text(
+                                  UIStrings.kChangeAccountButtonTitle),
                             ),
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: GestureDetector(
-                                onTap: controller.exit,
-                                child: const Text('Sair'),
+                                onTap: () async {
+                                  final confirm =
+                                      await _confirmationBottomSheet(context,
+                                          UIStrings.kExitConfirmationMsg);
+                                  if (confirm) controller.exit();
+                                },
+                                child: const Text(UIStrings.kExitButtonTitle),
                               ),
                             ),
                           ],
@@ -130,10 +134,10 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
   TextFormField _textName() {
     return TextFormField(
       decoration: InputDecoration(
-        labelText: NOME_LABEL_TEXT,
+        labelText: UIStrings.kNameLabelText,
         labelStyle: textStyleLabel,
         border: const OutlineInputBorder(),
-        hintText: NOME_HINT_TEXT,
+        hintText: UIStrings.kNameHintText,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         contentPadding: EdgeInsets.all(0),
         prefixIcon: Icon(Icons.person),
@@ -180,5 +184,29 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
         ),
       ],
     );
+  }
+
+  ///Abre uma página inferior informando uma ação solicitada.
+  ///Retorna `true` se o usuário confirmar a ação.
+  Future<bool> _confirmationBottomSheet(
+      BuildContext context, String message) async {
+    final bottomSheet = MyBottomSheet(
+      content: Text(
+        message,
+        textAlign: TextAlign.justify,
+      ),
+      actions: [
+        TextButton(
+          child: const Text(UIStrings.kCancelButtonTitle),
+          onPressed: () => Navigator.pop<bool>(context, false),
+        ),
+        TextButton(
+          child: const Text(UIStrings.kConfirmButtonTitle),
+          onPressed: () => Navigator.pop<bool>(context, true),
+        ),
+      ],
+    );
+    final confirm = await bottomSheet.showModal<bool>(context);
+    return confirm ?? false;
   }
 }

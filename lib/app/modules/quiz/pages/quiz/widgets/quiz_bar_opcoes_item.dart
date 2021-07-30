@@ -4,7 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../shared/theme/tema.dart';
 import '../../../shared/models/opcoesItem.dart';
-import '../../../shared/utils/strings_interface.dart';
+import '../../../shared/utils/ui_strings.dart';
 import '../quiz_controller.dart';
 
 ///Cria uma barra contendo, à esquerda, um indicador de andamento na lista de questões,
@@ -29,7 +29,7 @@ class QuizBarOpcoesItem extends StatelessWidget {
           Icons.filter_list,
           //color: Colors.white,
         ),
-        title: const Text(QUIZ_OPCAO_ITEM_FILTRAR),
+        title: const Text(UIStrings.QUIZ_OPCAO_ITEM_FILTRAR),
       ),
     )
   ];
@@ -54,7 +54,7 @@ class QuizBarOpcoesItem extends StatelessWidget {
         PopupMenuButton<OpcoesItem>(
           child: Row(
             children: <Widget>[
-              Text(QUIZ_OPCOES_ITEM),
+              Text(UIStrings.QUIZ_OPCOES_ITEM),
               const SizedBox(width: 4),
               Icon(
                 Icons.expand_more,

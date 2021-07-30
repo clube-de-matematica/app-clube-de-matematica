@@ -74,6 +74,10 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   ///Retorna true se houver um usuário conectado (anônimo ou logado).
   bool get connected => _auth.connected;
 
+  /// Lançará uma exceção se não houver um usuário conectado.
+  void checkAuthentication(String originClass, String originField) =>
+      _auth.checkAuthentication(originClass, originField);
+
   _UserAppBase({
     String? name,
     String? email,

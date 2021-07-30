@@ -3,7 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/tema.dart';
-import '../../../../shared/utils/string_interface.dart';
+import '../../../../shared/utils/ui_strings.dart';
 import '../../shared/models/filtros_model.dart';
 import '../../shared/models/opcao_filtro_model.dart';
 import '../../shared/widgets/expansion_tile_personalizado.dart';
@@ -57,7 +57,7 @@ class _FiltroOpcoesPageState extends State<FiltroOpcoesPage> {
             future: controller.loading,
             builder: (_, snapshot) {
               if (snapshot.hasError) {
-                return const Text(APP_MSG_ERRO_INESPERADO);
+                return const Text(UIStrings.APP_MSG_ERRO_INESPERADO);
               } else if (snapshot.hasData) {
                 return Expanded(
                     child: ListView.separated(

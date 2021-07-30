@@ -3,7 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../shared/theme/tema.dart';
-import '../../../shared/utils/strings_interface.dart';
+import '../../../shared/utils/ui_strings.dart';
 import '../quiz_controller.dart';
 
 ///Barra contendo os botões para avançar e voltar na lista de itens.
@@ -39,7 +39,7 @@ class QuizBottomBar extends BottomAppBar {
                     children: <Widget>[
                       const Icon(Icons.chevron_left),
                       const SizedBox(width: 4),
-                      const Text(QUIZ_TEXTO_BOTAO_VOLTAR),
+                      const Text(UIStrings.QUIZ_TEXTO_BOTAO_VOLTAR),
                     ],
                   )),
             );
@@ -60,7 +60,7 @@ class QuizBottomBar extends BottomAppBar {
                   onPressed: controller.podeAvancar ? controller.avancar : null,
                   child: Row(
                     children: <Widget>[
-                      const Text(QUIZ_TEXTO_BOTAO_AVANCAR),
+                      const Text(UIStrings.QUIZ_TEXTO_BOTAO_AVANCAR),
                       const SizedBox(width: 4),
                       const Icon(Icons.chevron_right),
                     ],

@@ -4,7 +4,7 @@ import 'package:mobx/mobx.dart';
 import '../../filtros_module.dart';
 import '../../shared/models/filtro_controller_model.dart';
 import '../../shared/models/filtros_model.dart';
-import '../../shared/utils/strings_interface.dart';
+import '../../shared/utils/ui_strings.dart';
 
 part 'filtro_tipos_controller.g.dart';
 
@@ -33,7 +33,7 @@ abstract class _FiltroTiposControllerBase extends FiltroController with Store {
   @override
 
   ///Retorna o título usado na `AppBar` da página de tipos de filtro.
-  String get tituloAppBar => FILTRO_TIPOS_TEXTO_APPBAR;
+  String get tituloAppBar => UIStrings.FILTRO_TIPOS_TEXTO_APPBAR;
 
   @override
   @computed

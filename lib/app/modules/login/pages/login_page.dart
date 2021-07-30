@@ -6,7 +6,7 @@ import '../../../shared/theme/tema.dart';
 import '../../../shared/widgets/myBottomSheet.dart';
 import '../../../shared/widgets/myWillPopScope.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
-import '../utils/strings_interface.dart';
+import '../utils/ui_strings.dart';
 import '../widgets/login_with_google_button.dart';
 import 'login_controller.dart';
 
@@ -66,12 +66,12 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                LOGIN_MSG_BEM_VINDO + "\n",
+                                UIStrings.LOGIN_MSG_BEM_VINDO + "\n",
                                 style: textStyleH1,
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                LOGIN_MSG_SOB_BEM_VINDO,
+                                UIStrings.LOGIN_MSG_SOB_BEM_VINDO,
                                 style: textStyleH2,
                                 textAlign: TextAlign.center,
                               ),
@@ -138,7 +138,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                 opacity: clicked ? 0.0 : 1.0,
                 onEnd: () {},
                 child: Text(
-                  LOGIN_TEXT_BUTTON_USER_ANONYMOUS,
+                  UIStrings.LOGIN_TEXT_BUTTON_USER_ANONYMOUS,
                   style: tema.textTheme.bodyText1?.copyWith(
                     decoration: TextDecoration.underline,
                     decorationThickness: 0.75,
@@ -181,18 +181,18 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   MyBottomSheet _buildBottomSheetConfirmarLoginAnonymously() {
     return MyBottomSheet(
       content: const Text(
-        LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_MSG,
+        UIStrings.LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_MSG,
         textAlign: TextAlign.justify,
       ),
       actions: [
         TextButton(
           child: const Text(
-              LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL),
+              UIStrings.LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL),
           onPressed: () => Navigator.pop<bool>(context, false),
         ),
         TextButton(
-          child: const Text(
-              LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CONFIRM),
+          child: const Text(UIStrings
+              .LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CONFIRM),
           onPressed: () => Navigator.pop<bool>(context, true),
         ),
       ],
@@ -212,18 +212,18 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         color: textColor2,
       ),
       title: const Text(
-        LOGIN_DIALOG_ERROR_TITLE,
+        UIStrings.LOGIN_DIALOG_ERROR_TITLE,
         textAlign: TextAlign.justify,
       ),
       content: SingleChildScrollView(
         child: const Text(
-          LOGIN_DIALOG_ERROR_MSG,
+          UIStrings.LOGIN_DIALOG_ERROR_MSG,
           textAlign: TextAlign.justify,
         ),
       ),
       actions: [
         TextButton(
-          child: const Text(LOGIN_DIALOG_ERROR_TEXT_BUTTON_CLOSE),
+          child: const Text(UIStrings.LOGIN_DIALOG_ERROR_TEXT_BUTTON_CLOSE),
           onPressed: () => Navigator.pop(context),
         ),
       ],

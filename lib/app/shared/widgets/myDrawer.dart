@@ -144,7 +144,7 @@ class _MyDrawerState extends State<MyDrawer> {
         const Divider(),
         ListTile(
           title: Text('Sobre'),
-          leading: _buildAboutIcon(context), //Icon(Icons.feedback),
+          leading: Icon(Icons.info),
           onTap: () {
             Navigator.pop(context);
           },

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/tema.dart';
-import '../utils/strings_interface.dart';
+import '../utils/ui_strings.dart';
 import 'expansion_tile_personalizado.dart';
 
 ///Contém um [InputChip] para cada filtro selecionado.
@@ -36,7 +36,7 @@ class FiltrosSelecionados extends StatelessWidget {
       backgroundColor: backgroundColor,
       collapsedBackgroundColor: backgroundColor,
       title: Text(
-        FILTRO_TEXTO_SECAO_FILROS_SELECINADO,
+        UIStrings.FILTRO_TEXTO_SECAO_FILROS_SELECINADO,
         //style: textStyle,
       ),
       children: children,
