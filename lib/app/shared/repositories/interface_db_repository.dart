@@ -2,7 +2,7 @@ import 'dart:async';
 
 import '../utils/strings_db.dart';
 
-enum CollectionType { itens, assuntos }
+enum CollectionType { questoes, assuntos }
 
 extension ExtensionCollectionType on CollectionType {
   /// Retorna o nome da coleção (ou tabela) correspondente a [this].
@@ -10,19 +10,19 @@ extension ExtensionCollectionType on CollectionType {
     switch (this) {
       case CollectionType.assuntos:
         return DbConst.kDbDataCollectionAssuntos;
-      case CollectionType.itens:
-        return DbConst.kDbDataCollectionItens;
+      case CollectionType.questoes:
+        return DbConst.kDbDataCollectionQuestoes;
     }
   }
 }
 
 /// O objeto usado em consultas condicionais.
 ///
-/// [args] deve conter apenas entradas ou de um [DataItem] ou de um [DataAssunto].
+/// [args] deve conter apenas entradas ou de um [DataQuestao] ou de um [DataAssunto].
 class DataWhere {
   final CollectionType collection;
 
-  /// Deve conter apenas entradas ou de um [DataItem] ou de um [DataAssunto].
+  /// Deve conter apenas entradas ou de um [DataQuestao] ou de um [DataAssunto].
   final Map<String, dynamic> args;
   DataWhere(
     this.collection,
@@ -33,23 +33,23 @@ class DataWhere {
           switch (collection) {
             case CollectionType.assuntos:
               keys = [
-                DbConst.kDbDataAssuntoKeyArvore,
+                DbConst.kDbDataAssuntoKeyHierarquia,
                 DbConst.kDbDataAssuntoKeyTitulo
               ];
               break;
-            case CollectionType.itens:
+            case CollectionType.questoes:
               keys = [
-                DbConst.kDbDataItemKeyAlternativas,
-                DbConst.kDbDataItemKeyAno,
-                DbConst.kDbDataItemKeyAssuntos,
-                DbConst.kDbDataItemKeyDificuldade,
-                DbConst.kDbDataItemKeyEnunciado,
-                DbConst.kDbDataItemKeyGabarito,
-                DbConst.kDbDataItemKeyId,
-                DbConst.kDbDataItemKeyImagensEnunciado,
-                DbConst.kDbDataItemKeyIndice,
-                DbConst.kDbDataItemKeyNivel,
-                DbConst.kDbDataItemKeyReferencia
+                DbConst.kDbDataQuestaoKeyAlternativas,
+                DbConst.kDbDataQuestaoKeyAno,
+                DbConst.kDbDataQuestaoKeyAssuntos,
+                DbConst.kDbDataQuestaoKeyDificuldade,
+                DbConst.kDbDataQuestaoKeyEnunciado,
+                DbConst.kDbDataQuestaoKeyGabarito,
+                DbConst.kDbDataQuestaoKeyId,
+                DbConst.kDbDataQuestaoKeyImagensEnunciado,
+                DbConst.kDbDataQuestaoKeyIndice,
+                DbConst.kDbDataQuestaoKeyNivel,
+                DbConst.kDbDataQuestaoKeyReferencia
               ];
               break;
           }

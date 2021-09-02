@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../shared/models/item_model.dart';
+import '../../../shared/models/questao_model.dart';
 import '../quiz_controller.dart';
 import 'katex_flutter.dart';
 import 'quiz_componente_imagem.dart';
@@ -16,7 +16,7 @@ class EnunciadoItem extends StatelessWidget {
 
   final QuizController controller;
 
-  Item get item => controller.item;
+  Questao get item => controller.item;
 
   @override
   Widget build(BuildContext context) {

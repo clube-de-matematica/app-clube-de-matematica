@@ -23,18 +23,18 @@ mixin _$Filtros on _FiltrosBase, Store {
       (_$totalSelecinadoComputed ??= Computed<int>(() => super.totalSelecinado,
               name: '_FiltrosBase.totalSelecinado'))
           .value;
-  Computed<List<Item>>? _$allItensComputed;
+  Computed<List<Questao>>? _$allItensComputed;
 
   @override
-  List<Item> get allItens =>
-      (_$allItensComputed ??= Computed<List<Item>>(() => super.allItens,
+  List<Questao> get allItens =>
+      (_$allItensComputed ??= Computed<List<Questao>>(() => super.allItens,
               name: '_FiltrosBase.allItens'))
           .value;
-  Computed<List<Item>>? _$itensFiltradosComputed;
+  Computed<List<Questao>>? _$itensFiltradosComputed;
 
   @override
-  List<Item> get itensFiltrados => (_$itensFiltradosComputed ??=
-          Computed<List<Item>>(() => super.itensFiltrados,
+  List<Questao> get itensFiltrados => (_$itensFiltradosComputed ??=
+          Computed<List<Questao>>(() => super.itensFiltrados,
               name: '_FiltrosBase.itensFiltrados'))
       .value;
 

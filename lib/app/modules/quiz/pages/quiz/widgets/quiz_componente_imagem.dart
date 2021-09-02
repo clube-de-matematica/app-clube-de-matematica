@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../../../../shared/widgets/myShimmer.dart';
-import '../../../shared/models/imagem_item_model.dart';
+import '../../../shared/models/imagem_questao_model.dart';
 
 ///Estrutura que conterá uma imagem do enunciado ou da alternativa.
 class QuizComponenteImagem extends StatelessWidget {
   const QuizComponenteImagem(this.imagem, {Key? key}) : super(key: key);
 
-  final ImagemItem imagem;
+  final ImagemQuestao imagem;
 
   @override
   Widget build(BuildContext context) {

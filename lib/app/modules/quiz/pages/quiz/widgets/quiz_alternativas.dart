@@ -3,7 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../shared/theme/tema.dart';
-import '../../../shared/models/alternativa_item_model.dart';
+import '../../../shared/models/alternativa_questao_model.dart';
 import '../quiz_controller.dart';
 import 'katex_flutter.dart';
 import 'quiz_componente_imagem.dart';

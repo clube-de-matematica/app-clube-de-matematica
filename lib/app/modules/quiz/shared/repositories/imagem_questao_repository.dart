@@ -6,35 +6,35 @@ import 'package:mobx/mobx.dart';
 
 import '../../../../shared/repositories/firebase/storage_repository.dart';
 import '../../../../shared/repositories/local_storage_repository.dart';
-import '../models/imagem_item_model.dart';
+import '../models/imagem_questao_model.dart';
 
-part 'imagem_item_repository.g.dart';
+part 'imagem_questao_repository.g.dart';
 
 ///Responsável por intermediar a relação entre o aplicativo e o banco de dados no que se
-///refere as imágens usadas nos itens.
-class ImagemItemRepository = _ImagemItemRepositoryBase
-    with _$ImagemItemRepository;
+///refere as imágens usadas nas questões.
+class ImagemQuestaoRepository = _ImagemQuestaoRepositoryBase
+    with _$ImagemQuestaoRepository;
 
-abstract class _ImagemItemRepositoryBase with Store {
+abstract class _ImagemQuestaoRepositoryBase with Store {
   final StorageRepository storageRepository;
   final Reference dirImagensInDb;
 
-  _ImagemItemRepositoryBase(this.storageRepository)
+  _ImagemQuestaoRepositoryBase(this.storageRepository)
       : dirImagensInDb = storageRepository.storage
             .ref()
             .child(StorageRepository.kRelativePathImages);
 
   ///Lista com as imágens já carregados.
   @observable
-  ObservableList<ImagemItem> imagens = <ImagemItem>[].asObservable();
+  ObservableList<ImagemQuestao> imagens = <ImagemQuestao>[].asObservable();
 
-  ///Adiciona um novo [ImagemItem] a [imagens].
+  ///Adiciona um novo [ImagemQuestao] a [imagens].
   @action
-  void _addInImagens(ImagemItem imagem) {
+  void _addInImagens(ImagemQuestao imagem) {
     if (!_existeImagem(imagem.nome)) this.imagens.add(imagem);
   }
 
-  ///Retorna `true` se um [ImagemItem] com o mesmo [nome] já tiver sido instanciado.
+  ///Retorna `true` se um [ImagemQuestao] com o mesmo [nome] já tiver sido instanciado.
   ///O método [imagens]`.any()` executa um `for` nos elementos de [imagens].
   ///O loop é interrompido assim que a condição for verdadeira.
   bool _existeImagem(String nome) {
@@ -106,7 +106,7 @@ abstract class _ImagemItemRepositoryBase with Store {
 
   ///Busca os metadados dos arquivos de imagem.
   ///Retornará `null` se o usuário não estiver logado ou ocrrer algum erro.
-  Future<FullMetadata?> getMetadados({String? nome, ImagemItem? imagem}) async {
+  Future<FullMetadata?> getMetadados({String? nome, ImagemQuestao? imagem}) async {
     ///Garantir que um dos atributos não seja nulo.
     assert(nome != null || imagem != null);
     if (!(nome != null || imagem != null)) return null;

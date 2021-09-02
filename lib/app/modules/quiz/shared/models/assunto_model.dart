@@ -38,13 +38,13 @@ class Assunto {
   }
 
   factory Assunto.fromJson(Map<String, dynamic> json) {
-    final bool isNotUnidade = json.containsKey(DbConst.kDbDataAssuntoKeyArvore);
+    final bool isNotUnidade = json.containsKey(DbConst.kDbDataAssuntoKeyHierarquia);
 
     ///`json[DbConst.kDbMapAssuntoKeyArvore]` é um `List<dynamic>`.
     ///`cast<String>()` informa que é um `List<String>`. Ocorrerá um erro se algum dos valores
     ///não for `String`.
     List<String> arvore = isNotUnidade
-        ? json[DbConst.kDbDataAssuntoKeyArvore].cast<String>()
+        ? json[DbConst.kDbDataAssuntoKeyHierarquia].cast<String>()
         : <String>[];
     return Assunto(
       arvore: arvore,
@@ -60,7 +60,7 @@ class Assunto {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    if (!isUnidade) data[DbConst.kDbDataAssuntoKeyArvore] = this.arvore;
+    if (!isUnidade) data[DbConst.kDbDataAssuntoKeyHierarquia] = this.arvore;
     data[DbConst.kDbDataAssuntoKeyTitulo] = this.titulo;
     return data;
   }

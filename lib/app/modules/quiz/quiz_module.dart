@@ -7,8 +7,8 @@ import '../filtros/shared/models/filtros_model.dart';
 import 'pages/quiz/quiz_controller.dart';
 import 'pages/quiz/quiz_page.dart';
 import 'shared/repositories/assuntos_repository.dart';
-import 'shared/repositories/imagem_item_repository.dart';
-import 'shared/repositories/itens_repository.dart';
+import 'shared/repositories/imagem_questao_repository.dart';
+import 'shared/repositories/questoes_repository.dart';
 
 ///Um submódulo do módulo principal [ClubeDeMatematicaModule].
 class QuizModule extends Module {
@@ -32,13 +32,13 @@ class QuizModule extends Module {
 
         //Controles
         Bind((i) =>
-            QuizController(i.get<ImagemItemRepository>(), i.get<Filtros>())),
+            QuizController(i.get<ImagemQuestaoRepository>(), i.get<Filtros>())),
 
         //Repositórios
-        Bind((i) => ItensRepository(
+        Bind((i) => QuestoesRepository(
             i.get<FirestoreRepository>(), i.get<AssuntosRepository>())),
         Bind((i) => AssuntosRepository(i.get<FirestoreRepository>())),
-        Bind((i) => ImagemItemRepository(i.get<StorageRepository>())),
+        Bind((i) => ImagemQuestaoRepository(i.get<StorageRepository>())),
       ];
 
   @override

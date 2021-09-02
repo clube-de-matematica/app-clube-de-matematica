@@ -18,10 +18,10 @@ const _kTbAssuntos = DbConst.kDbDataCollectionAssuntos;
 const _kTbAssuntosColId = "id";
 
 /// Nome da tabela que contém os itens.
-const _kTbItens = DbConst.kDbDataCollectionItens;
+const _kTbItens = DbConst.kDbDataCollectionQuestoes;
 
 /// Nome da tabela que relaciona os itens por caderno com a tabela de itens
-/// [DbConst.kDbDataCollectionItens].
+/// [DbConst.kDbDataCollectionQuestoes].
 ///
 /// Se um item foi usado em mais de um caderno, nesta tabela ele possuirá uma entrada para
 /// cada um desses cadernos.
@@ -38,14 +38,14 @@ const _kTbItensRefColId = "id";
 
 /// Nome do campo para o número do item (questão) no caderno de prova. Os valores
 /// para esse campo são do tipo [int].
-const _kTbItensRefColIndice = DbConst.kDbDataItemKeyIndice;
+const _kTbItensRefColIndice = DbConst.kDbDataQuestaoKeyIndice;
 
 /// Nome do campo para o nível da prova da OBMEP. Os valores para esse campo são do
 /// tipo [int].
-const _kTbItensRefColNivel = DbConst.kDbDataItemKeyNivel;
+const _kTbItensRefColNivel = DbConst.kDbDataQuestaoKeyNivel;
 
-/// Chave estrangeira para a coluna [DbConst.kDbDataItemKeyId] da tabela [_kTbItens].
-const _kTbItensRefColReferencia = DbConst.kDbDataItemKeyReferencia;
+/// Chave estrangeira para a coluna [DbConst.kDbDataQuestaoKeyId] da tabela [_kTbItens].
+const _kTbItensRefColReferencia = DbConst.kDbDataQuestaoKeyReferencia;
 
 /// Nome da tabela que contém os clubes.
 const _kTbClubes = DbConst.kDbDataCollectionClubes;
@@ -127,7 +127,7 @@ abstract class _SqliteRepositoryCore {
         // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
         '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
         '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
-        '"${DbConst.kDbDataAssuntoKeyArvore}" TEXT'
+        '"${DbConst.kDbDataAssuntoKeyHierarquia}" TEXT'
         '); ',
       );
     } catch (_) {
@@ -145,11 +145,11 @@ abstract class _SqliteRepositoryCore {
         'SELECT '
         //'"$_kTbAssuntosColId", '
         '"${DbConst.kDbDataAssuntoKeyTitulo}", '
-        '"${DbConst.kDbDataAssuntoKeyArvore}" '
+        '"${DbConst.kDbDataAssuntoKeyHierarquia}" '
         'FROM "$_kTbAssuntos" '
         'ORDER BY '
         // Concatenar o título do assunto ao final da árvore para fazer a ordenação.
-        '("${DbConst.kDbDataAssuntoKeyArvore}" || \'/\' '
+        '("${DbConst.kDbDataAssuntoKeyHierarquia}" || \'/\' '
         '|| "${DbConst.kDbDataAssuntoKeyTitulo}") ASC, '
         // Se a árvore for nula, a concatenação também será nula. Nesse caso, o título do
         // assunto permitirá a ordenação desses valores nulos.
@@ -169,14 +169,14 @@ abstract class _SqliteRepositoryCore {
       assert(Debug.print('[INFO] Criando a tabela "$_kTbItens"...'));
       await txn.execute(
         'CREATE TABLE IF NOT EXISTS "$_kTbItens" ('
-        '"${DbConst.kDbDataItemKeyId}" VARCHAR PRIMARY KEY NOT NULL, '
-        '"${DbConst.kDbDataItemKeyAno}" INTEGER NOT NULL, '
-        '"${DbConst.kDbDataItemKeyAssuntos}" VARCHAR NOT NULL, '
-        '"${DbConst.kDbDataItemKeyEnunciado}" TEXT NOT NULL, '
-        '"${DbConst.kDbDataItemKeyAlternativas}" TEXT NOT NULL, '
-        '"${DbConst.kDbDataItemKeyGabarito}" VARCHAR NOT NULL, '
-        '"${DbConst.kDbDataItemKeyDificuldade}" VARCHAR NOT NULL, '
-        '"${DbConst.kDbDataItemKeyImagensEnunciado}" TEXT'
+        '"${DbConst.kDbDataQuestaoKeyId}" VARCHAR PRIMARY KEY NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyAno}" INTEGER NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyAssuntos}" VARCHAR NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyEnunciado}" TEXT NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyAlternativas}" TEXT NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyGabarito}" VARCHAR NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyDificuldade}" VARCHAR NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyImagensEnunciado}" TEXT'
         '); ',
       );
     } catch (_) {
@@ -195,7 +195,7 @@ abstract class _SqliteRepositoryCore {
         '"$_kTbItensRefColNivel" INTEGER NOT NULL, '
         '"$_kTbItensRefColIndice" INTEGER NOT NULL, '
         '"$_kTbItensRefColReferencia" VARCHAR NOT NULL, '
-        'FOREIGN KEY("$_kTbItensRefColReferencia") REFERENCES "$_kTbItens"("${DbConst.kDbDataItemKeyId}") ON DELETE RESTRICT'
+        'FOREIGN KEY("$_kTbItensRefColReferencia") REFERENCES "$_kTbItens"("${DbConst.kDbDataQuestaoKeyId}") ON DELETE RESTRICT'
         '); ',
       );
     } catch (_) {
@@ -213,18 +213,18 @@ abstract class _SqliteRepositoryCore {
       await txn.execute(
         'CREATE VIEW IF NOT EXISTS "$_kViewAllItens" AS '
         'SELECT '
-        '"$_kTbItensRef"."$_kTbItensRefColId" AS "${DbConst.kDbDataItemKeyId}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyAno}", '
-        '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataItemKeyNivel}", '
-        '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataItemKeyIndice}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyAssuntos}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyEnunciado}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyAlternativas}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyGabarito}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyDificuldade}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyImagensEnunciado}" '
+        '"$_kTbItensRef"."$_kTbItensRefColId" AS "${DbConst.kDbDataQuestaoKeyId}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAno}", '
+        '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataQuestaoKeyNivel}", '
+        '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataQuestaoKeyIndice}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAssuntos}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyEnunciado}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAlternativas}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyGabarito}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyDificuldade}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyImagensEnunciado}" '
         'FROM "$_kTbItensRef" '
-        'INNER JOIN "$_kTbItens" ON "$_kTbItens"."${DbConst.kDbDataItemKeyId}" = "$_kTbItensRef"."$_kTbItensRefColReferencia"'
+        'INNER JOIN "$_kTbItens" ON "$_kTbItens"."${DbConst.kDbDataQuestaoKeyId}" = "$_kTbItensRef"."$_kTbItensRefColReferencia"'
         '; ',
       );
     } catch (_) {
@@ -245,18 +245,18 @@ abstract class _SqliteRepositoryCore {
       await txn.execute(
         'CREATE VIEW IF NOT EXISTS "$_kViewDistinctItens" AS '
         'SELECT '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyId}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyAno}", '
-        '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataItemKeyNivel}", '
-        '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataItemKeyIndice}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyAssuntos}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyEnunciado}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyAlternativas}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyGabarito}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyDificuldade}", '
-        '"$_kTbItens"."${DbConst.kDbDataItemKeyImagensEnunciado}" '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyId}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAno}", '
+        '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataQuestaoKeyNivel}", '
+        '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataQuestaoKeyIndice}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAssuntos}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyEnunciado}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAlternativas}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyGabarito}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyDificuldade}", '
+        '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyImagensEnunciado}" '
         'FROM "$_kTbItens" '
-        'INNER JOIN "$_kTbItensRef" ON "$_kTbItensRef"."$_kTbItensRefColId" = "$_kTbItens"."${DbConst.kDbDataItemKeyId}"'
+        'INNER JOIN "$_kTbItensRef" ON "$_kTbItensRef"."$_kTbItensRefColId" = "$_kTbItens"."${DbConst.kDbDataQuestaoKeyId}"'
         '; ',
       );
     } catch (_) {
@@ -274,7 +274,7 @@ abstract class _SqliteRepositoryCore {
           '[INFO] Criando o gatilho "trigger_insert_in_tb_itens_if_not_exists"...'));
       await txn.execute(
         'CREATE TRIGGER "trigger_insert_in_tb_itens_if_not_exists" BEFORE INSERT ON "$_kTbItens" '
-        'WHEN EXISTS (SELECT 1 FROM "$_kTbItens" WHERE "${DbConst.kDbDataItemKeyId}" = NEW."${DbConst.kDbDataItemKeyId}") '
+        'WHEN EXISTS (SELECT 1 FROM "$_kTbItens" WHERE "${DbConst.kDbDataQuestaoKeyId}" = NEW."${DbConst.kDbDataQuestaoKeyId}") '
         'BEGIN '
         'SELECT RAISE(ABORT,"A tabela $_kTbItens já possui um registro com o id fornecido."); '
         'END; ',
@@ -295,7 +295,7 @@ abstract class _SqliteRepositoryCore {
         // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
         '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
         '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
-        '"${DbConst.kDbDataAssuntoKeyArvore}" TEXT'
+        '"${DbConst.kDbDataAssuntoKeyHierarquia}" TEXT'
         '); ',
       );
     } catch (_) {
@@ -375,7 +375,7 @@ abstract class _SqliteRepositoryCore {
       } else {
         String? colId;
         if (table == _kTbItens) {
-          colId = DbConst.kDbDataItemKeyId;
+          colId = DbConst.kDbDataQuestaoKeyId;
         } else if (table == _kTbItensRef) {
           colId = _kTbItensRefColId;
         }

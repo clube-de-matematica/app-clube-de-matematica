@@ -1,31 +1,31 @@
 import '../../../../shared/models/exceptions/my_exception.dart';
 import '../../../../shared/utils/strings_db.dart';
-import 'alternativa_item_model.dart';
-import 'ano_item_model.dart';
+import 'alternativa_questao_model.dart';
+import 'ano_questao_model.dart';
 import 'assunto_model.dart';
 import 'dificuldade_item_model.dart';
-import 'imagem_item_model.dart';
-import 'nivel_item_model.dart';
+import 'imagem_questao_model.dart';
+import 'nivel_questao_model.dart';
 
-///Contém as propriedades de um item.
-class Item {
-  ///Key para o `id` do item referenciado.
+///Contém as propriedades de uma questão.
+class Questao {
+  ///Key para o `id` da questão referenciada.
   static const kKeyIdReferencia = "id_referencia";
 
-  ///Key para o `nivel` do item referenciado.
+  ///Key para o `nivel` da questão referenciada.
   static const kKeyNivelReferencia = "nivel_referencia";
 
-  ///Key para o `indice` do item referenciado.
+  ///Key para o `indice` da questão referenciada.
   static const kKeyIndiceReferencia = "indice_referencia";
 
-  ///Se [isReferenciado] é verdadeiro, [id] será o id do item que fáz referência.
+  ///Se [isReferenciado] é verdadeiro, [id] será o id da questão que fáz referência.
   final String id;
   final Ano ano;
 
-  ///Se [isReferenciado] é verdadeiro, [nivel] será o nível do item que fáz referência.
+  ///Se [isReferenciado] é verdadeiro, [nivel] será o nível da questão que fáz referência.
   final Nivel nivel;
 
-  ///Se [isReferenciado] é verdadeiro, [indice] será o índice do item que fáz referência.
+  ///Se [isReferenciado] é verdadeiro, [indice] será o índice da questão que fáz referência.
   final int indice;
   final List<Assunto> assuntos;
   final Dificuldade dificuldade;
@@ -34,18 +34,18 @@ class Item {
   final String gabarito;
 
   ///A lista de imágens é opcional, pois alguns enunciados não contém imágem.
-  final List<ImagemItem> imagensEnunciado;
+  final List<ImagemQuestao> imagensEnunciado;
 
-  ///[id] do item referenciado.
+  ///[id] da questão referenciada.
   final String? idReferencia;
 
-  ///[nivel] do item referenciado.
+  ///[nivel] da questão referenciada.
   final Nivel? nivelReferencia;
 
-  ///[indice] do item referenciado.
+  ///[indice] da questão referenciada.
   final int? indiceReferencia;
 
-  Item({
+  Questao({
     required this.id,
     required this.ano,
     required this.nivel,
@@ -61,7 +61,7 @@ class Item {
     this.indiceReferencia,
   });
 
-  factory Item.fromJson(
+  factory Questao.fromJson(
     Map<String, dynamic> json,
     List<Assunto> assuntosCarreados,
   ) {
@@ -78,7 +78,7 @@ class Item {
     final _assuntos = <Assunto>[];
     final _alternativas = <Alternativa>[];
 
-    json[DbConst.kDbDataItemKeyAssuntos].forEach((v) {
+    json[DbConst.kDbDataQuestaoKeyAssuntos].forEach((v) {
       //Se o assunto não for encontrado ocorrerá um erro.
       _assuntos.add(assuntosCarreados.firstWhere(
         (element) => element.titulo == v,
@@ -93,21 +93,21 @@ class Item {
       ));
     });
 
-    json[DbConst.kDbDataItemKeyAlternativas].forEach((v) {
+    json[DbConst.kDbDataQuestaoKeyAlternativas].forEach((v) {
       _alternativas.add(Alternativa.fromJson(v));
     });
 
-    return Item(
-      id: json[DbConst.kDbDataItemKeyId],
-      ano: Ano(json[DbConst.kDbDataItemKeyAno]),
-      nivel: Nivel(json[DbConst.kDbDataItemKeyNivel]),
-      indice: json[DbConst.kDbDataItemKeyIndice],
+    return Questao(
+      id: json[DbConst.kDbDataQuestaoKeyId],
+      ano: Ano(json[DbConst.kDbDataQuestaoKeyAno]),
+      nivel: Nivel(json[DbConst.kDbDataQuestaoKeyNivel]),
+      indice: json[DbConst.kDbDataQuestaoKeyIndice],
       assuntos: _assuntos,
       dificuldade:
-          Dificuldade.fromString(json[DbConst.kDbDataItemKeyDificuldade]),
-      enunciado: json[DbConst.kDbDataItemKeyEnunciado].cast<String>(),
+          Dificuldade.fromString(json[DbConst.kDbDataQuestaoKeyDificuldade]),
+      enunciado: json[DbConst.kDbDataQuestaoKeyEnunciado].cast<String>(),
       alternativas: _alternativas,
-      gabarito: json[DbConst.kDbDataItemKeyGabarito],
+      gabarito: json[DbConst.kDbDataQuestaoKeyGabarito],
       imagensEnunciado: _getImagensEnunciado(json),
       idReferencia:
           json.containsKey(kKeyIdReferencia) ? json[kKeyIdReferencia] : null,
@@ -123,18 +123,18 @@ class Item {
   ///Retorna a lista de imágens do enunciado.
   ///Retorna uma lista vazia se o enunciado não tiver imágem.
   ///[jsonItem] é o json retornado do banco de dados.
-  static List<ImagemItem> _getImagensEnunciado(Map<String, dynamic> jsonItem) {
-    final _imagensEnunciado = <ImagemItem>[];
-    if (jsonItem.containsKey(DbConst.kDbDataItemKeyImagensEnunciado)) {
-      jsonItem[DbConst.kDbDataItemKeyImagensEnunciado]
+  static List<ImagemQuestao> _getImagensEnunciado(Map<String, dynamic> jsonItem) {
+    final _imagensEnunciado = <ImagemQuestao>[];
+    if (jsonItem.containsKey(DbConst.kDbDataQuestaoKeyImagensEnunciado)) {
+      jsonItem[DbConst.kDbDataQuestaoKeyImagensEnunciado]
           .forEach((imagemInfo) {
-        _imagensEnunciado.add(ImagemItem.fromJson(imagemInfo));
+        _imagensEnunciado.add(ImagemQuestao.fromJson(imagemInfo));
       });
     }
     return _imagensEnunciado;
   }
 
-  ///Será `true` se, no banco de dados, o item fizer referência a outro.
+  ///Será `true` se, no banco de dados, a questão fizer referência a outra.
   bool get isReferenciado =>
       idReferencia != null &&
       nivelReferencia != null &&
@@ -143,33 +143,33 @@ class Item {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (isReferenciado) {
-      ///Retornará um `Map` do item que faz referência.
+      ///Retornará um `Map` da questão que faz referência.
       ///Para inserír no banco de dados é necessário adicionar
       ///`data[DB_DOC_QUESTAO_REFERENCIA] = (await FirebaseFirestore.instance).collection(DB_COLECAO_QUESTOES).doc(data[ITEM_ID_REFERENCIA_KEY])`
       ///e remover `data[ITEM_ID_REFERENCIA_KEY]` antes de enviar o `Map`.
       data[kKeyIdReferencia] = this.idReferencia;
-      data[DbConst.kDbDataItemKeyId] = this.id;
-      data[DbConst.kDbDataItemKeyNivel] = this.nivel.valor;
-      data[DbConst.kDbDataItemKeyIndice] = this.indice;
+      data[DbConst.kDbDataQuestaoKeyId] = this.id;
+      data[DbConst.kDbDataQuestaoKeyNivel] = this.nivel.valor;
+      data[DbConst.kDbDataQuestaoKeyIndice] = this.indice;
       return data;
     } else {
-      data[DbConst.kDbDataItemKeyId] = this.id;
-      data[DbConst.kDbDataItemKeyNivel] = this.nivel.valor;
-      data[DbConst.kDbDataItemKeyIndice] = this.indice;
-      data[DbConst.kDbDataItemKeyAno] = this.ano.valor;
+      data[DbConst.kDbDataQuestaoKeyId] = this.id;
+      data[DbConst.kDbDataQuestaoKeyNivel] = this.nivel.valor;
+      data[DbConst.kDbDataQuestaoKeyIndice] = this.indice;
+      data[DbConst.kDbDataQuestaoKeyAno] = this.ano.valor;
       if (this.assuntos.isNotEmpty) {
-        data[DbConst.kDbDataItemKeyAssuntos] =
+        data[DbConst.kDbDataQuestaoKeyAssuntos] =
             this.assuntos.map((v) => v.titulo).toList();
       }
-      data[DbConst.kDbDataItemKeyDificuldade] = this.dificuldade.toString();
-      data[DbConst.kDbDataItemKeyEnunciado] = this.enunciado;
+      data[DbConst.kDbDataQuestaoKeyDificuldade] = this.dificuldade.toString();
+      data[DbConst.kDbDataQuestaoKeyEnunciado] = this.enunciado;
       if (this.alternativas.isNotEmpty) {
-        data[DbConst.kDbDataItemKeyAlternativas] =
+        data[DbConst.kDbDataQuestaoKeyAlternativas] =
             this.alternativas.map((v) => v.toJson()).toList();
       }
-      data[DbConst.kDbDataItemKeyGabarito] = this.gabarito;
+      data[DbConst.kDbDataQuestaoKeyGabarito] = this.gabarito;
       if (this.imagensEnunciado.isNotEmpty) {
-        data[DbConst.kDbDataItemKeyImagensEnunciado] =
+        data[DbConst.kDbDataQuestaoKeyImagensEnunciado] =
             this.imagensEnunciado.map((v) => v.toJson()).toList();
       }
       return data;

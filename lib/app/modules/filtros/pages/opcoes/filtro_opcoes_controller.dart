@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:diacritic/diacritic.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../quiz/shared/models/ano_item_model.dart';
+import '../../../quiz/shared/models/ano_questao_model.dart';
 import '../../../quiz/shared/models/assunto_model.dart';
 import '../../../quiz/shared/models/dificuldade_item_model.dart';
-import '../../../quiz/shared/models/item_model.dart';
-import '../../../quiz/shared/models/nivel_item_model.dart';
+import '../../../quiz/shared/models/questao_model.dart';
+import '../../../quiz/shared/models/nivel_questao_model.dart';
 import '../../shared/models/filtro_controller_model.dart';
 import '../../shared/models/filtros_model.dart';
 import '../../shared/models/opcao_filtro_model.dart';
@@ -41,11 +41,11 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
   ///Nos demais casos conterá as instâncias de [OpcaoFiltro] disponíveis para o [tipo].
   final List<OpcaoFiltro> allOpcoes = <OpcaoFiltro>[];
 
-  ///Retorna um [Iterable] com os [Item] relacionados às opções temporariamente selecionadas,
+  ///Retorna um [Iterable] com os [Questao] relacionados às opções temporariamente selecionadas,
   ///excetuando-se as do tipo [tipo].
   ///A condição aplicada na filtragem dos itens usa o conectivo "ou" para filtros do mesmo
   ///tipo, e o conectivo "e" para tipos diferentes.
-  Iterable<Item> get _itensRelacionados {
+  Iterable<Questao> get _itensRelacionados {
     return filtrosTemp.allItens.where((item) {
       return (tipo == TiposFiltro.ano ||
               filtrosTemp.anos.isEmpty ||

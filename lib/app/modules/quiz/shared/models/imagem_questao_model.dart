@@ -3,20 +3,20 @@ import 'package:mobx/mobx.dart';
 
 import '../../../../shared/utils/strings_db.dart';
 
-part 'imagem_item_model.g.dart';
+part 'imagem_questao_model.g.dart';
 
-///Modelo para as imágens usadas no enunciado e nas alternativas dos itens.
-class ImagemItem = _ImagemItemBase with _$ImagemItem;
+///Modelo para as imágens usadas no enunciado e nas alternativas das questões.
+class ImagemQuestao = _ImagemQuestaoBase with _$ImagemQuestao;
 
-abstract class _ImagemItemBase with Store {
-  _ImagemItemBase({
+abstract class _ImagemQuestaoBase with Store {
+  _ImagemQuestaoBase({
     required this.nome,
     required this.width,
     required this.height,
   });
 
   // ignore: unused_element
-  _ImagemItemBase.fromJson(Map<String, dynamic> json)
+  _ImagemQuestaoBase.fromJson(Map<String, dynamic> json)
       : nome = json[DbConst.kDbDataImagemKeyNome],
         width = json[DbConst.kDbDataImagemKeyLargura] as double,
         height = json[DbConst.kDbDataImagemKeyAltura] as double;

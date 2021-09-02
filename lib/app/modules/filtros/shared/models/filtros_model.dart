@@ -1,8 +1,8 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../quiz/shared/models/item_model.dart';
-import '../../../quiz/shared/repositories/itens_repository.dart';
+import '../../../quiz/shared/models/questao_model.dart';
+import '../../../quiz/shared/repositories/questoes_repository.dart';
 import 'opcao_filtro_model.dart';
 
 part 'filtros_model.g.dart';
@@ -104,14 +104,14 @@ abstract class _FiltrosBase with Store {
   @computed
 
   ///Retorna uma lista com todos os itens carregados.
-  List<Item> get allItens => Modular.get<ItensRepository>().itens;
+  List<Questao> get allItens => Modular.get<QuestoesRepository>().questoes;
 
   @computed
 
   ///Retorna uma lista com os itens resultantes da aplicação dos filtros.
   ///A condição aplicada na filtragem dos itens usa o conectivo "ou" para filtros do mesmo
   ///tipo, e o conectivo "e" para tipos diferentes.
-  List<Item> get itensFiltrados => allItens.where((item) {
+  List<Questao> get itensFiltrados => allItens.where((item) {
         return (anos.isEmpty ||
                 anos.any((element) => item.ano == element.opcao)) &&
             (niveis.isEmpty ||

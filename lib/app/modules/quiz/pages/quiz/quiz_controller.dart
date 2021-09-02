@@ -8,11 +8,11 @@ import 'package:mobx/mobx.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../../../filtros/filtros_module.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
-import '../../shared/models/alternativa_item_model.dart';
-import '../../shared/models/imagem_item_model.dart';
-import '../../shared/models/item_model.dart';
-import '../../shared/models/opcoesItem.dart';
-import '../../shared/repositories/imagem_item_repository.dart';
+import '../../shared/models/alternativa_questao_model.dart';
+import '../../shared/models/imagem_questao_model.dart';
+import '../../shared/models/questao_model.dart';
+import '../../shared/models/opcoesQuestao.dart';
+import '../../shared/repositories/imagem_questao_repository.dart';
 import '../../shared/utils/assets_quiz.dart';
 
 part 'quiz_controller.g.dart';
@@ -20,7 +20,7 @@ part 'quiz_controller.g.dart';
 class QuizController = _QuizControllerBase with _$QuizController;
 
 abstract class _QuizControllerBase with Store {
-  final ImagemItemRepository imagemItemRepository;
+  final ImagemQuestaoRepository imagemItemRepository;
   final Filtros filtros;
 
   final _initialized = Completer<bool>();
@@ -63,12 +63,12 @@ abstract class _QuizControllerBase with Store {
   @computed
 
   ///Itens selecionado para serem exibidos.
-  List<Item> get itensFiltrados => filtros.itensFiltrados;
+  List<Questao> get itensFiltrados => filtros.itensFiltrados;
 
   @computed
 
-  ///[Item] em exibição.
-  Item get item => itensFiltrados[_indice];
+  ///[Questao] em exibição.
+  Questao get item => itensFiltrados[_indice];
 
   @computed
 
@@ -175,7 +175,7 @@ abstract class _QuizControllerBase with Store {
   }
 
   ///Atribui o valor da propriedade [imagem.provider].
-  _setImagemProvider(ImagemItem imagem) {
+  _setImagemProvider(ImagemQuestao imagem) {
     if (kIsWeb)
       imagemItemRepository.getUrlImagemInDb(imagem.nome).then((url) =>
           imagem.provider = (url != null)
@@ -191,10 +191,10 @@ abstract class _QuizControllerBase with Store {
   }
 
   ///Retorna a opção escolhida pelo usuário dentre as opções disponíveis para o item.
-  Future<void> setOpcaoItem(OpcoesItem opcao) async {
+  Future<void> setOpcaoItem(OpcoesQuestao opcao) async {
     switch (opcao) {
-      case OpcoesItem.none:
-      case OpcoesItem.filter:
+      case OpcoesQuestao.none:
+      case OpcoesQuestao.filter:
         await onTapFiltrar();
     }
   }

@@ -1,25 +1,24 @@
-///Contém o ano de aplicação do item e uma lista com todas as instâncias de [Ano].
-
-class Ano {
+///Contém o nível da prova da questão e uma lista com todas as instâncias de [Nivel].
+class Nivel {
   ///Todas as instâncias criadas.
-  static final List<Ano> instancias = <Ano>[];
+  static final List<Nivel> instancias = <Nivel>[];
 
-  ///Um inteiro que representa o ano de aplicação da prova.
+  ///Um inteiro que representa o nível da prova.
   final int valor;
 
   ///Construtor interdo.
-  Ano._interno(this.valor);
+  Nivel._interno(this.valor);
 
   ///Método encarregado de criar as instâncias.
-  static Ano _novaInstancia(int valor) {
-    final instancia = Ano._interno(valor);
+  static Nivel _novaInstancia(int valor) {
+    final instancia = Nivel._interno(valor);
     instancias.add(instancia);
     return instancia;
   }
 
   ///Caso haja em [instancias] uma instância correspondente a [valor],
   ///ela será retornada, caso contrário será criada uma nova.
-  factory Ano(int valor) {
+  factory Nivel(int valor) {
     return instancias.firstWhere((element) => element.valor == valor,
         orElse: () => _novaInstancia(valor));
   }
@@ -32,7 +31,7 @@ class Ano {
   ///Sobrescrever o operador de igualdade.
   @override
   bool operator ==(Object other) {
-    return other is Ano && this.valor == other.valor;
+    return other is Nivel && this.valor == other.valor;
   }
 
   @override

@@ -16,18 +16,18 @@ mixin _$QuizController on _QuizControllerBase, Store {
           Computed<String?>(() => super.alternativaSelecionada,
               name: '_QuizControllerBase.alternativaSelecionada'))
       .value;
-  Computed<List<Item>>? _$itensFiltradosComputed;
+  Computed<List<Questao>>? _$itensFiltradosComputed;
 
   @override
-  List<Item> get itensFiltrados => (_$itensFiltradosComputed ??=
-          Computed<List<Item>>(() => super.itensFiltrados,
+  List<Questao> get itensFiltrados => (_$itensFiltradosComputed ??=
+          Computed<List<Questao>>(() => super.itensFiltrados,
               name: '_QuizControllerBase.itensFiltrados'))
       .value;
-  Computed<Item>? _$itemComputed;
+  Computed<Questao>? _$itemComputed;
 
   @override
-  Item get item => (_$itemComputed ??=
-          Computed<Item>(() => super.item, name: '_QuizControllerBase.item'))
+  Questao get item => (_$itemComputed ??=
+          Computed<Questao>(() => super.item, name: '_QuizControllerBase.item'))
       .value;
   Computed<int>? _$indiceComputed;
 

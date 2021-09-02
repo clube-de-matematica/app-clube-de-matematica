@@ -1,6 +1,6 @@
 import '../../../../shared/models/exceptions/my_exception.dart';
 import '../../../../shared/utils/strings_db.dart';
-import 'imagem_item_model.dart';
+import 'imagem_questao_model.dart';
 
 ///Tipos de alternativas.
 enum TypeAlternativa {
@@ -8,12 +8,12 @@ enum TypeAlternativa {
   imagem,
 }
 
-///Contém as propriedades de uma alternativa do item.
+///Contém as propriedades de uma alternativa do questao.
 class Alternativa {
   final String alternativa;
   final TypeAlternativa tipo;
   final String? valorSeTexto;
-  final ImagemItem? valorSeImagem;
+  final ImagemQuestao? valorSeImagem;
 
   Alternativa({
     required this.alternativa,
@@ -24,16 +24,16 @@ class Alternativa {
 
   ///Retorna uma Instância de [Alternativa] a partir de um `Map<String, dynamic>`.
   factory Alternativa.fromJson(Map<String, dynamic> json) => Alternativa(
-        alternativa: json[DbConst.kDbDataAlternativaKeyAlternativa],
+        alternativa: json[DbConst.kDbDataAlternativaKeySequencial],
         tipo: parseTypeAlternativa(json[DbConst.kDbDataAlternativaKeyTipo]),
         valorSeTexto: json[DbConst.kDbDataAlternativaKeyTipo] ==
                 DbConst.kDbDataAlternativaKeyTipoValTexto
-            ? json[DbConst.kDbDataAlternativaKeyValor]
+            ? json[DbConst.kDbDataAlternativaKeyConteudo]
             : null,
         valorSeImagem: json[DbConst.kDbDataAlternativaKeyTipo] ==
                 DbConst.kDbDataAlternativaKeyTipoValImagem
-            ? ImagemItem.fromJson(
-                json[DbConst.kDbDataAlternativaKeyValor])
+            ? ImagemQuestao.fromJson(
+                json[DbConst.kDbDataAlternativaKeyConteudo])
             : null,
       );
 
@@ -68,15 +68,15 @@ class Alternativa {
   bool get isTipoImagem => tipo == TypeAlternativa.imagem;
 
   ///Retorna uma [String] com o texto da alternativa se for do tipo "texto".
-  ///Se for do tipo "imagem", retorna um [ImagemItem].
+  ///Se for do tipo "imagem", retorna um [ImagemQuestao].
   get valor => isTipoTexto ? valorSeTexto : valorSeImagem;
 
   ///Retorna um json com os dados da alternativa.
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data[DbConst.kDbDataAlternativaKeyAlternativa] = this.alternativa;
+    data[DbConst.kDbDataAlternativaKeySequencial] = this.alternativa;
     data[DbConst.kDbDataAlternativaKeyTipo] = tipoToString(this.tipo);
-    data[DbConst.kDbDataAlternativaKeyValor] =
+    data[DbConst.kDbDataAlternativaKeyConteudo] =
         isTipoTexto ? this.valorSeTexto : valorSeImagem!.toJson();
     return data;
   }

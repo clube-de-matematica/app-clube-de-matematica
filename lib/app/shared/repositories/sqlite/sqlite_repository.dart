@@ -114,14 +114,14 @@ class SqliteRepository
           inserted = await _dbInsertIfNotExist(
               _kTbAssuntos, _encode(data, collection));
           break;
-        case CollectionType.itens:
+        case CollectionType.questoes:
           inserted = await _dbInsertItemIfNotExist(data);
           break;
       }
       return inserted;
     } catch (error) {
       assert(Debug.print('[ERROR] Não foi possível inserir o '
-          '${collection == CollectionType.itens ? "item" : "assunto"} $data.'));
+          '${collection == CollectionType.questoes ? "item" : "assunto"} $data.'));
       assert(Debug.printBetweenLine(error, ''));
       return false;
     }
@@ -132,18 +132,18 @@ class SqliteRepository
     switch (collection) {
       case CollectionType.assuntos:
         return _kViewAssuntos;
-      case CollectionType.itens:
+      case CollectionType.questoes:
         return _kViewAllItens;
     }
   }
 
-  /// Recebe um objeto [DataItem] por meio de [data] e insere seus valores nas tabelas
+  /// Recebe um objeto [DataQuestao] por meio de [data] e insere seus valores nas tabelas
   /// [_kTbItens] e [_kTbItensRef].
-  Future<bool> _dbInsertItemIfNotExist(DataItem data) async {
+  Future<bool> _dbInsertItemIfNotExist(DataQuestao data) async {
     /// Verificar se o item referencia outro. Nesse caso, os dados serão inseridos apenas
     /// em `_kTbItensRef`.
-    if (data.containsKey(DbConst.kDbDataItemKeyReferencia)) {
-      assert(data[DbConst.kDbDataItemKeyReferencia] != null);
+    if (data.containsKey(DbConst.kDbDataQuestaoKeyReferencia)) {
+      assert(data[DbConst.kDbDataQuestaoKeyReferencia] != null);
       final inserted = await _dbInsertIfNotExist(_kTbItensRef, data);
       return inserted;
     } else {
@@ -152,12 +152,12 @@ class SqliteRepository
 
       /// Separar os dados para serem inseridos nas tabelas `_kTbItens` e `_kTbItensRef`.
       data.forEach((key, value) {
-        if (key == DbConst.kDbDataItemKeyId) {
+        if (key == DbConst.kDbDataQuestaoKeyId) {
           dataForTbItens[key] = value;
           dataForTbItensRef[key] = value;
-          dataForTbItensRef[DbConst.kDbDataItemKeyReferencia] = value;
-        } else if (key == DbConst.kDbDataItemKeyNivel ||
-            key == DbConst.kDbDataItemKeyIndice) {
+          dataForTbItensRef[DbConst.kDbDataQuestaoKeyReferencia] = value;
+        } else if (key == DbConst.kDbDataQuestaoKeyNivel ||
+            key == DbConst.kDbDataQuestaoKeyIndice) {
           dataForTbItensRef[key] = value;
         } else {
           dataForTbItens[key] = value;
@@ -167,7 +167,7 @@ class SqliteRepository
           [dataForTbItensRef[_kTbItensRefColId]]);
       if (!exist) {
         final inserted = await _dbInsertInTransaction({
-          _kTbItens: _encode(dataForTbItens, CollectionType.itens),
+          _kTbItens: _encode(dataForTbItens, CollectionType.questoes),
           _kTbItensRef: dataForTbItensRef,
         });
         return inserted;
@@ -205,19 +205,19 @@ class SqliteRepository
     return Map.fromEntries(entries);
   }
 
-  /// Retorna `true` se [key] corresponder a uma chave de [DataItem] ou [DataAssunto] cujo
+  /// Retorna `true` se [key] corresponder a uma chave de [DataQuestao] ou [DataAssunto] cujo
   /// valor precisa ser codificado para String Json antes de ser inserido no banco de dados
   /// gerenciado pelo [Sqflite].
   bool _isDataDocumentKeyOfUnsupportedValue(
       String key, CollectionType collection) {
     switch (collection) {
-      case CollectionType.itens:
-        return key == DbConst.kDbDataItemKeyAlternativas ||
-            key == DbConst.kDbDataItemKeyAssuntos ||
-            key == DbConst.kDbDataItemKeyEnunciado ||
-            key == DbConst.kDbDataItemKeyImagensEnunciado;
+      case CollectionType.questoes:
+        return key == DbConst.kDbDataQuestaoKeyAlternativas ||
+            key == DbConst.kDbDataQuestaoKeyAssuntos ||
+            key == DbConst.kDbDataQuestaoKeyEnunciado ||
+            key == DbConst.kDbDataQuestaoKeyImagensEnunciado;
       case CollectionType.assuntos:
-        return key == DbConst.kDbDataAssuntoKeyArvore;
+        return key == DbConst.kDbDataAssuntoKeyHierarquia;
     }
   }
 }

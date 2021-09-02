@@ -148,52 +148,52 @@ class _SqliteRepositoryTest extends SqliteRepository {
 
   /// Retorna um [DataDocument] de um item que não faz referência a outro item.
   DataDocument item1() => {
-        DbConst.kDbDataItemKeyId: '2019pf1n1q01',
-        DbConst.kDbDataItemKeyAno: 2019,
-        DbConst.kDbDataItemKeyNivel: 1,
-        DbConst.kDbDataItemKeyIndice: 1,
-        DbConst.kDbDataItemKeyAssuntos: ['Área', 'Regra de três'],
-        DbConst.kDbDataItemKeyEnunciado: [
+        DbConst.kDbDataQuestaoKeyId: '2019pf1n1q01',
+        DbConst.kDbDataQuestaoKeyAno: 2019,
+        DbConst.kDbDataQuestaoKeyNivel: 1,
+        DbConst.kDbDataQuestaoKeyIndice: 1,
+        DbConst.kDbDataQuestaoKeyAssuntos: ['Área', 'Regra de três'],
+        DbConst.kDbDataQuestaoKeyEnunciado: [
           'Primeira parte ',
           '##ml##',
           'segunda parte'
         ],
-        DbConst.kDbDataItemKeyAlternativas: [
+        DbConst.kDbDataQuestaoKeyAlternativas: [
           {
-            DbConst.kDbDataAlternativaKeyAlternativa: 'a',
+            DbConst.kDbDataAlternativaKeySequencial: 'a',
             DbConst.kDbDataAlternativaKeyTipo:
                 DbConst.kDbDataAlternativaKeyTipoValTexto,
-            DbConst.kDbDataAlternativaKeyValor: 'Alternativa "A".'
+            DbConst.kDbDataAlternativaKeyConteudo: 'Alternativa "A".'
           },
           {
-            DbConst.kDbDataAlternativaKeyAlternativa: 'b',
+            DbConst.kDbDataAlternativaKeySequencial: 'b',
             DbConst.kDbDataAlternativaKeyTipo:
                 DbConst.kDbDataAlternativaKeyTipoValTexto,
-            DbConst.kDbDataAlternativaKeyValor: 'Alternativa "B".'
+            DbConst.kDbDataAlternativaKeyConteudo: 'Alternativa "B".'
           },
           {
-            DbConst.kDbDataAlternativaKeyAlternativa: 'c',
+            DbConst.kDbDataAlternativaKeySequencial: 'c',
             DbConst.kDbDataAlternativaKeyTipo:
                 DbConst.kDbDataAlternativaKeyTipoValTexto,
-            DbConst.kDbDataAlternativaKeyValor: 'Alternativa "C".'
+            DbConst.kDbDataAlternativaKeyConteudo: 'Alternativa "C".'
           },
           {
-            DbConst.kDbDataAlternativaKeyAlternativa: 'd',
+            DbConst.kDbDataAlternativaKeySequencial: 'd',
             DbConst.kDbDataAlternativaKeyTipo:
                 DbConst.kDbDataAlternativaKeyTipoValTexto,
-            DbConst.kDbDataAlternativaKeyValor: 'Alternativa "D".'
+            DbConst.kDbDataAlternativaKeyConteudo: 'Alternativa "D".'
           },
           {
-            DbConst.kDbDataAlternativaKeyAlternativa: 'e',
+            DbConst.kDbDataAlternativaKeySequencial: 'e',
             DbConst.kDbDataAlternativaKeyTipo:
                 DbConst.kDbDataAlternativaKeyTipoValTexto,
-            DbConst.kDbDataAlternativaKeyValor: 'Alternativa "E".'
+            DbConst.kDbDataAlternativaKeyConteudo: 'Alternativa "E".'
           }
         ],
-        DbConst.kDbDataItemKeyGabarito: 'a',
-        DbConst.kDbDataItemKeyDificuldade:
-            DbConst.kDbDataItemKeyDificuldadeValBaixa,
-        DbConst.kDbDataItemKeyImagensEnunciado: [
+        DbConst.kDbDataQuestaoKeyGabarito: 'a',
+        DbConst.kDbDataQuestaoKeyDificuldade:
+            DbConst.kDbDataQuestaoKeyDificuldadeValBaixa,
+        DbConst.kDbDataQuestaoKeyImagensEnunciado: [
           {
             DbConst.kDbDataImagemKeyNome: '2019PF1N1Q01.PNG',
             DbConst.kDbDataImagemKeyAltura: 300,
@@ -207,11 +207,11 @@ class _SqliteRepositoryTest extends SqliteRepository {
     Debug.print('[TEST] Testando inserção de "_SqliteRepositoryTest.item1"...');
     bool result = false;
     final item = item1();
-    final inserted = await setDocumentIfNotExist(CollectionType.itens, item);
+    final inserted = await setDocumentIfNotExist(CollectionType.questoes, item);
     if (inserted) {
       final where = DataWhere(
-        CollectionType.itens,
-        {DbConst.kDbDataItemKeyId: item[DbConst.kDbDataItemKeyId]},
+        CollectionType.questoes,
+        {DbConst.kDbDataQuestaoKeyId: item[DbConst.kDbDataQuestaoKeyId]},
       );
       final returned = await getDoc(where);
       result = DeepCollectionEquality().equals(returned, item);
@@ -225,20 +225,20 @@ class _SqliteRepositoryTest extends SqliteRepository {
   /// Retorna um [DataDocument] de um item que não faz referência a outro item.
   DataDocument item2() {
     return item1()
-      ..remove(DbConst.kDbDataItemKeyImagensEnunciado)
+      ..remove(DbConst.kDbDataQuestaoKeyImagensEnunciado)
       ..addAll({
-        DbConst.kDbDataItemKeyId: '2020pf1n1q01',
-        DbConst.kDbDataItemKeyAno: 2020,
-        DbConst.kDbDataItemKeyAssuntos: ['Divisibilidade']
+        DbConst.kDbDataQuestaoKeyId: '2020pf1n1q01',
+        DbConst.kDbDataQuestaoKeyAno: 2020,
+        DbConst.kDbDataQuestaoKeyAssuntos: ['Divisibilidade']
       });
   }
 
   /// Retorna um [DataDocument] de um item que faz referência ao [item1].
   DataDocument item3() => {
-        DbConst.kDbDataItemKeyId: '2019pf1n2q04',
-        DbConst.kDbDataItemKeyNivel: 2,
-        DbConst.kDbDataItemKeyIndice: 4,
-        DbConst.kDbDataItemKeyReferencia: '2019pf1n1q01'
+        DbConst.kDbDataQuestaoKeyId: '2019pf1n2q04',
+        DbConst.kDbDataQuestaoKeyNivel: 2,
+        DbConst.kDbDataQuestaoKeyIndice: 4,
+        DbConst.kDbDataQuestaoKeyReferencia: '2019pf1n1q01'
       };
 
   /// Retorna `true` se não for possível inserir o retorno de [item3] antes do de [item1],
@@ -251,15 +251,15 @@ class _SqliteRepositoryTest extends SqliteRepository {
     final item = item3();
     assert(!(await _exist(
       _kTbItens,
-      [DbConst.kDbDataItemKeyId],
+      [DbConst.kDbDataQuestaoKeyId],
       [item[_kTbItensRefColReferencia]],
     )));
-    final inserted = await setDocumentIfNotExist(CollectionType.itens, item);
+    final inserted = await setDocumentIfNotExist(CollectionType.questoes, item);
     bool result = !inserted;
     if (inserted) {
       final where = DataWhere(
-        CollectionType.itens,
-        {DbConst.kDbDataItemKeyId: item[DbConst.kDbDataItemKeyId]},
+        CollectionType.questoes,
+        {DbConst.kDbDataQuestaoKeyId: item[DbConst.kDbDataQuestaoKeyId]},
       );
       final returned = await getDoc(where);
       result = !(DeepCollectionEquality().equals(returned, item));
@@ -280,10 +280,10 @@ class _SqliteRepositoryTest extends SqliteRepository {
     final _item1 = item1();
     final _item2 = item2();
     final _item3 = item3();
-    if (await setDocumentIfNotExist(CollectionType.itens, _item1)) {
-      if (await setDocumentIfNotExist(CollectionType.itens, _item2)) {
-        if (await setDocumentIfNotExist(CollectionType.itens, _item3)) {
-          final returned = await getCollection(CollectionType.itens);
+    if (await setDocumentIfNotExist(CollectionType.questoes, _item1)) {
+      if (await setDocumentIfNotExist(CollectionType.questoes, _item2)) {
+        if (await setDocumentIfNotExist(CollectionType.questoes, _item3)) {
+          final returned = await getCollection(CollectionType.questoes);
           result = returned.length == 3;
         }
       }
@@ -297,7 +297,7 @@ class _SqliteRepositoryTest extends SqliteRepository {
   /// Retorna um [DataDocument] de um assunto que não é uma unidade.
   DataDocument assunto1() => {
         DbConst.kDbDataAssuntoKeyTitulo: 'Área',
-        DbConst.kDbDataAssuntoKeyArvore: ['Geometria', 'Polígonos']
+        DbConst.kDbDataAssuntoKeyHierarquia: ['Geometria', 'Polígonos']
       };
 
   /// Retorna `true` se o retorno de [assunto1] for inserido.
@@ -321,7 +321,7 @@ class _SqliteRepositoryTest extends SqliteRepository {
   /// Retorna um [DataDocument] de um assunto que não é uma unidade.
   DataDocument assunto2() => {
         DbConst.kDbDataAssuntoKeyTitulo: 'Regra de três',
-        DbConst.kDbDataAssuntoKeyArvore: [
+        DbConst.kDbDataAssuntoKeyHierarquia: [
           'Matemática financeira',
           'Proporcionalidade'
         ]
@@ -437,7 +437,7 @@ const _kSQL =
     // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
     '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
     '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
-    '"${DbConst.kDbDataAssuntoKeyArvore}" TEXT'
+    '"${DbConst.kDbDataAssuntoKeyHierarquia}" TEXT'
     '); '
 
     /// Caso ainda não exista, cria a visualização para "consolidar" os dados dos assuntos.
@@ -445,11 +445,11 @@ const _kSQL =
     'SELECT '
     //'"$_kTbAssuntosColId", '
     '"${DbConst.kDbDataAssuntoKeyTitulo}", '
-    '"${DbConst.kDbDataAssuntoKeyArvore}" '
+    '"${DbConst.kDbDataAssuntoKeyHierarquia}" '
     'FROM "$_kTbAssuntos" '
     'ORDER BY '
     // Concatenar o título do assunto ao final da árvore para fazer a ordenação.
-    '("${DbConst.kDbDataAssuntoKeyArvore}" || \'/\' '
+    '("${DbConst.kDbDataAssuntoKeyHierarquia}" || \'/\' '
     '|| "${DbConst.kDbDataAssuntoKeyTitulo}") ASC, '
     // Se a árvore for nula, a concatenação também será nula. Nesse caso, o título do
     // assunto permitirá a ordenação desses valores nulos.
@@ -458,14 +458,14 @@ const _kSQL =
 
     /// Cria a tabela para os itens, caso ainda não exista.
     'CREATE TABLE IF NOT EXISTS "$_kTbItens" ('
-    '"${DbConst.kDbDataItemKeyId}" VARCHAR PRIMARY KEY NOT NULL, '
-    '"${DbConst.kDbDataItemKeyAno}" INTEGER NOT NULL, '
-    '"${DbConst.kDbDataItemKeyAssuntos}" VARCHAR NOT NULL, '
-    '"${DbConst.kDbDataItemKeyEnunciado}" TEXT NOT NULL, '
-    '"${DbConst.kDbDataItemKeyAlternativas}" TEXT NOT NULL, '
-    '"${DbConst.kDbDataItemKeyGabarito}" VARCHAR NOT NULL, '
-    '"${DbConst.kDbDataItemKeyDificuldade}" VARCHAR NOT NULL, '
-    '"${DbConst.kDbDataItemKeyImagensEnunciado}" TEXT'
+    '"${DbConst.kDbDataQuestaoKeyId}" VARCHAR PRIMARY KEY NOT NULL, '
+    '"${DbConst.kDbDataQuestaoKeyAno}" INTEGER NOT NULL, '
+    '"${DbConst.kDbDataQuestaoKeyAssuntos}" VARCHAR NOT NULL, '
+    '"${DbConst.kDbDataQuestaoKeyEnunciado}" TEXT NOT NULL, '
+    '"${DbConst.kDbDataQuestaoKeyAlternativas}" TEXT NOT NULL, '
+    '"${DbConst.kDbDataQuestaoKeyGabarito}" VARCHAR NOT NULL, '
+    '"${DbConst.kDbDataQuestaoKeyDificuldade}" VARCHAR NOT NULL, '
+    '"${DbConst.kDbDataQuestaoKeyImagensEnunciado}" TEXT'
     '); '
 
     /// Cria a tabela para as referências dos itens, caso ainda não exista.
@@ -474,7 +474,7 @@ const _kSQL =
     '"$_kTbItensRefColNivel" INTEGER NOT NULL, '
     '"$_kTbItensRefColIndice" INTEGER NOT NULL, '
     '"$_kTbItensRefColReferencia" VARCHAR NOT NULL, '
-    'FOREIGN KEY("$_kTbItensRefColReferencia") REFERENCES "$_kTbItens"("${DbConst.kDbDataItemKeyId}") ON DELETE RESTRICT'
+    'FOREIGN KEY("$_kTbItensRefColReferencia") REFERENCES "$_kTbItens"("${DbConst.kDbDataQuestaoKeyId}") ON DELETE RESTRICT'
     '); '
 
     /// Caso ainda não exista, cria a visualização para "consolidar" os dados dos itens.
@@ -482,18 +482,18 @@ const _kSQL =
     /// que se o item foi aplicado em dois cadernos, possuirá um registro para cada um destes.
     'CREATE VIEW IF NOT EXISTS "$_kViewAllItens" AS '
     'SELECT '
-    '"$_kTbItensRef"."$_kTbItensRefColId" AS "${DbConst.kDbDataItemKeyId}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyAno}", '
-    '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataItemKeyNivel}", '
-    '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataItemKeyIndice}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyAssuntos}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyEnunciado}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyAlternativas}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyGabarito}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyDificuldade}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyImagensEnunciado}" '
+    '"$_kTbItensRef"."$_kTbItensRefColId" AS "${DbConst.kDbDataQuestaoKeyId}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAno}", '
+    '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataQuestaoKeyNivel}", '
+    '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataQuestaoKeyIndice}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAssuntos}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyEnunciado}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAlternativas}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyGabarito}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyDificuldade}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyImagensEnunciado}" '
     'FROM "$_kTbItensRef" '
-    'INNER JOIN "$_kTbItens" ON "$_kTbItens"."${DbConst.kDbDataItemKeyId}" = "$_kTbItensRef"."$_kTbItensRefColReferencia"'
+    'INNER JOIN "$_kTbItens" ON "$_kTbItens"."${DbConst.kDbDataQuestaoKeyId}" = "$_kTbItensRef"."$_kTbItensRefColReferencia"'
     '; '
 
     /// Caso ainda não exista, cria a visualização para "consolidar" os dados dos itens,
@@ -502,24 +502,24 @@ const _kSQL =
     /// ele possuirá um único registro.
     'CREATE VIEW IF NOT EXISTS "$_kViewDistinctItens" AS '
     'SELECT '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyId}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyAno}", '
-    '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataItemKeyNivel}", '
-    '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataItemKeyIndice}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyAssuntos}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyEnunciado}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyAlternativas}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyGabarito}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyDificuldade}", '
-    '"$_kTbItens"."${DbConst.kDbDataItemKeyImagensEnunciado}" '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyId}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAno}", '
+    '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataQuestaoKeyNivel}", '
+    '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataQuestaoKeyIndice}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAssuntos}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyEnunciado}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyAlternativas}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyGabarito}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyDificuldade}", '
+    '"$_kTbItens"."${DbConst.kDbDataQuestaoKeyImagensEnunciado}" '
     'FROM "$_kTbItens" '
-    'INNER JOIN "$_kTbItensRef" ON "$_kTbItensRef"."$_kTbItensRefColId" = "$_kTbItens"."${DbConst.kDbDataItemKeyId}"'
+    'INNER JOIN "$_kTbItensRef" ON "$_kTbItensRef"."$_kTbItensRefColId" = "$_kTbItens"."${DbConst.kDbDataQuestaoKeyId}"'
     '; '
 
     /// Cria um gatilho para impedir a sobreposição acidental dos registros já
     /// inseridos na tabela de itens.
     'CREATE TRIGGER "trigger_insert_in_tb_itens_if_not_exists" BEFORE INSERT ON "$_kTbItens" '
-    'WHEN EXISTS (SELECT 1 FROM "$_kTbItens" WHERE "${DbConst.kDbDataItemKeyId}" = NEW."${DbConst.kDbDataItemKeyId}") '
+    'WHEN EXISTS (SELECT 1 FROM "$_kTbItens" WHERE "${DbConst.kDbDataQuestaoKeyId}" = NEW."${DbConst.kDbDataQuestaoKeyId}") '
     'BEGIN '
     'SELECT RAISE(ABORT,"A tabela $_kTbItens já possui um registro com o id fornecido."); '
     'END; '
@@ -529,5 +529,5 @@ const _kSQL =
     // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
     '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
     '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
-    '"${DbConst.kDbDataAssuntoKeyArvore}" TEXT'
+    '"${DbConst.kDbDataAssuntoKeyHierarquia}" TEXT'
     '); ';

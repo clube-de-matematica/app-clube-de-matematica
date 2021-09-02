@@ -80,8 +80,8 @@ class FirestoreRepository with DbRepositoryMixin implements IDbRepository {
     Query<DataFirestore> query = collectionRef;
 
     /// Se a chave não existir, `args[DbConst.kDbDataItemKeyId]` retorn `null`.
-    final String id = args[DbConst.kDbDataItemKeyId] ?? '';
-    if (where.collection == CollectionType.itens && id.isNotEmpty) {
+    final String id = args[DbConst.kDbDataQuestaoKeyId] ?? '';
+    if (where.collection == CollectionType.questoes && id.isNotEmpty) {
       docRef = collectionRef.doc(id);
     } else {
       _encode(where.args, where.collection).forEach((key, value) {
@@ -171,24 +171,24 @@ class FirestoreRepository with DbRepositoryMixin implements IDbRepository {
 
   /// Codifica os dados para serem inseridos no banco de dados.
   DataFirestore _encode(DataDocument data, CollectionType collection) {
-    if (collection == CollectionType.itens &&
-        data.containsKey(DbConst.kDbDataItemKeyReferencia)) {
+    if (collection == CollectionType.questoes &&
+        data.containsKey(DbConst.kDbDataQuestaoKeyReferencia)) {
       // Substituir o objeto de referência pelo id.
-      final idRef = data[DbConst.kDbDataItemKeyReferencia] as String;
+      final idRef = data[DbConst.kDbDataQuestaoKeyReferencia] as String;
       final ref = _getCollectionRef(collection).doc(idRef);
-      data[DbConst.kDbDataItemKeyReferencia] = ref;
+      data[DbConst.kDbDataQuestaoKeyReferencia] = ref;
     }
     return data;
   }
 
   /// Decodifica os dados retornados do banco de dados.
   DataDocument _decode(DataFirestore data, CollectionType collection) {
-    if (collection == CollectionType.itens &&
-        data.containsKey(DbConst.kDbDataItemKeyReferencia)) {
+    if (collection == CollectionType.questoes &&
+        data.containsKey(DbConst.kDbDataQuestaoKeyReferencia)) {
       // Substituir o objeto de referência pelo id.
       final idRef =
-          (data[DbConst.kDbDataItemKeyReferencia] as DocumentReference).id;
-      data[DbConst.kDbDataItemKeyReferencia] = idRef;
+          (data[DbConst.kDbDataQuestaoKeyReferencia] as DocumentReference).id;
+      data[DbConst.kDbDataQuestaoKeyReferencia] = idRef;
     }
     return data;
   }

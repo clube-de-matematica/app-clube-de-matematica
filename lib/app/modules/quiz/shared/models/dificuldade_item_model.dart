@@ -41,11 +41,11 @@ class Dificuldade {
   ///Retorna um [NiveisDificuldade] a partir da string que o representa.
   // ignore: missing_return
   static NiveisDificuldade _fromString(String string) {
-    if (string == DbConst.kDbDataItemKeyDificuldadeValBaixa)
+    if (string == DbConst.kDbDataQuestaoKeyDificuldadeValBaixa)
       return NiveisDificuldade.baixa;
-    if (string == DbConst.kDbDataItemKeyDificuldadeValMedia)
+    if (string == DbConst.kDbDataQuestaoKeyDificuldadeValMedia)
       return NiveisDificuldade.media;
-    if (string == DbConst.kDbDataItemKeyDificuldadeValAlta)
+    if (string == DbConst.kDbDataQuestaoKeyDificuldadeValAlta)
       return NiveisDificuldade.alta;
     else
       throw MyException(
@@ -60,11 +60,11 @@ class Dificuldade {
   String toString() {
     switch (this.dificuldade) {
       case NiveisDificuldade.baixa:
-        return DbConst.kDbDataItemKeyDificuldadeValBaixa;
+        return DbConst.kDbDataQuestaoKeyDificuldadeValBaixa;
       case NiveisDificuldade.media:
-        return DbConst.kDbDataItemKeyDificuldadeValMedia;
+        return DbConst.kDbDataQuestaoKeyDificuldadeValMedia;
       case NiveisDificuldade.alta:
-        return DbConst.kDbDataItemKeyDificuldadeValAlta;
+        return DbConst.kDbDataQuestaoKeyDificuldadeValAlta;
     }
   }
 

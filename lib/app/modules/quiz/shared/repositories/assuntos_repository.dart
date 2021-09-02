@@ -63,12 +63,12 @@ class AssuntosRepository {
         ///Se o assunto não for uma unidade será criado um [Assunto] com o título do topo
         ///da hierarquia de assuntos. Caso contrário, primeiramente será criado um [Assunto]
         ///para a unidade - nesse caso a arvore será uma lista vazia.
-        if (data.containsKey(DbConst.kDbDataAssuntoKeyArvore)) {
+        if (data.containsKey(DbConst.kDbDataAssuntoKeyHierarquia)) {
           Assunto(
               arvore: List<String>.empty(),
 
               ///`map[DB_DOC_ASSUNTO_ARVORE]` vem como [List<dynamic>].
-              titulo: data[DbConst.kDbDataAssuntoKeyArvore][0]
+              titulo: data[DbConst.kDbDataAssuntoKeyHierarquia][0]
                   as String //Tipado para [String].
               );
         }
