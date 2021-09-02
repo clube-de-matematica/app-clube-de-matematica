@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:math' as math;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:clubedematematica/app/shared/models/exceptions/my_exception.dart';
+import 'package:clubedematematica/app/shared/utils/constantes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -7,6 +12,9 @@ import '../../modules/perfil/perfil_module.dart';
 import '../../modules/perfil/widgets/avatar.dart';
 import '../repositories/firebase/auth_repository.dart';
 import 'myWillPopScope.dart';
+
+/// Indica a página em que [MyDrawer] está sendo exibido.
+enum MyDrawerPage { quiz, clubes }
 
 ///Um [Scaffold] com o [Drawer] do aplicativo.
 class MyDrawer extends StatefulWidget {
@@ -34,6 +42,7 @@ class MyDrawer extends StatefulWidget {
     this.drawerEnableOpenDragGesture = true,
     this.endDrawerEnableOpenDragGesture = true,
     this.restorationId,
+    this.page = MyDrawerPage.clubes,
   }) : super(key: key);
 
   final PreferredSizeWidget? appBar;
@@ -58,6 +67,7 @@ class MyDrawer extends StatefulWidget {
   final bool drawerEnableOpenDragGesture;
   final bool endDrawerEnableOpenDragGesture;
   final String? restorationId;
+  final MyDrawerPage page;
 
   ///Usuário do aplicativo.
   UserApp get user => Modular.get<UserApp>();
@@ -112,42 +122,58 @@ class _MyDrawerState extends State<MyDrawer> {
       padding: EdgeInsets.zero,
       children: [
         drawerHeader,
-        ListTile(
-          title: Text('Clubes'),
-          leading: const Icon(Icons.groups),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: Text('Questões'),
-          leading: const Icon(Icons.quiz),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
+        if (widget.page == MyDrawerPage.quiz)
+          ListTile(
+            title: Text('Clubes'),
+            leading: const Icon(Icons.groups),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        if (widget.page == MyDrawerPage.clubes)
+          for (var i in _buildClubes(context)) i,
+        if (widget.page == MyDrawerPage.clubes) const Divider(thickness: 1.5),
+        if (widget.page == MyDrawerPage.clubes)
+          ListTile(
+            title: Text('Questões'),
+            leading: const Icon(Icons.quiz_outlined),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
         ListTile(
           title: Text('Favoritos'),
-          leading: const Icon(Icons.favorite),
+          leading: const Icon(Icons.favorite_outline),
           onTap: () {
             Navigator.pop(context);
           },
         ),
-        const Divider(),
+        ListTile(
+          title: Text('Downloads'),
+          leading: const Icon(Icons.download_outlined),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        const Divider(thickness: 1.5),
         ListTile(
           title: Text('Configurações'),
-          leading: const Icon(Icons.settings),
+          leading: const Icon(Icons.settings_outlined),
           onTap: () {
             Navigator.pop(context);
           },
         ),
-        const Divider(),
         ListTile(
           title: Text('Sobre'),
-          leading: Icon(Icons.info),
+          leading: Icon(Icons.info_outlined),
           onTap: () {
             Navigator.pop(context);
           },
+        ),
+        const Divider(thickness: 1.5),
+        const ListTile(
+          title: Text('Versão: $APP_VERSION'),
+          dense: true,
         ),
       ],
     );
@@ -181,46 +207,24 @@ class _MyDrawerState extends State<MyDrawer> {
     );
   }
 
-  _buildAboutIcon(BuildContext context) {
-    final IconThemeData iconTheme = IconTheme.of(context);
-    final double? iconSize = iconTheme.size;
-    final double iconOpacity = iconTheme.opacity ?? 1.0;
-    Color iconColor = iconTheme.color!;
-
-    if (iconOpacity != 1.0)
-      iconColor = iconColor.withOpacity(iconColor.opacity * iconOpacity);
-
-    return IconTheme(
-      data: IconTheme.of(context),
-      child: Container(
-        width: iconSize == null ? null : iconSize - 4,
-        height: iconSize == null ? null : iconSize - 4,
-        padding: EdgeInsets.zero,
-        child: Center(
-          child: RichText(
-            overflow: TextOverflow.visible, // Never clip.
-            text: TextSpan(
-              text: 'i',
-              style: TextStyle(
-                inherit: false,
-                color: iconColor,
-                fontSize: iconSize == null ? null : iconSize - 8,
-                fontFamily: "Courgette",
-                //fontFamily: icon!.fontFamily,
-                //package: icon!.fontPackage,
-              ),
-            ),
-          ),
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: iconColor,
-            style: BorderStyle.solid,
-            width: 1.0,
-          ),
-          borderRadius: BorderRadius.circular(16.0),
-        ),
+  List<Widget> _buildClubes(BuildContext context) {
+    final clubCreator = [];
+    final clubMember = [];
+    final a = FieldValue.serverTimestamp();
+    return [
+      ListTile(
+        title: Text('Clube 1'),
+        subtitle: Text('Administrador'),
+        leading: CircleAvatar(),
+        //dense: true,
       ),
-    );
+      //const Divider(thickness: 1.5, height: 1.0),
+      ListTile(
+        title: Text('Clube 2'),
+        subtitle: Text('Membro'),
+        leading: CircleAvatar(),
+        //dense: true,
+      ),
+    ];
   }
 }

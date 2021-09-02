@@ -82,8 +82,9 @@ class PerfilController {
     formState.save();
     //Chamar uma nova rota e fechar todas as demais.
     if (user.connected) {
-      // TODO:
-      // Para que pushNamedAndRemoveUntil funcione foi necessário modificar
+      // TODO: Verificar o método pushNamedAndRemoveUntil() de ModularRouterDelegate,
+      // Para que pushNamedAndRemoveUntil funcione foi necessário modificar, 
+      // em [ModularRouterDelegate], 
       /* 
         Future<T?> pushNamedAndRemoveUntil<T extends Object?>(String newRouteName, bool Function(Route) predicate, {Object? arguments, bool forRoot = false}) {
           popUntil(predicate);

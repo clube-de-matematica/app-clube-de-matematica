@@ -22,7 +22,7 @@ typedef DataArvore = List<String>;
 typedef DataItem = Map<String, dynamic>;
 
 /// Super tipo para a alternativa do item (questão).
-/// Possui as chaves:
+/// As chaves podem ser:
 /// * [DbConst.kDbDataAlternativaKeyAlternativa];
 /// * [DbConst.kDbDataAlternativaKeyTipo]; e
 /// * [DbConst.kDbDataAlternativaKeyValor].
@@ -32,6 +32,34 @@ typedef DataAlternativa = Map<String, String>;
 /// O valor [dynamic] pode ser [String] para [DbConst.kDbDataImagemKeyNome] ou [int]
 /// [DbConst.kDbDataImagemKeyLargura] e [DbConst.kDbDataImagemKeyAltura].
 typedef DataImagem = Map<String, dynamic>;
+
+/// O objeto com as informações dos usuários usadas nos clubes.
+/// As chaves podem ser:
+/// * [DbConst.kDbDataUserKeyDisplayName];
+/// * [DbConst.kDbDataUserKeyUid]; ou
+/// * [DbConst.kDbDataUserKeyHashEmail].
+typedef DataUser = Map<String, String>;
+
+/// O valor [dynamic] pode ser:
+/// * [String] para [DbConst.kDbDataClubeKeyNome] e [DbConst.kDbDataClubeKeyProprietario];
+/// * [int] para [DbConst.kDbDataClubeKeyTimestamp]; ou
+/// * [List]<[String]> para [DbConst.kDbDataClubeKeyAdministradores] e [DbConst.kDbDataClubeKeyMembros].
+typedef DataClube = Map<String, dynamic>;
+
+/// O objeto para a resposta do usuário a uma tarefa.
+/// A chave é o ID do item (questão) e o valor é o identificador da alternativa escolhida.
+typedef DataResposta = Map<String, String>;
+
+/// O objeto com o [DataResposta] de todos os membros do clube à tarefa.
+/// A chave é o UID do membro e o valor é o objeto [DataResposta] com as respostas desse
+/// membro.
+typedef DataRespostas = Map<String, DataResposta>;
+
+/// O valor [dynamic] pode ser:
+/// * [String] para [DbConst.kDbDataTarefaKeyAutor] e [DbConst.kDbDataTarefaKeyIdClube];
+/// * [int] para [DbConst.kDbDataTarefaKeyTimestamp]; ou
+/// * [List]<[String]> para [DbConst.kDbDataTarefaKeyIdItens].
+typedef DataTarefa = Map<String, dynamic>;
 
 /// Objeto que contem as constantes comuns aos bancos de dados local e remoto.
 abstract class DbConst {
@@ -98,7 +126,7 @@ abstract class DbConst {
  * ****************************************************************************************
 **/
 
-  /// Nome da coleção (ou tabela) que contem os assuntos ligados a cada item (questão).
+  /// Nome da coleção (ou tabela) que contém os assuntos ligados a cada item (questão).
   /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataAssunto]>.
   static const kDbDataCollectionAssuntos = "assuntos";
 
@@ -188,7 +216,94 @@ abstract class DbConst {
   /// Nome do campo para a referência à outro item (questão).
   /// Usado quando o mesmo item foi aplicado em mais de uma prova.
   /// Os valores desse campo são do tipo [String] e contém o ID do item referenciado.
+  /// No banco de dados remoto, o campo contém uma referência para outro item.
   static const kDbDataItemKeyReferencia = "referencia";
+
+/** 
+ * ****************************************************************************************
+**/
+
+  /// Nome da chave que armazena o nome do usuário em [DataUser].
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataUserKeyDisplayName = "display_name";
+
+  /// Nome da chave que armazena o UID do usuário no [Firebase] em [DataUser].
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataUserKeyUid = "uid";
+
+  /// Nome da chave que armazena o hash do email do usuário em [DataUser].
+  /// Esse campo possiblita localizar o usuário caso haja alteração no seu UID.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataUserKeyHashEmail = "uid";
+
+/** 
+ * ****************************************************************************************
+**/
+
+  /// Nome da coleção (ou tabela) que contem os clubes.
+  /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataClube]>.
+  static const kDbDataCollectionClubes = "clubes";
+
+  /// Nome do campo que contém o carimbo de data/hora da criação do clube.
+  /// Os valores desse campo são de algum tipo que possa ser convertido no número de
+  /// milisegundos a partir de 0001-01-01T00:00:00Z, geralmente um [int] com esse número.
+  static const kDbDataClubeKeyTimestamp = "timestamp";
+
+  /// Nome do campo que contém o código aleatório que compões os dois últimos dígitos do ID
+  /// base 62 usado para ingresso no clube.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataClubeKeyRandomCode = "random_code";
+
+  /// Nome do campo que contém o nome do clube.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataClubeKeyNome = "nome";
+
+  /// Nome do campo que contém o email do proprietário do clube.
+  /// Os valores desse campo são do tipo [DataUser].
+  static const kDbDataClubeKeyProprietario = "proprietario";
+
+  /// Nome do campo que contém uma lista com o email de cada administrador do clube.
+  /// Os valores desse campo são do tipo [List]<[DataUser]>.
+  static const kDbDataClubeKeyAdministradores = "administradores";
+
+  /// Nome do campo que contém uma lista com o email de cada membro do clube.
+  /// Os valores desse campo são do tipo [List]<[DataUser]>.
+  static const kDbDataClubeKeyMembros = "membros";
+
+  /// Nome do campo que contém um inteiro que intica o nível de privacidade do clube.
+  /// * Se 0, o clube é público. Qualquer usuário com o código de acesso pode ingressar.
+  /// * Se 1, o clube é privado. O ingresso depende da permissão de um administrador.
+  static const kDbDataClubeKeyPrivacidade = "privacidade";
+
+/** 
+ * ****************************************************************************************
+**/
+
+  /// Nome da coleção (ou tabela) que contem as tarefas.
+  /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataTarefa]>.
+  static const kDbDataCollectionTarefas = "tarefas";
+
+  /// Nome do campo que contém o carimbo de data/hora da criação da tarefa.
+  /// Os valores desse campo são de algum tipo que possa ser convertido no número de
+  /// milisegundos a partir de 0001-01-01T00:00:00Z, geralmente um [int] com esse número.
+  static const kDbDataTarefaKeyTimestamp = "timestamp";
+
+  /// Nome do campo que contém o objeto [DataUser] (sem o campo
+  /// [DbConst.kDbDataUserKeyDisplayName]) do autor da tarefa.
+  /// Os valores desse campo são do tipo [DataUser].
+  static const kDbDataTarefaKeyAutor = "autor";
+
+  /// Nome do campo que contém o ID do clube ao qual a tarefa pertence.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataTarefaKeyIdClube = "id_clube";
+
+  /// Nome do campo que contém uma lista com os ID's dos itens que pertencem à tarefa.
+  /// Os valores desse campo são do tipo [List]<[String]>.
+  static const kDbDataTarefaKeyIdItens = "id_Itens";
+
+  /// Nome do campo que contém o objeto [DataRespostas] associado à tarefa.
+  /// Os valores desse campo são do tipo [DataRespostas].
+  static const kDbDataTarefaKeyRespostas = "respostas";
 
 /** 
  * ****************************************************************************************

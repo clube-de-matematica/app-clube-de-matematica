@@ -47,6 +47,12 @@ const _kTbItensRefColNivel = DbConst.kDbDataItemKeyNivel;
 /// Chave estrangeira para a coluna [DbConst.kDbDataItemKeyId] da tabela [_kTbItens].
 const _kTbItensRefColReferencia = DbConst.kDbDataItemKeyReferencia;
 
+/// Nome da tabela que contém os clubes.
+const _kTbClubes = DbConst.kDbDataCollectionClubes;
+
+/// Nome da tabela que contém os tarefas.
+const _kTbTarefas = DbConst.kDbDataCollectionTarefas;
+
 /// Nome da View que relaciona os dados das tabelas [_kTbItensRef] e [_kTbItens].
 /// Esta visualização conterá um registro para cada aplicação do item. Isso significa que
 /// se o item foi aplicado em dois cadernos, possuirá um registro para cada um destes.
@@ -106,6 +112,7 @@ abstract class _SqliteRepositoryCore {
       await _createViewAllItens(txn);
       await _createViewDistinctItens(txn);
       await _createTriggerNotInsertInTbItens(txn);
+      await _createTbClubes(txn);
       assert(Debug.print(
           '[INFO] Tranzação de criação do esquema do banco de dados concluída.'));
     });
@@ -275,6 +282,24 @@ abstract class _SqliteRepositoryCore {
     } catch (_) {
       assert(Debug.print(
           '[ERROR] O gatilho "trigger_insert_in_tb_itens_if_not_exists" não foi criado.'));
+      rethrow;
+    }
+  }
+
+  /// Cria a tabela para os assuntos, caso ainda não exista.
+  Future<void> _createTbClubes(Transaction txn) async {
+    try {
+      assert(Debug.print('[INFO] Criando a tabela "$_kTbAssuntos"...'));
+      await txn.execute(
+        'CREATE TABLE IF NOT EXISTS "$_kTbAssuntos" ('
+        // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
+        '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
+        '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
+        '"${DbConst.kDbDataAssuntoKeyArvore}" TEXT'
+        '); ',
+      );
+    } catch (_) {
+      assert(Debug.print('[ERROR] A tabela "$_kTbAssuntos" não foi criada.'));
       rethrow;
     }
   }

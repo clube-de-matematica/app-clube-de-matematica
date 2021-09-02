@@ -53,6 +53,7 @@ dependencies:
   #logging: ^1.0.1 #Manipulador de logs.
   sqflite: ^2.0.0+3
   hive_flutter: ^1.1.0
+  crypto: ^3.0.1
   
 
 dev_dependencies:

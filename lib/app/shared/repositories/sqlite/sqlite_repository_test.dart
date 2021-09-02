@@ -352,6 +352,7 @@ class _SqliteRepositoryTest extends SqliteRepository {
 /// Usado para executar um aplicativo simples e testar o banco de dados.
 /// Não foi possível realizar testes de unidade, por isso este mecanismo.
 Future<void> testSqliteRepository() async {
+  final a = _kSQL;
   runZonedGuarded(() async {
     assert(Debug.call(() async {
       // Inicializar o Flutter.
@@ -419,7 +420,7 @@ Future<void> testSqliteRepository() async {
         Sqflite.devSetDebugModeOn(true);
 
         //final repo = _SqliteRepositoryTest(auth);
-        
+
       } catch (e) {
         Debug.printBetweenLine('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
       }
@@ -428,3 +429,105 @@ Future<void> testSqliteRepository() async {
     Debug.printBetweenLine(er);
   });
 }
+
+const _kSQL =
+
+    /// Cria a tabela para os assuntos, caso ainda não exista.
+    'CREATE TABLE IF NOT EXISTS "$_kTbAssuntos" ('
+    // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
+    '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
+    '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
+    '"${DbConst.kDbDataAssuntoKeyArvore}" TEXT'
+    '); '
+
+    /// Caso ainda não exista, cria a visualização para "consolidar" os dados dos assuntos.
+    'CREATE VIEW IF NOT EXISTS "$_kViewAssuntos" AS '
+    'SELECT '
+    //'"$_kTbAssuntosColId", '
+    '"${DbConst.kDbDataAssuntoKeyTitulo}", '
+    '"${DbConst.kDbDataAssuntoKeyArvore}" '
+    'FROM "$_kTbAssuntos" '
+    'ORDER BY '
+    // Concatenar o título do assunto ao final da árvore para fazer a ordenação.
+    '("${DbConst.kDbDataAssuntoKeyArvore}" || \'/\' '
+    '|| "${DbConst.kDbDataAssuntoKeyTitulo}") ASC, '
+    // Se a árvore for nula, a concatenação também será nula. Nesse caso, o título do
+    // assunto permitirá a ordenação desses valores nulos.
+    '"${DbConst.kDbDataAssuntoKeyTitulo}" ASC'
+    '; '
+
+    /// Cria a tabela para os itens, caso ainda não exista.
+    'CREATE TABLE IF NOT EXISTS "$_kTbItens" ('
+    '"${DbConst.kDbDataItemKeyId}" VARCHAR PRIMARY KEY NOT NULL, '
+    '"${DbConst.kDbDataItemKeyAno}" INTEGER NOT NULL, '
+    '"${DbConst.kDbDataItemKeyAssuntos}" VARCHAR NOT NULL, '
+    '"${DbConst.kDbDataItemKeyEnunciado}" TEXT NOT NULL, '
+    '"${DbConst.kDbDataItemKeyAlternativas}" TEXT NOT NULL, '
+    '"${DbConst.kDbDataItemKeyGabarito}" VARCHAR NOT NULL, '
+    '"${DbConst.kDbDataItemKeyDificuldade}" VARCHAR NOT NULL, '
+    '"${DbConst.kDbDataItemKeyImagensEnunciado}" TEXT'
+    '); '
+
+    /// Cria a tabela para as referências dos itens, caso ainda não exista.
+    'CREATE TABLE IF NOT EXISTS "$_kTbItensRef" ('
+    '"$_kTbItensRefColId" VARCHAR PRIMARY KEY NOT NULL, '
+    '"$_kTbItensRefColNivel" INTEGER NOT NULL, '
+    '"$_kTbItensRefColIndice" INTEGER NOT NULL, '
+    '"$_kTbItensRefColReferencia" VARCHAR NOT NULL, '
+    'FOREIGN KEY("$_kTbItensRefColReferencia") REFERENCES "$_kTbItens"("${DbConst.kDbDataItemKeyId}") ON DELETE RESTRICT'
+    '); '
+
+    /// Caso ainda não exista, cria a visualização para "consolidar" os dados dos itens.
+    /// Esta visualização conterá um registro para cada aplicação do item. Isso significa
+    /// que se o item foi aplicado em dois cadernos, possuirá um registro para cada um destes.
+    'CREATE VIEW IF NOT EXISTS "$_kViewAllItens" AS '
+    'SELECT '
+    '"$_kTbItensRef"."$_kTbItensRefColId" AS "${DbConst.kDbDataItemKeyId}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyAno}", '
+    '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataItemKeyNivel}", '
+    '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataItemKeyIndice}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyAssuntos}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyEnunciado}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyAlternativas}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyGabarito}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyDificuldade}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyImagensEnunciado}" '
+    'FROM "$_kTbItensRef" '
+    'INNER JOIN "$_kTbItens" ON "$_kTbItens"."${DbConst.kDbDataItemKeyId}" = "$_kTbItensRef"."$_kTbItensRefColReferencia"'
+    '; '
+
+    /// Caso ainda não exista, cria a visualização para "consolidar" os dados dos itens,
+    /// excluindo-se os casos de reaplicação.
+    /// Nesta visualização, mesmo que um item tenha sido aplicado em mais de um caderno,
+    /// ele possuirá um único registro.
+    'CREATE VIEW IF NOT EXISTS "$_kViewDistinctItens" AS '
+    'SELECT '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyId}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyAno}", '
+    '"$_kTbItensRef"."$_kTbItensRefColNivel" AS "${DbConst.kDbDataItemKeyNivel}", '
+    '"$_kTbItensRef"."$_kTbItensRefColIndice" AS "${DbConst.kDbDataItemKeyIndice}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyAssuntos}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyEnunciado}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyAlternativas}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyGabarito}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyDificuldade}", '
+    '"$_kTbItens"."${DbConst.kDbDataItemKeyImagensEnunciado}" '
+    'FROM "$_kTbItens" '
+    'INNER JOIN "$_kTbItensRef" ON "$_kTbItensRef"."$_kTbItensRefColId" = "$_kTbItens"."${DbConst.kDbDataItemKeyId}"'
+    '; '
+
+    /// Cria um gatilho para impedir a sobreposição acidental dos registros já
+    /// inseridos na tabela de itens.
+    'CREATE TRIGGER "trigger_insert_in_tb_itens_if_not_exists" BEFORE INSERT ON "$_kTbItens" '
+    'WHEN EXISTS (SELECT 1 FROM "$_kTbItens" WHERE "${DbConst.kDbDataItemKeyId}" = NEW."${DbConst.kDbDataItemKeyId}") '
+    'BEGIN '
+    'SELECT RAISE(ABORT,"A tabela $_kTbItens já possui um registro com o id fornecido."); '
+    'END; '
+
+    /// Cria a tabela para os assuntos, caso ainda não exista.
+    'CREATE TABLE IF NOT EXISTS "$_kTbAssuntos" ('
+    // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
+    '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
+    '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
+    '"${DbConst.kDbDataAssuntoKeyArvore}" TEXT'
+    '); ';
