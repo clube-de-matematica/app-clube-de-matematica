@@ -26,10 +26,10 @@ typedef DataQuestao = Map<String, dynamic>;
 /// * [DbConst.kDbDataAlternativaKeySequencial];
 /// * [DbConst.kDbDataAlternativaKeyTipo]; e
 /// * [DbConst.kDbDataAlternativaKeyConteudo].
-typedef DataAlternativa = Map<String, String>;
+typedef DataAlternativa = Map<String, dynamic>;
 
 /// Super tipo para as imagens usadas no enunciado e nas alternativas do item (questão).
-/// O valor [dynamic] pode ser [String] para [DbConst.kDbDataImagemKeyNome] ou [int]
+/// O valor [dynamic] pode ser [String] para [DbConst.kDbDataImagemKeyBase64] ou [int]
 /// [DbConst.kDbDataImagemKeyLargura] e [DbConst.kDbDataImagemKeyAltura].
 typedef DataImagem = Map<String, dynamic>;
 
@@ -110,7 +110,7 @@ abstract class DbConst {
   /// Chave de [DataImagem] para o nome (com extenção) da imágem usada no enunciado ou na
   /// alternativa do item (questão).
   /// Os valores para essa chave são do tipo [String].
-  static const kDbDataImagemKeyNome = "nome";
+  static const kDbDataImagemKeyBase64 = "nome";
 
   /// Chave de [DataImagem] para a largura da imágem usada no enunciado ou na
   /// alternativa do item (questão).

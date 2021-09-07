@@ -95,7 +95,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     _name = null;
     _email = null;
     _urlAvatar = null;
-    await _deleteImageAvatar();
+    if (!kIsWeb) await _deleteImageAvatar();
     _pathAvatar = null;
     notifyListeners();
   }

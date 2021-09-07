@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:clubedematematica/app/shared/repositories/sqlite/sqlite_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -13,21 +12,13 @@ import 'app/clube_de_matematica_widget.dart';
 import 'app/shared/models/debug.dart';
 import 'app/shared/models/exceptions/error_handler.dart';
 
+bool get _usarFirebaseCrashlytics => (!Debug.inDebugger || false) && !kIsWeb;
+
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  final db = FirebaseFirestore.instance;
-  await testSqliteRepository();
-/*   await db.collection('teste').doc('1234567890').set({
-    'timestemp': FieldValue.serverTimestamp(),
-    'adms': [
-      {'email': '12345@gmail.com', 'uid': '12345'},
-      {'email': '54321@gmail.com', 'uid': '54321'},
-    ],
-  });
-  final Timestamp doc =
-      (await db.collection('teste').doc('1234567890').get()).data()!['teste'];
-  final DateTime date = doc.toDate(); */
+  //WidgetsFlutterBinding.ensureInitialized();
+  //await Firebase.initializeApp();
+  //final db = FirebaseFirestore.instance;
+  //await testSqliteRepository();
   runZonedGuarded<Future<void>>(
     () async {
       ErrorHandler.runApp(
@@ -43,7 +34,7 @@ void main() async {
           ErrorHandler.oldOnError?.call(details);
 
           //Executar o comportamento personalizado.
-          if (!Debug.inDebugger && true) {
+          if (_usarFirebaseCrashlytics) {
             if (FirebaseCrashlytics.instance.isCrashlyticsCollectionEnabled) {
               FirebaseCrashlytics.instance.recordError(
                 details.exceptionAsString(),
@@ -96,7 +87,8 @@ Future<void> _init() async {
   ///para fazer upload de relatórios existentes, mesmo quando a coleta automática de dados
   ///está desativada. Use [FirebaseCrashlytics.deleteUnsentReports] para excluir quaisquer
   ///relatórios armazenados no dispositivo sem enviá-los ao Crashlytics.
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  if (_usarFirebaseCrashlytics)
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   //=======================================================================================
   //=======================================================================================
 }

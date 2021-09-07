@@ -54,6 +54,7 @@ dependencies:
   sqflite: ^2.0.0+3
   hive_flutter: ^1.1.0
   crypto: ^3.0.1
+  supabase_flutter: ^0.2.6
   
 
 dev_dependencies:

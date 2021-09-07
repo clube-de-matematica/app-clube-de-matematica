@@ -122,4 +122,14 @@ abstract class IDbRepository {
     VoidCallback? onSuccess,
     FutureOr<bool> onError(Object error)?, */
   });
+
+  /// 
+
+  Future<DataCollection> getAssuntos();
+
+  Future<DataCollection> getQuestoes();
+
+  Future<bool> setAssunto(DataDocument data);
+
+  Future<bool> setQuestao(DataDocument data);
 }

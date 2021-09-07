@@ -193,6 +193,30 @@ class FirestoreRepository with DbRepositoryMixin implements IDbRepository {
     return data;
   }
 
+  @override
+  Future<DataCollection> getAssuntos() {
+    // TODO: implement getAssuntos
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DataCollection> getQuestoes() {
+    // TODO: implement getQuestoes
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setAssunto(DataDocument data) {
+    // TODO: implement setAssunto
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setQuestao(DataDocument data) {
+    // TODO: implement setQuestao
+    throw UnimplementedError();
+  }
+
   // @override
   // String getDocId(ref) => (ref as DocumentReference).id;
 

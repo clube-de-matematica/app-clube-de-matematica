@@ -29,7 +29,7 @@ typedef DataQuestao = Map<String, dynamic>;
 typedef DataAlternativa = Map<String, String>;
 
 /// Super tipo para as imagens usadas no enunciado e nas alternativas da questão.
-/// O valor [dynamic] pode ser [String] para [DbConst.kDbDataImagemKeyNome] ou [int]
+/// O valor [dynamic] pode ser [String] para [DbConst.kDbDataImagemKeyBase64] ou [int]
 /// [DbConst.kDbDataImagemKeyLargura] e [DbConst.kDbDataImagemKeyAltura].
 typedef DataImagem = Map<String, dynamic>;
 
@@ -92,6 +92,25 @@ abstract class DbConst {
  * ****************************************************************************************
 **/
 
+  /// Chave de [DataImagem] para a codificação em string base64 da imágem usada no enunciado 
+  /// ou na alternativa do item (questão).
+  /// Os valores para essa chave são do tipo [String].
+  static const kDbDataImagemKeyBase64 = "base64";
+
+  /// Chave de [DataImagem] para a largura da imágem usada no enunciado ou na
+  /// alternativa do item (questão).
+  /// Os valores para essa chave são do tipo [int].
+  static const kDbDataImagemKeyLargura = "largura";
+
+  /// Chave de [DataImagem] para a altura da imágem usada no enunciado ou na
+  /// alternativa do item (questão).
+  /// Os valores para essa chave são do tipo [int].
+  static const kDbDataImagemKeyAltura = "altura";
+
+/** 
+ * ****************************************************************************************
+**/
+
   /// Nome da coleção (ou tabela) que contém os assuntos ligados a cada questão.
   /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataAssunto]>.
   static const kDbDataCollectionAssuntos = "assuntos";
@@ -105,7 +124,7 @@ abstract class DbConst {
   static const kDbDataAssuntoKeyTitulo = "assunto";
 
   /// Nome do campo para a lista com a hierarquia de tópicos para o assunto, iniciando pela 
-  /// unidade. O último elemento é o próprio assunto. Será NULL se o assunto for uma unidade.
+  /// unidade. A lista não contém o assunto. Será uma lista vazia se o assunto for uma unidade.
   /// Os valores para esse campo são do tipo [DataHierarquia].
   static const kDbDataAssuntoKeyHierarquia = "hierarquia";
 

@@ -59,7 +59,6 @@ abstract class _ImagemQuestaoRepositoryBase with Store {
   ///Somente para Android e IOS.
   ///Retorna um arquivo de imágem.
   ///Se o arquivo da imágem não estiver salvo no dispositivo, será feito o download.
-  ///[nome] não pode ser nulo.
   ///Retorna `null` se ocorrer algo errado.
   Future<File?> getImagemFile(String nome) async {
     if (!kIsWeb) {

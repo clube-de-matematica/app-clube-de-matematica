@@ -195,7 +195,7 @@ class _SqliteRepositoryTest extends SqliteRepository {
             DbConst.kDbDataQuestaoKeyDificuldadeValBaixa,
         DbConst.kDbDataQuestaoKeyImagensEnunciado: [
           {
-            DbConst.kDbDataImagemKeyNome: '2019PF1N1Q01.PNG',
+            DbConst.kDbDataImagemKeyBase64: '2019PF1N1Q01.PNG',
             DbConst.kDbDataImagemKeyAltura: 300,
             DbConst.kDbDataImagemKeyLargura: 200
           }
@@ -346,6 +346,30 @@ class _SqliteRepositoryTest extends SqliteRepository {
     Debug.print('O registro ${result ? "" : "não "}foi inserido.');
     assert(await _dbCloseAndDelete());
     return result;
+  }
+
+  @override
+  Future<DataCollection> getAssuntos() {
+    // TODO: implement getAssuntos
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DataCollection> getQuestoes() {
+    // TODO: implement getQuestoes
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setAssunto(DataDocument data) {
+    // TODO: implement setAssunto
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setQuestao(DataDocument data) {
+    // TODO: implement setQuestao
+    throw UnimplementedError();
   }
 }
 

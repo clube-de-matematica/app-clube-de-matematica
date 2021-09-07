@@ -17,13 +17,13 @@ abstract class _ImagemQuestaoBase with Store {
 
   // ignore: unused_element
   _ImagemQuestaoBase.fromJson(Map<String, dynamic> json)
-      : nome = json[DbConst.kDbDataImagemKeyNome],
+      : nome = json[DbConst.kDbDataImagemKeyBase64],
         width = json[DbConst.kDbDataImagemKeyLargura] as double,
         height = json[DbConst.kDbDataImagemKeyAltura] as double;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data[DbConst.kDbDataImagemKeyNome] = this.nome;
+    data[DbConst.kDbDataImagemKeyBase64] = this.nome;
     data[DbConst.kDbDataImagemKeyLargura] = this.width;
     data[DbConst.kDbDataImagemKeyAltura] = this.height;
     return data;

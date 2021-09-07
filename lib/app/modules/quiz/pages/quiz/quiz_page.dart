@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:clubedematematica/app/shared/repositories/firebase/firestore_repository.dart';
+import 'package:clubedematematica/app/shared/repositories/supabase/firebase_to_supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -31,6 +33,10 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
 
   @override
   Widget build(BuildContext context) {
+
+    //FirebaseToSupabase.migrarAsuntos();
+    //FirebaseToSupabase.migrarQuestoes();
+    
     return MyDrawer(
       appBar: QuizAppBar(controller),
       body: Padding(
