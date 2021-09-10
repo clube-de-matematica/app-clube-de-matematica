@@ -83,21 +83,6 @@ mixin _$Filtros on _FiltrosBase, Store {
     });
   }
 
-  final _$dificuldadesAtom = Atom(name: '_FiltrosBase.dificuldades');
-
-  @override
-  ObservableSet<OpcaoFiltro> get dificuldades {
-    _$dificuldadesAtom.reportRead();
-    return super.dificuldades;
-  }
-
-  @override
-  set dificuldades(ObservableSet<OpcaoFiltro> value) {
-    _$dificuldadesAtom.reportWrite(value, super.dificuldades, () {
-      super.dificuldades = value;
-    });
-  }
-
   final _$_FiltrosBaseActionController = ActionController(name: '_FiltrosBase');
 
   @override
@@ -139,7 +124,6 @@ mixin _$Filtros on _FiltrosBase, Store {
 assuntos: ${assuntos},
 anos: ${anos},
 niveis: ${niveis},
-dificuldades: ${dificuldades},
 allFilters: ${allFilters},
 totalSelecinado: ${totalSelecinado},
 allItens: ${allItens},

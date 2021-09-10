@@ -16,7 +16,7 @@ class EnunciadoItem extends StatelessWidget {
 
   final QuizController controller;
 
-  Questao get item => controller.item;
+  Questao get item => controller.questao;
 
   @override
   Widget build(BuildContext context) {

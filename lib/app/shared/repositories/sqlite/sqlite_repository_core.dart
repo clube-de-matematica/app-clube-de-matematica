@@ -1,4 +1,4 @@
-part of 'sqlite_repository.dart';
+/* part of 'sqlite_repository.dart';
 
 /// O objeto usado para definir ações a serem executadas dentro da tranzação [txn].
 typedef _DbTansactionActions = Future<void> Function(Transaction txn);
@@ -482,3 +482,4 @@ abstract class _SqliteRepositoryCore {
     }
   }
 }
+ */

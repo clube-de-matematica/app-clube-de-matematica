@@ -9,11 +9,11 @@ part of 'quiz_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$QuizController on _QuizControllerBase, Store {
-  Computed<String?>? _$alternativaSelecionadaComputed;
+  Computed<int?>? _$alternativaSelecionadaComputed;
 
   @override
-  String? get alternativaSelecionada => (_$alternativaSelecionadaComputed ??=
-          Computed<String?>(() => super.alternativaSelecionada,
+  int? get alternativaSelecionada => (_$alternativaSelecionadaComputed ??=
+          Computed<int?>(() => super.alternativaSelecionada,
               name: '_QuizControllerBase.alternativaSelecionada'))
       .value;
   Computed<List<Questao>>? _$itensFiltradosComputed;
@@ -23,12 +23,13 @@ mixin _$QuizController on _QuizControllerBase, Store {
           Computed<List<Questao>>(() => super.itensFiltrados,
               name: '_QuizControllerBase.itensFiltrados'))
       .value;
-  Computed<Questao>? _$itemComputed;
+  Computed<Questao>? _$questaoComputed;
 
   @override
-  Questao get item => (_$itemComputed ??=
-          Computed<Questao>(() => super.item, name: '_QuizControllerBase.item'))
-      .value;
+  Questao get questao =>
+      (_$questaoComputed ??= Computed<Questao>(() => super.questao,
+              name: '_QuizControllerBase.questao'))
+          .value;
   Computed<int>? _$indiceComputed;
 
   @override
@@ -84,13 +85,13 @@ mixin _$QuizController on _QuizControllerBase, Store {
       Atom(name: '_QuizControllerBase._alternativaSelecionada');
 
   @override
-  String? get _alternativaSelecionada {
+  int? get _alternativaSelecionada {
     _$_alternativaSelecionadaAtom.reportRead();
     return super._alternativaSelecionada;
   }
 
   @override
-  set _alternativaSelecionada(String? value) {
+  set _alternativaSelecionada(int? value) {
     _$_alternativaSelecionadaAtom
         .reportWrite(value, super._alternativaSelecionada, () {
       super._alternativaSelecionada = value;
@@ -112,7 +113,7 @@ mixin _$QuizController on _QuizControllerBase, Store {
   }
 
   @override
-  void _setAlternativaSelecionada(String? valor) {
+  void _setAlternativaSelecionada(int? valor) {
     final _$actionInfo = _$_QuizControllerBaseActionController.startAction(
         name: '_QuizControllerBase._setAlternativaSelecionada');
     try {
@@ -127,7 +128,7 @@ mixin _$QuizController on _QuizControllerBase, Store {
     return '''
 alternativaSelecionada: ${alternativaSelecionada},
 itensFiltrados: ${itensFiltrados},
-item: ${item},
+questao: ${questao},
 indice: ${indice},
 textoContadorBarOpcoesItem: ${textoContadorBarOpcoesItem},
 podeAvancar: ${podeAvancar},

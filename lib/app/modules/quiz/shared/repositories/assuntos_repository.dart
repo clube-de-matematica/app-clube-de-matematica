@@ -46,7 +46,7 @@ class AssuntosRepository {
     _isLoading = true;
     DataCollection resultado;
     try {
-      resultado = await dbRepository.getCollection(CollectionType.assuntos);
+      resultado = await dbRepository.getAssuntos();
     } catch (e) {
       assert(Debug.printBetweenLine(
           "Erro a buscar os dados da coleção ${CollectionType.assuntos.name}."));
@@ -59,38 +59,11 @@ class AssuntosRepository {
       return List<Assunto>.empty();
     } else {
       resultado.forEach((data) {
-        ///A auxência da árvore hierárquica indica que o assunto é uma unidade.
-        ///Se o assunto não for uma unidade será criado um [Assunto] com o título do topo
-        ///da hierarquia de assuntos. Caso contrário, primeiramente será criado um [Assunto]
-        ///para a unidade - nesse caso a arvore será uma lista vazia.
-        if (data.containsKey(DbConst.kDbDataAssuntoKeyHierarquia)) {
-          Assunto(
-              arvore: List<String>.empty(),
-
-              ///`map[DB_DOC_ASSUNTO_ARVORE]` vem como [List<dynamic>].
-              titulo: data[DbConst.kDbDataAssuntoKeyHierarquia][0]
-                  as String //Tipado para [String].
-              );
-        }
-
-        ///Criar um [Assunto] com base no [map].
+        ///Criar um [Assunto] com base em [data].
         Assunto.fromJson(data);
       });
       _isLoading = false;
       return assuntosCarregados;
-    }
-  }
-
-  ///Insere um novo assunto no banco de dados.
-  ///Retorna `true` se o assunto for inserido com suceso.
-  Future<bool> inserirAssunto(Assunto assunto) async {
-    try {
-      return await dbRepository.setDocumentIfNotExist(
-          CollectionType.assuntos, assunto.toJson());
-    } catch (e) {
-      assert(Debug.printBetweenLine("Erro ao inserir o assunto $assunto."));
-      assert(Debug.print(e));
-      return false;
     }
   }
 }

@@ -7,11 +7,10 @@ import 'shared/repositories/firebase/auth_repository.dart';
 import 'shared/theme/tema.dart';
 import 'shared/utils/constantes.dart';
 
-///O [Widget] principal do aplicativo.
+/// O [Widget] principal do aplicativo.
 class ClubeDeMatematicaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-  //throw "Testando o envio de relatório de erro.";
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: APP_NOME,

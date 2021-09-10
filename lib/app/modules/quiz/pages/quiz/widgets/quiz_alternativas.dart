@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/modules/quiz/shared/models/imagem_questao_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -22,7 +23,7 @@ class QuizAlternativas extends StatelessWidget {
   Widget build(_) {
     return Observer(builder: (_) {
       final List<Widget> lista = <Widget>[];
-      controller.item.alternativas.forEach((alternativa) {
+      controller.questao.alternativas.forEach((alternativa) {
         lista.add(GestureDetector(
           onTap: () => controller.onTapAlternativa(alternativa),
           child: AnimatedContainer(
@@ -30,10 +31,9 @@ class QuizAlternativas extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color:
-                  controller.alternativaSelecionada == alternativa.alternativa
-                      ? tema.colorScheme.background.withOpacity(0.5)
-                      : tema.colorScheme.onSurface.withOpacity(0.07),
+              color: controller.alternativaSelecionada == alternativa.sequencial
+                  ? tema.colorScheme.background.withOpacity(0.5)
+                  : tema.colorScheme.onSurface.withOpacity(0.07),
               borderRadius: const BorderRadius.all(const Radius.circular(4)),
             ),
             //Estrutura do item.
@@ -56,11 +56,11 @@ class QuizAlternativas extends StatelessWidget {
             CircleAvatar(
               radius: 15,
               backgroundColor: tema.scaffoldBackgroundColor,
-              child: Text(alternativa.alternativa, style: textStyle),
+              child: Text(alternativa.identificador, style: textStyle),
             ),
           ],
         ),
-        //Estrutura do conteúdo do item.
+        //Estrutura do conteúdo da alternativa.
         Expanded(
             child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -69,11 +69,11 @@ class QuizAlternativas extends StatelessWidget {
             Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: Builder(builder: (_) {
-                  //Caso o conteúdo do ítem seja texto.
+                  //Caso o conteúdo da alternativa seja texto.
                   if (alternativa.isTipoTexto) {
                     KaTeX tex = KaTeX(
-                      laTeXCode: alternativa.valorSeTexto!,
-                      /* laTeXCode: Text(alternativa.valorSeTexto!,
+                      laTeXCode: alternativa.conteudo as String,
+                      /* laTeXCode: Text(alternativa.conteudo as String,
                           textAlign: TextAlign.justify, style: textStyle), */
                     );
                     return QuizTextFromBlocs(
@@ -83,9 +83,9 @@ class QuizAlternativas extends StatelessWidget {
                           : TextAlign.justify,
                     );
                   }
-                  //Caso o conteúdo do ítem seja imágem.
+                  //Caso o conteúdo da alternativa seja imágem.
                   else if (alternativa.isTipoImagem) {
-                    return QuizComponenteImagem(alternativa.valorSeImagem!);
+                    return QuizComponenteImagem(alternativa.conteudo as ImagemQuestao);
                   } else
                     return const SizedBox();
                 }))

@@ -1,83 +1,98 @@
+import 'dart:convert';
+
 import '../../../../shared/models/exceptions/my_exception.dart';
 import '../../../../shared/utils/strings_db.dart';
 import 'imagem_questao_model.dart';
 
-///Tipos de alternativas.
+/// Tipos de alternativas.
 enum TypeAlternativa {
   texto,
   imagem,
 }
 
-///Contém as propriedades de uma alternativa do questao.
+extension ExtensionTypeAlternativa on TypeAlternativa {
+  /// Retorna o ID correspondente ao tipo no banco de dados.
+  int toInt() {
+    switch (this) {
+      case TypeAlternativa.texto:
+        return 0;
+      case TypeAlternativa.imagem:
+        return 1;
+    }
+  }
+}
+
+/// Contém as propriedades de uma alternativa do questao.
 class Alternativa {
-  final String alternativa;
+  final String idQuestao;
+  final int sequencial;
   final TypeAlternativa tipo;
-  final String? valorSeTexto;
-  final ImagemQuestao? valorSeImagem;
+  final conteudo;
 
   Alternativa({
-    required this.alternativa,
+    required this.idQuestao,
+    required this.sequencial,
     required this.tipo,
-    this.valorSeTexto,
-    this.valorSeImagem,
-  }) : assert((valorSeTexto != null) != /* XOR */ (valorSeImagem != null));
+    required this.conteudo,
+  });
 
-  ///Retorna uma Instância de [Alternativa] a partir de um `Map<String, dynamic>`.
-  factory Alternativa.fromJson(Map<String, dynamic> json) => Alternativa(
-        alternativa: json[DbConst.kDbDataAlternativaKeySequencial],
-        tipo: parseTypeAlternativa(json[DbConst.kDbDataAlternativaKeyTipo]),
-        valorSeTexto: json[DbConst.kDbDataAlternativaKeyTipo] ==
-                DbConst.kDbDataAlternativaKeyTipoValTexto
-            ? json[DbConst.kDbDataAlternativaKeyConteudo]
-            : null,
-        valorSeImagem: json[DbConst.kDbDataAlternativaKeyTipo] ==
-                DbConst.kDbDataAlternativaKeyTipoValImagem
-            ? ImagemQuestao.fromJson(
-                json[DbConst.kDbDataAlternativaKeyConteudo])
-            : null,
-      );
+  /// Retorna uma Instância de [Alternativa] a partir de um `Map<String, dynamic>`.
+  factory Alternativa.fromJson(DataAlternativa json) {
+    final idQuestao = json[DbConst.kDbDataAlternativaKeyIdQuestao] as String;
+    final sequencial = json[DbConst.kDbDataAlternativaKeySequencial] as int;
+    final conteudo;
+    if (json[DbConst.kDbDataAlternativaKeyTipo] as int ==
+        DbConst.kDbDataAlternativaKeyTipoValTexto)
+      conteudo = json[DbConst.kDbDataAlternativaKeyConteudo];
+    else {
+      final dataImagem =
+          jsonDecode(json[DbConst.kDbDataAlternativaKeyConteudo]) as DataImagem;
+      dataImagem[ImagemQuestao.kKeyName] =
+          '${idQuestao}_alternativa_$sequencial.png';
+      conteudo = ImagemQuestao.fromJson(dataImagem);
+    }
 
-  ///Retorna um [TypeAlternativa] com base em [tipo].
-  static TypeAlternativa parseTypeAlternativa(String tipo) {
+    return Alternativa(
+      idQuestao: idQuestao,
+      sequencial: sequencial,
+      tipo:
+          parseTypeAlternativa(json[DbConst.kDbDataAlternativaKeyTipo] as int),
+      conteudo: conteudo,
+    );
+  }
+
+  /// Retorna um [TypeAlternativa] com base em [tipo].
+  static TypeAlternativa parseTypeAlternativa(int tipo) {
     if (tipo == DbConst.kDbDataAlternativaKeyTipoValTexto)
       return TypeAlternativa.texto;
     if (tipo == DbConst.kDbDataAlternativaKeyTipoValImagem)
       return TypeAlternativa.imagem;
     throw MyException(
-      "String inválida!",
+      "Tipo inválido!",
       originClass: "Alternativa",
       originField: "parseTypeAlternativa()",
       fieldDetails: "tipo == $tipo",
     );
   }
 
-  ///Retorna uma string com base em [tipo].
-  String tipoToString(TypeAlternativa tipo) {
-    switch (tipo) {
-      case TypeAlternativa.texto:
-        return DbConst.kDbDataAlternativaKeyTipoValTexto;
-      case TypeAlternativa.imagem:
-        return DbConst.kDbDataAlternativaKeyTipoValImagem;
-    }
-  }
-
-  ///Retorna `true` se a alternativa for do tipo "texto".
+  /// Retorna `true` se a alternativa for do tipo "texto".
   bool get isTipoTexto => tipo == TypeAlternativa.texto;
 
-  ///Retorna `true` se a alternativa for do tipo "imagem".
+  /// Retorna `true` se a alternativa for do tipo "imagem".
   bool get isTipoImagem => tipo == TypeAlternativa.imagem;
 
-  ///Retorna uma [String] com o texto da alternativa se for do tipo "texto".
-  ///Se for do tipo "imagem", retorna um [ImagemQuestao].
-  get valor => isTipoTexto ? valorSeTexto : valorSeImagem;
+  /// Retorna o identificador da alternativa ("A", "B", "C", "D" ou "E").
+  String get identificador => 'ABCDE'.substring(sequencial, sequencial + 1);
 
-  ///Retorna um json com os dados da alternativa.
+  /// Retorna um json com os dados da alternativa.
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data[DbConst.kDbDataAlternativaKeySequencial] = this.alternativa;
-    data[DbConst.kDbDataAlternativaKeyTipo] = tipoToString(this.tipo);
-    data[DbConst.kDbDataAlternativaKeyConteudo] =
-        isTipoTexto ? this.valorSeTexto : valorSeImagem!.toJson();
+    final DataAlternativa data = DataAlternativa();
+    data[DbConst.kDbDataAlternativaKeyIdQuestao] = this.idQuestao;
+    data[DbConst.kDbDataAlternativaKeySequencial] = this.sequencial;
+    data[DbConst.kDbDataAlternativaKeyTipo] = this.tipo.toInt();
+    data[DbConst.kDbDataAlternativaKeyConteudo] = isTipoTexto
+        ? this.conteudo
+        : jsonEncode((this.conteudo as ImagemQuestao).toJson());
     return data;
   }
 }

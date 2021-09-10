@@ -1,7 +1,5 @@
 import 'dart:ui';
 
-import 'package:clubedematematica/app/shared/repositories/firebase/firestore_repository.dart';
-import 'package:clubedematematica/app/shared/repositories/supabase/firebase_to_supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -17,16 +15,16 @@ import 'widgets/quiz_bar_opcoes_item.dart';
 import 'widgets/quiz_bottom_bar.dart';
 import 'widgets/quiz_enunciado_item.dart';
 
-//Esta é a página de exibição de cada item a ser resolvido.
+/// Esta é a página de exibição de cada item a ser resolvido.
 class QuizPage extends StatefulWidget {
   @override
   _QuizPageState createState() => _QuizPageState();
 }
 
-///[ModularState] irá criar um [controller] a partir de um [Bind] do tipo
-///[QuizController] disponível em um dos módulos da hierarquia (quando houver mais de
-///um). A vantagem de usar [ModularState] é que automáticamente será feito o `dispose` de
-///[controller] junto com o de [_QuizPageState].
+/// [ModularState] irá criar um [controller] a partir de um [Bind] do tipo [QuizController] 
+/// disponível em um dos módulos da hierarquia (quando houver mais de um). A vantagem de usar 
+/// [ModularState] é que automáticamente será feito o `dispose` de [controller] junto com o 
+/// de [_QuizPageState].
 class _QuizPageState extends ModularState<QuizPage, QuizController> {
   ThemeData get tema => Modular.get<MeuTema>().temaClaro;
   TextStyle? get textStyle => tema.textTheme.bodyText1;
@@ -43,14 +41,14 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Column(
             children: <Widget>[
-              ///Contém um indicador do número de questões à esquerda e, à direita,
-              ///um botão para exibir as opções disponíveis para a questão.
+              // Contém um indicador do número de questões à esquerda e, à direita,
+              // um botão para exibir as opções disponíveis para a questão.
               QuizBarOpcoesItem(controller),
 
-              ///Linha divisória.
+              // Linha divisória.
               const Divider(height: double.minPositive),
 
-              ///O `FutureBuilder` aguardará até que os itens sejam carregados.
+              // O `FutureBuilder` aguardará até que os itens sejam carregados.
               FutureBuilder(
                   future: controller.initialized,
                   builder: (_, snapshot) {
@@ -104,23 +102,23 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
     );
   }
 
-  ///Retorna uma lista com os componentes do item e um botão para confirmar a alternativa
-  ///escolhida.
+  /// Retorna uma lista com os componentes do item e um botão para confirmar a alternativa
+  /// escolhida.
   List<Widget> _ifItensFiltradosIsNotEmpty() {
     return <Widget>[
-      ///Enunciado da questão.
+      // Enunciado da questão.
       Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: EnunciadoItem(controller),
       ),
 
-      ///Opções de resposta.
+      // Opções de resposta.
       QuizAlternativas(controller),
     ];
   }
 
-  ///Retorna uma lista com um botão para exibir a página de filtros e um texto informando
-  ///que não foram encontrados itens a serem exibidos.
+  /// Retorna uma lista com um botão para exibir a página de filtros e um texto informando
+  /// que não foram encontrados itens a serem exibidos.
   List<Widget> _ifItensFiltradosIsEmpty() {
     return <Widget>[
       Text(

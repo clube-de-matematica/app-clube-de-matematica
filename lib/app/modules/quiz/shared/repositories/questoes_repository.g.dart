@@ -40,17 +40,6 @@ mixin _$QuestoesRepository on _QuestoesRepositoryBase, Store {
     return _$carregarQuestoesAsyncAction.run(() => super.carregarQuestoes());
   }
 
-  final _$_carregarQuestaoReferenciadaAsyncAction =
-      AsyncAction('_QuestoesRepositoryBase._carregarQuestaoReferenciada');
-
-  @override
-  Future<Questao?> _carregarQuestaoReferenciada(
-      List<Map<String, dynamic>> dbQuestoesData,
-      Map<String, dynamic> questaoReferenciadora) {
-    return _$_carregarQuestaoReferenciadaAsyncAction.run(() => super
-        ._carregarQuestaoReferenciada(dbQuestoesData, questaoReferenciadora));
-  }
-
   final _$_QuestoesRepositoryBaseActionController =
       ActionController(name: '_QuestoesRepositoryBase');
 

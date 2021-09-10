@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart' show IterableExtension;
 import 'package:mobx/mobx.dart';
 
 import '../../../../shared/models/debug.dart';
@@ -34,7 +33,7 @@ abstract class _QuestoesRepositoryBase with Store {
   /// Ficará ativa até que a condição seja satisfeita pela primeira vez.
   /// Após isso ela executa o seu método `dispose`.
   Future<List<Questao>> get questoesAsync =>
-      asyncWhen((_) => _questoes.isNotEmpty).then((value) => _questoes);
+      asyncWhen((_) => _questoes.isNotEmpty).then((_) => _questoes);
 
   /// Adiciona um novo [Questao] a [questoes].
   @action
@@ -52,15 +51,6 @@ abstract class _QuestoesRepositoryBase with Store {
       return _questoes.any((element) => element.id == id);
   }
 
-  /// Retorna um elemento de [questoes] com base em [id].
-  /// Retorna `null` se não for encontrado um elemento que satisfaça `element.id == id`.
-  Questao? _getQuestaoById(String id) {
-    if (_questoes.isEmpty)
-      return null;
-    else
-      return _questoes.firstWhereOrNull((element) => element.id == id);
-  }
-
   /// Assim o [Observable] notificará apenas ao final da execução do método.
   /// Buscar as questões no banco de dados e carregar na lista [questoes],
   /// caso ainda não tenham sido carregados.
@@ -69,8 +59,8 @@ abstract class _QuestoesRepositoryBase with Store {
   Future<List<Questao>> carregarQuestoes() async {
     DataCollection resultado;
     try {
-      /// Aguardar o retorno das questões.
-      resultado = await dbRepository.getCollection(CollectionType.questoes);
+      // Aguardar o retorno das questões.
+      resultado = await dbRepository.getQuestoes();
     } catch (e) {
       assert(Debug.printBetweenLine(
           "Erro a buscar os dados da coleção ${CollectionType.questoes.name}."));
@@ -79,80 +69,19 @@ abstract class _QuestoesRepositoryBase with Store {
     }
     if (resultado.isEmpty) return List<Questao>.empty();
 
-    /// Aguardar o carregamento dos assuntos.
+    // Aguardar o carregamento dos assuntos.
     await assuntosRepository.assuntos;
 
-    /// Carregar as questões.
-    /// Não pode ser um `forEach`, pois precisa ser assincrono.
+    // Carregar as questões.
+    // Não pode ser um `forEach`, pois precisa ser assincrono.
     for (var data in resultado) {
       if (!_existeQuestao(data[DbConst.kDbDataQuestaoKeyId])) {
-        if (data.containsKey(DbConst.kDbDataQuestaoKeyReferencia)) {
-          await _carregarQuestaoReferenciada(resultado, data);
-        } else {
-          /// Criar um `Item` com base no `map` e incluir na lista de questões carregadas.
-          /// Não será emitido várias notificações, pois `carregarItens` também é um `action`.
-          _addInQuestoes(
-              Questao.fromJson(data, assuntosRepository.assuntosCarregados));
-        }
+        // Criar um `Questao` com base no `data` e incluir na lista de questões carregadas.
+        // Não será emitido várias notificações, pois `carregarItens` também é um `action`.
+        _addInQuestoes(
+            Questao.fromJson(data));
       }
     }
     return _questoes;
-  }
-
-  /// Assim o [Observable] notificará apenas ao final da execução do método.
-  /// Carrega uma questão referenciada na lista [questoes], caso ainda não tenha sido carregada.
-  @action
-  Future<Questao?> _carregarQuestaoReferenciada(
-    // Retorno de `get()` na coleção das questões.
-    DataCollection dbQuestoesData,
-    // [Map] da questão que faz a referência.
-    DataDocument questaoReferenciadora,
-  ) async {
-    if (dbQuestoesData.isEmpty) return null;
-
-    /// Aguardar o carregamento dos assuntos. Não haverá atraso caso já tenham sido carregados.
-    final assuntos = await assuntosRepository.assuntos;
-    if (assuntos.isEmpty) return null;
-    
-    final idRef = questaoReferenciadora[DbConst.kDbDataQuestaoKeyReferencia];
-
-    // Retornar a questão se ela já estiver carregada.
-    if (_existeQuestao(idRef)) {
-      return _getQuestaoById(idRef);
-    }
-    // Criar e retornar a questão se ele não estiver carregada.
-    else {
-      /// Criar uma cópia dos dados da questão referenciada.
-      final data = DataDocument.from(
-        dbQuestoesData.firstWhere(
-          (element) => element[DbConst.kDbDataQuestaoKeyId] == idRef,
-        ),
-      );
-
-      /// Criar uma entrada para o id da questão referenciada.
-      data[Questao.kKeyIdReferencia] = data[DbConst.kDbDataQuestaoKeyId];
-
-      /// Criar uma entrada para o índice da questão referenciada.
-      data[Questao.kKeyIndiceReferencia] = data[DbConst.kDbDataQuestaoKeyIndice];
-
-      /// Criar uma entrada para o nível da questão referenciada.
-      data[Questao.kKeyNivelReferencia] = data[DbConst.kDbDataQuestaoKeyNivel];
-
-      /// Atualizar com o id da questão que referencia.
-      data[DbConst.kDbDataQuestaoKeyId] =
-          questaoReferenciadora[DbConst.kDbDataQuestaoKeyId];
-
-      /// Atualizar com o índice da questão que referencia.
-      data[DbConst.kDbDataQuestaoKeyIndice] =
-          questaoReferenciadora[DbConst.kDbDataQuestaoKeyIndice];
-
-      /// Atualizar com o nível da questão que referencia.
-      data[DbConst.kDbDataQuestaoKeyNivel] =
-          questaoReferenciadora[DbConst.kDbDataQuestaoKeyNivel];
-
-      final _questao = Questao.fromJson(data, assuntos);
-      _addInQuestoes(_questao);
-      return _questao;
-    }
   }
 }

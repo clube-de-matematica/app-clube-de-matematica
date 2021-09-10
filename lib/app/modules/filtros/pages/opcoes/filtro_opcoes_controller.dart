@@ -5,7 +5,6 @@ import 'package:mobx/mobx.dart';
 
 import '../../../quiz/shared/models/ano_questao_model.dart';
 import '../../../quiz/shared/models/assunto_model.dart';
-import '../../../quiz/shared/models/dificuldade_item_model.dart';
 import '../../../quiz/shared/models/questao_model.dart';
 import '../../../quiz/shared/models/nivel_questao_model.dart';
 import '../../shared/models/filtro_controller_model.dart';
@@ -57,11 +56,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
           (tipo == TiposFiltro.assunto ||
               filtrosTemp.assuntos.isEmpty ||
               filtrosTemp.assuntos
-                  .any((element) => item.assuntos.contains(element.opcao))) &&
-          (tipo == TiposFiltro.dificuldade ||
-              filtrosTemp.dificuldades.isEmpty ||
-              filtrosTemp.dificuldades
-                  .any((element) => item.dificuldade == element.opcao));
+                  .any((element) => item.assuntos.contains(element.opcao)));
     });
   }
 
@@ -78,27 +73,20 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
             ///filtrados ou que são unidade de algum destes.
             .where((a) => filtrosTemp.totalSelecinado == 0
                 ? true
-                : _itensRelacionados.any((item) =>
-                    item.assuntos.any((b) => a == b || a.titulo == b.unidade)));
+                : _itensRelacionados.any((questao) => questao.assuntos
+                    .any((b) => a == b || a.id == b.unidade.id)));
         break;
       case TiposFiltro.nivel:
         opcoesRelacionadas = Nivel.instancias.where((nivel) =>
             filtrosTemp.totalSelecinado == 0
                 ? true
-                : _itensRelacionados.any((item) => item.nivel == nivel));
-        break;
-      case TiposFiltro.dificuldade:
-        opcoesRelacionadas = Dificuldade.instancias.where((dificuldade) =>
-            filtrosTemp.totalSelecinado == 0
-                ? true
-                : _itensRelacionados
-                    .any((item) => item.dificuldade == dificuldade));
+                : _itensRelacionados.any((questao) => questao.nivel == nivel));
         break;
       case TiposFiltro.ano:
         opcoesRelacionadas = Ano.instancias.where((ano) =>
             filtrosTemp.totalSelecinado == 0
                 ? true
-                : _itensRelacionados.any((item) => item.ano == ano));
+                : _itensRelacionados.any((questao) => questao.ano == ano));
         break;
     }
 
@@ -127,7 +115,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
                 ///Adicionar os assuntos que já estão no filtro.
                 ..assuntos.addAll(allFilters[tipo]!
                     .where((element) =>
-                        unidade.titulo == (element.opcao as Assunto).unidade)
+                        unidade.id == (element.opcao as Assunto).unidade.id)
                     .cast<OpcaoFiltroAssunto>())));
 
       ///Adicionar os assuntos que não estão nos filtros em suas respectivas unidades.
@@ -146,7 +134,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
           .forEach((assunto) {
         ///Pegar a unidade correspondente ao assunto.
         (allOpcoes.firstWhere(
-                    (element) => assunto.unidade == element.opcao.titulo)
+                    (element) => assunto.unidade.id == element.opcao.id)
                 as OpcaoFiltroAssuntoUnidade)
             .assuntos
             .add(OpcaoFiltroAssunto(assunto));

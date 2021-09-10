@@ -20,22 +20,20 @@ part 'quiz_controller.g.dart';
 class QuizController = _QuizControllerBase with _$QuizController;
 
 abstract class _QuizControllerBase with Store {
-  final ImagemQuestaoRepository imagemItemRepository;
+  final ImagemQuestaoRepository imagemQuestaoRepository;
   final Filtros filtros;
 
   final _initialized = Completer<bool>();
 
+  /// Índice da questão selecionada em [itensFiltrados].
   @observable
-
-  ///Índice da questão selecionada em [itensFiltrados].
   int _indice = 0;
 
+  /// Indica qual altenativa está selecionada;
   @observable
+  int? _alternativaSelecionada;
 
-  ///Indica qual altenativa está selecionada;
-  String? _alternativaSelecionada;
-
-  _QuizControllerBase(this.imagemItemRepository, this.filtros) {
+  _QuizControllerBase(this.imagemQuestaoRepository, this.filtros) {
     _inicializar();
   }
 
@@ -44,47 +42,41 @@ abstract class _QuizControllerBase with Store {
       await _carregarImagens();
       _initialized.complete(
 
-          ///Impedir que o futuro seja completado antes de passado um segundo.
-          ///Isso é feito para que o indicador de carregamento seja exibido corretamente.
+          // Impedir que o futuro seja completado antes de passado um segundo.
+          // Isso é feito para que o indicador de carregamento seja exibido corretamente.
           await Future.delayed(const Duration(seconds: 1), () => true));
     } catch (e) {
       _initialized.completeError(e);
     }
   }
 
-  ///Quando incompleto indica que ainda não há itens para serem exibidos.
+  /// Quando incompleto indica que ainda não há itens para serem exibidos.
   Future<bool> get initialized => _initialized.future;
 
+  /// Indica qual altenativa está selecionada;
   @computed
+  int? get alternativaSelecionada => _alternativaSelecionada;
 
-  ///Indica qual altenativa está selecionada;
-  String? get alternativaSelecionada => _alternativaSelecionada;
-
+  /// Itens selecionado para serem exibidos.
   @computed
-
-  ///Itens selecionado para serem exibidos.
   List<Questao> get itensFiltrados => filtros.itensFiltrados;
 
+  /// [Questao] em exibição.
   @computed
+  Questao get questao => itensFiltrados[_indice];
 
-  ///[Questao] em exibição.
-  Questao get item => itensFiltrados[_indice];
-
+  /// Retorna o índice da questão selecionada em [itensFiltrados].
   @computed
-
-  ///Retorna o índice da questão selecionada em [itensFiltrados].
   int get indice => _indice;
 
+  /// Idica o item exibido e o total de itesn selecionados.
   @computed
-
-  ///Idica o item exibido e o total de itesn selecionados.
   String get textoContadorBarOpcoesItem =>
       "${indice + 1} de ${itensFiltrados.length}";
 
+  /// Atribui um novo valor para [_indice].
+  /// Se [force] for `true`, [valor] será aplicado independentemente do valor atual de [indice].
   @action
-
-  ///Atribui um novo valor para [_indice].
-  ///Se [force] for `true`, [valor] será aplicado independentemente do valor atual de [indice].
   void _setIndice(int valor, {bool force = false}) {
     if (_indice != valor || force) {
       _indice = valor;
@@ -93,10 +85,9 @@ abstract class _QuizControllerBase with Store {
     }
   }
 
+  /// Atribui um novo valor para [_alternativaSelecionada].
   @action
-
-  ///Atribui um novo valor para [_alternativaSelecionada].
-  void _setAlternativaSelecionada(String? valor) {
+  void _setAlternativaSelecionada(int? valor) {
     if (_alternativaSelecionada == valor) {
       _alternativaSelecionada = null;
     } else {
@@ -104,28 +95,26 @@ abstract class _QuizControllerBase with Store {
     }
   }
 
-  ///Será executado quanda [alternativa] for pressionada.
+  /// Será executado quanda [alternativa] for pressionada.
   void onTapAlternativa(Alternativa alternativa) =>
-      _setAlternativaSelecionada(alternativa.alternativa);
+      _setAlternativaSelecionada(alternativa.sequencial);
 
+  /// Retorna um `bool` que define se há um próximo item.
   @computed
-
-  ///Retorna um `bool` que define se há um próximo item.
   bool get podeAvancar => _indice < itensFiltrados.length - 1;
 
+  /// Retorna um `bool` que define se há um item anterior.
   @computed
-
-  ///Retorna um `bool` que define se há um item anterior.
   bool get podeVoltar => _indice > 0;
 
-  ///Avança para o próximo item.
+  /// Avança para o próximo item.
   void avancar() {
     if (podeAvancar) {
       _setIndice(_indice + 1);
     }
   }
 
-  ///Voltar para o item anterior.
+  /// Voltar para o item anterior.
   void voltar() {
     if (podeVoltar) {
       _setIndice(_indice - 1);
@@ -133,64 +122,59 @@ abstract class _QuizControllerBase with Store {
     }
   }
 
+  /// Retorna um `bool` que define se há uma resposta a ser confirmada.
   @computed
-
-  ///Retorna um `bool` que define se há uma resposta a ser confirmada.
   bool get podeConfirmar => _alternativaSelecionada != null;
 
-  ///Ações a serem executada ao confirmar uma resposta.
+  /// Ações a serem executada ao confirmar uma resposta.
   void confirmar() {
     avancar();
   }
 
-  ///Retorna `true` se [string] corresponder ao identificador de imágem em linha.
+  /// Retorna `true` se [string] corresponder ao identificador de imágem em linha.
   bool isImageInLine(String string) =>
       string == DbConst.kDbStringImagemNaoDestacada;
 
-  ///Retorna `true` se [string] corresponder ao identificador de imágem em nova linha.
+  /// Retorna `true` se [string] corresponder ao identificador de imágem em nova linha.
   bool isImageNewLine(String string) =>
       string == DbConst.kDbStringImagemDestacada;
 
-  ///Carregar os [ImageProvider] das imágens do item, caso ainda não tenham sido carregados.
-  ///A reação `asyncWhen` é usada para esperar uma condição em um [Observable].
-  ///Ficará ativa até que a condição seja satisfeita pela primeira vez.
-  ///Após isso ela executa o seu método `dispose`.
+  /// Carregar os [ImageProvider] das imágens do item, caso ainda não tenham sido carregados.
+  /// A reação `asyncWhen` é usada para esperar uma condição em um [Observable].
+  /// Ficará ativa até que a condição seja satisfeita pela primeira vez.
+  /// Após isso ela executa o seu método `dispose`.
   Future<void> _carregarImagens() async {
-    ///Aguardar até que a lista de itens não seja vazia.
+    // Aguardar até que a lista de itens não seja vazia.
     await asyncWhen((_) => itensFiltrados.isNotEmpty);
 
-    ///Carregar imágens do ecunciado.
-    if (item.imagensEnunciado.isNotEmpty)
-      item.imagensEnunciado.forEach((imagem) {
+    // Carregar imágens do ecunciado.
+    if (questao.imagensEnunciado.isNotEmpty)
+      questao.imagensEnunciado.forEach((imagem) {
         if (imagem.provider == null) _setImagemProvider(imagem);
       });
 
-    ///Carregar imágens das alternativas.
-    item.alternativas.forEach((alternativa) {
+    // Carregar imágens das alternativas.
+    questao.alternativas.forEach((alternativa) {
       if (alternativa.isTipoImagem) {
-        if (alternativa.valorSeImagem!.provider == null)
-          _setImagemProvider(alternativa.valorSeImagem!);
+        final imagem = alternativa.conteudo as ImagemQuestao;
+        if (imagem.provider == null) _setImagemProvider(imagem);
       }
     });
   }
 
-  ///Atribui o valor da propriedade [imagem.provider].
+  /// Atribui o valor da propriedade [imagem.provider].
   _setImagemProvider(ImagemQuestao imagem) {
     if (kIsWeb)
-      imagemItemRepository.getUrlImagemInDb(imagem.nome).then((url) =>
-          imagem.provider = (url != null)
-              ? NetworkImage(url, scale: 0.99)
-              : Image.asset(QuizAssets.BASELINE_IMAGE_NOT_SUPPORTED_BLACK_24DP)
-                  .image);
+      imagem.provider = MemoryImage(imagem.uint8List, scale: 0.99);
     else
-      imagemItemRepository.getImagemFile(imagem.nome).then((file) =>
+      imagemQuestaoRepository.getImagemFile(imagem).then((file) =>
           imagem.provider = file != null
               ? FileImage(file, scale: 0.99)
               : Image.asset(QuizAssets.BASELINE_IMAGE_NOT_SUPPORTED_BLACK_24DP)
                   .image);
   }
 
-  ///Retorna a opção escolhida pelo usuário dentre as opções disponíveis para o item.
+  /// Retorna a opção escolhida pelo usuário dentre as opções disponíveis para o item.
   Future<void> setOpcaoItem(OpcoesQuestao opcao) async {
     switch (opcao) {
       case OpcoesQuestao.none:
@@ -199,13 +183,13 @@ abstract class _QuizControllerBase with Store {
     }
   }
 
-  ///Ação executada para abrir a página de filtro.
-  ///Retornará `true` se o botão "Aplicar" de uma das páginas de filtro for pressionado.
+  /// Ação executada para abrir a página de filtro.
+  /// Retornará `true` se o botão "Aplicar" de uma das páginas de filtro for pressionado.
   Future<bool> onTapFiltrar() async {
-    ///Usa-se `Modular.to` para caminhos literais e `Modular.link` para rotas no
-    ///módulo atual.
-    ///Se o retorno de `pushNamed` for `true`, significa que o botão "Aplicar" de uma das
-    ///páginas de  filtro foi pressionado.
+    // Usa-se `Modular.to` para caminhos literais e `Modular.link` para rotas no
+    // módulo atual.
+    // Se o retorno de `pushNamed` for `true`, significa que o botão "Aplicar" de uma das
+    // páginas de  filtro foi pressionado.
     final retorno = await Modular.to
             .pushNamed<bool>(FiltrosModule.kAbsoluteRouteFiltroTiposPage) ??
         false;

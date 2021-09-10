@@ -1,4 +1,4 @@
-part of 'sqlite_repository.dart';
+/* part of 'sqlite_repository.dart';
 
 // TODO: Comentar todo o código abaixo antes de compilar para lançamento.
 class _SqliteRepositoryTest extends SqliteRepository {
@@ -555,3 +555,4 @@ const _kSQL =
     '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
     '"${DbConst.kDbDataAssuntoKeyHierarquia}" TEXT'
     '); ';
+ */

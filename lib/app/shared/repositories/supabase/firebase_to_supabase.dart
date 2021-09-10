@@ -1,4 +1,4 @@
-import 'dart:convert';
+/* import 'dart:convert';
 
 import 'package:clubedematematica/app/shared/repositories/firebase/storage_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -177,3 +177,4 @@ abstract class FirebaseToSupabase {
     }
   }
 }
+ */

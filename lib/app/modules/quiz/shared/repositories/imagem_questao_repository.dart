@@ -10,114 +10,49 @@ import '../models/imagem_questao_model.dart';
 
 part 'imagem_questao_repository.g.dart';
 
-///Responsável por intermediar a relação entre o aplicativo e o banco de dados no que se
-///refere as imágens usadas nas questões.
+/// Responsável por intermediar a relação entre o aplicativo e o banco de dados no que se
+/// refere as imágens usadas nas questões.
 class ImagemQuestaoRepository = _ImagemQuestaoRepositoryBase
     with _$ImagemQuestaoRepository;
 
 abstract class _ImagemQuestaoRepositoryBase with Store {
-  final StorageRepository storageRepository;
-  final Reference dirImagensInDb;
 
-  _ImagemQuestaoRepositoryBase(this.storageRepository)
-      : dirImagensInDb = storageRepository.storage
-            .ref()
-            .child(StorageRepository.kRelativePathImages);
-
-  ///Lista com as imágens já carregados.
+  /// Lista com as imágens já carregados.
   @observable
   ObservableList<ImagemQuestao> imagens = <ImagemQuestao>[].asObservable();
 
-  ///Adiciona um novo [ImagemQuestao] a [imagens].
+  /// Adiciona um novo [ImagemQuestao] a [imagens].
   @action
   void _addInImagens(ImagemQuestao imagem) {
-    if (!_existeImagem(imagem.nome)) this.imagens.add(imagem);
+    if (!_existeImagem(imagem.name)) this.imagens.add(imagem);
   }
 
-  ///Retorna `true` se um [ImagemQuestao] com o mesmo [nome] já tiver sido instanciado.
-  ///O método [imagens]`.any()` executa um `for` nos elementos de [imagens].
-  ///O loop é interrompido assim que a condição for verdadeira.
+  /// Retorna `true` se um [ImagemQuestao] com o mesmo [nome] já tiver sido instanciado.
+  /// O método [imagens]`.any()` executa um `for` nos elementos de [imagens].
+  /// O loop é interrompido assim que a condição for verdadeira.
   bool _existeImagem(String nome) {
     if (imagens.isEmpty)
       return false;
     else
-      return imagens.any((element) => element.nome == nome);
+      return imagens.any((element) => element.name == nome);
   }
 
-  /* ///Mesmo executando outra [action], será emitida apenas uma notificação.
-  ///Retorna um elemento de [imagens] com base em [nome].
-  ///Se não for encontrado um elemento se satisfaça `element.nome == `[nome] ele será criado.
-  @action
-  ImagemItem _getImagemByNome(String nome) {
-    return imagens.firstWhere((element) => element.nome == nome, orElse: () {
-      final imagem = ImagemItem(nome: nome);
-      _addInImagens(imagem);
-      return imagem;
-    });
-  } */
-
-  ///Somente para Android e IOS.
-  ///Retorna um arquivo de imágem.
-  ///Se o arquivo da imágem não estiver salvo no dispositivo, será feito o download.
-  ///Retorna `null` se ocorrer algo errado.
-  Future<File?> getImagemFile(String nome) async {
+  /// Somente para Android e IOS.
+  /// Retorna um arquivo de imágem.
+  /// Se o arquivo da imágem não estiver salvo no dispositivo, isso será feito.
+  /// Retorna `null` se ocorrer algo errado.
+  Future<File?> getImagemFile(ImagemQuestao image) async {
     if (!kIsWeb) {
-      //Criar uma referência a um arquivo no armazenamento local.
-      final file = await LocalStorageRepository.getFile(nome);
+      // Criar uma referência a um arquivo no armazenamento local.
+      final file = await LocalStorageRepository.getFile(image.name);
 
-      //Se o arquivo não existe, ele será baixado.
+      // Se o arquivo não existe, ele será criado.
       if (!(await file.exists())) {
-        ///Fazer o download e salvar em [file].
-        await _downloadImagemFile(file, nome);
+        // Salvar os bytes da imagem no arquivo.
+        await file.writeAsBytes(image.uint8List);
       }
       return file;
     }
     return null;
-  }
-
-  ///Faz o download de uma imágem no Firebase Storage, caso não esteja no armazenamento local.
-  ///Retornará `null` se o usuário não estiver logado ou ocrrer algum erro ao buscar o arquivo.
-  Future<File?> _downloadImagemFile(File fileTemp, String imgNome) async {
-    try {
-      ///Se o arquivo não existe, ele será baixado.
-      if (await fileTemp.exists()) return fileTemp;
-
-      ///Fazer o download e salvar em `fileTemp`.
-      return await storageRepository.downloadFile(
-          dirImagensInDb.child(imgNome), fileTemp);
-    } on MyExceptionStorageRepository catch (error) {
-      print(error.toString());
-      return null;
-    }
-  }
-
-  ///Retorna assincronamente uma URL para download da imágem no Firebase Storage.
-  ///Retornará `null` se o usuário não estiver logado ou ocrrer algum erro ao buscar os dados.
-  Future<String?> getUrlImagemInDb(String nome) async {
-    try {
-      ///Buscar a URL. O retorno será `null` se o usuário não estiver logado.
-      return storageRepository.getUrlInDb(dirImagensInDb.child(nome));
-    } on MyExceptionStorageRepository catch (error) {
-      print(error.toString());
-      return null;
-    }
-  }
-
-  ///Busca os metadados dos arquivos de imagem.
-  ///Retornará `null` se o usuário não estiver logado ou ocrrer algum erro.
-  Future<FullMetadata?> getMetadados({String? nome, ImagemQuestao? imagem}) async {
-    ///Garantir que um dos atributos não seja nulo.
-    assert(nome != null || imagem != null);
-    if (!(nome != null || imagem != null)) return null;
-
-    ///O operador `??=` atribui apenas se a variável for nula.
-    nome ??= imagem!.nome;
-    try {
-      ///Buscar os metadados. O retorno será `null` se o usuário não estiver logado.
-      return storageRepository.getMetadados(dirImagensInDb.child(nome));
-    } on MyExceptionStorageRepository catch (error) {
-      print(error.toString());
-      return null;
-    }
   }
 }

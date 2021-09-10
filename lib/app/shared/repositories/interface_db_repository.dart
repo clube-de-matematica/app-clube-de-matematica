@@ -42,14 +42,12 @@ class DataWhere {
                 DbConst.kDbDataQuestaoKeyAlternativas,
                 DbConst.kDbDataQuestaoKeyAno,
                 DbConst.kDbDataQuestaoKeyAssuntos,
-                DbConst.kDbDataQuestaoKeyDificuldade,
                 DbConst.kDbDataQuestaoKeyEnunciado,
                 DbConst.kDbDataQuestaoKeyGabarito,
                 DbConst.kDbDataQuestaoKeyId,
                 DbConst.kDbDataQuestaoKeyImagensEnunciado,
                 DbConst.kDbDataQuestaoKeyIndice,
                 DbConst.kDbDataQuestaoKeyNivel,
-                DbConst.kDbDataQuestaoKeyReferencia
               ];
               break;
           }
@@ -77,13 +75,13 @@ abstract class IDbRepository {
   String get pathAssuntos; */
 
   /// Retorna os dados da coleção correspondente a [collection] no banco de dados.
-  Future<DataCollection> getCollection(
+  /* Future<DataCollection> getCollection(
     CollectionType collection,
 
     ///
     /// Se fornecido, o resultado de [onError] será retornado quando ocorrer um erro na solicitação.
     // {FutureOr<DataCollection> onError(Object error)?,}
-  );
+  ); */
 
   /// Retorna os dados do documento (ou registro), na coleção (ou tabela) correspondente a
   /// [where.collection], cujos campos correspondentes às chaves de [where.args] possuem os
@@ -91,13 +89,13 @@ abstract class IDbRepository {
   ///
   /// Retorna um [DataDocument] vazio caso ocorra um erro ou não seja encontrada uma
   /// correspondência.
-  Future<DataDocument> getDoc(
+  /* Future<DataDocument> getDoc(
     DataWhere where,
 
     ///
     /// Se fornecido, o resultado de [onError] será retornado quando ocorrer um erro na solicitação.
     // {FutureOr<DataDocument> onError(Object error)?,}
-  );
+  ); */
 
   /// Retorna o id do documento cuja referência é [ref].
   //String getDocId(ref);
@@ -105,7 +103,7 @@ abstract class IDbRepository {
   /// Salvar [data] se ainda não existir o documento [id] na coleção (ou tabrla) correspondente
   /// a [collection].
   /// Se [id] for `null`, será gerado um id automaticamente.
-  Future<bool> setDocumentIfNotExist(
+  /* Future<bool> setDocumentIfNotExist(
     CollectionType collection,
     Map<String, dynamic> data, {
     String? id,
@@ -121,7 +119,7 @@ abstract class IDbRepository {
     /* FutureOr<bool> onExist()?,
     VoidCallback? onSuccess,
     FutureOr<bool> onError(Object error)?, */
-  });
+  }); */
 
   /// 
 

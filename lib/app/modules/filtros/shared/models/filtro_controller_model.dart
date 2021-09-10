@@ -67,8 +67,6 @@ abstract class _FiltroControllerBase with Store {
         return UIStrings.FILTRO_TEXTO_TIPO_ASSUNTO;
       case TiposFiltro.nivel:
         return UIStrings.FILTRO_TEXTO_TIPO_NIVEL;
-      case TiposFiltro.dificuldade:
-        return UIStrings.FILTRO_TEXTO_TIPO_DIFICULDADE;
       case TiposFiltro.ano:
         return UIStrings.FILTRO_TEXTO_TIPO_ANO;
       //default: return null;
@@ -94,40 +92,4 @@ abstract class _FiltroControllerBase with Store {
     _filtrosAplicados.aplicar(filtrosTemp);
     Modular.to.pop(true);
   }
-
-/* 
-  @computed
-  ///Itens Filtrados.
-  ///Usa o conectivo "ou" para filtros do mesmo tipo, e o conectivo "e" para tipos diferentes.
-  ///Posteriormente deve utilizar uma consulta ofline no Firebase Firestore.
-  List<Item> get itensFiltrados {
-    ///A aplicação do filtro é feita na ordem de maior restrição a longo prazo.
-    ///Por exemplo, conforme o banco de dados cresce, filtrar por ano já eliminará a maior 
-    ///parte dos itens. Isso gera um ganho de desempenho.
-    List<Item> temp = List<Item>();
-    List<Item> ref = temp.isNotEmpty ? temp : itens;
-
-    if (_filtrosAplicados.anos.isNotEmpty) temp.addAll(
-      ref.where((item) => _filtrosAplicados.anos.any(
-          (element) => item.ano == element.opcao))
-    );
-
-    if (_filtrosAplicados.niveis.isNotEmpty) temp.addAll(
-      ref.where((item) => _filtrosAplicados.niveis.any(
-          (element) => item.nivel == element.opcao))
-    );
-
-    if (_filtrosAplicados.assuntos.isNotEmpty) temp.addAll(
-      ref.where((item) => _filtrosAplicados.assuntos.any(
-          (element) => item.assuntos.contains(element.opcao)))
-    );
-
-    if (_filtrosAplicados.dificuldades.isNotEmpty) temp.addAll(
-      ref.where((item) => _filtrosAplicados.dificuldades.any(
-          (element) => item.dificuldade == element.opcao))
-    );
-
-    return temp;
-  }
- */
 }
