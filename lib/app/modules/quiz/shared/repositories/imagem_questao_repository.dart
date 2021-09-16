@@ -4,7 +4,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../shared/repositories/firebase/storage_repository.dart';
 import '../../../../shared/repositories/local_storage_repository.dart';
 import '../models/imagem_questao_model.dart';
 

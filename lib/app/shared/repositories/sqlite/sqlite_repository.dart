@@ -1,4 +1,4 @@
-/* import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -18,7 +18,7 @@ import '../interface_db_repository.dart';
 import '../mixin_db_repository.dart';
 
 part 'sqlite_repository_core.dart';
-part 'sqlite_repository_test.dart';
+//part 'sqlite_repository_test.dart';
 
 /// Fáz o gerenciamento do banco de dados SQLite.
 ///
@@ -50,6 +50,9 @@ class SqliteRepository
     _authRepository.checkAuthentication(_debugName, memberName);
   }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/* 
   @override
   Future<DataCollection> getCollection(CollectionType collection) async {
     assert(Debug.print("[INFO] Chamando $_debugName.getCollection..."));
@@ -126,7 +129,10 @@ class SqliteRepository
       return false;
     }
   }
-
+ */
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/* 
   /// Retorna o nome da visualização correspondente à [collection].
   String _getView(CollectionType collection) {
     switch (collection) {
@@ -174,7 +180,7 @@ class SqliteRepository
       }
       return false;
     }
-  }
+  } */
 
   /// Codifica os dados para serem inseridos no banco de dados.
   DataSQLite _encode(DataDocument data, CollectionType collection) {
@@ -245,4 +251,3 @@ class SqliteRepository
     throw UnimplementedError();
   }
 }
- */

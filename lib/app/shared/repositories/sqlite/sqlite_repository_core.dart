@@ -1,4 +1,4 @@
-/* part of 'sqlite_repository.dart';
+part of 'sqlite_repository.dart';
 
 /// O objeto usado para definir ações a serem executadas dentro da tranzação [txn].
 typedef _DbTansactionActions = Future<void> Function(Transaction txn);
@@ -10,63 +10,10 @@ typedef DataSQLite = Map<String, Object?>;
 
 /// Nome do arquivo de banco de dados para os itens.
 const _kDbFileName = "clubedematematica.db";
-
-/// Nome da tabela que contém os assuntos ligados a cada item.
-const _kTbAssuntos = DbConst.kDbDataCollectionAssuntos;
-
-/// Chave primária. Osvalores são gerados pelo próprio banco de dados.
-const _kTbAssuntosColId = "id";
-
-/// Nome da tabela que contém os itens.
-const _kTbItens = DbConst.kDbDataCollectionQuestoes;
-
-/// Nome da tabela que relaciona os itens por caderno com a tabela de itens
-/// [DbConst.kDbDataCollectionQuestoes].
-///
-/// Se um item foi usado em mais de um caderno, nesta tabela ele possuirá uma entrada para
-/// cada um desses cadernos.
-const _kTbItensRef = "tb_itens_ref";
-
-/// Nome da coluna para o ID do item.
-/// Os valores desta coluna são do tipo `VARCHAR` e estão no formato `2019PF1N1Q01`, onde:
-/// * 2019 é o ano de aplicação da prova;
-/// * PF1 indica que a prova é da primeira fase;
-/// * N1 indica que a prova é do nível 1;
-/// * Q01 indica que trata-se do primeiro item do caderno.
-/// Esta coluna é uma chave primária.
-const _kTbItensRefColId = "id";
-
-/// Nome do campo para o número do item (questão) no caderno de prova. Os valores
-/// para esse campo são do tipo [int].
-const _kTbItensRefColIndice = DbConst.kDbDataQuestaoKeyIndice;
-
-/// Nome do campo para o nível da prova da OBMEP. Os valores para esse campo são do
-/// tipo [int].
-const _kTbItensRefColNivel = DbConst.kDbDataQuestaoKeyNivel;
-
-/// Chave estrangeira para a coluna [DbConst.kDbDataQuestaoKeyId] da tabela [_kTbItens].
-const _kTbItensRefColReferencia = DbConst.kDbDataQuestaoKeyReferencia;
-
-/// Nome da tabela que contém os clubes.
-const _kTbClubes = DbConst.kDbDataCollectionClubes;
-
-/// Nome da tabela que contém os tarefas.
-const _kTbTarefas = DbConst.kDbDataCollectionTarefas;
-
-/// Nome da View que relaciona os dados das tabelas [_kTbItensRef] e [_kTbItens].
-/// Esta visualização conterá um registro para cada aplicação do item. Isso significa que
-/// se o item foi aplicado em dois cadernos, possuirá um registro para cada um destes.
-/// Criada para facilitar as consultas de dados.
-const _kViewAllItens = "view_all_itens";
-
-/// Nome da View que relaciona os dados das tabelas [_kTbItens] e [_kTbItensRef].
-/// Nessta visualização, mesmo que um item tenha sido aplicado em mais de um caderno, ele
-/// possuirá um único registro.
-/// Criada para facilitar as consultas de dados.
-const _kViewDistinctItens = "view_distinct_itens";
-
-/// Nome da visualização para a tabela [_kTbAssuntos].
-const _kViewAssuntos = 'view_assuntos';
+const _tb_questao_x_assunto = 'questao_x_assunto';
+const _tb_tipos_alternativa = '_tb_tipos_alternativa';
+const _tb_alternativas = '_tb_alternativas';
+const _tb_questoes_caderno = '_tb_questoes_caderno';
 
 /// O objeto responsável pela manipulação do [Sqflite].
 ///
@@ -105,86 +52,144 @@ abstract class _SqliteRepositoryCore {
     await db.transaction((txn) async {
       assert(Debug.print(
           '[INFO] Iniciando a tranzação de criação do esquema do banco de dados...'));
+      await _createTbQuestoes(txn);
       await _createTbAssuntos(txn);
-      await _createViewAssuntos(txn);
-      await _createTbItens(txn);
-      await _createTbItensRef(txn);
-      await _createViewAllItens(txn);
-      await _createViewDistinctItens(txn);
-      await _createTriggerNotInsertInTbItens(txn);
-      await _createTbClubes(txn);
+      await _createTbQuestaoAssunto(txn);
+      await _createTbTiposAlternativa(txn);
+      await _createTbAlternativa(txn);
+      await _createTbQuestoesCaderno(txn);
       assert(Debug.print(
           '[INFO] Tranzação de criação do esquema do banco de dados concluída.'));
     });
   }
 
-  /// Cria a tabela para os assuntos, caso ainda não exista.
-  Future<void> _createTbAssuntos(Transaction txn) async {
-    try {
-      assert(Debug.print('[INFO] Criando a tabela "$_kTbAssuntos"...'));
-      await txn.execute(
-        'CREATE TABLE IF NOT EXISTS "$_kTbAssuntos" ('
-        // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
-        '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
-        '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
-        '"${DbConst.kDbDataAssuntoKeyHierarquia}" TEXT'
-        '); ',
-      );
-    } catch (_) {
-      assert(Debug.print('[ERROR] A tabela "$_kTbAssuntos" não foi criada.'));
-      rethrow;
-    }
-  }
-
-  /// Caso ainda não exista, cria a visualização para "consolidar" os dados dos assuntos.
-  Future<void> _createViewAssuntos(Transaction txn) async {
-    try {
-      assert(Debug.print('[INFO] Criando a vizualização "$_kViewAssuntos"...'));
-      await txn.execute(
-        'CREATE VIEW IF NOT EXISTS "$_kViewAssuntos" AS '
-        'SELECT '
-        //'"$_kTbAssuntosColId", '
-        '"${DbConst.kDbDataAssuntoKeyTitulo}", '
-        '"${DbConst.kDbDataAssuntoKeyHierarquia}" '
-        'FROM "$_kTbAssuntos" '
-        'ORDER BY '
-        // Concatenar o título do assunto ao final da árvore para fazer a ordenação.
-        '("${DbConst.kDbDataAssuntoKeyHierarquia}" || \'/\' '
-        '|| "${DbConst.kDbDataAssuntoKeyTitulo}") ASC, '
-        // Se a árvore for nula, a concatenação também será nula. Nesse caso, o título do
-        // assunto permitirá a ordenação desses valores nulos.
-        '"${DbConst.kDbDataAssuntoKeyTitulo}" ASC'
-        '; ',
-      );
-    } catch (_) {
-      assert(Debug.print(
-          '[ERROR] A vizualização "$_kViewAssuntos" não foi criada.'));
-      rethrow;
-    }
-  }
-
   /// Cria a tabela para os itens, caso ainda não exista.
-  Future<void> _createTbItens(Transaction txn) async {
+  Future<void> _createTbQuestoes(Transaction txn) async {
     try {
-      assert(Debug.print('[INFO] Criando a tabela "$_kTbItens"...'));
+      assert(Debug.print(
+          '[INFO] Criando a tabela "${DbConst.kDbDataCollectionQuestoes}"...'));
       await txn.execute(
-        'CREATE TABLE IF NOT EXISTS "$_kTbItens" ('
-        '"${DbConst.kDbDataQuestaoKeyId}" VARCHAR PRIMARY KEY NOT NULL, '
-        '"${DbConst.kDbDataQuestaoKeyAno}" INTEGER NOT NULL, '
-        '"${DbConst.kDbDataQuestaoKeyAssuntos}" VARCHAR NOT NULL, '
+        'CREATE TABLE IF NOT EXISTS "${DbConst.kDbDataCollectionQuestoes}" ('
+        '"${DbConst.kDbDataQuestaoKeyId}" INTEGER PRIMARY KEY NOT NULL, '
         '"${DbConst.kDbDataQuestaoKeyEnunciado}" TEXT NOT NULL, '
-        '"${DbConst.kDbDataQuestaoKeyAlternativas}" TEXT NOT NULL, '
-        '"${DbConst.kDbDataQuestaoKeyGabarito}" VARCHAR NOT NULL, '
-        '"${DbConst.kDbDataQuestaoKeyDificuldade}" VARCHAR NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyGabarito}" INTEGER NOT NULL, '
         '"${DbConst.kDbDataQuestaoKeyImagensEnunciado}" TEXT'
         '); ',
       );
     } catch (_) {
-      assert(Debug.print('[ERROR] A tabela "$_kTbItens" não foi criada.'));
+      assert(Debug.print(
+          '[ERROR] A tabela "${DbConst.kDbDataCollectionQuestoes}" não foi criada.'));
       rethrow;
     }
   }
 
+  /// Cria a tabela para os assuntos, caso ainda não exista.
+  Future<void> _createTbAssuntos(Transaction txn) async {
+    try {
+      assert(Debug.print(
+          '[INFO] Criando a tabela "${DbConst.kDbDataCollectionAssuntos}"...'));
+      await txn.execute(
+        'CREATE TABLE IF NOT EXISTS "${DbConst.kDbDataCollectionAssuntos}" ('
+        // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
+        '"${DbConst.kDbDataAssuntoKeyId}" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
+        '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
+        '"${DbConst.kDbDataAssuntoKeyHierarquia}" TEXT DEFAULT NULL, '
+        'UNIQUE ("${DbConst.kDbDataAssuntoKeyTitulo}", "${DbConst.kDbDataAssuntoKeyHierarquia}")'
+        '); ',
+      );
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] A tabela "${DbConst.kDbDataCollectionAssuntos}" não foi criada.'));
+      rethrow;
+    }
+  }
+
+  /// Cria a tabela que faz o relacionamento muitos para muitos entre as tabelas
+  /// [DbConst.kDbDataCollectionQuestoes] e [DbConst.kDbDataCollectionAssuntos].
+  Future<void> _createTbQuestaoAssunto(Transaction txn) async {
+    try {
+      assert(
+          Debug.print('[INFO] Criando a tabela "$_tb_questao_x_assunto"...'));
+      await txn.execute(
+        'CREATE TABLE "$_tb_questao_x_assunto" ('
+        '"id_questao" INTEGER NOT NULL, '
+        '"id_assunto" INTEGER NOT NULL, '
+        'PRIMARY KEY ("id_questao", "id_assunto"), '
+        'FOREIGN KEY ("id_questao") REFERENCES "${DbConst.kDbDataCollectionQuestoes}" ("${DbConst.kDbDataQuestaoKeyId}") ON DELETE CASCADE ON UPDATE CASCADE, '
+        'FOREIGN KEY ("id_assunto") REFERENCES "${DbConst.kDbDataCollectionAssuntos}" ("${DbConst.kDbDataAssuntoKeyId}") ON DELETE RESTRICT ON UPDATE CASCADE'
+        ');',
+      );
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] A tabela "$_tb_questao_x_assunto" não foi criada.'));
+      rethrow;
+    }
+  }
+
+  /// Cria a tabela para os tipos de alternativa disponíveis.
+  Future<void> _createTbTiposAlternativa(Transaction txn) async {
+    try {
+      assert(
+          Debug.print('[INFO] Criando a tabela "$_tb_tipos_alternativa"...'));
+      await txn.execute(
+        'CREATE TABLE "$_tb_tipos_alternativa" ('
+        '"id" INTEGER PRIMARY KEY NOT NULL, '
+        '"tipo" VARCHAR UNIQUE NOT NULL'
+        ');',
+      );
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] A tabela "$_tb_tipos_alternativa" não foi criada.'));
+      rethrow;
+    }
+  }
+
+  /// Cria a tabela para as alternativas de resposta usadas nas questões.
+  Future<void> _createTbAlternativa(Transaction txn) async {
+    try {
+      assert(Debug.print('[INFO] Criando a tabela "$_tb_alternativas"...'));
+      await txn.execute(
+        'CREATE TABLE "$_tb_alternativas" ('
+        '"id_questao" INTEGER NOT NULL, '
+        '"sequencial" INTEGER NOT NULL, '
+        '"id_tipo" INTEGER NOT NULL, '
+        '"conteudo" TEXT NOT NULL, '
+        'PRIMARY KEY ("id_questao", "sequencial"), '
+        'FOREIGN KEY ("id_questao") REFERENCES "${DbConst.kDbDataCollectionQuestoes}" ("${DbConst.kDbDataQuestaoKeyId}") ON DELETE CASCADE ON UPDATE CASCADE, '
+        'FOREIGN KEY ("id_tipo") REFERENCES "$_tb_tipos_alternativa" ("id") ON DELETE RESTRICT ON UPDATE CASCADE'
+        ');',
+      );
+    } catch (_) {
+      assert(
+          Debug.print('[ERROR] A tabela "$_tb_alternativas" não foi criada.'));
+      rethrow;
+    }
+  }
+
+  /// Cria a tabela que relaciona as questões por caderno. Se uma questão foi usada em mais
+  /// de um caderno, nesta tabela ela possuirá um registro para cada um desses cadernos.
+  Future<void> _createTbQuestoesCaderno(Transaction txn) async {
+    try {
+      assert(Debug.print('[INFO] Criando a tabela "$_tb_questoes_caderno"...'));
+      await txn.execute(
+        'CREATE TABLE "$_tb_questoes_caderno" ('
+        '"id" VARCHAR PRIMARY KEY NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyAno}" INTEGER NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyNivel}" INTEGER NOT NULL, '
+        '"${DbConst.kDbDataQuestaoKeyIndice}" INTEGER NOT NULL, '
+        '"id_questao" INTEGER NOT NULL,'
+        'FOREIGN KEY ("id_questao") REFERENCES "${DbConst.kDbDataCollectionQuestoes}" ("${DbConst.kDbDataQuestaoKeyId}") ON DELETE RESTRICT ON UPDATE CASCADE'
+        ');',
+      );
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] A tabela "$_tb_questoes_caderno" não foi criada.'));
+      rethrow;
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+/* 
   /// Cria a tabela para as referências dos itens, caso ainda não exista.
   Future<void> _createTbItensRef(Transaction txn) async {
     try {
@@ -289,9 +294,10 @@ abstract class _SqliteRepositoryCore {
   /// Cria a tabela para os assuntos, caso ainda não exista.
   Future<void> _createTbClubes(Transaction txn) async {
     try {
-      assert(Debug.print('[INFO] Criando a tabela "$_kTbAssuntos"...'));
+      assert(Debug.print(
+          '[INFO] Criando a tabela "${DbConst.kDbDataCollectionAssuntos}"...'));
       await txn.execute(
-        'CREATE TABLE IF NOT EXISTS "$_kTbAssuntos" ('
+        'CREATE TABLE IF NOT EXISTS "${DbConst.kDbDataCollectionAssuntos}" ('
         // O SQLite recomenda que não seja usado o atributo AUTOINCREMENT.
         '"$_kTbAssuntosColId" INTEGER PRIMARY KEY NOT NULL ' /* AUTOINCREMENT */ ', '
         '"${DbConst.kDbDataAssuntoKeyTitulo}" TEXT NOT NULL, '
@@ -299,10 +305,11 @@ abstract class _SqliteRepositoryCore {
         '); ',
       );
     } catch (_) {
-      assert(Debug.print('[ERROR] A tabela "$_kTbAssuntos" não foi criada.'));
+      assert(Debug.print(
+          '[ERROR] A tabela "${DbConst.kDbDataCollectionAssuntos}" não foi criada.'));
       rethrow;
     }
-  }
+  } */
 
   /// Cria uma tranzaçao para inserir os dados dos valores de [keyTableValueData].
   /// As chaves de [keyTableValueData] devem conter o nome da tabela na qual os dados do seu
@@ -353,23 +360,28 @@ abstract class _SqliteRepositoryCore {
 
   /// Retorna `true` se [name] é o nome de uma tabela.
   bool _isTableName(String name) {
-    return name == _kTbAssuntos || name == _kTbItens || name == _kTbItensRef;
+    return [
+      DbConst.kDbDataCollectionAssuntos,
+      DbConst.kDbDataCollectionQuestoes,
+      _tb_alternativas,
+      _tb_questao_x_assunto,
+      _tb_questoes_caderno,
+      _tb_tipos_alternativa,
+    ].contains(name);
   }
 
   /// Retorna `true` se [name] é o nome de uma visualização.
   bool _isViewName(String name) {
-    return name == _kViewAssuntos ||
-        name == _kViewAllItens ||
-        name == _kViewDistinctItens;
+    return [].contains(name);
   }
 
   /// Se ainda não existir, insere [values] na tabela [table].
   /// [values] já deve estar codificado.
   Future<bool> _dbInsertIfNotExist(String table, DataSQLite values) async {
     assert(_isTableName(table));
-    if (_isTableName(table)) {
+    /* if (_isTableName(table)) {
       Future<bool> Function() exist;
-      if (table == _kTbAssuntos) {
+      if (table == DbConst.kDbDataCollectionAssuntos) {
         exist = () async =>
             await _exist(table, values.keys.toList(), values.values.toList());
       } else {
@@ -387,7 +399,7 @@ abstract class _SqliteRepositoryCore {
           return await exist();
         }
       }
-    }
+    } */
     return false;
   }
 
@@ -482,4 +494,3 @@ abstract class _SqliteRepositoryCore {
     }
   }
 }
- */

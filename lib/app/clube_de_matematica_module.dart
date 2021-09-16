@@ -10,7 +10,6 @@ import 'modules/perfil/models/userapp.dart';
 import 'modules/perfil/perfil_module.dart';
 import 'modules/quiz/quiz_module.dart';
 import 'shared/repositories/firebase/auth_repository.dart';
-import 'shared/repositories/firebase/storage_repository.dart';
 import 'shared/repositories/supabase/supabase_db_repository.dart';
 import 'shared/theme/tema.dart';
 
@@ -43,10 +42,6 @@ class ClubeDeMatematicaModule extends Module {
         ), */
         Bind((i) => SupabaseDbRepository(
               i.get<Future<Supabase>>(),
-              i.get<AuthRepository>(),
-            )),
-        Bind((i) => StorageRepository(
-              i.get<FirebaseStorage>(),
               i.get<AuthRepository>(),
             )),
 
