@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -10,7 +8,6 @@ import 'modules/perfil/models/userapp.dart';
 import 'modules/perfil/perfil_module.dart';
 import 'modules/quiz/quiz_module.dart';
 import 'shared/repositories/firebase/auth_repository.dart';
-import 'shared/repositories/firebase/storage_repository.dart';
 import 'shared/repositories/supabase/supabase_db_repository.dart';
 import 'shared/theme/tema.dart';
 
@@ -45,10 +42,6 @@ class ClubeDeMatematicaModule extends Module {
               i.get<Future<Supabase>>(),
               i.get<AuthRepository>(),
             )),
-        Bind((i) => StorageRepository(
-              i.get<FirebaseStorage>(),
-              i.get<AuthRepository>(),
-            )),
 
         //Supabase
         Bind((i) => Supabase.initialize(
@@ -57,8 +50,6 @@ class ClubeDeMatematicaModule extends Module {
             )),
 
         //Firebase
-        Bind((i) => FirebaseFirestore.instance),
-        Bind((i) => FirebaseStorage.instance),
         Bind((i) => FirebaseAuth.instance),
       ];
 

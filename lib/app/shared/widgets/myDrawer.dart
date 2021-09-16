@@ -1,8 +1,3 @@
-import 'dart:async';
-import 'dart:math' as math;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:clubedematematica/app/shared/models/exceptions/my_exception.dart';
-import 'package:clubedematematica/app/shared/utils/constantes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -11,6 +6,7 @@ import '../../modules/perfil/models/userapp.dart';
 import '../../modules/perfil/perfil_module.dart';
 import '../../modules/perfil/widgets/avatar.dart';
 import '../repositories/firebase/auth_repository.dart';
+import '../utils/constantes.dart';
 import 'myWillPopScope.dart';
 
 /// Indica a página em que [MyDrawer] está sendo exibido.
@@ -208,9 +204,6 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
   List<Widget> _buildClubes(BuildContext context) {
-    final clubCreator = [];
-    final clubMember = [];
-    final a = FieldValue.serverTimestamp();
     return [
       ListTile(
         title: Text('Clube 1'),

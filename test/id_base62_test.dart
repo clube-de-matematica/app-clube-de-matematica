@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:clubedematematica/app/shared/repositories/id_base62.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
