@@ -65,7 +65,8 @@ typedef DataUser = Map<String, dynamic>;
 /// O objeto com os dados de um clube. 
 /// O valor [dynamic] pode ser:
 /// * [String] para [DbConst.kDbDataClubeKeyNome] e [DbConst.kDbDataClubeKeyProprietario];
-/// * [int] para [DbConst.kDbDataClubeKeyDataCriacao]; ou
+/// * [int] para [DbConst.kDbDataClubeKeyId] e [DbConst.kDbDataClubeKeyDataCriacao]; 
+/// * [bool] para [DbConst.kDbDataClubeKeyPrivado]; ou
 /// * [List]<[String]> para [DbConst.kDbDataClubeKeyAdministradores] e [DbConst.kDbDataClubeKeyMembros].
 typedef DataClube = Map<String, dynamic>;
 
@@ -233,6 +234,10 @@ abstract class DbConst {
   /// Nome da coleção (ou tabela) para os clubes.
   /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataClube]>.
   static const kDbDataCollectionClubes = 'clubes';
+
+  /// Nome do campo para o ID do usuário.
+  /// Os valores desse campo são do tipo [int].
+  static const kDbDataClubeKeyId = 'id';
 
   /// Nome do campo para o carimbo de data/hora da criação do clube.
   /// Os valores desse campo são de algum tipo que possa ser convertido no número de

@@ -32,12 +32,6 @@ class ClubeDeMatematicaModule extends Module {
 
         //Repositórios
         Bind((i) => AuthRepository(i.get<FirebaseAuth>())),
-        /* Bind(
-          (i) => FirestoreRepository(
-            i.get<FirebaseFirestore>(),
-            i.get<AuthRepository>(),
-          ),
-        ), */
         Bind((i) => SupabaseDbRepository(
               i.get<Future<Supabase>>(),
               i.get<AuthRepository>(),

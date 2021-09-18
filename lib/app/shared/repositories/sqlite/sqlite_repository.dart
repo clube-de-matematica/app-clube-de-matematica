@@ -244,4 +244,16 @@ class SqliteRepository
     // TODO: implement setQuestao
     throw UnimplementedError();
   }
+
+  @override
+  Future<DataCollection> getClubes(int idUsuario) {
+    // TODO: implement getClubes
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setClube(DataDocument data) {
+    // TODO: implement setClube
+    throw UnimplementedError();
+  }
 }

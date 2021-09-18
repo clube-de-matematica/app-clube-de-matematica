@@ -125,9 +125,13 @@ abstract class IDbRepository {
 
   Future<DataCollection> getAssuntos();
 
-  Future<DataCollection> getQuestoes();
-
   Future<bool> setAssunto(DataDocument data);
 
+  Future<DataCollection> getQuestoes();
+
   Future<bool> setQuestao(DataDocument data);
+
+  Future<DataCollection> getClubes(int idUsuario);
+
+  Future<bool> setClube(DataDocument data);
 }

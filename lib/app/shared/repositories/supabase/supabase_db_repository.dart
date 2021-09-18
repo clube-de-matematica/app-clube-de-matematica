@@ -61,32 +61,6 @@ class SupabaseDbRepository
     }
   }
 
-  @override
-  Future<DataCollection> getQuestoes() async {
-    assert(Debug.print('[INFO] Chamando $_debugName.getQuestoes()...'));
-    _checkAuthentication('getQuestoes()');
-    try {
-      assert(Debug.print(
-          '[INFO] Solicitando os dados da coleção "$view_questoes"...'));
-      final response =
-          await (await client).from(view_questoes).select().execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        throw MyException(
-          error.message,
-          originClass: _debugName,
-          originField: 'getQuestoes()',
-          error: error,
-        );
-      }
-      return (response.data as List).cast<DataQuestao>();
-    } catch (_) {
-      assert(Debug.print(
-          '[ERROR] Erro ao solicitar os dados da coleção "$view_questoes".'));
-      rethrow;
-    }
-  }
-
   /// [data] tem a estrutura {"assunto": [String], "id_assunto_pai": [int?]}.
   @override
   Future<bool> setAssunto(DataAssunto data) async {
@@ -116,6 +90,32 @@ class SupabaseDbRepository
   }
 
   @override
+  Future<DataCollection> getQuestoes() async {
+    assert(Debug.print('[INFO] Chamando $_debugName.getQuestoes()...'));
+    _checkAuthentication('getQuestoes()');
+    try {
+      assert(Debug.print(
+          '[INFO] Solicitando os dados da coleção "$view_questoes"...'));
+      final response =
+          await (await client).from(view_questoes).select().execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        throw MyException(
+          error.message,
+          originClass: _debugName,
+          originField: 'getQuestoes()',
+          error: error,
+        );
+      }
+      return (response.data as List).cast<DataQuestao>();
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao solicitar os dados da coleção "$view_questoes".'));
+      rethrow;
+    }
+  }
+
+  @override
   Future<bool> setQuestao(DataQuestao data) async {
     assert(Debug.print('[INFO] Chamando $_debugName.setQuestao()...'));
     _checkAuthentication('setQuestao()');
@@ -134,8 +134,61 @@ class SupabaseDbRepository
       }
       return (response.count ?? 0) > 0;
     } catch (_) {
+      assert(
+          Debug.print('[ERROR] Erro ao inserir a questão ${data.toString()}.'));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<DataCollection> getClubes(int idUsuario) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.getClubes()...'));
+    _checkAuthentication('getClubes()');
+    try {
       assert(Debug.print(
-          '[ERROR] Erro ao inserir a questão ${data.toString()}.'));
+          '[INFO] Solicitando os dados dos clubes do usuário cujo ID é $idUsuario...'));
+      final response = await (await client).rpc(
+        'get_clubes',
+        params: {'id_usuario': idUsuario},
+      ).execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        throw MyException(
+          error.message,
+          originClass: _debugName,
+          originField: 'getClubes()',
+          error: error,
+        );
+      }
+      return (response.data as List).cast<DataClube>();
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao solicitar os dados dos clubes do usuário cujo ID é $idUsuario.'));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> setClube(DataDocument data) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.setClube()...'));
+    _checkAuthentication('setClube()');
+    try {
+      assert(Debug.print('[INFO] Inserindo o clube ${data.toString()}...'));
+      final response =
+          await (await client).rpc('inserir_clube', params: data).execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        throw MyException(
+          error.message,
+          originClass: _debugName,
+          originField: 'setClube()',
+          error: error,
+        );
+      }
+      return (response.count ?? 0) > 0;
+    } catch (_) {
+      assert(
+          Debug.print('[ERROR] Erro ao inserir o clube ${data.toString()}.'));
       rethrow;
     }
   }
