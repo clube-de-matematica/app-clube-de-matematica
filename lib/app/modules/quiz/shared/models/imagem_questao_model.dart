@@ -39,8 +39,9 @@ abstract class _ImagemQuestaoBase with Store {
   _ImagemQuestaoBase.fromJson(Map<String, dynamic> json)
       : name = json[ImagemQuestao.kKeyName] as String,
         base64 = json[DbConst.kDbDataImagemKeyBase64] as String,
-        width = json[DbConst.kDbDataImagemKeyLargura] as double,
-        height = json[DbConst.kDbDataImagemKeyAltura] as double;
+        // A multiplicação faz a converção para double.
+        width = json[DbConst.kDbDataImagemKeyLargura] * 1.0,
+        height = json[DbConst.kDbDataImagemKeyAltura] * 1.0;
 
   Map<String, dynamic> toJson({bool includeName = false}) {
     final Map<String, dynamic> data = new Map<String, dynamic>();

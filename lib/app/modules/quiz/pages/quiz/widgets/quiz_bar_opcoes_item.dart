@@ -62,7 +62,7 @@ class QuizBarOpcoesItem extends StatelessWidget {
               ),
             ],
           ),
-          onSelected: (opcao) => controller.setOpcaoItem(opcao),
+          onSelected: (opcao) => controller.setOpcaoItem(context, opcao),
           itemBuilder: (_) => _popupMenuItens,
         ),
       ],

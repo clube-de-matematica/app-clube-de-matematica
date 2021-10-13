@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../shared/repositories/interface_auth_repository.dart';
 import '../../../shared/theme/tema.dart';
-import '../../../shared/widgets/myBottomSheet.dart';
-import '../../../shared/widgets/myWillPopScope.dart';
+import '../../../shared/widgets/appBottomSheet.dart';
+import '../../../shared/widgets/appWillPopScope.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
 import '../utils/ui_strings.dart';
 import '../widgets/login_with_google_button.dart';
 import 'login_controller.dart';
 
-///Página de login.
+/// Página de login.
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -21,41 +22,41 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
 
   ThemeData get tema => Theme.of(context);
 
-  ///Tom mais escuro. Usado no "bem cindo" e no texto do botão de login com o Google.
+  /// Tom mais escuro. Usado no "bem cindo" e no texto do botão de login com o Google.
   Color get textColor1 => tema.colorScheme.onSurface.withOpacity(0.6);
 
-  ///Tom mais claro. Usado na mensagem e no texto do botão de login anônimo.
+  /// Tom mais claro. Usado na mensagem e no texto do botão de login anônimo.
   Color get textColor2 => textColor1.withOpacity(0.5);
 
-  ///Estilo do texto do "bem vindo".
+  /// Estilo do texto do "bem vindo".
   TextStyle? get textStyleH1 => tema.textTheme.bodyText1?.copyWith(
         fontSize: 24 * escala,
         color: textColor1,
       );
 
-  ///Estilo do texto da mensagem.
+  /// Estilo do texto da mensagem.
   TextStyle? get textStyleH2 => textStyleH1?.copyWith(color: textColor2);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: MyWillPopScope(
+      body: AppWillPopScope(
         child: Container(
           //padding: EdgeInsetsDirectional.only(bottom: MediaQuery.of(context).size.height * 0.2),
           color: Colors.blueGrey[50],
           child: Column(
             children: [
-              ///`Container` com a altura da barra de status.
+              /// `Container` com a altura da barra de status.
               Container(
                 height: MediaQuery.of(context).padding.top,
                 color: tema.colorScheme.primary,
               ),
 
-              ///Corpo da página.
+              /// Corpo da página.
               ScrollViewWithChildExpandable(
                 child: Column(
                   children: [
-                    ///"Bem vindo" e mensagem.
+                    /// "Bem vindo" e mensagem.
                     Expanded(
                       flex: 3,
                       child: Align(
@@ -83,16 +84,18 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
 
                     Expanded(child: const SizedBox()),
 
-                    ///Botão de login com o Google.
+                    /// Botão de login com o Google.
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: LoginWithGoogleButton(
                         margin: EdgeInsets.all(16.0),
                         onPressed: () async {
                           if (!controller.isLoading) {
-                            final autenticado =
+                            final result =
                                 await controller.onTapLoginWithGoogle();
-                            if (autenticado == null) {
+                            if (result == StatusSignIn.success) {
+                              controller.showPerfilPage(context);
+                            } else if (result == StatusSignIn.error) {
                               _buildBottomSheetErroLogin().showModal(context);
                             }
                           }
@@ -100,7 +103,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                       ),
                     ),
 
-                    ///Botão de autenticação anônima.
+                    /// Botão de autenticação anônima.
                     Expanded(
                       child: Align(
                         alignment: Alignment.topCenter,
@@ -117,7 +120,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
     );
   }
 
-  ///Retorna o botão de autenticação anônima.
+  /// Retorna o botão de autenticação anônima.
   Widget _buildButtonLoginAnonymously() {
     return Observer(
       builder: (context) {
@@ -163,7 +166,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
               final result = await _buildBottomSheetConfirmarLoginAnonymously()
                   .showModal<bool>(context);
               if (result ?? false) {
-                final autenticado = await controller.onTapLoginAnonymously();
+                final autenticado = await controller.onTapConnectAnonymously(context);
                 if (!autenticado) {
                   _buildBottomSheetErroLogin().showModal(context);
                 }
@@ -175,11 +178,11 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
     );
   }
 
-  ///Abre uma página inferior informando os recursos que não estarão disponíveis enquanto o usuário
-  ///estiver conectado anonimamente.
-  ///Ao ser fechada, retorna `true` se o usuário confirmar que deseja continuar conectado anonimamente.
-  MyBottomSheet _buildBottomSheetConfirmarLoginAnonymously() {
-    return MyBottomSheet(
+  /// Abre uma página inferior informando os recursos que não estarão disponíveis enquanto o usuário
+  /// estiver conectado anonimamente.
+  /// Ao ser fechada, retorna `true` se o usuário confirmar que deseja continuar conectado anonimamente.
+  AppBottomSheet _buildBottomSheetConfirmarLoginAnonymously() {
+    return AppBottomSheet(
       content: const Text(
         UIStrings.LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_MSG,
         textAlign: TextAlign.justify,
@@ -199,9 +202,9 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
     );
   }
 
-  ///Abre uma página inferior informando que houve um erro durante a autenticação.
-  MyBottomSheet _buildBottomSheetErroLogin() {
-    return MyBottomSheet(
+  /// Abre uma página inferior informando que houve um erro durante a autenticação.
+  AppBottomSheet _buildBottomSheetErroLogin() {
+    return AppBottomSheet(
       titleTextStyle: tema.textTheme.bodyText1?.copyWith(
         fontSize: 18 * escala,
         color: textColor1,

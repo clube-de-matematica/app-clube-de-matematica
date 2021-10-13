@@ -1,36 +1,41 @@
-import 'package:clubedematematica/app/modules/clubes/pages/clube_controller.dart';
-import 'package:clubedematematica/app/modules/clubes/pages/clube_page.dart';
-import 'package:clubedematematica/app/modules/clubes/pages/home/home_clubes_page.dart';
-import 'package:clubedematematica/app/modules/quiz/quiz_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+
+import 'pages/clube_controller.dart';
+import 'pages/clube_page.dart';
+import 'pages/home/home_clubes_controller.dart';
+import 'pages/home/home_clubes_page.dart';
 
 class ClubesModule extends Module {
   ///Rota relativa.
   static const kRelativeRouteModule = "/clubes";
 
   ///Rota absoluta.
-  static const kAbsoluteRouteModule =
-      QuizModule.kAbsoluteRouteModule + kRelativeRouteModule;
+  static const kAbsoluteRouteModule = kRelativeRouteModule;
+
+  ///Rota relativa.
+  static const kRelativeRouteHomePage = '';
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteHomePage =
+      kAbsoluteRouteModule + kRelativeRouteHomePage;
 
   @override
   //Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
         //Controles
         Bind((i) => ClubeController()),
+        Bind((i) => HomeClubesController()),
       ];
 
   @override
   //Lista de rotas.
   List<ModularRoute> get routes => [
-        ChildRoute(kRelativeRouteModule, child: (_, __) => HomeClubesPage()),
-        /* ChildRoute(
-          '$kRelativeRouteModule/:id',
-          child: (_, args) => ClubePage(id: args.params['id']),
-        ),
+        ChildRoute(kRelativeRouteHomePage, child: (_, __) => HomeClubesPage()),
         ChildRoute(
-          kRelativeRouteFiltroOpcoesPage,
-          child: (_, args) => FiltroOpcoesPage(args.data),
-          transition: TransitionType.noTransition,
-        ), */
+          '/:id',
+          child: (_, args) => ClubePage(args.data),
+        ),
+        // Redirecionar para a página inicial quando uma rota não for encontrada.
+        //WildcardRoute(child: (_, __) => HomeClubesPage()),
       ];
 }

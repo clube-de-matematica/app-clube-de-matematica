@@ -2,7 +2,7 @@ import 'dart:async';
 
 import '../utils/strings_db.dart';
 
-enum CollectionType { questoes, assuntos }
+enum CollectionType { assuntos, clubes, questoes, usuarios}
 
 extension ExtensionCollectionType on CollectionType {
   /// Retorna o nome da coleção (ou tabela) correspondente a [this].
@@ -10,8 +10,12 @@ extension ExtensionCollectionType on CollectionType {
     switch (this) {
       case CollectionType.assuntos:
         return DbConst.kDbDataCollectionAssuntos;
+      case CollectionType.clubes:
+        return DbConst.kDbDataCollectionClubes;
       case CollectionType.questoes:
         return DbConst.kDbDataCollectionQuestoes;
+      case CollectionType.usuarios:
+        return DbConst.kDbDataCollectionUsuarios;
     }
   }
 }
@@ -48,6 +52,19 @@ class DataWhere {
                 DbConst.kDbDataQuestaoKeyImagensEnunciado,
                 DbConst.kDbDataQuestaoKeyIndice,
                 DbConst.kDbDataQuestaoKeyNivel,
+              ];
+              break;
+            case CollectionType.clubes:
+              keys = [
+                //TODO
+              ];
+              break;
+            case CollectionType.usuarios:
+              keys = [
+                DbConst.kDbDataUserKeyEmail,
+                DbConst.kDbDataUserKeyFoto,
+                DbConst.kDbDataUserKeyId,
+                DbConst.kDbDataUserKeyNome,
               ];
               break;
           }

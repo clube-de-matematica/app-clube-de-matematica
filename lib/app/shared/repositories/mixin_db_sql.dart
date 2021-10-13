@@ -6,5 +6,5 @@ mixin DbSqlMixin {
   /// Esta visualização conterá um registro para cada aplicação da questão. Isso significa que
   /// se a questão foi aplicado em dois cadernos, possuirá um registro para cada um destes.
   /// Criada para facilitar as consultas de dados.
-  final view_questoes = "view_questoes";
+  final viewQuestoes = "view_questoes";
 }

@@ -41,26 +41,27 @@ typedef DataAlternativa = Map<String, dynamic>;
 /// * [double] para [DbConst.kDbDataImagemKeyLargura] e [DbConst.kDbDataImagemKeyAltura].
 typedef DataImagem = Map<String, dynamic>;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /// O objeto com os dados de um usuário.
 /// O valor [dynamic] pode ser:
 /// * [int] para [DbConst.kDbDataUserKeyId]; ou
-/// * [String] para [DbConst.kDbDataUserKeyDisplayNome], [DbConst.kDbDataUserKeyFoto] e 
+/// * [String] para [DbConst.kDbDataUserKeyNome], [DbConst.kDbDataUserKeyFoto] e 
 /// [DbConst.kDbDataUserKeyEmail].
 typedef DataUser = Map<String, dynamic>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /// O objeto com os dados de um clube. 
 /// O valor [dynamic] pode ser:
@@ -211,9 +212,13 @@ abstract class DbConst {
  * ****************************************************************************************
 **/
 
+  /// Nome da coleção (ou tabela) para os usuários.
+  /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataUser]>.
+  static const kDbDataCollectionUsuarios = 'usuarios';
+
   /// Nome do campo para o nome do usuário.
   /// Os valores desse campo são do tipo [String].
-  static const kDbDataUserKeyDisplayNome = 'nome';
+  static const kDbDataUserKeyNome = 'nome';
 
   /// Nome do campo para o ID do usuário.
   /// Os valores desse campo são do tipo [int].
@@ -226,6 +231,19 @@ abstract class DbConst {
   /// Nome do campo para a string base64 da foto de perfil do usuário.
   /// Os valores desse campo são do tipo [String].
   static const kDbDataUserKeyFoto = 'foto';
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /** 
  * ****************************************************************************************

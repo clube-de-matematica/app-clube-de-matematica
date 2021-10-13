@@ -1,149 +1,146 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:clubedematematica/app/shared/repositories/firebase/auth_repository.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../shared/extensions.dart';
 import '../../../shared/models/exceptions/my_exception.dart';
+import '../../../shared/repositories/interface_auth_repository.dart';
 import '../../../shared/repositories/local_storage_repository.dart';
 
 part 'userapp.g.dart';
 
-///A Key para a propriedade `name` no json de [UserApp.fromJson(json)].
+/// A Key para a propriedade `id` no json de [UserApp.fromJson(json)].
+const ID = "id";
+
+/// A Key para a propriedade `name` no json de [UserApp.fromJson(json)].
 const NOME = "name";
 
-///A Key para a propriedade `email` no json de [UserApp.fromJson(json)].
+/// A Key para a propriedade `email` no json de [UserApp.fromJson(json)].
 const EMAIL = "email";
 
-///A Key para a propriedade `pathAvatar` no json de [UserApp.fromJson(json)].
+/// A Key para a propriedade `pathAvatar` no json de [UserApp.fromJson(json)].
 const PATH_AVATAR = "pathAvatar";
 
-///A Key para a propriedade `urlAvatar` no json de [UserApp.fromJson(json)].
+/// A Key para a propriedade `urlAvatar` no json de [UserApp.fromJson(json)].
 const URL_AVATAR = "urlAvatar";
 
-///Modelo para o usuário do App.
+/// Modelo para o usuário do App.
 class UserApp extends _UserAppBase with _$UserApp {
-  UserApp({
-    String? name,
-    String? email,
-    String? pathAvatar,
-    String? urlAvatar,
-  }) : super(
-          name: name,
-          email: email,
-          pathAvatar: pathAvatar,
-          urlAvatar: urlAvatar,
-        );
+  static final _instance = UserApp._();
+  static UserApp get instance => _instance;
 
-  UserApp.fromJson(Map<String, dynamic> json)
-      : super(
-          name: json[NOME],
-          email: json[EMAIL],
-          pathAvatar: json[PATH_AVATAR],
-          urlAvatar: json[URL_AVATAR],
-        );
-}
-
-abstract class _UserAppBase extends ChangeNotifier with Store {
-  ///Nome do usuário.
-  @observable
-  String? _name;
-
-  ///Email do usuário.
-  String? _email;
-
-  ///Path da imágem do avatar do usuário.
-  ///Para a Web é uma URL.
-  String? _pathAvatar;
-
-  ///URL da imágem do avatar do usuário.
-  String? _urlAvatar;
-
-  ///A instância de [AuthRepository].
-  AuthRepository get _auth => Modular.get<AuthRepository>();
-
-  ///Retorna `true` se houver um usuário amônimo conectado.
-  bool get isAnonymous => _auth.isAnonymous;
-
-  ///Retorna `true` se houver um usuário logado.
-  bool get logged => _auth.logged;
-
-  ///Retorna true se houver um usuário conectado (anônimo ou logado).
-  bool get connected => _auth.connected;
-
-  /// Lançará uma exceção se não houver um usuário conectado.
-  void checkAuthentication(String originClass, String originField) =>
-      _auth.checkAuthentication(originClass, originField);
-
-  _UserAppBase({
+  UserApp._() : super();
+  
+  factory UserApp({
+    int? id,
     String? name,
     String? email,
     String? pathAvatar,
     String? urlAvatar,
   }) {
+    return instance..set(id, name, email, pathAvatar, urlAvatar);
+  }
+
+  factory UserApp.fromJson(Map<String, dynamic> json) {
+    return instance
+      ..set(
+        json[ID],
+        json[NOME],
+        json[EMAIL],
+        json[PATH_AVATAR],
+        json[URL_AVATAR],
+      );
+  }
+}
+
+abstract class _UserAppBase extends ChangeNotifier with Store {
+  /// ID do usuário no banco de dados.
+  @observable
+  int? _id;
+
+  /// Nome do usuário.
+  @observable
+  String? _name;
+
+  /// Email do usuário.
+  String? _email;
+
+  /// Path da imágem do avatar do usuário.
+  /// Para a Web é uma URL.
+  String? _pathAvatar;
+
+  /// URL da imágem do avatar do usuário.
+  String? _urlAvatar;
+
+  /// A instância de [IAuthRepository].
+  //IAuthRepository get _auth => Modular.get<IAuthRepository>();
+
+  /// Retorna `true` se houver um usuário amônimo conectado.
+  bool isAnonymous = true;
+
+  _UserAppBase({
+    int? id,
+    String? name,
+    String? email,
+    String? pathAvatar,
+    String? urlAvatar,
+  }) {
+    this._id = id;
     this._name = name;
     this._email = email;
     this._pathAvatar = pathAvatar;
     this._urlAvatar = urlAvatar;
   }
 
-  ///Define [_name], [_email], [_urlAvatar] e [_pathAvatar] para `null`.
-  Future<void> _reset() async {
-    _name = null;
-    _email = null;
-    _urlAvatar = null;
-    if (!kIsWeb) await _deleteImageAvatar();
-    _pathAvatar = null;
+  @action
+  Future<void> set(
+    int? id,
+    String? name,
+    String? email,
+    String? pathAvatar,
+    String? urlAvatar,
+  ) async {
+    _id = id;
+    _name = name;
+    _email = email;
+    _urlAvatar = urlAvatar;
+    if (pathAvatar == null && !kIsWeb) await _deleteImageAvatar();
+    _pathAvatar = pathAvatar;
     notifyListeners();
   }
 
-  ///Cria um usuário anônimo de forma assincrona.
-  ///Se já houver um usuário anônimo conectado, esse usuário será retornado.
-  ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
-  ///Retorna `true` se o processo for bem sucedido.
-  FutureOr<bool> signInAnonymously() async {
-    final autenticado = await _auth.signInAnonymously();
-    if (autenticado) await _reset();
-    return autenticado;
-  }
+  /// Define [_id], [_name], [_email], [_urlAvatar] e [_pathAvatar] para `null`.
+  Future<void> reset() => set(null, null, null, null, null);
 
-  ///Solicitar login com uma cota Google.
-  ///Se houver qualquer outro usuário conectado, esse usuário será desconectado.
-  Future<StatusSignIn> signInWithGoogle([bool replaceUser = false]) async {
-    final result = await _auth.signInWithGoogle(replaceUser);
-    if (result == StatusSignIn.success) {
-      _name = _auth.currentUserName;
-      _email = _auth.currentUserEmail;
-      _urlAvatar = _auth.currentUserAvatarUrl;
-      notifyListeners();
-    } else {
-      signOut();
-    }
-    return result;
-  }
-
-  ///Fazer logout da conta Google.
-  Future<void> signOut() async {
-    await Future.wait([
-      _auth.signOut(),
-      _reset(),
-    ]);
-  }
-
-  ///O nome do arquivo da imagem do avatar do usuário sem a extensão.
+  /// O nome do arquivo da imagem do avatar do usuário sem a extensão.
   static const _AVATAR_IMAGE_NAME = "user_app";
 
-  ///Nome do usuário.
+  /// ID do usuário.
+  @computed
+  int? get id => _id;
+
+  /// ID do usuário.
+  set id(int? id) => _setId(id);
+
+  /// Definir o ID do usuário.
+  @action
+  void _setId(int? id) {
+    if (id != _id) {
+      _id = id;
+      notifyListeners();
+    }
+  }
+
+  /// Nome do usuário.
   @computed
   String? get name => _name;
 
-  ///Nome do usuário.
+  /// Nome do usuário.
   set name(String? name) => _setName(name);
 
-  ///Definir o nome do usuário.
+  /// Definir o nome do usuário.
   @action
   void _setName(String? name) {
     final condition = name?.isNotEmpty ?? true;
@@ -154,10 +151,10 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     }
   }
 
-  ///Email do usuário.
+  /// Email do usuário.
   String? get email => _email;
 
-  ///Email do usuário.
+  /// Email do usuário.
   set email(String? email) {
     final condition = email?.isNotEmpty ?? true;
     assert(condition);
@@ -167,12 +164,12 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     }
   }
 
-  ///Path da imágem do avatar do usuário.
-  ///Para a Web é uma URL.
+  /// Path da imágem do avatar do usuário.
+  /// Para a Web é uma URL.
   String? get pathAvatar => _pathAvatar;
 
-  ///Path da imágem do avatar do usuário.
-  ///Para a Web é uma URL.
+  /// Path da imágem do avatar do usuário.
+  /// Para a Web é uma URL.
   set pathAvatar(String? pathAvatar) {
     final condition = pathAvatar?.isNotEmpty ?? true;
     assert(condition);
@@ -193,10 +190,10 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     }
   }
 
-  ///URL da imágem do avatar do usuário.
+  /// URL da imágem do avatar do usuário.
   String? get urlAvatar => _urlAvatar;
 
-  ///URL da imágem do avatar do usuário.
+  /// URL da imágem do avatar do usuário.
   set urlAvatar(String? urlAvatar) {
     final condition = urlAvatar?.isNotEmpty ?? true;
     assert(condition);
@@ -206,15 +203,15 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     }
   }
 
-  ///Apenas para Android e IOS.
-  ///Path do diretório do arquivos da imagem do avatar do usuário.
+  /// Apenas para Android e IOS.
+  /// Path do diretório do arquivos da imagem do avatar do usuário.
   static const _DIR_AVATAR =
       LocalStorageRepository.DIR_PROFILE_PHOTOS_RELATIVE_PATH;
 
-  ///Apenas para Android e IOS.
-  ///Salva o arquivo da imagem do avatar do usuário no diretório do aplicativo.
-  ///[path] é o path da origem do arquivo.
-  ///Retorna `null` se o arquivo em [path] não for salvo com sucesso.
+  /// Apenas para Android e IOS.
+  /// Salva o arquivo da imagem do avatar do usuário no diretório do aplicativo.
+  /// [path] é o path da origem do arquivo.
+  /// Retorna `null` se o arquivo em [path] não for salvo com sucesso.
   Future<File?> _saveImageAvatar(String path) async {
     if (kIsWeb)
       throw MyException(
@@ -230,9 +227,9 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     }
   }
 
-  ///Apenas para Android e IOS.
-  ///Se existir, exclui o arquivo com a imágem usada no avatar.
-  ///Retorna, assincronamente, `false` se o arquivo não for encontrado ou se ocorrer um erro.
+  /// Apenas para Android e IOS.
+  /// Se existir, exclui o arquivo com a imágem usada no avatar.
+  /// Retorna, assincronamente, `false` se o arquivo não for encontrado ou se ocorrer um erro.
   Future<bool> _deleteImageAvatar() async {
     if (kIsWeb)
       throw MyException(
@@ -246,6 +243,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data[ID] = this._id ?? "";
     data[NOME] = this._name ?? "";
     data[EMAIL] = this._email ?? "";
     data[PATH_AVATAR] = this._pathAvatar ?? "";
@@ -255,7 +253,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
 
   @override
   String toString() {
-    return '_UserAppBase(_name: $_name, _email: $_email, _pathAvatar: $_pathAvatar, _urlAvatar: $_urlAvatar)';
+    return '_UserAppBase(_id: $_id, _name: $_name, _email: $_email, _pathAvatar: $_pathAvatar, _urlAvatar: $_urlAvatar)';
   }
 
   @override
@@ -263,6 +261,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     if (identical(this, o)) return true;
 
     return o is _UserAppBase &&
+        o._id == _id &&
         o._name == _name &&
         o._email == _email &&
         o._pathAvatar == _pathAvatar &&
@@ -271,7 +270,8 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
 
   @override
   int get hashCode {
-    return _name.hashCode ^
+    return _id.hashCode ^
+        _name.hashCode ^
         _email.hashCode ^
         _pathAvatar.hashCode ^
         _urlAvatar.hashCode;

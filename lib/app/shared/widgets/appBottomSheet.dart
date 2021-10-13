@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 ///Uma página exibida na parte inferior da tela.
 ///A estrutura desse [Widget] é baseada na estrutura do [AlertDialog].
-class MyBottomSheet extends StatelessWidget {
-  const MyBottomSheet({
+class AppBottomSheet extends StatelessWidget {
+  const AppBottomSheet({
     Key? key,
     this.title,
     this.titlePadding,

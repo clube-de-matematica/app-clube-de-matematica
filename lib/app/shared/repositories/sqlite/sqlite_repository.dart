@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../models/debug.dart';
 import '../../models/exceptions/my_exception.dart';
 import '../../utils/strings_db.dart';
-import '../firebase/auth_repository.dart';
+import '../interface_auth_repository.dart';
 import '../interface_db_repository.dart';
 import '../mixin_db_repository.dart';
 
@@ -34,10 +34,10 @@ class SqliteRepository
   }
   //Fim da implementação do padrão singleton
 */
-  SqliteRepository(AuthRepository authRepository)
+  SqliteRepository(IAuthRepository authRepository)
       : _authRepository = authRepository;
 
-  final AuthRepository _authRepository;
+  final IAuthRepository _authRepository;
 
   /// Lançará uma exceção se não houver um usuário conectado.
   void _checkAuthentication(String memberName) {
@@ -218,6 +218,10 @@ class SqliteRepository
             key == DbConst.kDbDataQuestaoKeyImagensEnunciado;
       case CollectionType.assuntos:
         return key == DbConst.kDbDataAssuntoKeyHierarquia;
+      case CollectionType.clubes:
+        return false;//TODO
+      case CollectionType.usuarios:
+        return true;
     }
   }
 

@@ -8,6 +8,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import 'app/clube_de_matematica_module.dart';
 import 'app/clube_de_matematica_widget.dart';
+import 'app/configure_supabase.dart';
 import 'app/shared/models/debug.dart';
 import 'app/shared/models/exceptions/error_handler.dart';
 
@@ -90,6 +91,7 @@ Future<void> _init() async {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   //=======================================================================================
   //=======================================================================================
+  await initializeSupabase();
 }
 
 ///Lógica executada antes da inicialização do [Firebase] ser concluída.

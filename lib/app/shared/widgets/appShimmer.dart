@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 ///Widget com efeito de brilho para ser usado como espaço reservado.
-class MyShimmer extends Shimmer {
-  MyShimmer({
+class AppShimmer extends Shimmer {
+  AppShimmer({
     Widget? child,
     double? width,
     double? height,

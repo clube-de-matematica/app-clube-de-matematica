@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../../../shared/widgets/myShimmer.dart';
+import '../../../../../shared/widgets/appShimmer.dart';
 import '../../../shared/models/imagem_questao_model.dart';
 
 ///Estrutura que conterá uma imagem do enunciado ou da alternativa.
@@ -12,7 +12,7 @@ class QuizComponenteImagem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final placeHolder = MyShimmer(
+    final placeHolder = AppShimmer(
       width: imagem.width,
       height: imagem.height,
     );

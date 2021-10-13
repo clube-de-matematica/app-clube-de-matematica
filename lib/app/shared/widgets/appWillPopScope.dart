@@ -5,20 +5,20 @@ import '../theme/tema.dart';
 
 ///Widget usado para notificar o usuário antes de fechar o aplicativo.
 ///Uma [SnackBar] é exibida para o usuário.
-///[MyWillPopScope] deve estar na subárvore do corpo de um [Scaffold], caso contrário,
+///[AppWillPopScope] deve estar na subárvore do corpo de um [Scaffold], caso contrário,
 ///`Scaffold.of()` em `_onWillPop()` lançará uma exceção.
-class MyWillPopScope extends StatefulWidget {
+class AppWillPopScope extends StatefulWidget {
   final Widget child;
-  const MyWillPopScope({
+  const AppWillPopScope({
     Key? key,
     required this.child,
   }) : super(key: key);
 
   @override
-  _MyWillPopScopeState createState() => _MyWillPopScopeState();
+  _AppWillPopScopeState createState() => _AppWillPopScopeState();
 }
 
-class _MyWillPopScopeState extends State<MyWillPopScope> {
+class _AppWillPopScopeState extends State<AppWillPopScope> {
   ThemeData get tema => Modular.get<MeuTema>().temaClaro;
 
   TextStyle? get textStyle => tema.textTheme.bodyText1;

@@ -6,7 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/tema.dart';
 import '../../../../shared/utils/ui_strings.dart' as uiStringsApp;
-import '../../../../shared/widgets/myDrawer.dart';
+import '../../../../shared/widgets/scaffoldWithDrawer.dart';
 import '../../shared/utils/ui_strings.dart';
 import 'quiz_controller.dart';
 import 'widgets/quiz_alternativas.dart';
@@ -21,9 +21,9 @@ class QuizPage extends StatefulWidget {
   _QuizPageState createState() => _QuizPageState();
 }
 
-/// [ModularState] irá criar um [controller] a partir de um [Bind] do tipo [QuizController] 
-/// disponível em um dos módulos da hierarquia (quando houver mais de um). A vantagem de usar 
-/// [ModularState] é que automáticamente será feito o `dispose` de [controller] junto com o 
+/// [ModularState] irá criar um [controller] a partir de um [Bind] do tipo [QuizController]
+/// disponível em um dos módulos da hierarquia (quando houver mais de um). A vantagem de usar
+/// [ModularState] é que automáticamente será feito o `dispose` de [controller] junto com o
 /// de [_QuizPageState].
 class _QuizPageState extends ModularState<QuizPage, QuizController> {
   ThemeData get tema => Modular.get<MeuTema>().temaClaro;
@@ -31,11 +31,11 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
 
   @override
   Widget build(BuildContext context) {
-
     //FirebaseToSupabase.migrarAsuntos();
     //FirebaseToSupabase.migrarQuestoes();
-    
-    return MyDrawer(
+
+    return ScaffoldWithDrawer(
+      page: AppDrawerPage.quiz,
       appBar: QuizAppBar(controller),
       body: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -62,7 +62,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                           child: Observer(builder: (_) {
                             return Column(
                               children: controller.itensFiltrados.isEmpty
-                                  ? _ifItensFiltradosIsEmpty()
+                                  ? _ifItensFiltradosIsEmpty(context)
                                   : _ifItensFiltradosIsNotEmpty(),
                             );
                           }),
@@ -119,7 +119,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
 
   /// Retorna uma lista com um botão para exibir a página de filtros e um texto informando
   /// que não foram encontrados itens a serem exibidos.
-  List<Widget> _ifItensFiltradosIsEmpty() {
+  List<Widget> _ifItensFiltradosIsEmpty(BuildContext context) {
     return <Widget>[
       Text(
         UIStrings.QUIZ_MSG_ITENS_NAO_ENCONTRADOS,
@@ -132,7 +132,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
           padding: const EdgeInsets.only(top: 40),
         ),
         child: const Text(UIStrings.QUIZ_TEXTO_BOTAO_FILTRAR),
-        onPressed: () => controller.onTapFiltrar(),
+        onPressed: () => controller.onTapFiltrar(context),
       )
     ];
   }

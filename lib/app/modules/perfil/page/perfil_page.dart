@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../shared/theme/tema.dart';
-import '../../../shared/widgets/myBottomSheet.dart';
-import '../../../shared/widgets/myWillPopScope.dart';
+import '../../../shared/widgets/appBottomSheet.dart';
+import '../../../shared/widgets/appWillPopScope.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
 import '../utils/ui_strings.dart';
 import '../widgets/avatar.dart';
@@ -36,13 +36,13 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
           final formState = _formKey.currentState;
           if (formState != null) {
             controller.save(
+              context,
               formState: formState,
-              navigatorState: Navigator.of(context),
             );
           }
         },
       ),
-      body: MyWillPopScope(
+      body: AppWillPopScope(
         child: Container(
           //padding: EdgeInsetsDirectional.only(bottom: MediaQuery.of(context).size.height * 0.2),
           color: tema.colorScheme.primary.withOpacity(0.02),
@@ -98,7 +98,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                                     context,
                                     UIStrings.kAccountChangeConfirmationMsg);
                                 if (confirm)
-                                  controller.signInWithAnotherAccount();
+                                  controller.signInWithAnotherAccount(context);
                               },
                               child: const Text(
                                   UIStrings.kChangeAccountButtonTitle),
@@ -111,7 +111,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                                   final confirm =
                                       await _confirmationBottomSheet(context,
                                           UIStrings.kExitConfirmationMsg);
-                                  if (confirm) controller.exit();
+                                  if (confirm) controller.exit(context);
                                 },
                                 child: const Text(UIStrings.kExitButtonTitle),
                               ),
@@ -133,6 +133,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
 
   TextFormField _textName() {
     return TextFormField(
+      keyboardType: TextInputType.text,
       decoration: InputDecoration(
         labelText: UIStrings.kNameLabelText,
         labelStyle: textStyleLabel,
@@ -190,7 +191,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
   ///Retorna `true` se o usuário confirmar a ação.
   Future<bool> _confirmationBottomSheet(
       BuildContext context, String message) async {
-    final bottomSheet = MyBottomSheet(
+    final bottomSheet = AppBottomSheet(
       content: Text(
         message,
         textAlign: TextAlign.justify,

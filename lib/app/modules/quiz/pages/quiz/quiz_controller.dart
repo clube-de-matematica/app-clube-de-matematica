@@ -2,16 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../../../navigation.dart';
 import '../../../../shared/utils/strings_db.dart';
-import '../../../filtros/filtros_module.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
 import '../../shared/models/alternativa_questao_model.dart';
 import '../../shared/models/imagem_questao_model.dart';
-import '../../shared/models/questao_model.dart';
 import '../../shared/models/opcoesQuestao.dart';
+import '../../shared/models/questao_model.dart';
 import '../../shared/repositories/imagem_questao_repository.dart';
 import '../../shared/utils/assets_quiz.dart';
 
@@ -175,24 +174,27 @@ abstract class _QuizControllerBase with Store {
   }
 
   /// Retorna a opção escolhida pelo usuário dentre as opções disponíveis para o item.
-  Future<void> setOpcaoItem(OpcoesQuestao opcao) async {
+  Future<void> setOpcaoItem(BuildContext context, OpcoesQuestao opcao) async {
     switch (opcao) {
       case OpcoesQuestao.none:
       case OpcoesQuestao.filter:
-        await onTapFiltrar();
+        await onTapFiltrar(context);
     }
   }
 
   /// Ação executada para abrir a página de filtro.
   /// Retornará `true` se o botão "Aplicar" de uma das páginas de filtro for pressionado.
-  Future<bool> onTapFiltrar() async {
+  Future<bool> onTapFiltrar(BuildContext context) async {
     // Usa-se `Modular.to` para caminhos literais e `Modular.link` para rotas no
     // módulo atual.
     // Se o retorno de `pushNamed` for `true`, significa que o botão "Aplicar" de uma das
     // páginas de  filtro foi pressionado.
-    final retorno = await Modular.to
+    /* final retorno = await Modular.to
             .pushNamed<bool>(FiltrosModule.kAbsoluteRouteFiltroTiposPage) ??
-        false;
+        false; */
+    final retorno =
+        await Navigation.showPage<bool>(context, RoutePage.filtrosTipos) ??
+            false;
     if (retorno) _setIndice(0, force: true);
     return retorno;
   }

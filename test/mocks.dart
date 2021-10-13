@@ -1,9 +1,7 @@
-import 'package:clubedematematica/app/shared/repositories/firebase/auth_repository.dart';
+import 'package:clubedematematica/app/shared/repositories/interface_auth_repository.dart';
 import 'package:mockito/mockito.dart';
 
-/// Mock para a classe [AuthRepository].
-class MockAuthRepository extends Fake implements AuthRepository {
-  @override
-  bool get connected => true;
+/// Mock para a classe [AuthFirebaseRepository].
+class MockAuthRepository extends Fake implements IAuthRepository {
 
 }

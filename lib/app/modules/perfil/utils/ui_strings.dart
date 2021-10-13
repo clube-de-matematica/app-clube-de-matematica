@@ -4,7 +4,7 @@ abstract class UIStrings {
   static const kNameLabelText = "Nome";
 
   /// Mensagem na caixa de texto quando ela estiver vazia.
-  static const kNameHintText = "Como você deseja ser chamado";
+  static const kNameHintText = "Como deseja ser chamado?";
 
   /// Mensagem para indicar o preenchimento obrigatório.
   static const kNameValidationMsgCampoObrigatotio = "Campo obrigatório";

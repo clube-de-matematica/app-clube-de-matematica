@@ -1,7 +1,8 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../filtros_module.dart';
+import '../../../../navigation.dart';
 import '../../shared/models/filtro_controller_model.dart';
 import '../../shared/models/filtros_model.dart';
 import '../../shared/utils/ui_strings.dart';
@@ -20,12 +21,19 @@ abstract class _FiltroTiposControllerBase extends FiltroController with Store {
       : super(filtrosAplicados: filtrosAplicados, filtrosTemp: filtrosTemp);
 
   ///Ação a ser executada quando um item da lista de tipos é pressionado.
-  void onTap(TiposFiltro tipo) async {
+  void onTap(BuildContext context, TiposFiltro tipo) async {
     ///Se o retorno de `pushNamed` for `true`, significa que o botão "Aplicar" da página de
     ///opções de filtro foi pressionado.
-    final retorno = (await Modular.to.pushNamed<bool>(
+    /* final retorno = (await Modular.to.pushNamed<bool>(
             FiltrosModule.kAbsoluteRouteFiltroOpcoesPage,
             arguments: tipo)) ??
+        false;
+    if (retorno) Modular.to.pop(true); */
+    final retorno = (await Navigation.showPage<bool>(
+          context,
+          RoutePage.filtrosOpcoes,
+          arguments: tipo,
+        )) ??
         false;
     if (retorno) Modular.to.pop(true);
   }

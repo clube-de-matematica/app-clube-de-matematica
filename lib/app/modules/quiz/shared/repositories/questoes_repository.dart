@@ -77,7 +77,7 @@ abstract class _QuestoesRepositoryBase with Store {
     for (var data in resultado) {
       if (!_existeQuestao(data[DbConst.kDbDataQuestaoKeyId])) {
         // Criar um `Questao` com base no `data` e incluir na lista de questões carregadas.
-        // Não será emitido várias notificações, pois `carregarItens` também é um `action`.
+        // Não será emitido várias notificações, pois `carregarQuestoes` também é um `action`.
         _addInQuestoes(
             Questao.fromJson(data));
       }

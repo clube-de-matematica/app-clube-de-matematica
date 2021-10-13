@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:clubedematematica/app/shared/widgets/myShimmer.dart';
+import 'package:clubedematematica/app/shared/widgets/appShimmer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -83,7 +83,7 @@ class Avatar extends StatelessWidget {
                 duration: const Duration(milliseconds: 500),
                 child: frame != null
                     ? child
-                    : MyShimmer(
+                    : AppShimmer(
                         height: size,
                         width: size,
                       ),

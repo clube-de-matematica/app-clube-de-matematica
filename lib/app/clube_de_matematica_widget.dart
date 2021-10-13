@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'modules/login/login_module.dart';
-import 'modules/quiz/quiz_module.dart';
-import 'shared/repositories/firebase/auth_repository.dart';
+import 'navigation.dart';
+import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/theme/tema.dart';
 import 'shared/utils/constantes.dart';
 
@@ -15,9 +14,33 @@ class ClubeDeMatematicaWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
       theme: Modular.get<MeuTema>().temaClaro,
-      initialRoute:Modular.get<AuthRepository>().logged
-          ? QuizModule.kAbsoluteRouteQuizPage
-          : LoginModule.kAbsoluteRouteLoginPage,
+      initialRoute: Modular.get<IAuthRepository>().logged
+          ? RouteModule.quiz.name
+          : RouteModule.login.name,
+      /* builder: (context, child) {
+        /// Isso criará um [Scaffold] abaixo do [Navigator], mas acima de todas as rotas.
+        return Scaffold(
+          key: rootScaffoldKey,
+          drawer: AppDrawer(key: rootDrawerKey),
+          body: child,
+        );
+      }, */
     ).modular();
   }
 }
+/* 
+openRootDrawer(BuildContext context) {
+  // Esta é uma operação que deve ser evitada em uma arvore de widgets muito extensa.
+  // Alternativamente, pode-se usar uma [GlobalKey] no [Scaffold] desejado e expô-la.
+  // context.findRootAncestorStateOfType<ScaffoldState>()?.openDrawer();
+  rootScaffoldKey.currentState?.openDrawer();
+}
+
+bool get isRootDrawerOpen =>
+    rootScaffoldKey.currentState?.isDrawerOpen ?? false;
+
+/// Alternativa ao uso de [BuildContext.findRootAncestorStateOfType] em [openRootDrawer].
+final GlobalKey<ScaffoldState> rootScaffoldKey = GlobalKey<ScaffoldState>();
+
+final GlobalKey<State<AppDrawer>> rootDrawerKey = GlobalKey<State<AppDrawer>>();
+ */

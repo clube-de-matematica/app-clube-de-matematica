@@ -60,19 +60,21 @@ class _FiltroOpcoesPageState extends State<FiltroOpcoesPage> {
                 return const Text(UIStrings.APP_MSG_ERRO_INESPERADO);
               } else if (snapshot.hasData) {
                 return Expanded(
-                    child: ListView.separated(
-                  itemCount: allOpcoes.length,
-                  itemBuilder: (_, indice) {
-                    final valor = allOpcoes[indice];
-                    return tipo == TiposFiltro.assunto
-                        ? _opcaoTipoAssunto(valor as OpcaoFiltroAssuntoUnidade)
-                        : _opcaoOutrosTipos(valor);
-                  },
-                  separatorBuilder: (_, __) => Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    child: const Divider(height: double.minPositive),
+                  child: ListView.separated(
+                    itemCount: allOpcoes.length,
+                    itemBuilder: (_, indice) {
+                      final valor = allOpcoes[indice];
+                      return tipo == TiposFiltro.assunto
+                          ? _opcaoTipoAssunto(
+                              valor as OpcaoFiltroAssuntoUnidade)
+                          : _opcaoOutrosTipos(valor);
+                    },
+                    separatorBuilder: (_, __) => Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: const Divider(height: double.minPositive),
+                    ),
                   ),
-                ));
+                );
               } else
                 return Container(
                     padding: EdgeInsets.only(top: 100),

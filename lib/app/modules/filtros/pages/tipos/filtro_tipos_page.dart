@@ -24,9 +24,9 @@ class _FiltroTiposPageState
   @override
   Widget build(BuildContext context) {
     return FiltroPageModel(
-        controller: controller,
-        body: Expanded(
-            child: ListView.separated(
+      controller: controller,
+      body: Expanded(
+        child: ListView.separated(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           itemCount: tipos.length,
           itemBuilder: (context, indice) {
@@ -45,10 +45,12 @@ class _FiltroTiposPageState
                 controller.tiposFiltroToString(tipos[indice]),
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              onTap: () => controller.onTap(tipos[indice]),
+              onTap: () => controller.onTap(context, tipos[indice]),
             );
           },
           separatorBuilder: (context, indice) => const Divider(),
-        )));
+        ),
+      ),
+    );
   }
 }

@@ -20,6 +20,7 @@ class ButtonProgressIndicator extends StatefulWidget {
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final double? elevation;
+  final bool isLoading;
 
   const ButtonProgressIndicator({
     Key? key,
@@ -33,6 +34,7 @@ class ButtonProgressIndicator extends StatefulWidget {
     this.padding,
     this.elevation,
     this.transform = false,
+    this.isLoading = false,
   }) : super(key: key);
 
   @override
@@ -42,9 +44,9 @@ class ButtonProgressIndicator extends StatefulWidget {
 
 class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
     with TickerProviderStateMixin {
-  /// Será 1 (um) quando [widget.onPressed] estiver em andamento e 0 (zero) nos
+  /// Será `true` quando [widget.onPressed] estiver em andamento e `false` nos
   /// demais casos.
-  int _state = 0;
+  late bool _isLoading;
   late double _initialWidth;
   double _width = double.maxFinite;
   final _height = 48.0;
@@ -70,13 +72,16 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
   void initState() {
     super.initState();
 
+    _isLoading = widget.isLoading;
+
     if (widget.transform) {
       _animation = Tween(begin: 0.0, end: 1).animate(_controller)
         ..addListener(() {
-          setState(() {
-            _width =
-                _initialWidth - ((_initialWidth - _height) * _animation.value);
-          });
+          if (mounted)
+            setState(() {
+              _width = _initialWidth -
+                  ((_initialWidth - _height) * _animation.value);
+            });
         });
     }
   }
@@ -121,7 +126,7 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
               child: child,
               onPressed: () {
                 _initialWidth = context.size?.width ?? _height;
-                if (_state == 0) {
+                if (!_isLoading) {
                   animateButton();
                 }
               },
@@ -133,9 +138,9 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
   }
 
   Widget? setUpButtonChild() {
-    if (_state == 0) {
+    if (!_isLoading) {
       return widget.child;
-    } else if (_state == 1) {
+    } else {
       return SizedBox(
         height: 24.0,
         width: 24.0,
@@ -146,25 +151,30 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
           strokeWidth: 2.0,
         ),
       );
-    } else {
-      return null;
     }
   }
 
   void animateButton() {
     final _onPressed = widget.onPressed;
     if (_onPressed != null) {
-      _controller.forward();
+      if (mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
 
-      setState(() {
-        _state = 1;
-      });
+      if (widget.transform) _controller.forward();
 
       _onPressed().whenComplete(() async {
-        await _controller.reverse();
-        setState(() {
-          _state = 0;
-        });
+        if (widget.transform) {
+          if (_controller.isAnimating) _controller.stop();
+          await _controller.reverse();
+        }
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       });
     }
   }

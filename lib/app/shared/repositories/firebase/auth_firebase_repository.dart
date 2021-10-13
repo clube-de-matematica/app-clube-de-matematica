@@ -1,37 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
+/* import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../models/debug.dart';
-import '../../models/exceptions/my_exception.dart';
-
-/// Estado da solicitação de login.
-enum StatusSignIn {
-  /// Nenhuma solicitação de autenticação em andamento.
-  none,
-
-  /// Solicitação de autenticação em andamento.
-  inProgress,
-
-  /// Solicitação de autenticação concluída com sucesso.
-  success,
-
-  /// Solicitação de autenticação cancelada pelo usuário.
-  canceled,
-
-  /// Houve um erro na solicitação de autenticação.
-  error,
-}
+import '../interface_auth_repository.dart';
 
 ///Gerencia processos de autenticação com o Firebase Auth.
-class AuthRepository {
-  static const _className = "AuthRepository";
+class AuthFirebaseRepository extends IAuthRepository with MixinAuthRepository {
   final FirebaseAuth _auth;
 
   ///AINDA É PRECISO DEFINIR OS ESCOPOS DO OAUTH.
   final _googleSignIn = GoogleSignIn();
 
-  AuthRepository(FirebaseAuth auth) : _auth = auth {
+  AuthFirebaseRepository(FirebaseAuth auth) : _auth = auth {
     /* try {
       getUserAnonymous();
     } on MyExceptionAuthentication catch (e) {
@@ -41,25 +22,25 @@ class AuthRepository {
   }
 
   ///Retorna o usuário atual.
-  User? get currentUser => _auth.currentUser;
+  User? get _currentUser => _auth.currentUser;
 
   ///Retorna o nome do usuário atual.
-  String? get currentUserName => currentUser?.displayName;
+  String? get currentUserName => _currentUser?.displayName;
 
   ///Retorna o Email do usuário atual.
-  String? get currentUserEmail => currentUser?.email;
+  String? get currentUserEmail => _currentUser?.email;
 
   ///Retorna a URL da foto do usuário atual.
-  String? get currentUserAvatarUrl => currentUser?.photoURL;
+  String? get currentUserAvatarUrl => _currentUser?.photoURL;
 
   ///Retorna `true` se houver um usuário conectado (anônimo ou logado).
-  bool get connected => currentUser != null;
+  bool get connected => _currentUser != null;
 
   ///Retorna `true` se houver um usuário amônimo conectado.
-  bool get isAnonymous => currentUser?.isAnonymous ?? false;
+  bool get isAnonymous => _currentUser?.isAnonymous ?? false;
 
   ///Retorna `true` se houver um usuário logado.
-  bool get logged => !(currentUser?.isAnonymous ?? true);
+  bool get logged => !(_currentUser?.isAnonymous ?? true);
 
   ///Cria um usuário anônimo de forma assincrona.
   ///Se já houver um usuário anônimo conectado, nada será feito, mas retorna `true`.
@@ -74,9 +55,9 @@ class AuthRepository {
       if (user == null) return false;
 
       assert(user.isAnonymous);
-      assert(user.uid == currentUser?.uid);
+      assert(user.uid == _currentUser?.uid);
 
-      return user.uid == currentUser?.uid;
+      return user.uid == _currentUser?.uid;
     } on FirebaseAuthException catch (error) {
       throw MyExceptionAuthRepository(
         error: error,
@@ -175,9 +156,9 @@ class AuthRepository {
     if (user == null) return StatusSignIn.error;
 
     assert(!user.isAnonymous);
-    assert(user.uid == currentUser?.uid);
+    assert(user.uid == _currentUser?.uid);
 
-    if (user.uid == currentUser?.uid)
+    if (user.uid == _currentUser?.uid)
       return StatusSignIn.success;
     else
       return StatusSignIn.error;
@@ -205,54 +186,5 @@ class AuthRepository {
   Future<void> _signOut() async {
     await _auth.signOut();
   }
-
-  /// Lançará uma exceção se não houver um usuário conectado.
-  void checkAuthentication(String originClass, String originField) {
-    assert(Debug.print("[INFO] Verificando altenticação..."));
-    if (!connected) {
-      assert(Debug.print("[ERROR] Usuário não altenticado."));
-      throw MyExceptionAuthRepository(
-        originClass: originClass,
-        originField: originField,
-        type: TypeErroAuthentication.unauthenticatedUser,
-      );
-    }
-  }
 }
-
-///Uma enumeração para todos os tipos de erro [MyExceptionAuthRepository].
-///[unauthenticatedUser]: [_MSG_USUARIO_NAO_ALTENTICADO].
-enum TypeErroAuthentication {
-  unauthenticatedUser,
-}
-
-const _MSG_PADRAO_ERRO = "Erro de autenticação.";
-
-const _MSG_USUARIO_NAO_ALTENTICADO = "Usuário não autenticado.";
-
-class MyExceptionAuthRepository extends MyException {
-  MyExceptionAuthRepository({
-    String message = _MSG_PADRAO_ERRO,
-    Object? error,
-    String? originField,
-    String? fieldDetails,
-    String? causeError,
-    TypeErroAuthentication? type,
-    String originClass = AuthRepository._className,
-  }) : super(
-          (type == null) ? _MSG_PADRAO_ERRO : _getMessage(type),
-          error: error,
-          originClass: originClass,
-          originField: originField,
-          fieldDetails: fieldDetails,
-          causeError: causeError,
-        );
-
-  ///Retorna a mensagem correspondente ao tipo do erro em [type].
-  static String _getMessage(TypeErroAuthentication type) {
-    switch (type) {
-      case TypeErroAuthentication.unauthenticatedUser:
-        return _MSG_USUARIO_NAO_ALTENTICADO;
-    }
-  }
-}
+ */
