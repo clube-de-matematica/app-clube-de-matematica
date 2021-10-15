@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../shared/theme/tema.dart';
+import '../../../../../shared/theme/appTheme.dart';
 import '../../../shared/models/opcoesQuestao.dart';
 import '../../../shared/utils/ui_strings.dart';
 import '../quiz_controller.dart';
@@ -18,7 +17,7 @@ class QuizBarOpcoesItem extends StatelessWidget {
   final QuizController controller;
 
   TextStyle? get textStyle =>
-      Modular.get<MeuTema>().temaClaro.textTheme.bodyText2;
+      AppTheme.instance.temaClaro.textTheme.bodyText2;
 
   ///As opções do popup de opções do item.
   static const _popupMenuItens = <PopupMenuItem<OpcoesQuestao>>[

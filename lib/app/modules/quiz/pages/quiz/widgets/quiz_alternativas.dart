@@ -1,9 +1,8 @@
 import 'package:clubedematematica/app/modules/quiz/shared/models/imagem_questao_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../shared/theme/tema.dart';
+import '../../../../../shared/theme/appTheme.dart';
 import '../../../shared/models/alternativa_questao_model.dart';
 import '../quiz_controller.dart';
 import 'katex_flutter.dart';
@@ -16,7 +15,7 @@ class QuizAlternativas extends StatelessWidget {
 
   final QuizController controller;
 
-  ThemeData get tema => Modular.get<MeuTema>().temaClaro;
+  ThemeData get tema => AppTheme.instance.temaClaro;
   TextStyle? get textStyle => tema.textTheme.bodyText1;
 
   @override

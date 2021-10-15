@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../shared/theme/tema.dart';
+import '../../../shared/theme/appTheme.dart';
 import '../../../shared/widgets/appBottomSheet.dart';
 import '../../../shared/widgets/appWillPopScope.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
@@ -17,7 +17,7 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
-  double get escala => MeuTema.escala;
+  double get escala => AppTheme.escala;
 
   ThemeData get tema => Theme.of(context);
 

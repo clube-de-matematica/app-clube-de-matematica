@@ -3,7 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../shared/repositories/interface_auth_repository.dart';
-import '../../../shared/theme/tema.dart';
+import '../../../shared/theme/appTheme.dart';
 import '../../../shared/widgets/appBottomSheet.dart';
 import '../../../shared/widgets/appWillPopScope.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
@@ -18,7 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends ModularState<LoginPage, LoginController> {
-  double get escala => MeuTema.escala;
+  double get escala => AppTheme.escala;
 
   ThemeData get tema => Theme.of(context);
 

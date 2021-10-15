@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../shared/theme/tema.dart';
+import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/utils/ui_strings.dart';
 import '../../shared/models/filtros_model.dart';
 import '../../shared/models/opcao_filtro_model.dart';
@@ -33,7 +33,7 @@ class _FiltroOpcoesPageState extends State<FiltroOpcoesPage> {
 
   final FiltroOpcoesController controller;
 
-  ThemeData get tema => Modular.get<MeuTema>().temaClaro;
+  ThemeData get tema => AppTheme.instance.temaClaro;
 
   Color get backgroundColor => tema.primaryColor.withOpacity(0.07);
 

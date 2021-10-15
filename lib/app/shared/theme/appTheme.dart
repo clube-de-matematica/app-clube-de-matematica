@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 import '../extensions.dart';
 
 ///Tema usado no aplicativo.
-class MeuTema {
+class AppTheme {
+  static final _instance = AppTheme._();
+  AppTheme._();
+  factory AppTheme() => _instance;
+  static AppTheme get instance => _instance;
+
+  static MaterialColor get primarySwatch => Colors.teal;
+
   ///Usada para almentar a fonte de todos os [TextStyle] do tema de forma proporcional.
   static double _escala = 1.0;
 
@@ -17,7 +24,7 @@ class MeuTema {
   }
 
   ThemeData get temaClaro {
-    final temp = ThemeData(primarySwatch: Colors.teal);
+    final temp = ThemeData(primarySwatch: primarySwatch);
     final onSurface = Colors.black.withOpacity(0.7);
 
     return temp.copyWith(

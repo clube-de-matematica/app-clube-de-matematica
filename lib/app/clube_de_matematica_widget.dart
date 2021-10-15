@@ -3,7 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import 'navigation.dart';
 import 'shared/repositories/interface_auth_repository.dart';
-import 'shared/theme/tema.dart';
+import 'shared/theme/appTheme.dart';
 import 'shared/utils/constantes.dart';
 
 /// O [Widget] principal do aplicativo.
@@ -13,7 +13,7 @@ class ClubeDeMatematicaWidget extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
-      theme: Modular.get<MeuTema>().temaClaro,
+      theme: AppTheme.instance.temaClaro,
       initialRoute: Modular.get<IAuthRepository>().logged
           ? RouteModule.quiz.name
           : RouteModule.login.name,

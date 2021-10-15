@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../shared/theme/tema.dart';
+import '../../../../shared/theme/appTheme.dart';
 import '../utils/ui_strings.dart';
 import 'expansion_tile_personalizado.dart';
 
@@ -13,12 +12,12 @@ class FiltrosSelecionados extends StatelessWidget {
   final List<Widget> children;
 
   Color get textColor =>
-      Modular.get<MeuTema>().temaClaro.colorScheme.onPrimary.withOpacity(0.8);
+      AppTheme.instance.temaClaro.colorScheme.onPrimary.withOpacity(0.8);
 
   Color get backgroundColor =>
-      Modular.get<MeuTema>().temaClaro.colorScheme.primary;
+      AppTheme.instance.temaClaro.colorScheme.primary;
 
-  TextStyle? get textStyle => Modular.get<MeuTema>()
+  TextStyle? get textStyle => AppTheme.instance
       .temaClaro
       .textTheme
       .bodyText1

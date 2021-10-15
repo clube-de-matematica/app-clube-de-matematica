@@ -14,7 +14,6 @@ import 'modules/quiz/quiz_module.dart';
 import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/repositories/supabase/auth_supabase_repository.dart';
 import 'shared/repositories/supabase/supabase_db_repository.dart';
-import 'shared/theme/tema.dart';
 
 class ClubeDeMatematicaModule extends Module {
   /// Rota relativa.
@@ -27,7 +26,7 @@ class ClubeDeMatematicaModule extends Module {
   //Um Bind é uma injeção de dependência.
   //Como este é o módulo plincipal (MainModule), ela estará disponível para todo o app.
   List<Bind> get binds => [
-        Bind((_) => MeuTema()),
+        //Bind((_) => AppTheme()),
         Bind<UserApp>((i) => i.get<IAuthRepository>().user),
         Bind.singleton((_) => DeepAndAppLinks()),
 

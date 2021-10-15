@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../shared/theme/tema.dart';
+import '../../../../../shared/theme/appTheme.dart';
 import '../../../shared/utils/ui_strings.dart';
 import '../quiz_controller.dart';
 
@@ -14,7 +13,7 @@ class QuizBottomBar extends BottomAppBar {
           child: _buildChild(controller),
         );
 
-  static ThemeData get _tema => Modular.get<MeuTema>().temaClaro;
+  static ThemeData get _tema => AppTheme.instance.temaClaro;
 
   static Widget _buildChild(QuizController controller) {
     return Padding(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../shared/theme/tema.dart';
+import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/utils/ui_strings.dart' as uiStringsApp;
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
 import '../../shared/utils/ui_strings.dart';
@@ -26,7 +26,7 @@ class QuizPage extends StatefulWidget {
 /// [ModularState] é que automáticamente será feito o `dispose` de [controller] junto com o
 /// de [_QuizPageState].
 class _QuizPageState extends ModularState<QuizPage, QuizController> {
-  ThemeData get tema => Modular.get<MeuTema>().temaClaro;
+  ThemeData get tema => AppTheme.instance.temaClaro;
   TextStyle? get textStyle => tema.textTheme.bodyText1;
 
   @override

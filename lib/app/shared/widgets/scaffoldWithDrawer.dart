@@ -214,7 +214,7 @@ class _AppDrawerState extends State<_AppDrawer> {
       return ListTile(
         title: Text(clube.nome),
         subtitle: Text(subtitle),
-        leading: CircleAvatar(),
+        leading: CircleAvatar(backgroundColor: clube.capa),
         onTap: () {
           showPage(
             context,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../shared/theme/tema.dart';
+import '../../../../../shared/theme/appTheme.dart';
 import '../../../shared/utils/ui_strings.dart';
 import '../quiz_controller.dart';
 
@@ -24,7 +23,7 @@ class QuizAppBar extends AppBar {
 
   final QuizController controller;
 
-  static ThemeData get _tema => Modular.get<MeuTema>().temaClaro;
+  static ThemeData get _tema => AppTheme.instance.temaClaro;
 
   ///Necessário para que este [Widget] possa ser usado como o `appbar` de um [Scaffold].
   //@override

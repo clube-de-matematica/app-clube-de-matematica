@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
-import '../theme/tema.dart';
+import '../theme/appTheme.dart';
 
 ///Widget usado para notificar o usuário antes de fechar o aplicativo.
 ///Uma [SnackBar] é exibida para o usuário.
@@ -19,7 +18,7 @@ class AppWillPopScope extends StatefulWidget {
 }
 
 class _AppWillPopScopeState extends State<AppWillPopScope> {
-  ThemeData get tema => Modular.get<MeuTema>().temaClaro;
+  ThemeData get tema => AppTheme.instance.temaClaro;
 
   TextStyle? get textStyle => tema.textTheme.bodyText1;
 
