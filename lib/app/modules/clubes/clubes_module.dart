@@ -1,7 +1,9 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'pages/clube_controller.dart';
-import 'pages/clube_page.dart';
+import 'pages/clube/clube_controller.dart';
+import 'pages/clube/clube_page.dart';
+import 'pages/criar/criar_clube_page.dart';
+import 'pages/editar/editar_clube_page.dart';
 import 'pages/home/home_clubes_controller.dart';
 import 'pages/home/home_clubes_page.dart';
 
@@ -19,6 +21,20 @@ class ClubesModule extends Module {
   static const kAbsoluteRouteHomePage =
       kAbsoluteRouteModule + kRelativeRouteHomePage;
 
+  ///Rota relativa.
+  static const kRelativeRouteCriarPage = '/novo';
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteCriarPage =
+      kAbsoluteRouteModule + kRelativeRouteCriarPage;
+
+  ///Rota relativa.
+  static const kRelativeRouteEditarPage = '/editar';
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteEditarPage =
+      kAbsoluteRouteModule + kRelativeRouteEditarPage;
+
   @override
   //Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
@@ -31,6 +47,8 @@ class ClubesModule extends Module {
   //Lista de rotas.
   List<ModularRoute> get routes => [
         ChildRoute(kRelativeRouteHomePage, child: (_, __) => HomeClubesPage()),
+        ChildRoute(kRelativeRouteCriarPage, child: (_, __) => AdicionarClubePage()),
+        ChildRoute(kRelativeRouteEditarPage, child: (_, args) => EditarClubePage(args.data)),
         ChildRoute(
           '/:id',
           child: (_, args) => ClubePage(args.data),

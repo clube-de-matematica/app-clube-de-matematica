@@ -229,4 +229,36 @@ class SupabaseDbRepository
       rethrow;
     }
   }
+
+  @override
+  Future<bool> exitClube(int idClube, int idUser) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.exitClube()...'));
+    _checkAuthentication('exitClube()');
+    try {
+      assert(Debug.print(
+          '[INFO] Excluindo o usuário cujo "idUser = $idUser" do clube cujo '
+          '"idClube = $idClube" na tabela "$tbClubeXUsuario"...'));
+      final response = await _client
+          .from(tbClubeXUsuario)
+          .delete()
+          .eq(tbClubeXUsuarioColIdUsuario, idUser)
+          .eq(tbClubeXUsuarioColIdClube, idClube)
+          .execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        throw MyException(
+          error.message,
+          originClass: _debugName,
+          originField: 'exitClube()',
+          error: error,
+        );
+      }
+      return true;
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao excluir o usuário cujo "idUser = $idUser" do clube cujo '
+          '"idClube = $idClube" na tabela "$tbClubeXUsuario".'));
+      rethrow;
+    }
+  }
 }

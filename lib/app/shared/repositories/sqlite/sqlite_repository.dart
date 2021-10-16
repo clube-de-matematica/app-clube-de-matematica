@@ -260,4 +260,10 @@ class SqliteRepository
     // TODO: implement setClube
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> exitClube(int idClube, int idUser) {
+    // TODO: implement exiteClube
+    throw UnimplementedError();
+  }
 }

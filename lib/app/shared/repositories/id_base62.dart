@@ -18,11 +18,18 @@ abstract class IdBase62 {
   /// O sufíxo da ultima chamada de [generateId].
   static String _lastSuffix = kDictionary[0] + kDictionary[0];
 
-  /// Retorna um sufíxo base 62 aleatório e de comprimento 2.
-  static String _getSuffix() {
+  /// Retorna um ID base 62 aleatório de comprimento [length].
+  static String randon([int length = 10]) {
     final random = math.Random.secure();
-    return kDictionary[random.nextInt(62)] + kDictionary[random.nextInt(62)];
+    String id = '';
+    while (0 < length--) {
+      id += kDictionary[random.nextInt(62)];
+    }
+    return id;
   }
+
+  /// Retorna um sufíxo base 62 aleatório de comprimento 2.
+  static String _getSuffix([int length = 2]) => randon(length);
 
   /// Gera, assincronamente, um ID de dez caracteres, em base 62, onde os oito primeiro caracteres correspondem
   /// a um carimbo de data/hora e os demais a um sufixo aleatório.

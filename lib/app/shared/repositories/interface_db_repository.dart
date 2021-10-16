@@ -2,7 +2,7 @@ import 'dart:async';
 
 import '../utils/strings_db.dart';
 
-enum CollectionType { assuntos, clubes, questoes, usuarios}
+enum CollectionType { assuntos, clubes, questoes, usuarios }
 
 extension ExtensionCollectionType on CollectionType {
   /// Retorna o nome da coleção (ou tabela) correspondente a [this].
@@ -138,7 +138,7 @@ abstract class IDbRepository {
     FutureOr<bool> onError(Object error)?, */
   }); */
 
-  /// 
+  ///
 
   Future<DataCollection> getAssuntos();
 
@@ -151,4 +151,7 @@ abstract class IDbRepository {
   Future<DataCollection> getClubes(int idUsuario);
 
   Future<bool> setClube(DataDocument data);
+
+  /// Remove o usuário correspondente a [idUser] do clube correspondente a [idClube].
+  Future<bool> exitClube(int idClube, int idUser);
 }

@@ -40,6 +40,13 @@ mixin _$ClubesRepository on _ClubesRepositoryBase, Store {
     return _$carregarClubesAsyncAction.run(() => super.carregarClubes());
   }
 
+  final _$sairClubeAsyncAction = AsyncAction('_ClubesRepositoryBase.sairClube');
+
+  @override
+  Future<bool> sairClube(Clube clube) {
+    return _$sairClubeAsyncAction.run(() => super.sairClube(clube));
+  }
+
   final _$_ClubesRepositoryBaseActionController =
       ActionController(name: '_ClubesRepositoryBase');
 

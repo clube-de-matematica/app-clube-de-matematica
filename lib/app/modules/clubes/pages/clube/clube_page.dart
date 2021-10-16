@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../shared/widgets/scaffoldWithDrawer.dart';
-import '../shared/models/clube.dart';
+import '../../../../shared/widgets/scaffoldWithDrawer.dart';
+import '../../shared/models/clube.dart';
 
 class ClubePage extends StatefulWidget {
   final Clube clube;

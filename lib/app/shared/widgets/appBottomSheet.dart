@@ -15,6 +15,7 @@ class AppBottomSheet extends StatelessWidget {
     this.contentTextStyle,
     this.actions,
     this.actionsPadding = EdgeInsets.zero,
+    this.actionAlignment,
     this.actionsOverflowDirection,
     this.actionsOverflowButtonSpacing,
     this.buttonPadding,
@@ -40,6 +41,7 @@ class AppBottomSheet extends StatelessWidget {
   final TextStyle? contentTextStyle;
   final List<Widget>? actions;
   final EdgeInsetsGeometry actionsPadding;
+  final MainAxisAlignment? actionAlignment;
   final VerticalDirection? actionsOverflowDirection;
   final double? actionsOverflowButtonSpacing;
   final EdgeInsetsGeometry? buttonPadding;
@@ -162,13 +164,16 @@ class AppBottomSheet extends StatelessWidget {
         child: Container(
           alignment: AlignmentDirectional.centerEnd,
           padding: EdgeInsets.all(spacing),
-          child: OverflowBar(
-            spacing: spacing,
-            overflowAlignment: OverflowBarAlignment.end,
-            overflowDirection:
-                actionsOverflowDirection ?? VerticalDirection.down,
-            overflowSpacing: actionsOverflowButtonSpacing ?? 0,
-            children: actions!,
+          child: IntrinsicHeight(
+            child: OverflowBar(
+              alignment: actionAlignment,
+              spacing: spacing,
+              overflowAlignment: OverflowBarAlignment.end,
+              overflowDirection:
+                  actionsOverflowDirection ?? VerticalDirection.down,
+              overflowSpacing: actionsOverflowButtonSpacing ?? 0,
+              children: actions!,
+            ),
           ),
         ),
       );
@@ -177,7 +182,8 @@ class AppBottomSheet extends StatelessWidget {
     final anchor = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(
+        Container(
+          padding: const EdgeInsets.only(top: 8.0),
           width: 48.0,
           child: const Divider(
             height: 10.0,

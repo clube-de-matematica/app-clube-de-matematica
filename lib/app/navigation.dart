@@ -3,7 +3,9 @@ import 'package:flutter/widgets.dart';
 
 import 'clube_de_matematica_module.dart';
 import 'modules/clubes/clubes_module.dart';
-import 'modules/clubes/pages/clube_page.dart';
+import 'modules/clubes/pages/clube/clube_page.dart';
+import 'modules/clubes/pages/criar/criar_clube_page.dart';
+import 'modules/clubes/pages/editar/editar_clube_page.dart';
 import 'modules/clubes/pages/home/home_clubes_page.dart';
 import 'modules/filtros/filtros_module.dart';
 import 'modules/filtros/pages/opcoes/filtro_opcoes_page.dart';
@@ -79,6 +81,12 @@ enum RoutePage {
 
   /// Representa a rota para a página [ClubePage].
   clube,
+
+  /// Representa a rota para a página [AdicionarClubePage].
+  adicionarClube,
+
+  /// Representa a rota para a página [EditarClubePage].
+  editarClube,
 }
 
 extension RoutePageExtension on RoutePage {
@@ -96,6 +104,10 @@ extension RoutePageExtension on RoutePage {
         return PerfilModule.kAbsoluteRoutePerfilPage;
       case RoutePage.homeClubes:
         return ClubesModule.kAbsoluteRouteHomePage;
+      case RoutePage.adicionarClube:
+        return ClubesModule.kAbsoluteRouteCriarPage;
+      case RoutePage.editarClube:
+        return ClubesModule.kAbsoluteRouteEditarPage;
       case RoutePage.clube:
         throw MyException(
             'RoutePage.clube não possui um nome estático, pois representa uma rota dinâmica.');
@@ -111,6 +123,8 @@ extension RoutePageExtension on RoutePage {
       case RoutePage.login:
       case RoutePage.perfil:
       case RoutePage.homeClubes:
+      case RoutePage.adicionarClube:
+      case RoutePage.editarClube:
         return false;
       case RoutePage.clube:
         return true;
@@ -129,6 +143,8 @@ extension RoutePageExtension on RoutePage {
       case RoutePage.filtrosOpcoes:
       case RoutePage.login:
       case RoutePage.perfil:
+      case RoutePage.adicionarClube:
+      case RoutePage.editarClube:
         return false;
     }
   }
@@ -179,7 +195,8 @@ abstract class Navigation {
     final previousPage = Navigation.previousPage(context);
     final currentPage = Navigation.currentPage(context);
     final newPage = routeName!;
-    final currentPageIsClube = currentPage?.startsWith('${RoutePage.homeClubes.name}/') ?? false;
+    final currentPageIsClube =
+        currentPage?.startsWith('${RoutePage.homeClubes.name}/') ?? false;
 
     if (newPage != currentPage) {
       // Se a nova página está na pilha e é a anterior.
@@ -240,6 +257,10 @@ abstract class Navigation {
               return navigator.pushReplacementNamed(newPage,
                   arguments: arguments, result: result);
             }
+            return navigator.pushNamed(newPage, arguments: arguments);
+          case RoutePage.adicionarClube:
+            return navigator.pushNamed(newPage, arguments: arguments);
+          case RoutePage.editarClube:
             return navigator.pushNamed(newPage, arguments: arguments);
           default:
             // TODO

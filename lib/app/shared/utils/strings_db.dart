@@ -266,6 +266,10 @@ abstract class DbConst {
   /// Os valores desse campo são do tipo [String].
   static const kDbDataClubeKeyNome = 'nome';
 
+  /// Uma pequena descrição sobre o clube.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataClubeKeyDescricao = 'descricao';
+
   /// Nome do campo para o ID do proprietário do clube.
   /// Os valores desse campo são do tipo [int].
   static const kDbDataClubeKeyProprietario = 'proprietario';
@@ -283,6 +287,14 @@ abstract class DbConst {
   /// * Se `false`, o clube é público. Qualquer usuário com o código de acesso pode ingressar.
   /// * Se `true`, o clube é privado. O ingresso depende da permissão de um administrador.
   static const kDbDataClubeKeyPrivado = 'privado';
+
+  /// A imágem ou a cor de capa.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataClubeKeyCapa = 'capa';
+
+  /// O ID base62 de acesso ao clube.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataClubeKeyCodigo = 'codigo';
 
 /** 
  * ****************************************************************************************

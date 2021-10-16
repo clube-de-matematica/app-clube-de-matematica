@@ -97,6 +97,19 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     return _clubes;
   }
 
+  /// Remove de [clube] o usuário atual.
+  @action
+  Future<bool> sairClube(Clube clube) async {
+    if (user.id == null) return false;
+    final sucesso = await dbRepository.exitClube(clube.id, user.id!);
+    if (sucesso) {
+      _clubes.remove(clube);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /// Encerrar as reações em execução.
   @override
   void dispose() {

@@ -1,3 +1,5 @@
+import 'package:clubedematematica/app/modules/clubes/pages/home/widgets/bottom_sheets.dart';
+import 'package:clubedematematica/app/shared/repositories/id_base62.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -28,35 +30,22 @@ extension OpcoesClubeExtension on OpcoesClube {
         return 'Sair do clube';
     }
   }
-
-  /// Retorna a ação a ser executada quando o item do menu de opções do clube é selecionado.
-  VoidCallback get onTap {
-    switch (this) {
-      case OpcoesClube.compartilharCodigo:
-        return () {}; // TODO
-      case OpcoesClube.editar:
-        return () {}; // TODO
-      case OpcoesClube.sair:
-        return () {}; // TODO
-    }
-  }
 }
 
 class HomeClubesController = _HomeClubesControllerBase
     with _$HomeClubesController;
 
 abstract class _HomeClubesControllerBase with Store {
+  ClubesRepository get repository => Modular.get<ClubesRepository>();
+
   /// Lista com os clubes do usuário.
-  List<Clube> get clubes => Modular.get<ClubesRepository>().clubes;
+  List<Clube> get clubes => repository.clubes;
 
   /// Usuário do aplicativo.
   UserApp get user => Modular.get<UserApp>();
 
+  /// Abre a página para [clube].
   void openClubePage(BuildContext context, Clube clube) {
-    /* Modular.to.pushNamed(
-      '${ClubesModule.kAbsoluteRouteModule}/${clube.id}',
-      arguments: clube,
-    ); */
     Navigation.showPage(
       context,
       RoutePage.clube,
@@ -65,5 +54,21 @@ abstract class _HomeClubesControllerBase with Store {
     );
   }
 
-  void addClube() {}
+  /// Criar ou participar de um clube.
+  void addClube(BuildContext context) {
+    Navigation.showPage(context, RoutePage.adicionarClube);
+  }
+
+  /// Abre um diálogo com o código de acesso [clube].
+  void compartilharCodigo(Clube clube) {}
+
+  /// Abre a página para editar as informações [clube].
+  void editar(BuildContext context ,Clube clube) {
+    Navigation.showPage(context, RoutePage.editarClube,arguments: clube);
+  }
+
+  /// Sair do [clube].
+  Future<bool> sair(Clube clube) async {
+    return repository.sairClube(clube);
+  }
 }
