@@ -44,7 +44,7 @@ class ButtonProgressIndicator extends StatefulWidget {
 
 class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
     with TickerProviderStateMixin {
-  /// Será `true` quando [widget.onPressed] estiver em andamento e `false` nos
+  /// Será `true` quando [widget.onParticipar] estiver em andamento e `false` nos
   /// demais casos.
   late bool _isLoading;
   late double _initialWidth;

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'criar_clube_controller.dart';
+part of 'adicionar_clube_controller.dart';
 
 // **************************************************************************
 // StoreGenerator

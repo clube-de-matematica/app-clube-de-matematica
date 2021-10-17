@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'clube_de_matematica_module.dart';
 import 'modules/clubes/clubes_module.dart';
 import 'modules/clubes/pages/clube/clube_page.dart';
-import 'modules/clubes/pages/criar/criar_clube_page.dart';
+import 'modules/clubes/pages/adicionar/adicionar_clube_page.dart';
 import 'modules/clubes/pages/editar/editar_clube_page.dart';
 import 'modules/clubes/pages/home/home_clubes_page.dart';
 import 'modules/filtros/filtros_module.dart';
