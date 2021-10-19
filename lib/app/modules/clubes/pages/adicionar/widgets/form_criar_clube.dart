@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/modules/clubes/shared/utils/random_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../shared/theme/appTheme.dart';
@@ -35,49 +36,54 @@ class _FormCriarClubeState extends State<FormCriarClube> {
 
   @override
   Widget build(BuildContext context) {
-    corTema = widget.initialColor;
+    corTema = widget.initialColor ?? RandomColor();
     return Form(
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Text(
-              'Crie um clube:',
-              style: Theme.of(context).textTheme.headline6,
+      child: Builder(builder: (context) {
+        return Column(
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                'Crie um clube:',
+                style: Theme.of(context).textTheme.headline6,
+              ),
             ),
-          ),
-          _buildTextFormField(
-            maxLength: 50,
-            labelText: 'Nome',
-            hintText: 'Digite o nome do clube',
-            onSaved: (valor) => nome = valor,
-            validator: widget.validarNome,
-          ),
-          _buildTextFormField(
-            maxLength: 200,
-            maxLines: 5,
-            labelText: 'Descrição',
-            hintText: 'Digite uma rápida descrição do clube',
-            onSaved: (valor) => descricao = valor,
-          ),
-          _buildTema(),
-          _buildSwitchListTile(),
-          TextButton(
-            child: const Text('CRIAR'),
-            onPressed: isLoading
-                ? null
-                : ()async {
-                    if (Form.of(context)?.validate() ?? false) {
-                      setState(() => isLoading = true);
-                      await widget.onCriar
-                          ?.call(nome!, descricao, corTema!, !grupoAberto);
-                      setState(() => isLoading = false);
-                    }
-                  },
-          ),
-        ],
-      ),
+            _buildTextFormField(
+              maxLength: 50,
+              labelText: 'Nome',
+              hintText: 'Digite o nome do clube',
+              onSaved: (valor) => nome = valor?.trim(),
+              validator: widget.validarNome,
+            ),
+            _buildTextFormField(
+              maxLength: 200,
+              maxLines: 5,
+              labelText: 'Descrição',
+              hintText: 'Digite uma rápida descrição do clube',
+              onSaved: (valor) => descricao = valor?.trim(),
+            ),
+            _buildTema(),
+            // TODO: Será implementado posteriormente como um novo recurso.
+            //_buildSwitchListTile(),
+            TextButton(
+              child: const Text('CRIAR'),
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      final form = Form.of(context);
+                      if (form?.validate() ?? false) {
+                        setState(() => isLoading = true);
+                        form?.save();
+                        await widget.onCriar
+                            ?.call(nome!, descricao, corTema!, !grupoAberto);
+                        if (mounted) setState(() => isLoading = false);
+                      }
+                    },
+            ),
+          ],
+        );
+      }),
     );
   }
 
@@ -92,9 +98,8 @@ class _FormCriarClubeState extends State<FormCriarClube> {
           ),
         );
       },
-      onSaved: (cor) => corTema = cor,
-      validator: (cor) {
-        if (cor == null) corTema = widget.initialColor;
+      onSaved: (cor) {
+        if (cor != null) corTema = cor;
       },
     );
   }

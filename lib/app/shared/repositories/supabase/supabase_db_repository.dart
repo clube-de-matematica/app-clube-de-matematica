@@ -206,23 +206,42 @@ class SupabaseDbRepository
   }
 
   @override
-  Future<bool> setClube(DataDocument data) async {
+  Future<DataClube> setClube({
+    required String nome,
+    required int proprietario,
+    required String codigo,
+    String? descricao,
+    bool privado = false,
+    List<int>? administradores,
+    List<int>? membros,
+    String? capa,
+  }) async {
     assert(Debug.print('[INFO] Chamando $_debugName.setClube()...'));
     _checkAuthentication('setClube()');
+    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
+    final data = {
+      'nome': nome,
+      'proprietario': proprietario,
+      'codigo': codigo,
+      'descricao': descricao,
+      'privado': privado,
+      'administradores': administradores,
+      'membros': membros,
+      'capa': capa,
+    };
     try {
       assert(Debug.print('[INFO] Inserindo o clube ${data.toString()}...'));
       final response =
           await _client.rpc('inserir_clube', params: data).execute();
       if (response.error != null) {
         final error = response.error as PostgrestError;
-        throw MyException(
-          error.message,
-          originClass: _debugName,
-          originField: 'setClube()',
-          error: error,
-        );
+        assert(Debug.print(
+            '[ERROR] Erro ao inserir o clube ${data.toString()}. '
+            '\n${error.toString()}'));
+        return DataClube();
       }
-      return (response.count ?? 0) > 0;
+      final list = (response.data as List).cast<DataClube>();
+      return list.isNotEmpty ? list[0] : DataClube();
     } catch (_) {
       assert(
           Debug.print('[ERROR] Erro ao inserir o clube ${data.toString()}.'));
@@ -258,6 +277,39 @@ class SupabaseDbRepository
       assert(Debug.print(
           '[ERROR] Erro ao excluir o usuário cujo "idUser = $idUser" do clube cujo '
           '"idClube = $idClube" na tabela "$tbClubeXUsuario".'));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<DataClube> enterClube(String accessCode, int idUser) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.enterClube()...'));
+    _checkAuthentication('enterClube()');
+    try {
+      assert(Debug.print(
+          '[INFO] Incluindo o usuário cujo "idUser = $idUser" no clube cujo '
+          'código de acesso é "$accessCode"...'));
+      final data = {
+        'id_usuario': idUser,
+        'codigo_clube': accessCode,
+        'id_permissao': 2,
+      };
+      final response =
+          await _client.rpc('entrar_clube', params: data).execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(Debug.print(
+            '[ERROR] Erro ao incluir o usuário cujo "idUser = $idUser" no clube cujo '
+            'código de acesso é "$accessCode". '
+            '\n${error.toString()}'));
+        return DataClube();
+      }
+      final list = (response.data as List).cast<DataClube>();
+      return list.isNotEmpty ? list[0] : DataClube();
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao incluir o usuário cujo "idUser = $idUser" no clube cujo '
+          'código de acesso é "$accessCode".'));
       rethrow;
     }
   }

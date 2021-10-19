@@ -23,7 +23,7 @@ class ColorPickerListTile extends StatefulWidget {
 }
 
 class _ColorPickerListTileState extends State<ColorPickerListTile> {
-  final seletor = ColorPicker();
+  late final seletor = ColorPicker(widget.initialColor);
   late Color? cor = widget.initialColor ?? seletor.shadeColor;
 
   @override

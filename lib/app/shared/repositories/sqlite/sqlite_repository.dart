@@ -256,7 +256,16 @@ class SqliteRepository
   }
 
   @override
-  Future<bool> setClube(DataDocument data) {
+  Future<DataClube> setClube({
+    required String nome,
+    required int proprietario,
+    required String codigo,
+    String? descricao,
+    bool privado = false,
+    List<int>? administradores,
+    List<int>? membros,
+    String? capa,
+  }) {
     // TODO: implement setClube
     throw UnimplementedError();
   }
@@ -264,6 +273,12 @@ class SqliteRepository
   @override
   Future<bool> exitClube(int idClube, int idUser) {
     // TODO: implement exiteClube
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DataClube> enterClube(String accessCode, int idUser) {
+    // TODO: implement enterClube
     throw UnimplementedError();
   }
 }

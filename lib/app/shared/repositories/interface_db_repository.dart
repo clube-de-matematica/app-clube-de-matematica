@@ -150,8 +150,22 @@ abstract class IDbRepository {
 
   Future<DataCollection> getClubes(int idUsuario);
 
-  Future<bool> setClube(DataDocument data);
+  Future<DataClube> setClube({
+    required String nome,
+    required int proprietario,
+    required String codigo,
+    String? descricao,
+    bool privado = false,
+    List<int>? administradores,
+    List<int>? membros,
+    String? capa,
+  });
 
   /// Remove o usuário correspondente a [idUser] do clube correspondente a [idClube].
   Future<bool> exitClube(int idClube, int idUser);
+
+  /// Adiciona o usuário correspondente a [idUser] ao clube correspondente a [accessCode].
+  /// Retorna os dados do clube após a alteração.
+  /// Retorna um [DataDocument] vazio se ocorrer algum erro.
+  Future<DataClube> enterClube(String accessCode, int idUser);
 }

@@ -2,6 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../../shared/models/debug.dart';
+import '../../../../shared/repositories/id_base62.dart';
 import '../../../../shared/repositories/interface_db_repository.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../../../perfil/models/userapp.dart';
@@ -97,6 +98,39 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     return _clubes;
   }
 
+  /// Criar um novo clube com as informações dos parâmetros.
+  /// Se o processo for bem sucedido, retorna o [Clube] criado.
+  @action
+  Future<Clube?> criarClube(
+    String nome,
+    String? descricao,
+    String? capa,
+    bool privado, {
+    List<int>? administradores,
+    List<int>? membros,
+  }) async {
+    if (user.id == null) return null;
+    final proprietario = user.id!;
+    final codigo = IdBase62.randon(6);
+    final dataClube = await dbRepository.setClube(
+      nome: nome,
+      proprietario: proprietario,
+      codigo: codigo,
+      descricao: descricao,
+      privado: privado,
+      administradores: administradores,
+      membros: membros,
+      capa: capa,
+    );
+    if (dataClube.isNotEmpty) {
+      final clube = Clube.fromMap(dataClube);
+      _addInClubes(clube);
+      return clube;
+    } else {
+      return null;
+    }
+  }
+
   /// Remove de [clube] o usuário atual.
   @action
   Future<bool> sairClube(Clube clube) async {
@@ -107,6 +141,30 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       return true;
     } else {
       return false;
+    }
+  }
+
+  /// Inclui o usuário atual no clube correspondente a [codigo].
+  /// Se o processo for bem sucedido, retorna o [Clube] correspondente.
+  @action
+  Future<Clube?> entrarClube(String codigo) async {
+    if (user.id == null) return null;
+    final dataClube = await dbRepository.enterClube(codigo, user.id!);
+    if (dataClube.isNotEmpty) {
+      final temp = Clube.fromMap(dataClube);
+      final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
+      if (indice == -1) {
+        _addInClubes(temp);
+        return temp;
+      } else {
+        // TODO: Testar se o mobx reconhece essas mudanças.
+        _clubes[indice].membros
+          ..clear()
+          ..addAll(temp.membros);
+        return _clubes[indice];
+      }
+    } else {
+      return null;
     }
   }
 

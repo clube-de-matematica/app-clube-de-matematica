@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'adicionar_clube_controller.dart';
+import 'widgets/bottom_sheets.dart';
 import 'widgets/form_codigo_clube.dart';
-import 'widgets/form_crar_clube.dart';
+import 'widgets/form_criar_clube.dart';
 
 class AdicionarClubePage extends StatefulWidget {
   const AdicionarClubePage({Key? key}) : super(key: key);
@@ -23,14 +24,21 @@ class _AdicionarClubePageState extends State<AdicionarClubePage> {
         children: [
           FormCodigoClube(
             onParticipar: (codigo) async {
-              await controller.participar(context, codigo);
+              final sucesso = await controller.participar(context, codigo);
+              if (!sucesso) {
+                await BottomSheetErroParticiparClube().showModal(context);
+              }
             },
           ),
           const Divider(height: 48.0),
           FormCriarClube(
+            validarNome: (nome) => controller.validarNome(nome),
             onCriar: (nome, descricao, corTema, privado) async {
-              await controller.criar(
+              final sucesso = await controller.criar(
                   context, nome, descricao, corTema, privado);
+              if (!sucesso) {
+                await BottomSheetErroCriarClube().showModal(context);
+              }
             },
           )
         ],

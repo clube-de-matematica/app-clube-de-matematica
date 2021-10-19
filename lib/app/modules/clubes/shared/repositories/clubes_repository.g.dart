@@ -40,11 +40,31 @@ mixin _$ClubesRepository on _ClubesRepositoryBase, Store {
     return _$carregarClubesAsyncAction.run(() => super.carregarClubes());
   }
 
+  final _$criarClubeAsyncAction =
+      AsyncAction('_ClubesRepositoryBase.criarClube');
+
+  @override
+  Future<Clube?> criarClube(
+      String nome, String? descricao, String? capa, bool privado,
+      {List<int>? administradores, List<int>? membros}) {
+    return _$criarClubeAsyncAction.run(() => super.criarClube(
+        nome, descricao, capa, privado,
+        administradores: administradores, membros: membros));
+  }
+
   final _$sairClubeAsyncAction = AsyncAction('_ClubesRepositoryBase.sairClube');
 
   @override
   Future<bool> sairClube(Clube clube) {
     return _$sairClubeAsyncAction.run(() => super.sairClube(clube));
+  }
+
+  final _$entrarClubeAsyncAction =
+      AsyncAction('_ClubesRepositoryBase.entrarClube');
+
+  @override
+  Future<Clube?> entrarClube(String codigo) {
+    return _$entrarClubeAsyncAction.run(() => super.entrarClube(codigo));
   }
 
   final _$_ClubesRepositoryBaseActionController =

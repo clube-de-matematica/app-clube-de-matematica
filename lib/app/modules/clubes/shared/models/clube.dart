@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:clubedematematica/app/shared/models/debug.dart';
 import 'package:flutter/painting.dart';
 
 import '../../../../shared/utils/strings_db.dart';
@@ -25,10 +26,10 @@ class Clube {
   final int id;
 
   /// Nome do clube.
-  final String nome;
+  String nome;
 
   /// Uma pequena descrição do clube.
-  final String? descricao;
+  String? descricao;
 
   /// ID do proprietário do clube.
   final int proprietario;
@@ -40,10 +41,10 @@ class Clube {
   final List<int> membros;
 
   /// Cor de fundo do [Card] e do avatar do clube.
-  final Color capa;
+  Color capa;
 
   /// O ID base62 para acesso ao clube.
-  final String? codigo;
+  String? codigo;
 
   Clube({
     required this.id,
@@ -57,6 +58,13 @@ class Clube {
   }) : this.capa = capa ?? RandomColor();
 
   factory Clube.fromMap(Map<String, dynamic> map) {
+    Color? _capa;
+    try {
+      _capa = Color(int.parse(map[DbConst.kDbDataClubeKeyCapa]));
+    } catch (_) {
+      assert(Debug.print('Não foi possível gerar a cor da capa a partir de '
+          '${map[DbConst.kDbDataClubeKeyCapa]}.'));
+    }
     return Clube(
       id: map[DbConst.kDbDataClubeKeyId],
       nome: map[DbConst.kDbDataClubeKeyNome],
@@ -65,7 +73,7 @@ class Clube {
       administradores:
           List<int>.from(map[DbConst.kDbDataClubeKeyAdministradores]),
       membros: List<int>.from(map[DbConst.kDbDataClubeKeyMembros]),
-      capa: map[DbConst.kDbDataClubeKeyCapa],
+      capa: _capa,
       codigo: map[DbConst.kDbDataClubeKeyCodigo],
     );
   }
@@ -78,7 +86,7 @@ class Clube {
       DbConst.kDbDataClubeKeyProprietario: proprietario,
       DbConst.kDbDataClubeKeyAdministradores: administradores,
       DbConst.kDbDataClubeKeyMembros: membros,
-      DbConst.kDbDataClubeKeyCapa: capa,
+      DbConst.kDbDataClubeKeyCapa: '${capa.value}',
       DbConst.kDbDataClubeKeyCodigo: codigo,
     };
   }

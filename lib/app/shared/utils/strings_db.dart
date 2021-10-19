@@ -62,13 +62,14 @@ typedef DataUser = Map<String, dynamic>;
 
 
 
-
 /// O objeto com os dados de um clube. 
 /// O valor [dynamic] pode ser:
-/// * [String] para [DbConst.kDbDataClubeKeyNome] e [DbConst.kDbDataClubeKeyProprietario];
-/// * [int] para [DbConst.kDbDataClubeKeyId] e [DbConst.kDbDataClubeKeyDataCriacao]; 
+/// * [String] para [DbConst.kDbDataClubeKeyNome], [DbConst.kDbDataClubeKeyDescricao], 
+/// [DbConst.kDbDataClubeKeyCapa] e [DbConst.kDbDataClubeKeyCodigo];
+/// * [int] para [DbConst.kDbDataClubeKeyId], [DbConst.kDbDataClubeKeyProprietario] 
+/// e [DbConst.kDbDataClubeKeyDataCriacao]; 
 /// * [bool] para [DbConst.kDbDataClubeKeyPrivado]; ou
-/// * [List]<[String]> para [DbConst.kDbDataClubeKeyAdministradores] e [DbConst.kDbDataClubeKeyMembros].
+/// * [List]<[int]> para [DbConst.kDbDataClubeKeyAdministradores] e [DbConst.kDbDataClubeKeyMembros].
 typedef DataClube = Map<String, dynamic>;
 
 /// O objeto com os dados de uma resposta de um usuário a uma tarefa.

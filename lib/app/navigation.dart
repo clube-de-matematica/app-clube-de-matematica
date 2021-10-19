@@ -199,6 +199,13 @@ abstract class Navigation {
         currentPage?.startsWith('${RoutePage.homeClubes.name}/') ?? false;
 
     if (newPage != currentPage) {
+      if (newPage == RoutePage.login.name) {
+        return navigator.pushNamedAndRemoveUntil(
+          newPage,
+          (_) => false,
+          arguments: arguments,
+        );
+      }
       // Se a nova página está na pilha e é a anterior.
       if (newPage == previousPage) {
         return navigator.pop(result);
@@ -231,12 +238,6 @@ abstract class Navigation {
             return navigator.pushNamed(newPage, arguments: arguments);
           case RoutePage.filtrosOpcoes:
             return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.login:
-            return navigator.pushNamedAndRemoveUntil(
-              newPage,
-              (_) => false,
-              arguments: arguments,
-            );
           case RoutePage.perfil:
             if (currentPage == RoutePage.login.name) {
               return navigator.pushReplacementNamed(newPage,
