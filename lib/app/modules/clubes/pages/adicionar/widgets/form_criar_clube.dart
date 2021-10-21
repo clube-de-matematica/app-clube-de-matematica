@@ -1,8 +1,9 @@
-import 'package:clubedematematica/app/modules/clubes/shared/utils/random_colors.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../shared/theme/appTheme.dart';
+import '../../../shared/utils/random_colors.dart';
 import '../../../shared/widgets/color_picker.dart';
+import '../../../shared/widgets/switch_list_tile_form_field.dart';
+import '../../../shared/widgets/text_form_fields.dart';
 
 /// Formulário para a criação de um clube.
 class FormCriarClube extends StatefulWidget {
@@ -49,23 +50,25 @@ class _FormCriarClubeState extends State<FormCriarClube> {
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),
-            _buildTextFormField(
-              maxLength: 50,
-              labelText: 'Nome',
-              hintText: 'Digite o nome do clube',
+            NomeClubeTextFormField(
               onSaved: (valor) => nome = valor?.trim(),
               validator: widget.validarNome,
             ),
-            _buildTextFormField(
-              maxLength: 200,
-              maxLines: 5,
-              labelText: 'Descrição',
-              hintText: 'Digite uma rápida descrição do clube',
+            const SizedBox(height: 8.0),
+            DescricaoClubeTextFormField(
               onSaved: (valor) => descricao = valor?.trim(),
             ),
-            _buildTema(),
+            ColorPickerListTileFormField(
+              onSaved: (cor) {
+                if (cor != null) corTema = cor;
+              },
+            ),
             // TODO: Será implementado posteriormente como um novo recurso.
-            //_buildSwitchListTile(),
+            /* SwitchListTileFormField(
+              onSaved: (gpAberto) {
+                if (gpAberto != null) grupoAberto = gpAberto;
+              },
+            ), */
             TextButton(
               child: const Text('CRIAR'),
               onPressed: isLoading
@@ -84,84 +87,6 @@ class _FormCriarClubeState extends State<FormCriarClube> {
           ],
         );
       }),
-    );
-  }
-
-  FormField<Color> _buildTema() {
-    return FormField<Color>(
-      builder: (field) {
-        return UnmanagedRestorationScope(
-          bucket: field.bucket,
-          child: ColorPickerListTile(
-            initialColor: corTema,
-            colorChange: (novaCor) => field.didChange(novaCor),
-          ),
-        );
-      },
-      onSaved: (cor) {
-        if (cor != null) corTema = cor;
-      },
-    );
-  }
-
-  FormField<bool> _buildSwitchListTile() {
-    return FormField<bool>(
-      builder: (field) {
-        return UnmanagedRestorationScope(
-          bucket: field.bucket,
-          child: SwitchListTile(
-            contentPadding: EdgeInsets.symmetric(horizontal: 0),
-            title: const Text('Grupo aberto'),
-            subtitle: const Text(
-                'Qualquer pessoa com o código de acesso pode participar?'),
-            value: grupoAberto,
-            onChanged: (value) {
-              setState(() {
-                grupoAberto = value;
-              });
-              field.didChange(value);
-            },
-          ),
-        );
-      },
-      onSaved: (gpAberto) {
-        if (gpAberto != null) grupoAberto = gpAberto;
-      },
-    );
-  }
-
-  TextFormField _buildTextFormField({
-    TextAlign textAlign = TextAlign.start,
-    String? labelText,
-    String? hintText,
-    String? initialValue,
-    int? maxLength,
-    int? maxLines,
-    TextStyle? style,
-    String? Function(String?)? validator,
-    void Function(String?)? onSaved,
-  }) {
-    // Estilo do texto dos rótulos do formulário.
-    final labelStyle = TextStyle(fontSize: 16 * AppTheme.escala);
-    return TextFormField(
-      autofocus: true,
-      textAlign: textAlign,
-      keyboardType: TextInputType.text,
-      maxLength: maxLength,
-      maxLines: maxLines,
-      style: style,
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: labelStyle,
-        border: const OutlineInputBorder(),
-        hintText: hintText,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        //prefixIcon: Icon(Icons.person),
-      ),
-      initialValue: initialValue,
-      validator: validator,
-      onSaved: onSaved,
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../shared/widgets/appBottomSheet.dart';
 
 /// Uma página inferior para exibir uma mensagem de erro [mensagem].
 class BottomSheetErro extends AppBottomSheet {
@@ -36,6 +36,16 @@ class BottomSheetErroParticiparClube extends BottomSheetErro {
 /// bem sucedido.
 class BottomSheetErroCriarClube extends BottomSheetErro {
   const BottomSheetErroCriarClube({Key? key})
+      : super(
+          'Tente novamente.',
+          key: key,
+        );
+}
+
+/// Uma página inferior para exibir uma mensagem de erro quando a atualização dos dados de 
+/// um clube não for bem sucedido.
+class BottomSheetErroAtualizarClube extends BottomSheetErro {
+  const BottomSheetErroAtualizarClube({Key? key})
       : super(
           'Tente novamente.',
           key: key,

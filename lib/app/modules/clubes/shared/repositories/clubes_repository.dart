@@ -111,7 +111,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   }) async {
     if (user.id == null) return null;
     final proprietario = user.id!;
-    final codigo = IdBase62.randon(6);
+    final codigo = IdBase62.getIdClube();
     final dataClube = await dbRepository.setClube(
       nome: nome,
       proprietario: proprietario,

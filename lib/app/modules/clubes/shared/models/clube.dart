@@ -44,7 +44,12 @@ class Clube {
   Color capa;
 
   /// O ID base62 para acesso ao clube.
-  String? codigo;
+  String codigo;
+
+  /// Define o nível de privacidade do clube.
+  /// * Se `false`, o clube é público. Qualquer usuário com o código de acesso pode ingressar.
+  /// * Se `true`, o clube é privado. O ingresso depende da permissão de um administrador.
+  bool privado;
 
   Clube({
     required this.id,
@@ -54,7 +59,8 @@ class Clube {
     this.administradores = const [],
     this.membros = const [],
     Color? capa,
-    this.codigo,
+   required this.codigo,
+    required this.privado,
   }) : this.capa = capa ?? RandomColor();
 
   factory Clube.fromMap(Map<String, dynamic> map) {
@@ -75,6 +81,7 @@ class Clube {
       membros: List<int>.from(map[DbConst.kDbDataClubeKeyMembros]),
       capa: _capa,
       codigo: map[DbConst.kDbDataClubeKeyCodigo],
+      privado: map[DbConst.kDbDataClubeKeyPrivado],
     );
   }
 
@@ -88,6 +95,7 @@ class Clube {
       DbConst.kDbDataClubeKeyMembros: membros,
       DbConst.kDbDataClubeKeyCapa: '${capa.value}',
       DbConst.kDbDataClubeKeyCodigo: codigo,
+      DbConst.kDbDataClubeKeyPrivado: privado,
     };
   }
 

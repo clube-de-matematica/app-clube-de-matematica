@@ -34,7 +34,7 @@ class _ColorPickerListTileState extends State<ColorPickerListTile> {
       subtitle: const Text('Cor da capa e do avatar do clube'),
       trailing: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: CircleAvatar(backgroundColor: cor),
+        child: CircleAvatar(backgroundColor: cor,maxRadius: 18,),
       ),
       onTap: () async {
         await seletor.openColorPicker(context);
@@ -137,4 +137,27 @@ class ColorPicker {
       ),
     );
   }
+}
+
+/// Um [ColorPickerListTile] que extende [FormField].
+/// Usado para definir a cor do tema do clube.
+class ColorPickerListTileFormField extends FormField<Color> {
+  ColorPickerListTileFormField({
+    Key? key,
+    Color? initialColor,
+    void Function(Color?)? onSaved,
+  }) : super(
+          key: key,
+          initialValue: initialColor,
+          builder: (field) {
+            return UnmanagedRestorationScope(
+              bucket: field.bucket,
+              child: ColorPickerListTile(
+                initialColor: field.widget.initialValue,
+                colorChange: (novaCor) => field.didChange(novaCor),
+              ),
+            );
+          },
+          onSaved: onSaved,
+        );
 }

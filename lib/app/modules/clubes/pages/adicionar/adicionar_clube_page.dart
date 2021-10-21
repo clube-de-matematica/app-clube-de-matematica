@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../shared/widgets/bottom_sheet_erro.dart';
 import 'adicionar_clube_controller.dart';
-import 'widgets/bottom_sheets.dart';
 import 'widgets/form_codigo_clube.dart';
 import 'widgets/form_criar_clube.dart';
 

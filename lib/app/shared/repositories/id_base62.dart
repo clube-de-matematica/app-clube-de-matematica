@@ -28,6 +28,9 @@ abstract class IdBase62 {
     return id;
   }
 
+  /// Retorna um ID com o comprimento atualmente usado pelos clubes.
+  static String getIdClube() => randon(6);
+
   /// Retorna um sufíxo base 62 aleatório de comprimento 2.
   static String _getSuffix([int length = 2]) => randon(length);
 
