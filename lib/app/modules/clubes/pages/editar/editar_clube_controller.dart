@@ -1,31 +1,34 @@
-import 'package:clubedematematica/app/modules/clubes/shared/repositories/clubes_repository.dart';
-import 'package:clubedematematica/app/modules/clubes/shared/utils/mixin_controllers.dart';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+
+import '../../shared/models/clube.dart';
+import '../../shared/repositories/clubes_repository.dart';
+import '../../shared/utils/mixin_controllers.dart';
 
 class EditarClubeController extends ClubeController with ClubeControllerMixin {
   final repository = Modular.get<ClubesRepository>();
 
-  /// Cria um clube com as informações dos parâmetros.
+  /// Atualiza os dados do clube que foram modificados.
   Future<bool> atualizar(
-    BuildContext context,
-    String nome,
+    BuildContext context, {
+    required Clube clube,
+    required String nome,
+    required String codigo,
     String? descricao,
-    Color corTema,
-    bool privado, {
-    List<int>? administradores,
-    List<int>? membros,
+    required Color corTema,
+    required bool privado,
   }) async {
-    /* final clube = await repository.criarClube(
-      nome,
-      descricao,
-      '${corTema.value}',
-      privado,
-      administradores: administradores,
-      membros: membros,
+    final _clube = await repository.atualizarClube(
+      clube: clube,
+      nome: nome,
+      codigo: codigo,
+      descricao: descricao,
+      capa: corTema,
+      privado: privado,
     );
-    if (clube == null) return false;
-    abrirPaginaClube(context, clube); */
+    if (_clube == null) return false;
+    abrirPaginaClube(context, _clube);
     return true;
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../shared/utils/random_colors.dart';
 import '../../../shared/widgets/color_picker.dart';
-import '../../../shared/widgets/switch_list_tile_form_field.dart';
 import '../../../shared/widgets/text_form_fields.dart';
 
 /// Formulário para a criação de um clube.
@@ -39,6 +38,7 @@ class _FormCriarClubeState extends State<FormCriarClube> {
   Widget build(BuildContext context) {
     corTema = widget.initialColor ?? RandomColor();
     return Form(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Builder(builder: (context) {
         return Column(
           children: [

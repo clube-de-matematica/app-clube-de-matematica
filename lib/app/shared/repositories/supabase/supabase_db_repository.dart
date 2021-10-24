@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 
-import '../../models/exceptions/my_exception.dart';
 import 'package:supabase/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/debug.dart';
+import '../../models/exceptions/my_exception.dart';
 import '../../utils/strings_db.dart';
 import '../interface_auth_repository.dart';
 import '../interface_db_repository.dart';
@@ -37,13 +38,13 @@ class SupabaseDbRepository
   Future<DataDocument> getUser(String email) async {
     assert(Debug.print('[INFO] Chamando $_debugName.getUser()...'));
     _checkAuthentication('getUser()');
-    final table = DbConst.kDbDataCollectionUsuarios;
+    final table = CollectionType.usuarios.name;
     try {
       assert(Debug.print(
           '[INFO] Solicitando os dados do usuário com o email "$email" '
           'na tabela "$table"...'));
       final response = await _client
-          .from(DbConst.kDbDataCollectionUsuarios)
+          .from(table)
           .select(DbConst.kDbDataUserKeyId)
           .eq(DbConst.kDbDataUserKeyEmail, email)
           .execute();
@@ -78,13 +79,10 @@ class SupabaseDbRepository
   Future<DataCollection> getAssuntos() async {
     assert(Debug.print('[INFO] Chamando $_debugName.getAssuntos()...'));
     //_checkAuthentication('getAssuntos()');
-    final table = DbConst.kDbDataCollectionAssuntos;
+    final table = CollectionType.assuntos.name;
     try {
       assert(Debug.print('[INFO] Solicitando os dados da tabela "$table"...'));
-      final response = await _client
-          .from(DbConst.kDbDataCollectionAssuntos)
-          .select()
-          .execute();
+      final response = await _client.from(table).select().execute();
       if (response.error != null) {
         final error = response.error as PostgrestError;
         throw MyException(
@@ -104,9 +102,9 @@ class SupabaseDbRepository
 
   /// [data] tem a estrutura {"assunto": [String], "id_assunto_pai": [int?]}.
   @override
-  Future<bool> setAssunto(DataAssunto data) async {
-    assert(Debug.print('[INFO] Chamando $_debugName.setAssunto()...'));
-    _checkAuthentication('setAssunto()');
+  Future<bool> insertAssunto(DataAssunto data) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.insertAssunto()...'));
+    _checkAuthentication('insertAssunto()');
     try {
       assert(Debug.print('[INFO] Inserindo o assunto ${data.toString()}...'));
       final response =
@@ -116,7 +114,7 @@ class SupabaseDbRepository
         throw MyException(
           error.message,
           originClass: _debugName,
-          originField: 'setAssunto()',
+          originField: 'insertAssunto()',
           error: error,
         );
       }
@@ -154,9 +152,9 @@ class SupabaseDbRepository
   }
 
   @override
-  Future<bool> setQuestao(DataQuestao data) async {
-    assert(Debug.print('[INFO] Chamando $_debugName.setQuestao()...'));
-    _checkAuthentication('setQuestao()');
+  Future<bool> insertQuestao(DataQuestao data) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.insertQuestao()...'));
+    _checkAuthentication('insertQuestao()');
     try {
       assert(Debug.print('[INFO] Inserindo a questão ${data.toString()}...'));
       final response = await _client.from(viewQuestoes).insert(data).execute();
@@ -165,7 +163,7 @@ class SupabaseDbRepository
         throw MyException(
           error.message,
           originClass: _debugName,
-          originField: 'setQuestao()',
+          originField: 'insertQuestao()',
           error: error,
         );
       }
@@ -206,7 +204,7 @@ class SupabaseDbRepository
   }
 
   @override
-  Future<DataClube> setClube({
+  Future<DataClube> insertClube({
     required String nome,
     required int proprietario,
     required String codigo,
@@ -216,8 +214,8 @@ class SupabaseDbRepository
     List<int>? membros,
     String? capa,
   }) async {
-    assert(Debug.print('[INFO] Chamando $_debugName.setClube()...'));
-    _checkAuthentication('setClube()');
+    assert(Debug.print('[INFO] Chamando $_debugName.insertClube()...'));
+    _checkAuthentication('insertClube()');
     // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
     final data = {
       'nome': nome,
@@ -235,9 +233,9 @@ class SupabaseDbRepository
           await _client.rpc('inserir_clube', params: data).execute();
       if (response.error != null) {
         final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao inserir o clube ${data.toString()}. '
-            '\n${error.toString()}'));
+        assert(
+            Debug.print('[ERROR] Erro ao inserir o clube ${data.toString()}. '
+                '\n${error.toString()}'));
         return DataClube();
       }
       final list = (response.data as List).cast<DataClube>();
@@ -310,6 +308,45 @@ class SupabaseDbRepository
       assert(Debug.print(
           '[ERROR] Erro ao incluir o usuário cujo "idUser = $idUser" no clube cujo '
           'código de acesso é "$accessCode".'));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<DataClube> updateClube(DataClube data) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.updateClube()...'));
+    _checkAuthentication('updateClube()');
+    final tbClubes = CollectionType.clubes.name;
+    final id = data[DbConst.kDbDataClubeKeyId] as int?;
+    if (data[DbConst.kDbDataClubeKeyAdministradores] != null) {
+      throw UnimplementedError(
+          'A atualização da lista de administradores não foi implementada.');
+    }
+    if (data[DbConst.kDbDataClubeKeyMembros] != null) {
+      throw UnimplementedError(
+          'A atualização da lista de membros não foi implementada.');
+    }
+    if (id == null) {
+      assert(Debug.print('[ERROR] O ID do clube não pode ser nulo.'));
+      return DataClube();
+    }
+    try {
+      assert(Debug.print(
+          '[INFO] Atualizando os dados do clube cujo "id = $id" do clube cujo '
+          'na tabela "$tbClubes"...'));
+      final response =
+          await _client.rpc('atualizar_clube', params: data).execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(Debug.print(
+            '[ERROR] Erro ao atualizar o clube. \n${error.toString()}'));
+        return DataClube();
+      }
+      final list = (response.data as List).cast<DataClube>();
+      return list.isNotEmpty ? list[0] : DataClube();
+    } catch (_) {
+      assert(Debug.print('[ERROR] Erro ao atualizar o clube cujo com os dados: '
+          '\n${data.toString()}'));
       rethrow;
     }
   }

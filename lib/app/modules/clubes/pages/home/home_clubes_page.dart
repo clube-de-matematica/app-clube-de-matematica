@@ -4,9 +4,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
-import 'widgets/bottom_sheets.dart';
-import 'widgets/clube_card.dart';
 import 'home_clubes_controller.dart';
+import 'widgets/clube_card.dart';
 
 /// Página inicial para visualização dos clubes do usuário.
 class HomeClubesPage extends StatefulWidget {

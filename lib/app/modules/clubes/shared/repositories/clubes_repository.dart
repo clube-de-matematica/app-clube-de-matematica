@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
@@ -112,7 +113,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (user.id == null) return null;
     final proprietario = user.id!;
     final codigo = IdBase62.getIdClube();
-    final dataClube = await dbRepository.setClube(
+    final dataClube = await dbRepository.insertClube(
       nome: nome,
       proprietario: proprietario,
       codigo: codigo,
@@ -162,6 +163,69 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
           ..clear()
           ..addAll(temp.membros);
         return _clubes[indice];
+      }
+    } else {
+      return null;
+    }
+  }
+
+  /// Atualiza os dados do clube que foram modificados.
+  @action
+  Future<Clube?> atualizarClube({
+    required Clube clube,
+    required String nome,
+    required String codigo,
+    String? descricao,
+    required Color capa,
+    required bool privado,
+  }) async {
+    if (user.id == null) return null;
+
+    if (descricao?.isEmpty ?? false) descricao = null;
+    final atualizarDescricao = clube.descricao != descricao;
+    // Como `null` é um valor válido para a descrição, para não ser atualizada, 
+    // ela deve ser envida como uma string vazia, 
+    if (!atualizarDescricao) descricao = '';
+
+    final atualizarCapa = clube.capa.value != capa.value;
+    // Como `null` é um valor válido para a capa, para não ser atualizada, 
+    // ela deve ser envida como uma string vazia, 
+    final dataCapa = atualizarCapa ? '${capa.value}' : '';
+
+    final DataClube dados = {
+      if (clube.nome != nome) DbConst.kDbDataClubeKeyNome: nome,
+      if (clube.codigo != codigo) DbConst.kDbDataClubeKeyCodigo: codigo,
+      if (clube.privado != privado) DbConst.kDbDataClubeKeyPrivado: privado,
+    };
+    if (dados.isEmpty && !atualizarCapa && !atualizarDescricao) {
+      assert(Debug.print('[ATTENTION] Não há dados para serem atualizados.'));
+      return clube;
+    }
+    dados[DbConst.kDbDataClubeKeyId] = clube.id;
+    dados[DbConst.kDbDataClubeKeyDescricao] = descricao;
+    dados[DbConst.kDbDataClubeKeyCapa] = dataCapa;
+
+    final dataResult = await dbRepository.updateClube(dados);
+    if (dataResult.isNotEmpty) {
+      final temp = Clube.fromMap(dataResult);
+      final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
+      if (indice == -1) {
+        return null;
+      } else {
+        final clube = _clubes[indice];
+        clube
+          ..nome = temp.nome
+          ..codigo = temp.codigo
+          ..descricao = temp.descricao
+          ..capa = temp.capa
+          ..privado = temp.privado;
+        clube.membros
+          ..clear()
+          ..addAll(temp.membros);
+        clube.administradores
+          ..clear()
+          ..addAll(temp.administradores);
+        return clube;
       }
     } else {
       return null;

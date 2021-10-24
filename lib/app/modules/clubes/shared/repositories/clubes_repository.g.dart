@@ -67,6 +67,26 @@ mixin _$ClubesRepository on _ClubesRepositoryBase, Store {
     return _$entrarClubeAsyncAction.run(() => super.entrarClube(codigo));
   }
 
+  final _$atualizarClubeAsyncAction =
+      AsyncAction('_ClubesRepositoryBase.atualizarClube');
+
+  @override
+  Future<Clube?> atualizarClube(
+      {required Clube clube,
+      required String nome,
+      required String codigo,
+      String? descricao,
+      required Color capa,
+      required bool privado}) {
+    return _$atualizarClubeAsyncAction.run(() => super.atualizarClube(
+        clube: clube,
+        nome: nome,
+        codigo: codigo,
+        descricao: descricao,
+        capa: capa,
+        privado: privado));
+  }
+
   final _$_ClubesRepositoryBaseActionController =
       ActionController(name: '_ClubesRepositoryBase');
 

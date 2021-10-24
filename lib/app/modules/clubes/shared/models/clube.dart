@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:clubedematematica/app/shared/models/debug.dart';
 import 'package:flutter/painting.dart';
 
+import '../../../../shared/models/debug.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../utils/random_colors.dart';
 

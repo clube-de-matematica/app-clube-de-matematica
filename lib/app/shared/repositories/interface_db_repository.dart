@@ -142,15 +142,15 @@ abstract class IDbRepository {
 
   Future<DataCollection> getAssuntos();
 
-  Future<bool> setAssunto(DataDocument data);
+  Future<bool> insertAssunto(DataDocument data);
 
   Future<DataCollection> getQuestoes();
 
-  Future<bool> setQuestao(DataDocument data);
+  Future<bool> insertQuestao(DataDocument data);
 
   Future<DataCollection> getClubes(int idUsuario);
 
-  Future<DataClube> setClube({
+  Future<DataClube> insertClube({
     required String nome,
     required int proprietario,
     required String codigo,
@@ -160,6 +160,11 @@ abstract class IDbRepository {
     List<int>? membros,
     String? capa,
   });
+
+  /// Atualiza os dados do clube com base em [data].
+  /// A capa e descrição não serão atualizadas se forem string vazia em [data].
+  /// Os demais não serão atualizados se forem null.
+  Future<DataClube> updateClube(DataClube data);
 
   /// Remove o usuário correspondente a [idUser] do clube correspondente a [idClube].
   Future<bool> exitClube(int idClube, int idUser);
