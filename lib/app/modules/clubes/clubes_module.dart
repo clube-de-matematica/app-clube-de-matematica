@@ -39,7 +39,6 @@ class ClubesModule extends Module {
   //Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
         //Controles
-        Bind((i) => ClubeController()),
         Bind((i) => HomeClubesController()),
       ];
 

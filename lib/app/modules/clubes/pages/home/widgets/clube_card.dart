@@ -19,14 +19,19 @@ class ClubeCard extends StatelessWidget {
   final HomeClubesController controller;
 
   /// ID do usuário do aplicativo.
-  int? get userId => Modular.get<UserApp>().id;
+  int? get userId => UserApp.instance.id;
 
   /// Numero de integrantes do Clubes.
-  int get numeroParticipantes =>
-      clube.administradores.length + clube.membros.length + 1;
+  int get numeroParticipantes => clube.usuarios.length;
+
+  Brightness get brightness => ThemeData.estimateBrightnessForColor(clube.capa);
+
+  Color get textColor {
+    return brightness == Brightness.light ? Colors.black : Colors.white;
+  }
 
   TextStyle get headerTextStyle => TextStyle(
-        color: AppTheme.instance.temaClaro.colorScheme.onPrimary,
+        color: textColor,
         fontSize: AppTheme.escala * 26,
         fontWeight: FontWeight.w400,
       );

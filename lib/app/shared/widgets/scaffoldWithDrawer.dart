@@ -202,14 +202,17 @@ class _AppDrawerState extends State<_AppDrawer> {
   List<Widget> _buildClubes(BuildContext context) {
     final userId = widget.user.id;
     return widget.clubes.map((clube) {
-      String subtitle;
+      final usuario = userId == null ? null : clube.getUsuario(userId);
+      String subtitle = '';
 
-      if (userId == clube.proprietario)
-        subtitle = 'Proprietário';
-      else if (clube.administradores.contains(userId))
-        subtitle = 'Administrador';
-      else
-        subtitle = 'Membro';
+      if (usuario != null) {
+        if (usuario.proprietario)
+          subtitle = 'Proprietário';
+        else if (usuario.administrador)
+          subtitle = 'Administrador';
+        else
+          subtitle = 'Membro';
+      }
 
       return ListTile(
         title: Text(clube.nome),

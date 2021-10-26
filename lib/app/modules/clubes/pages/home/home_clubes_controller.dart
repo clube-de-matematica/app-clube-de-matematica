@@ -1,5 +1,3 @@
-import 'package:clubedematematica/app/modules/clubes/pages/home/widgets/bottom_sheets.dart';
-import 'package:clubedematematica/app/shared/repositories/id_base62.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';

@@ -1,8 +1,21 @@
-import 'package:mobx/mobx.dart';
-part 'clube_controller.g.dart';
+import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
+import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
+import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
 
-class ClubeController = _ClubeControllerBase with _$ClubeController;
+/// Uma enumeração para os itens do menu de opções dos clubes.
+enum OpcoesUsuarioClube {
+  promoverAdmin,
+  removerAdmin,
+  sairAdmin,
+  remover,
+  sair,
+}
 
-abstract class _ClubeControllerBase with Store {
-  
+class ClubeController {
+  ClubeController(this.clube);
+
+  final Clube clube;
+
+  /// O [UsuarioClube] correspondente ao usuário atual do aplicativo para [clube].
+  UsuarioClube get usuarioApp => clube.getUsuario(UserApp.instance.id!)!;
 }

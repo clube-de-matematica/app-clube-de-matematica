@@ -92,7 +92,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
         if (!_existeClube(map[DbConst.kDbDataClubeKeyId])) {
           // Criar um `Clube` com base no `map` e incluir na lista de questões carregadas.
           // Não será emitido várias notificações, pois `carregarClubes` também é um `action`.
-          _addInClubes(Clube.fromMap(map));
+          _addInClubes(Clube.fromDataClube(map));
         }
       }
     }
@@ -124,7 +124,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       capa: capa,
     );
     if (dataClube.isNotEmpty) {
-      final clube = Clube.fromMap(dataClube);
+      final clube = Clube.fromDataClube(dataClube);
       _addInClubes(clube);
       return clube;
     } else {
@@ -152,17 +152,16 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (user.id == null) return null;
     final dataClube = await dbRepository.enterClube(codigo, user.id!);
     if (dataClube.isNotEmpty) {
-      final temp = Clube.fromMap(dataClube);
+      final temp = Clube.fromDataClube(dataClube);
       final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
       if (indice == -1) {
         _addInClubes(temp);
         return temp;
       } else {
+        final clube = _clubes[indice];
         // TODO: Testar se o mobx reconhece essas mudanças.
-        _clubes[indice].membros
-          ..clear()
-          ..addAll(temp.membros);
-        return _clubes[indice];
+        clube.sobrescrever(temp);
+        return clube;
       }
     } else {
       return null;
@@ -183,13 +182,13 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
 
     if (descricao?.isEmpty ?? false) descricao = null;
     final atualizarDescricao = clube.descricao != descricao;
-    // Como `null` é um valor válido para a descrição, para não ser atualizada, 
-    // ela deve ser envida como uma string vazia, 
+    // Como `null` é um valor válido para a descrição, para não ser atualizada,
+    // ela deve ser envida como uma string vazia,
     if (!atualizarDescricao) descricao = '';
 
     final atualizarCapa = clube.capa.value != capa.value;
-    // Como `null` é um valor válido para a capa, para não ser atualizada, 
-    // ela deve ser envida como uma string vazia, 
+    // Como `null` é um valor válido para a capa, para não ser atualizada,
+    // ela deve ser envida como uma string vazia,
     final dataCapa = atualizarCapa ? '${capa.value}' : '';
 
     final DataClube dados = {
@@ -207,24 +206,13 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
 
     final dataResult = await dbRepository.updateClube(dados);
     if (dataResult.isNotEmpty) {
-      final temp = Clube.fromMap(dataResult);
+      final temp = Clube.fromDataClube(dataResult);
       final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
       if (indice == -1) {
         return null;
       } else {
         final clube = _clubes[indice];
-        clube
-          ..nome = temp.nome
-          ..codigo = temp.codigo
-          ..descricao = temp.descricao
-          ..capa = temp.capa
-          ..privado = temp.privado;
-        clube.membros
-          ..clear()
-          ..addAll(temp.membros);
-        clube.administradores
-          ..clear()
-          ..addAll(temp.administradores);
+        clube.sobrescrever(temp);
         return clube;
       }
     } else {
