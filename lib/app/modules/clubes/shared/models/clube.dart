@@ -1,11 +1,14 @@
 import 'dart:convert';
 
-import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
 import 'package:flutter/painting.dart';
+import 'package:mobx/mobx.dart';
 
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../utils/random_colors.dart';
+import 'usuario_clube.dart';
+
+part 'clube.g.dart';
 
 /// Permissões de acesso do usuário aos clubes.
 enum PermissoesClube {
@@ -39,59 +42,26 @@ extension PermissoesClubeExtension on PermissoesClube {
   }
 }
 
-class Clube {
-  /// ID do clube.
-  final int id;
-
-  /// Nome do clube.
-  String nome;
-
-  /// Uma pequena descrição do clube.
-  String? descricao;
-
-  /// Objeto [UsuarioClube] do proprietário do clube.
-  final UsuarioClube proprietario;
-
-  /// Conjunto com todos os participantes do deste clube.
-  final Set<UsuarioClube> _usuarios;
-
-  /// Cor de fundo do [Card] e do avatar do clube.
-  Color capa;
-
-  /// O ID base62 para acesso ao clube.
-  String codigo;
-
-  /// Define o nível de privacidade do clube.
-  /// * Se `false`, o clube é público. Qualquer usuário com o código de acesso pode ingressar.
-  /// * Se `true`, o clube é privado. O ingresso depende da permissão de um administrador.
-  bool privado;
-
-  /// Uma lista inalterável com o objeto [UsuarioClube] de cada participantes do deste clube.
-  List<UsuarioClube> get usuarios => List.unmodifiable(_usuarios);
-
-  /// Uma lista inalterável com o objeto [UsuarioClube] de cada administrador do clube.
-  List<UsuarioClube> get administradores =>
-      List.unmodifiable(_usuarios.where((usuario) => usuario.administrador));
-
-  /// Uma lista inalterável com o objeto [UsuarioClube] de cada membro (excluindo-se
-  /// proprietário e administradores) do clube.
-  List<UsuarioClube> get membros => List.unmodifiable(_usuarios
-      .where((usuario) => usuario.permissao == PermissoesClube.membro));
-
+class Clube extends _ClubeBase with _$Clube {
   Clube({
-    required this.id,
-    required this.nome,
-    this.descricao,
+    required int id,
+    required String nome,
+    String? descricao,
     required UsuarioClube proprietario,
     Iterable<UsuarioClube>? usuarios,
     Color? capa,
-    required this.codigo,
-    required this.privado,
-  })  : this.capa = capa ?? RandomColor(),
-        this.proprietario = proprietario,
-        this._usuarios = (usuarios?.contains(proprietario) ?? false)
-            ? Set.from(usuarios!)
-            : [proprietario].toSet();
+    required String codigo,
+    required bool privado,
+  }) : super(
+          id: id,
+          nome: nome,
+          descricao: descricao,
+          proprietario: proprietario,
+          usuarios: usuarios,
+          capa: capa,
+          codigo: codigo,
+          privado: privado,
+        );
 
   /// Cria um objeto [Clube] a partir do [DataClube] [map].
   factory Clube.fromDataClube(DataClube map) {
@@ -128,7 +98,7 @@ class Clube {
     try {
       _capa = Color(int.parse(map[DbConst.kDbDataClubeKeyCapa]));
     } catch (_) {
-      assert(Debug.print('Não foi possível gerar a cor da capa a partir de '
+      assert(Debug.print('[ATTENTION] Não foi possível gerar a cor da capa a partir de '
           '${map[DbConst.kDbDataClubeKeyCapa]}.'));
     }
 
@@ -143,6 +113,81 @@ class Clube {
       privado: map[DbConst.kDbDataClubeKeyPrivado],
     );
   }
+
+  factory Clube.fromJsonDataClube(String source) =>
+      Clube.fromDataClube(json.decode(source));
+}
+
+abstract class _ClubeBase with Store {
+  /// ID do clube.
+  final int id;
+
+  /// Nome do clube.
+  @observable
+  String nome;
+
+  /// Uma pequena descrição do clube.
+  @observable
+  String? descricao;
+
+  /// Objeto [UsuarioClube] do proprietário do clube.
+  final UsuarioClube proprietario;
+
+  /// Conjunto com todos os participantes do deste clube.
+  @observable
+  ObservableSet<UsuarioClube> _usuarios;
+
+  /// Cor de fundo do [Card] e do avatar do clube.
+  @observable
+  Color capa;
+
+  /// O ID base62 para acesso ao clube.
+  String codigo;
+
+  /// Define o nível de privacidade do clube.
+  /// * Se `false`, o clube é público. Qualquer usuário com o código de acesso pode ingressar.
+  /// * Se `true`, o clube é privado. O ingresso depende da permissão de um administrador.
+  bool privado;
+
+  /// Uma lista inalterável com o objeto [UsuarioClube] de cada participantes do deste clube.
+  @computed
+  ObservableList<UsuarioClube> get usuarios => ObservableList.of(_usuarios);
+
+  /// Uma lista inalterável com o objeto [UsuarioClube] de cada administrador do clube.
+  @computed
+  ObservableList<UsuarioClube> get administradores =>
+      ObservableList.of(_usuarios.where((usuario) => usuario.administrador));
+
+  /// Uma lista inalterável com o objeto [UsuarioClube] de cada membro (excluindo-se
+  /// proprietário e administradores) do clube.
+  @computed
+  ObservableList<UsuarioClube> get membros => ObservableList.of(_usuarios
+      .where((usuario) => usuario.permissao == PermissoesClube.membro));
+
+  _ClubeBase({
+    required this.id,
+    required this.nome,
+    this.descricao,
+    required UsuarioClube proprietario,
+    Iterable<UsuarioClube>? usuarios,
+    Color? capa,
+    required this.codigo,
+    required this.privado,
+  })  : this.capa = capa ?? RandomColor(),
+        this.proprietario = proprietario,
+        this._usuarios = ObservableSet<UsuarioClube>()
+          ..add(proprietario)
+          ..addAll(usuarios?.where((usuario) => !usuario.proprietario) ?? []);
+  /* 
+  {
+    if (usuarios?.contains(proprietario) ?? false) {
+      addUsuarios(usuarios!);
+    } else {
+      if (usuarios != null) _usuarios.addAll(usuarios);
+      addUsuarios([proprietario]);
+    }
+  }
+   */
 
   DataClube toDataClube() {
     final administradores =
@@ -161,29 +206,48 @@ class Clube {
     };
   }
 
-  factory Clube.fromJsonDataClube(String source) =>
-      Clube.fromDataClube(json.decode(source));
-
   String toJsonDataClube() => json.encode(toDataClube());
 
   /// Sobrescreve os campos deste clube com os respectivos valores em [outro], desde que
   /// tenham o mesmo ID.
+  @action
   void sobrescrever(Clube outro) {
-    nome = outro.nome;
-    descricao = outro.descricao;
-    capa = outro.capa;
-    codigo = outro.codigo;
-    privado = outro.privado;
-    proprietario.email = outro.proprietario.email;
-    proprietario.nome = outro.proprietario.nome;
-    proprietario.foto = outro.proprietario.foto;
-    proprietario.permissao = outro.proprietario.permissao;
-    _usuarios.removeWhere((usuario) => !usuario.proprietario);
-    _usuarios.addAll(outro._usuarios.where((usuario) => !usuario.proprietario));
+    if (this.id == outro.id) {
+      nome = outro.nome;
+      descricao = outro.descricao;
+      capa = outro.capa;
+      codigo = outro.codigo;
+      privado = outro.privado;
+      proprietario.sobrescrever(outro.proprietario);
+      _usuarios.removeWhere((usuario) => !usuario.proprietario);
+      _usuarios
+          .addAll(outro._usuarios.where((usuario) => !usuario.proprietario));
+    }
   }
 
-  void addUsuarios(Iterable<UsuarioClube> usuarios) {
+  @action
+  void addUsuarios(Iterable<UsuarioClube> usuarios, {bool verificar = false}) {
+    if (verificar) {
+      usuarios.forEach((usuario) {
+        try {
+          _usuarios
+              .firstWhere((_usuario) => _usuario.id == usuario.id)
+              .sobrescrever(usuario);
+        } catch (_) {
+          _usuarios.add(usuario);
+        }
+      });
+      return;
+    }
     _usuarios.addAll(usuarios);
+  }
+
+  /// Remove deste clube os elementos de [usuarios].
+  @action
+  void removerUsuarios(Iterable<UsuarioClube> usuarios) {
+    usuarios.forEach((usuario) {
+      _usuarios.removeWhere((_usuario) => usuario.id == _usuario.id);
+    });
   }
 
   /// Retorna o usuário correspondente ao [id].

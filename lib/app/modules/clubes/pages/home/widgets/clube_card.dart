@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../../../../shared/theme/appTheme.dart';
 import '../../../../perfil/models/userapp.dart';
@@ -41,33 +41,35 @@ class ClubeCard extends StatelessWidget {
     return GestureDetector(
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: 160.0),
-        child: Card(
-          color: clube.capa,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Nome e descrição do clube.
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      header(context),
-                      body(),
-                    ],
-                  ),
-                ),
-                // Permissão do usuário e número de participantes.
-                footer(),
-              ],
+        child: Observer(builder: (_) {
+          return Card(
+            color: clube.capa,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
             ),
-          ),
-        ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Nome e descrição do clube.
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        header(context),
+                        body(),
+                      ],
+                    ),
+                  ),
+                  // Permissão do usuário e número de participantes.
+                  footer(),
+                ],
+              ),
+            ),
+          );
+        }),
       ),
       onTap: onTap,
     );

@@ -1,5 +1,4 @@
 import 'package:clubedematematica/app/navigation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -47,9 +46,6 @@ class ClubeDeMatematicaModule extends Module {
 
         //Supabase
         Bind((_) => Supabase.instance),
-
-        //Firebase
-        Bind((_) => FirebaseAuth.instance),
       ];
 
   @override

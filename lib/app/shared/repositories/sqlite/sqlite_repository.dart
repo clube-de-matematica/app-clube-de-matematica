@@ -219,7 +219,7 @@ class SqliteRepository
       case CollectionType.assuntos:
         return key == DbConst.kDbDataAssuntoKeyHierarquia;
       case CollectionType.clubes:
-        return false;//TODO
+        return false; //TODO
       case CollectionType.usuarios:
         return true;
     }
@@ -285,6 +285,13 @@ class SqliteRepository
   @override
   Future<DataClube> updateClube(DataClube data) {
     // TODO: implement updateClube
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> updatePermissionUserClube(
+      int idClube, int idUser, int idPermission) {
+    // TODO: implement updatePermissionUserClube
     throw UnimplementedError();
   }
 }

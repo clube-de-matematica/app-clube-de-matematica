@@ -1,18 +1,25 @@
-import 'dart:convert';
-
 import '../../../perfil/models/userapp.dart';
 import 'clube.dart';
 
+import 'package:mobx/mobx.dart';
+part 'usuario_clube.g.dart';
+
 /// Modelo para os dados de um usuário de clube.
-class UsuarioClube {
+class UsuarioClube = _UsuarioClubeBase with _$UsuarioClube;
+
+abstract class _UsuarioClubeBase with Store {
   final int id;
+  @observable
   String? email;
+  @observable
   String? nome;
+  @observable
   String? foto;
   final int idClube;
+  @observable
   PermissoesClube permissao;
 
-  UsuarioClube({
+  _UsuarioClubeBase({
     required this.id,
     this.email,
     this.nome,
@@ -26,62 +33,28 @@ class UsuarioClube {
       (UserApp.instance.id != null) && (UserApp.instance.id == id);
 
   /// Verdadeiro se este usuário for proprietátio do clube.
+  @computed
   bool get proprietario => permissao == PermissoesClube.proprietario;
 
   /// Verdadeiro se este usuário for administrador do clube.
+  @computed
   bool get administrador => permissao == PermissoesClube.administrador;
 
   /// Verdadeiro se este usuário do clube não for proprietátio nem administrador.
+  @computed
   bool get membro => permissao == PermissoesClube.membro;
 
-  UsuarioClube copyWith({
-    int? id,
-    String? email,
-    String? nome,
-    String? foto,
-    int? idClube,
-    PermissoesClube? permissao,
-  }) {
-    return UsuarioClube(
-      id: id ?? this.id,
-      email: email ?? this.email,
-      nome: nome ?? this.nome,
-      foto: foto ?? this.foto,
-      idClube: idClube ?? this.idClube,
-      permissao: permissao ?? this.permissao,
-    );
+  /// Sobrescreve os campos deste usuário com os respectivos valores em [outro], desde que
+  /// seus respectivos [id] e [idClube] sejam iguais.
+  @action
+  void sobrescrever(UsuarioClube outro) {
+    if (this.id == outro.id) {
+      email = outro.email;
+      nome = outro.nome;
+      foto = outro.foto;
+      permissao = outro.permissao;
+    }
   }
-
-//TODO: Ajustar os nomes das keys
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'email': email,
-      'nome': nome,
-      'foto': foto,
-      'idClube': idClube,
-      'permissao': permissao.id,
-    };
-  }
-
-  factory UsuarioClube.fromMap(Map<String, dynamic> map) {
-    return UsuarioClube(
-      id: map['id'],
-      email: map['email'] != null ? map['email'] : null,
-      nome: map['nome'] != null ? map['nome'] : null,
-      foto: map['foto'] != null ? map['foto'] : null,
-      idClube: map['idClube'],
-      permissao: PermissoesClube.values.firstWhere(
-        (valor) => valor.id == map['permissao'],
-        orElse: () => PermissoesClube.externo,
-      ),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory UsuarioClube.fromJson(String source) =>
-      UsuarioClube.fromMap(json.decode(source));
 
   @override
   String toString() {

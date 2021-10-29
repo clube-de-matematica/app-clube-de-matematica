@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -17,14 +18,14 @@ class ClubesRepository = _ClubesRepositoryBase with _$ClubesRepository;
 
 abstract class _ClubesRepositoryBase with Store implements Disposable {
   final IDbRepository dbRepository;
-  final UserApp user;
+  final UserApp usuarioApp;
   final _disposers = <ReactionDisposer>[];
 
-  _ClubesRepositoryBase(this.dbRepository, this.user) {
+  _ClubesRepositoryBase(this.dbRepository, this.usuarioApp) {
     _disposers.add(
       autorun(
         (_) {
-          if (user.id == null)
+          if (usuarioApp.id == null)
             _cleanClubes();
           else
             carregarClubes();
@@ -74,11 +75,11 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// Retornará uma lista vazia se o usuário não estiver logado ou ocorrer algum erro ao buscar os dados.
   @action
   Future<List<Clube>> carregarClubes() async {
-    if (user.id != null) {
+    if (usuarioApp.id != null) {
       DataCollection resultado;
       try {
         // Aguardar o retorno dos clubes.
-        resultado = await dbRepository.getClubes(user.id!);
+        resultado = await dbRepository.getClubes(usuarioApp.id!);
       } catch (e) {
         assert(Debug.printBetweenLine(
             "Erro a buscar os dados da coleção ${CollectionType.clubes.name}."));
@@ -110,8 +111,8 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     List<int>? administradores,
     List<int>? membros,
   }) async {
-    if (user.id == null) return null;
-    final proprietario = user.id!;
+    if (usuarioApp.id == null) return null;
+    final proprietario = usuarioApp.id!;
     final codigo = IdBase62.getIdClube();
     final dataClube = await dbRepository.insertClube(
       nome: nome,
@@ -132,11 +133,26 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     }
   }
 
+  /// Remove [usuario] de [clube].
+  Future<bool> removerDoClube(Clube clube, UsuarioClube usuario) async {
+    if (usuarioApp.id == null) return false;
+    if (clube.id != usuario.idClube) return false;
+    final sucesso = await dbRepository.exitClube(clube.id, usuario.id);
+    if (sucesso) {
+      clube.removerUsuarios([usuario]);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /// Remove de [clube] o usuário atual.
   @action
   Future<bool> sairClube(Clube clube) async {
-    if (user.id == null) return false;
-    final sucesso = await dbRepository.exitClube(clube.id, user.id!);
+    if (usuarioApp.id == null) return false;
+    final usuario = clube.getUsuario(usuarioApp.id!);
+    if (usuario == null) return false;
+    final sucesso = await removerDoClube(clube, usuario);
     if (sucesso) {
       _clubes.remove(clube);
       return true;
@@ -149,8 +165,8 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// Se o processo for bem sucedido, retorna o [Clube] correspondente.
   @action
   Future<Clube?> entrarClube(String codigo) async {
-    if (user.id == null) return null;
-    final dataClube = await dbRepository.enterClube(codigo, user.id!);
+    if (usuarioApp.id == null) return null;
+    final dataClube = await dbRepository.enterClube(codigo, usuarioApp.id!);
     if (dataClube.isNotEmpty) {
       final temp = Clube.fromDataClube(dataClube);
       final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
@@ -178,7 +194,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     required Color capa,
     required bool privado,
   }) async {
-    if (user.id == null) return null;
+    if (usuarioApp.id == null) return null;
 
     if (descricao?.isEmpty ?? false) descricao = null;
     final atualizarDescricao = clube.descricao != descricao;
@@ -217,6 +233,25 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       }
     } else {
       return null;
+    }
+  }
+
+  /// Atualiza a permissão do [usuario] para [permissao] em [clube].
+  Future<bool> atualizarPermissaoClube({
+    required Clube clube,
+    required UsuarioClube usuario,
+    required PermissoesClube permissao,
+  }) async {
+    if (usuarioApp.id == null) return false;
+    if (clube.id != usuario.idClube) return false;
+    if (usuario.permissao == permissao) return true;
+    final sucesso = await dbRepository.updatePermissionUserClube(
+        clube.id, usuario.id, permissao.id);
+    if (sucesso) {
+      usuario.permissao = permissao;
+      return true;
+    } else {
+      return false;
     }
   }
 

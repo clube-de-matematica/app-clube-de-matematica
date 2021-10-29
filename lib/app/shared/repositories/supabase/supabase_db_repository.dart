@@ -263,12 +263,11 @@ class SupabaseDbRepository
           .execute();
       if (response.error != null) {
         final error = response.error as PostgrestError;
-        throw MyException(
-          error.message,
-          originClass: _debugName,
-          originField: 'exitClube()',
-          error: error,
-        );
+        assert(Debug.print(
+            '[ERROR] Erro ao excluir o usuário cujo "idUser = $idUser" do clube cujo '
+            '"idClube = $idClube" na tabela "$tbClubeXUsuario".'));
+        assert(Debug.printBetweenLine(error));
+        return false;
       }
       return true;
     } catch (_) {
@@ -347,6 +346,41 @@ class SupabaseDbRepository
     } catch (_) {
       assert(Debug.print('[ERROR] Erro ao atualizar o clube cujo com os dados: '
           '\n${data.toString()}'));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> updatePermissionUserClube(
+    int idClube,
+    int idUser,
+    int idPermission,
+  ) async {
+    assert(Debug.print(
+        '[INFO] Chamando $_debugName.updatePermissionUserClube()...'));
+    _checkAuthentication('updatePermissionUserClube()');
+    try {
+      assert(Debug.print(
+          '[INFO] Atualizando a permissão de acesso do usuário ao clube de acordo '
+          'com os correspondentes idPermission = $idPermission, idUser = $idUser e '
+          'idClube = $idClube na tabela "$tbClubeXUsuario"...'));
+      final response = await _client
+          .from(tbClubeXUsuario)
+          .update({tbClubeXUsuarioColIdPermissao: idPermission})
+          .eq(tbClubeXUsuarioColIdUsuario, idUser)
+          .eq(tbClubeXUsuarioColIdClube, idClube)
+          .execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(
+            Debug.print('[ERROR] Erro ao atualizar a permissão do usuário.'));
+        assert(Debug.printBetweenLine(error));
+        return false;
+      }
+      return true;
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao atualizar a permissão de acesso do usuário ao clube'));
       rethrow;
     }
   }

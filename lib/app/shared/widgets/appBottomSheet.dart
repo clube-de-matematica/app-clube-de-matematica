@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 ///Uma página exibida na parte inferior da tela.
 ///A estrutura desse [Widget] é baseada na estrutura do [AlertDialog].
@@ -251,5 +252,46 @@ class AppBottomSheet extends StatelessWidget {
     // The final padding scale factor is clamped between 1/3 and 1. For example,
     // a non-scaled padding of 24 will produce a padding between 24 and 8.
     return lerpDouble(1.0, 1.0 / 3.0, clampedTextScaleFactor - 1.0)!;
+  }
+}
+
+/// Uma página inferior para confirmar ou cancelar uma ação.
+/// Ao ser fechada, retorna `true` se o usuário confirmar a ação.
+class BottomSheetCancelarConfirmar extends AppBottomSheet {
+  const BottomSheetCancelarConfirmar({
+    Key? key,
+    this.title,
+    this.content,
+    this.message,
+  })  : assert(!(content != null && message != null)),
+        super(key: key);
+
+  final Widget? title;
+  final Widget? content;
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    var content = this.content;
+    content ??= message == null
+        ? null
+        : Text(
+            message!,
+            textAlign: TextAlign.justify,
+          );
+    return AppBottomSheet(
+      title: title,
+      content: content,
+      actions: [
+        TextButton(
+          child: const Text('CANCELAR'),
+          onPressed: () => Navigator.pop<bool>(context, false),
+        ),
+        TextButton(
+          child: const Text('CONFIRMAR'),
+          onPressed: () => Navigator.pop<bool>(context, true),
+        ),
+      ],
+    );
   }
 }

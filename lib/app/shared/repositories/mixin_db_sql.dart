@@ -17,4 +17,7 @@ mixin DbSqlMixin {
 
   /// Nome da coluna para o ID do usuário na tabela [tbClubeXUsuario].
   final tbClubeXUsuarioColIdUsuario = 'id_usuario';
+
+  /// Nome da coluna para o ID de acesso do usuário ao clube na tabela [tbClubeXUsuario].
+  final tbClubeXUsuarioColIdPermissao = 'id_permissao';
 }

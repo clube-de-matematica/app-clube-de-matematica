@@ -5,30 +5,12 @@ import '../../../shared/models/clube.dart';
 
 /// Uma página inferior para confirmar a saída de um clube.
 /// Ao ser fechada, retorna `true` se o usuário confirmar que deseja sair do clube.
-class BottomSheetSairClube extends AppBottomSheet {
-  const BottomSheetSairClube(this.clube, {Key? key}) : super(key: key);
-
-  final Clube clube;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBottomSheet(
-      content: Text(
-        'Deseja realmente sair do clube "${clube.nome}"?',
-        textAlign: TextAlign.justify,
-      ),
-      actions: [
-        TextButton(
-          child: const Text('CANCELAR'),
-          onPressed: () => Navigator.pop<bool>(context, false),
-        ),
-        TextButton(
-          child: const Text('CONFIRMAR'),
-          onPressed: () => Navigator.pop<bool>(context, true),
-        ),
-      ],
-    );
-  }
+class BottomSheetSairClube extends BottomSheetCancelarConfirmar {
+  BottomSheetSairClube(Clube clube, {Key? key})
+      : super(
+          key: key,
+          message: 'Deseja realmente sair do clube "${clube.nome}"?',
+        );
 }
 
 /// Uma página inferior para exibir o código de um clube.

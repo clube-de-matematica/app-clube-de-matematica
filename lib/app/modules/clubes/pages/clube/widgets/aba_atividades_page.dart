@@ -1,17 +1,20 @@
+import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
+import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../shared/models/clube.dart';
+import '../clube_page.dart';
 
 /// A subpágina exibida na aba "Atividades" da página do [clube].
 class AtividadesPage extends StatelessWidget {
-  const AtividadesPage({
-    Key? key,
-    required this.clube,
-  }) : super(key: key);
-  final Clube clube;
+  const AtividadesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView();
+      final clube = ClubePage.of(context).controller.clube;
+      return OutlinedButton(
+        child: Text('data'),
+        onPressed: ()=>null,
+      );
   }
 }

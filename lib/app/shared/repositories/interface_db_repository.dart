@@ -173,4 +173,12 @@ abstract class IDbRepository {
   /// Retorna os dados do clube após a alteração.
   /// Retorna um [DataDocument] vazio se ocorrer algum erro.
   Future<DataClube> enterClube(String accessCode, int idUser);
+
+  /// Atualiza a permissão de acesso do usuário do clube de acordo com os correspondentes
+  /// [idPermission], [idUser] e [idClube].
+  Future<bool> updatePermissionUserClube(
+    int idClube,
+    int idUser,
+    int idPermission,
+  );
 }
