@@ -1,10 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
-///Uma página exibida na parte inferior da tela.
-///A estrutura desse [Widget] é baseada na estrutura do [AlertDialog].
+/// Uma página exibida na parte inferior da tela.
+/// A estrutura desse [Widget] é baseada na estrutura do [AlertDialog].
 class AppBottomSheet extends StatelessWidget {
   const AppBottomSheet({
     Key? key,
@@ -55,7 +54,7 @@ class AppBottomSheet extends StatelessWidget {
   final bool scrollable;
   final AnimationController? transitionAnimationController;
 
-  ///Exibir bottom sheet modal.
+  /// Exibir bottom sheet modal.
   Future<T?> showModal<T>(BuildContext context) {
     return showModalBottomSheet<T>(
       context: context,
@@ -68,7 +67,7 @@ class AppBottomSheet extends StatelessWidget {
     );
   }
 
-  ///Exibir bottom sheet persistente.
+  /// Exibir bottom sheet persistente.
   PersistentBottomSheetController<T> show<T>(BuildContext context) {
     return showBottomSheet<T>(
       context: context,
@@ -246,7 +245,7 @@ class AppBottomSheet extends StatelessWidget {
     return dialogChild;
   }
 
-  ///Copiado de [AlertDialog].
+  /// Copiado de [AlertDialog].
   double _paddingScaleFactor(double textScaleFactor) {
     final double clampedTextScaleFactor = textScaleFactor.clamp(1.0, 2.0);
     // The final padding scale factor is clamped between 1/3 and 1. For example,
@@ -292,6 +291,47 @@ class BottomSheetCancelarConfirmar extends AppBottomSheet {
           onPressed: () => Navigator.pop<bool>(context, true),
         ),
       ],
+    );
+  }
+}
+
+/// Uma página inferior que exibe um [CircularProgressIndicator].
+class BottomSheetCarregando extends AppBottomSheet {
+  const BottomSheetCarregando({
+    Key? key,
+    this.title,
+    required this.future,
+  }) : super(key: key);
+
+  final Widget? title;
+  final Future future;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBottomSheet(
+      title: title,
+      content: FutureBuilder(
+        future: future,
+        builder: (context, snapshot) {
+          final size = 56.0;
+          if (snapshot.hasData) {
+            Future.delayed(Duration(seconds: 1))
+                .then((_) => Navigator.pop(context));
+          }
+          return Container(
+            alignment: Alignment.center,
+            height: size,
+            child: SizedBox(
+              height: size,
+              width: size,
+              child: CircularProgressIndicator(
+                strokeWidth: 3.5,
+                color: Colors.black26,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

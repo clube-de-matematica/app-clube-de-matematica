@@ -1,7 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'pages/adicionar/adicionar_clube_page.dart';
-import 'pages/clube/clube_controller.dart';
 import 'pages/clube/clube_page.dart';
 import 'pages/editar/editar_clube_page.dart';
 import 'pages/home/home_clubes_controller.dart';

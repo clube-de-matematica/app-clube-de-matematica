@@ -1,4 +1,3 @@
-import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -9,6 +8,7 @@ import '../../../../shared/repositories/interface_db_repository.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../../../perfil/models/userapp.dart';
 import '../models/clube.dart';
+import '../models/usuario_clube.dart';
 
 part 'clubes_repository.g.dart';
 
@@ -69,34 +69,45 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       return _clubes.any((element) => element.id == id);
   }
 
-  /// Assim o [Observable] notificará apenas ao final da execução do método.
+  // Assim o [Observable] notificará apenas ao final da execução do método.
   /// Buscar os clubes no banco de dados e carregar na lista [clubes],
-  /// caso ainda não tenham sido carregados.
+  /// atualizando os clubes quando já estiverem na lista.
   /// Retornará uma lista vazia se o usuário não estiver logado ou ocorrer algum erro ao buscar os dados.
   @action
   Future<List<Clube>> carregarClubes() async {
-    if (usuarioApp.id != null) {
-      DataCollection resultado;
-      try {
-        // Aguardar o retorno dos clubes.
-        resultado = await dbRepository.getClubes(usuarioApp.id!);
-      } catch (e) {
-        assert(Debug.printBetweenLine(
-            "Erro a buscar os dados da coleção ${CollectionType.clubes.name}."));
-        assert(Debug.print(e));
-        return List<Clube>.empty();
-      }
-      if (resultado.isEmpty) return List<Clube>.empty();
-
-      // Carregar os clubes.
-      for (var map in resultado) {
-        if (!_existeClube(map[DbConst.kDbDataClubeKeyId])) {
-          // Criar um `Clube` com base no `map` e incluir na lista de questões carregadas.
-          // Não será emitido várias notificações, pois `carregarClubes` também é um `action`.
-          _addInClubes(Clube.fromDataClube(map));
-        }
-      }
+    if (usuarioApp.id == null) return List<Clube>.empty();
+    DataCollection resultado;
+    try {
+      // Aguardar o retorno dos clubes.
+      resultado = await dbRepository.getClubes(usuarioApp.id!);
+    } catch (e) {
+      assert(Debug.printBetweenLine(
+          "Erro a buscar os dados da coleção ${CollectionType.clubes.name}."));
+      assert(Debug.print(e));
+      return List<Clube>.empty();
     }
+    if (resultado.isEmpty) return List<Clube>.empty();
+
+    final temp = List<Clube>.from(
+        resultado.map((dataClube) => Clube.fromDataClube(dataClube)));
+
+    _clubes.removeWhere(
+      (clube) => temp.any(
+        (clubeTemp) => clubeTemp.id == clube.id,
+      ),
+    );
+
+    temp.forEach((clubeTemp) {
+      try {
+        _clubes
+            .firstWhere((clube) => clube.id == clubeTemp.id)
+            .sobrescrever(clubeTemp);
+      } catch (_) {
+        // Não será emitido várias notificações, pois `carregarClubes` também é um `action`.
+        _addInClubes(clubeTemp);
+      }
+    });
+
     return _clubes;
   }
 

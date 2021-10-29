@@ -3,8 +3,8 @@ import 'package:flutter/widgets.dart';
 
 import 'clube_de_matematica_module.dart';
 import 'modules/clubes/clubes_module.dart';
-import 'modules/clubes/pages/clube/clube_page.dart';
 import 'modules/clubes/pages/adicionar/adicionar_clube_page.dart';
+import 'modules/clubes/pages/clube/clube_page.dart';
 import 'modules/clubes/pages/editar/editar_clube_page.dart';
 import 'modules/clubes/pages/home/home_clubes_page.dart';
 import 'modules/filtros/filtros_module.dart';
@@ -153,11 +153,16 @@ extension RoutePageExtension on RoutePage {
 abstract class Navigation {
   /// Lista com os nomes das páginas empilhadas.
   static List<String?> pages(BuildContext context) {
-    return Navigator.of(context)
-        .widget
-        .pages
-        .map((page) => page.name?.replaceFirst('/', '', page.name!.length - 1))
-        .toList();
+    return Navigator.of(context).widget.pages.map((page) {
+      String? name;
+      //TODO: Incluído após uma atualização do Modular.
+      final list = page.name?.split('@');
+      if (list != null) {
+        final nameTemp = list[0];
+        name = nameTemp.replaceFirst('/', '', nameTemp.length - 1);
+      }
+      return name;
+    }).toList();
   }
 
   /// Penúltima página da pilha.
@@ -197,7 +202,7 @@ abstract class Navigation {
     final newPage = routeName!;
     final currentPageIsClube =
         currentPage?.startsWith('${RoutePage.homeClubes.name}/') ?? false;
-
+    
     if (newPage != currentPage) {
       if (newPage == RoutePage.login.name) {
         return navigator.pushNamedAndRemoveUntil(

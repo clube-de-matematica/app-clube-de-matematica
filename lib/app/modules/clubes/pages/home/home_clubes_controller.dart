@@ -9,6 +9,21 @@ import '../../shared/repositories/clubes_repository.dart';
 
 part 'home_clubes_controller.g.dart';
 
+/// Uma enumeração para os itens do menu de opções da página inicial dos clubes.
+enum OpcoesHomeClubePage {
+  atualizar,
+}
+
+extension OpcoesHomeClubePageExtension on OpcoesHomeClubePage {
+  /// Retorna o texto para ser usado no item do menu de opções.
+  String get textButton {
+    switch (this) {
+      case OpcoesHomeClubePage.atualizar:
+        return 'Atualizar';
+    }
+  }
+}
+
 /// Uma enumeração para os itens do menu de opções dos clubes.
 enum OpcoesClube {
   compartilharCodigo,
@@ -61,12 +76,18 @@ abstract class _HomeClubesControllerBase with Store {
   void compartilharCodigo(Clube clube) {}
 
   /// Abre a página para editar as informações [clube].
-  void editar(BuildContext context ,Clube clube) {
-    Navigation.showPage(context, RoutePage.editarClube,arguments: clube);
+  void editar(BuildContext context, Clube clube) {
+    Navigation.showPage(context, RoutePage.editarClube, arguments: clube);
   }
 
   /// Sair do [clube].
   Future<bool> sair(Clube clube) async {
     return repository.sairClube(clube);
+  }
+
+  /// Atualizar a lista de clubes do usuário do aplicativo.
+  Future<bool> atualizarListaDeClubes() async {
+    final clubes = await repository.carregarClubes();
+    return clubes.isNotEmpty;
   }
 }

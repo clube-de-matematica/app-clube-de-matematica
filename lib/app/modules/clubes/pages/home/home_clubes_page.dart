@@ -6,6 +6,7 @@ import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
 import 'home_clubes_controller.dart';
 import 'widgets/clube_card.dart';
+import 'widgets/home_clubes_options_button.dart';
 
 /// Página inicial para visualização dos clubes do usuário.
 class HomeClubesPage extends StatefulWidget {
@@ -28,7 +29,15 @@ class _HomeClubesPageState
 
     return ScaffoldWithDrawer(
       page: AppDrawerPage.clubes,
-      appBar: AppBar(title: const Text('Clubes')),
+      appBar: AppBar(
+        title: const Text('Clubes'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: HomeClubesOptionsButton(controller: controller),
+          )
+        ],
+      ),
       body: Observer(builder: (_) {
         final cards = _buildCards(context);
         return ListView(

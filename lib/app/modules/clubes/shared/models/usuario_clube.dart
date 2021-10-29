@@ -1,7 +1,8 @@
+import 'package:mobx/mobx.dart';
+
 import '../../../perfil/models/userapp.dart';
 import 'clube.dart';
 
-import 'package:mobx/mobx.dart';
 part 'usuario_clube.g.dart';
 
 /// Modelo para os dados de um usuário de clube.

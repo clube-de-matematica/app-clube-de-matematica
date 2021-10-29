@@ -149,17 +149,23 @@ abstract class _ClubeBase with Store {
   /// * Se `true`, o clube é privado. O ingresso depende da permissão de um administrador.
   bool privado;
 
-  /// Uma lista inalterável com o objeto [UsuarioClube] de cada participantes do deste clube.
+  /// Uma lista com o objeto [UsuarioClube] de cada participantes do deste clube.
+  /// 
+  /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
   ObservableList<UsuarioClube> get usuarios => ObservableList.of(_usuarios);
 
-  /// Uma lista inalterável com o objeto [UsuarioClube] de cada administrador do clube.
+  /// Uma lista com o objeto [UsuarioClube] de cada administrador do clube.
+  /// 
+  /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
   ObservableList<UsuarioClube> get administradores =>
       ObservableList.of(_usuarios.where((usuario) => usuario.administrador));
 
-  /// Uma lista inalterável com o objeto [UsuarioClube] de cada membro (excluindo-se
+  /// Uma lista com o objeto [UsuarioClube] de cada membro (excluindo-se
   /// proprietário e administradores) do clube.
+  /// 
+  /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
   ObservableList<UsuarioClube> get membros => ObservableList.of(_usuarios
       .where((usuario) => usuario.permissao == PermissoesClube.membro));
