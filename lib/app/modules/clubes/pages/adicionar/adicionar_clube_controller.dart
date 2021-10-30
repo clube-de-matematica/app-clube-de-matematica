@@ -1,23 +1,18 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter/painting.dart';
 
-import '../../shared/repositories/clubes_repository.dart';
+import '../../shared/models/clube.dart';
 import '../../shared/utils/mixin_controllers.dart';
 
-class AdicionarClubeController extends ClubeController with ClubeControllerMixin {
-  final repository = Modular.get<ClubesRepository>();
-  
+class AdicionarClubeController extends IClubeController
+    with IClubeControllerMixinValidar, IClubeControllerMixinShowPageClube {
+
   /// Inclui o usuário atual no clube correspondente a [codigo].
-  Future<bool> participar(BuildContext context, String codigo) async {
-    final clube = await repository.entrarClube(codigo);
-    if (clube == null) return false;
-    abrirPaginaClube(context, clube);
-    return true;
+  Future<Clube?> participar(String codigo) async {
+    return repository.entrarClube(codigo);
   }
 
   /// Cria um clube com as informações dos parâmetros.
-  Future<bool> criar(
-    BuildContext context,
+  Future<Clube?> criar(
     String nome,
     String? descricao,
     Color corTema,
@@ -33,8 +28,6 @@ class AdicionarClubeController extends ClubeController with ClubeControllerMixin
       administradores: administradores,
       membros: membros,
     );
-    if (clube == null) return false;
-    abrirPaginaClube(context, clube);
-    return true;
+    return clube;
   }
 }

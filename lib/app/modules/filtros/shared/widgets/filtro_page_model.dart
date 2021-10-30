@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../../shared/widgets/botao_primario.dart';
+import '../../../../shared/widgets/botoes.dart';
 import '../models/filtro_controller_model.dart';
 import '../models/filtros_model.dart';
 import '../utils/ui_strings.dart';

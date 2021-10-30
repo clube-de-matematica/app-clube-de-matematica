@@ -1,13 +1,10 @@
-
 import 'package:flutter/widgets.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../shared/models/clube.dart';
-import '../../shared/repositories/clubes_repository.dart';
 import '../../shared/utils/mixin_controllers.dart';
 
-class EditarClubeController extends ClubeController with ClubeControllerMixin {
-  final repository = Modular.get<ClubesRepository>();
+class EditarClubeController extends IClubeController
+    with IClubeControllerMixinValidar, IClubeControllerMixinShowPageClube {
 
   /// Atualiza os dados do clube que foram modificados.
   Future<bool> atualizar(

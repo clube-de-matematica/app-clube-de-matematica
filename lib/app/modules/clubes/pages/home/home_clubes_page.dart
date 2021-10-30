@@ -72,7 +72,7 @@ class _HomeClubesPageState
       return ClubeCard(
         controller: controller,
         clube: clube,
-        onTap: () => controller.openClubePage(context, clube),
+        onTap: () => controller.abrirPaginaClube(context, clube),
       );
     }).toList();
   }

@@ -6,6 +6,7 @@ import '../../../shared/repositories/interface_auth_repository.dart';
 import '../../../shared/theme/appTheme.dart';
 import '../../../shared/widgets/appBottomSheet.dart';
 import '../../../shared/widgets/appWillPopScope.dart';
+import '../../../shared/widgets/botoes.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
 import '../utils/ui_strings.dart';
 import '../widgets/login_with_google_button.dart';
@@ -166,7 +167,8 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
               final result = await _buildBottomSheetConfirmarLoginAnonymously()
                   .showModal<bool>(context);
               if (result ?? false) {
-                final autenticado = await controller.onTapConnectAnonymously(context);
+                final autenticado =
+                    await controller.onTapConnectAnonymously(context);
                 if (!autenticado) {
                   _buildBottomSheetErroLogin().showModal(context);
                 }
@@ -188,15 +190,15 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         textAlign: TextAlign.justify,
       ),
       actions: [
-        TextButton(
-          child: const Text(
-              UIStrings.LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL),
-          onPressed: () => Navigator.pop<bool>(context, false),
-        ),
-        TextButton(
+        TextButtonPriario(
           child: const Text(UIStrings
               .LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CONFIRM),
           onPressed: () => Navigator.pop<bool>(context, true),
+        ),
+        TextButtonSecundario(
+          child: const Text(
+              UIStrings.LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL),
+          onPressed: () => Navigator.pop<bool>(context, false),
         ),
       ],
     );
@@ -225,7 +227,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         ),
       ),
       actions: [
-        TextButton(
+        TextButtonPriario(
           child: const Text(UIStrings.LOGIN_DIALOG_ERROR_TEXT_BUTTON_CLOSE),
           onPressed: () => Navigator.pop(context),
         ),

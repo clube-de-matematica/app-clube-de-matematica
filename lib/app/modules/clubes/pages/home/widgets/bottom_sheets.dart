@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../../shared/widgets/botoes.dart';
 import '../../../shared/models/clube.dart';
 
 /// Uma página inferior para confirmar a saída de um clube.
@@ -27,7 +28,7 @@ class BottomSheetCodigoClube extends AppBottomSheet {
         child: SelectableText('${clube.codigo}'),
       ),
       actions: [
-        TextButton(
+        TextButtonPriario(
           child: const Text('FECHAR'),
           onPressed: () => Navigator.pop(context),
         ),

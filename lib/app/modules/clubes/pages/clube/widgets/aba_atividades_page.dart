@@ -11,10 +11,11 @@ class AtividadesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      final clube = ClubePage.of(context).controller.clube;
-      return OutlinedButton(
-        child: Text('data'),
-        onPressed: ()=>null,
+    final clube = ClubePage.of(context).controller.clube;
+    return Observer(builder: (context) {
+      return ListView(
+        children: [],
       );
+    });
   }
 }

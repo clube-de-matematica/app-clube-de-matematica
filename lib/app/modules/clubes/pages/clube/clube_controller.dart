@@ -1,11 +1,9 @@
-import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
-import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
-import 'package:clubedematematica/app/modules/clubes/shared/repositories/clubes_repository.dart';
-import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../navigation.dart';
+import '../../../perfil/models/userapp.dart';
+import '../../shared/models/clube.dart';
+import '../../shared/models/usuario_clube.dart';
+import '../../shared/utils/mixin_controllers.dart';
 
 /// Uma enumeração para os itens do menu de opções dos clubes.
 enum OpcoesUsuarioClube {
@@ -16,25 +14,23 @@ enum OpcoesUsuarioClube {
   sair,
 }
 
-class ClubeController {
+class ClubeController extends IClubeController
+    with IClubeControllerMixinShowPageEditar, IClubeControllerMixinSair {
   ClubeController(this.clube);
 
   final Clube clube;
 
-  ClubesRepository get repository => Modular.get<ClubesRepository>();
-
   /// O [UsuarioClube] correspondente ao usuário atual do aplicativo para [clube].
   UsuarioClube get usuarioApp => clube.getUsuario(UserApp.instance.id!)!;
 
-  /// Abre a página para editar as informações [clube].
-  void editar(BuildContext context) {
-    Navigation.showPage(context, RoutePage.editarClube, arguments: clube);
+  @override
+  void editar(BuildContext context, [Clube? clube]) {
+    super.editar(context, clube ?? this.clube);
   }
 
-  /// Sair do [clube].
-  Future<bool> sair() async {
-    if (usuarioApp.proprietario) return false;
-    return repository.sairClube(clube);
+  @override
+  Future<bool> sair([Clube? clube]) async {
+    return super.sair(clube ?? this.clube);
   }
 
   /// Define [usuario] como administrador de [clube].

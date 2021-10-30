@@ -1,13 +1,25 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../navigation.dart';
 import '../models/clube.dart';
+import '../repositories/clubes_repository.dart';
 
-abstract class ClubeController {}
+/// Abstração para os controles das páginas do módulo clubes.
+abstract class IClubeController {
+  ClubesRepository get repository => Modular.get<ClubesRepository>();
+}
 
-mixin ClubeControllerMixin on ClubeController {
+mixin IClubeControllerMixinShowPageEditar on IClubeController {
+  /// Abre a página para editar as informações do [clube].
+  void editar(BuildContext context, Clube clube) {
+    Navigation.showPage(context, RoutePage.editarClube, arguments: clube);
+  }
+}
+
+mixin IClubeControllerMixinShowPageClube on IClubeController {
   /// Abre uma página para [clube].
-  abrirPaginaClube(BuildContext context, Clube clube) {
+  void abrirPaginaClube(BuildContext context, Clube clube) {
     Navigation.showPage(
       context,
       RoutePage.clube,
@@ -15,7 +27,9 @@ mixin ClubeControllerMixin on ClubeController {
       arguments: clube,
     );
   }
+}
 
+mixin IClubeControllerMixinValidar on IClubeController {
   /// Faz a validação de [valor] como nome de clube.
   /// Retorna `null` se a validação for bem sucedida.
   String? validarNome(String? valor) {
@@ -24,5 +38,12 @@ mixin ClubeControllerMixin on ClubeController {
     } else if (valor.trim().length < 5) {
       return 'O nome deve ter no mínimo 5 caracteres';
     }
+  }
+}
+
+mixin IClubeControllerMixinSair on IClubeController {
+  /// Sair do [clube].
+  Future<bool> sair(Clube clube) async {
+    return repository.sairClube(clube);
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../../shared/theme/appTheme.dart';
 import '../../../shared/widgets/appBottomSheet.dart';
 import '../../../shared/widgets/appWillPopScope.dart';
+import '../../../shared/widgets/botoes.dart';
 import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
 import '../utils/ui_strings.dart';
 import '../widgets/avatar.dart';
@@ -197,13 +198,13 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
         textAlign: TextAlign.justify,
       ),
       actions: [
-        TextButton(
-          child: const Text(UIStrings.kCancelButtonTitle),
-          onPressed: () => Navigator.pop<bool>(context, false),
-        ),
-        TextButton(
+        TextButtonPriario(
           child: const Text(UIStrings.kConfirmButtonTitle),
           onPressed: () => Navigator.pop<bool>(context, true),
+        ),
+        TextButtonSecundario(
+          child: const Text(UIStrings.kCancelButtonTitle),
+          onPressed: () => Navigator.pop<bool>(context, false),
         ),
       ],
     );

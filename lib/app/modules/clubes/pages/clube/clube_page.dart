@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
 import '../../shared/models/clube.dart';
+import '../../shared/widgets/clube_options_button.dart';
 import 'clube_controller.dart';
 import 'widgets/aba_atividades_page.dart';
 import 'widgets/aba_pessoas_page.dart';
@@ -81,7 +83,19 @@ class _ClubePageState extends State<_ClubePage> {
       actions: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Icon(Icons.more_vert),
+          child: Builder(builder: (context) {
+            return ClubeOptionsButton(
+              clube: controller.clube,
+              onSair: () async {
+                final sair = controller.sair();
+                await BottomSheetCarregando(future: sair)
+                    .showModal<bool>(context);
+                if (await sair) Navigator.pop(context);
+              },
+              onEditar: () => controller.editar(context),
+              onCompartilharCodigo: () {},
+            );
+          }),
         )
       ],
     );

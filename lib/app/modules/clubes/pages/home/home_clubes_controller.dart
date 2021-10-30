@@ -1,11 +1,9 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../../navigation.dart';
-import '../../../perfil/models/userapp.dart';
 import '../../shared/models/clube.dart';
-import '../../shared/repositories/clubes_repository.dart';
+import '../../shared/utils/mixin_controllers.dart';
 
 part 'home_clubes_controller.g.dart';
 
@@ -48,41 +46,18 @@ extension OpcoesClubeExtension on OpcoesClube {
 class HomeClubesController = _HomeClubesControllerBase
     with _$HomeClubesController;
 
-abstract class _HomeClubesControllerBase with Store {
-  ClubesRepository get repository => Modular.get<ClubesRepository>();
-
+abstract class _HomeClubesControllerBase extends IClubeController
+    with
+        Store,
+        IClubeControllerMixinSair,
+        IClubeControllerMixinShowPageEditar,
+        IClubeControllerMixinShowPageClube {
   /// Lista com os clubes do usuário.
   List<Clube> get clubes => repository.clubes;
-
-  /// Usuário do aplicativo.
-  UserApp get user => Modular.get<UserApp>();
-
-  /// Abre a página para [clube].
-  void openClubePage(BuildContext context, Clube clube) {
-    Navigation.showPage(
-      context,
-      RoutePage.clube,
-      routeName: '${RoutePage.homeClubes.name}/${clube.id}',
-      arguments: clube,
-    );
-  }
 
   /// Criar ou participar de um clube.
   void addClube(BuildContext context) {
     Navigation.showPage(context, RoutePage.adicionarClube);
-  }
-
-  /// Abre um diálogo com o código de acesso [clube].
-  void compartilharCodigo(Clube clube) {}
-
-  /// Abre a página para editar as informações [clube].
-  void editar(BuildContext context, Clube clube) {
-    Navigation.showPage(context, RoutePage.editarClube, arguments: clube);
-  }
-
-  /// Sair do [clube].
-  Future<bool> sair(Clube clube) async {
-    return repository.sairClube(clube);
   }
 
   /// Atualizar a lista de clubes do usuário do aplicativo.

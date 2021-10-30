@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'botao_primario.dart';
+import 'botoes.dart';
 
 /// Uma barra inferior com um botão para cancelar uma ação e outro para aplicar.
 class BottomAppBarCancelarAplicar extends BottomAppBar {

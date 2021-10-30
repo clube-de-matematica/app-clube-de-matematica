@@ -163,6 +163,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuarioApp.id == null) return false;
     final usuario = clube.getUsuario(usuarioApp.id!);
     if (usuario == null) return false;
+    if (usuario.proprietario) return false;
     final sucesso = await removerDoClube(clube, usuario);
     if (sucesso) {
       _clubes.remove(clube);

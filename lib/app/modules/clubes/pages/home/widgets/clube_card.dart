@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../../../../shared/theme/appTheme.dart';
+import '../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../perfil/models/userapp.dart';
 import '../../../shared/models/clube.dart';
+import '../../../shared/widgets/clube_options_button.dart';
 import '../home_clubes_controller.dart';
-import 'clube_card_options_button.dart';
 
 class ClubeCard extends StatelessWidget {
   const ClubeCard({
@@ -19,7 +20,7 @@ class ClubeCard extends StatelessWidget {
   final HomeClubesController controller;
 
   /// ID do usuário do aplicativo.
-  int? get userId => UserApp.instance.id;
+  int get userId => UserApp.instance.id!;
 
   /// Numero de integrantes do Clubes.
   int get numeroParticipantes => clube.usuarios.length;
@@ -88,11 +89,13 @@ class ClubeCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        ClubeCardOptionsButton(
+        ClubeOptionsButton(
           clube: clube,
-          userId: userId!,
-          controller: controller,
           textStyle: headerTextStyle,
+          onCompartilharCodigo: () {},
+          onEditar: () => controller.editar(context, clube),
+          onSair: () => BottomSheetCarregando(future: controller.sair(clube))
+              .showModal(context),
         ),
       ],
     );
@@ -120,7 +123,7 @@ class ClubeCard extends StatelessWidget {
 
     String permissao;
 
-    switch (clube.permissao(userId!)) {
+    switch (clube.permissao(userId)) {
       case PermissoesClube.proprietario:
         permissao = 'Proprietário';
         break;

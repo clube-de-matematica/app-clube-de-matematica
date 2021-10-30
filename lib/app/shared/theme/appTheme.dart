@@ -190,13 +190,13 @@ class AppTheme {
           fontStyle: FontStyle.normal,
         ),
         button: temp.textTheme.button?.copyWith(
-          color: onSurface,
+          color: onSurface.withOpacity(0.45),
           fontSize: _escala * 14,
           //fontWeight: FontWeight.w400,
           fontStyle: FontStyle.normal,
 
           ///Também define o espaçamento entre os caracteres.
-          letterSpacing: 1.2,
+          letterSpacing: 1.8,
         ),
         overline: temp.textTheme.overline?.copyWith(
           color: onSurface,

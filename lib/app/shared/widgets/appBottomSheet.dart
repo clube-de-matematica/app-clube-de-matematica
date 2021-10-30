@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'botoes.dart';
+
 /// Uma página exibida na parte inferior da tela.
 /// A estrutura desse [Widget] é baseada na estrutura do [AlertDialog].
 class AppBottomSheet extends StatelessWidget {
@@ -157,23 +159,39 @@ class AppBottomSheet extends StatelessWidget {
       );
     }
 
+    final divider = () => const Divider(height: 1.0);
+
     if (actions != null) {
-      final double spacing = (buttonPadding?.horizontal ?? 16) / 2;
+      final double spacing = (buttonPadding?.horizontal ?? 0) / 2;
+      final _children = <Widget>[];
+      for (var i = 0; i < actions!.length; i++) {
+        _children.add(SizedBox(
+          height: 56.0,
+          width: double.maxFinite,
+          child: actions![i],
+        ));
+        if (i < actions!.length - 1) _children.add(divider());
+      }
       actionsWidget = Padding(
         padding: actionsPadding,
         child: Container(
-          alignment: AlignmentDirectional.centerEnd,
+          alignment: AlignmentDirectional.center,
           padding: EdgeInsets.all(spacing),
           child: IntrinsicHeight(
-            child: OverflowBar(
-              alignment: actionAlignment,
-              spacing: spacing,
-              overflowAlignment: OverflowBarAlignment.end,
-              overflowDirection:
-                  actionsOverflowDirection ?? VerticalDirection.down,
-              overflowSpacing: actionsOverflowButtonSpacing ?? 0,
-              children: actions!,
+            child: Column(
+              children: _children,
             ),
+            /* IntrinsicHeight(
+              child: OverflowBar(
+                alignment: actionAlignment,
+                spacing: spacing,
+                overflowAlignment: OverflowBarAlignment.end,
+                overflowDirection:
+                    actionsOverflowDirection ?? VerticalDirection.down,
+                overflowSpacing: actionsOverflowButtonSpacing ?? 0,
+                children: actions!,
+              ),
+            ), */
           ),
         ),
       );
@@ -193,8 +211,6 @@ class AppBottomSheet extends StatelessWidget {
       ],
     );
 
-    final divider = const Divider(height: 1.0);
-
     List<Widget> columnChildren;
     if (scrollable) {
       columnChildren = <Widget>[
@@ -212,7 +228,7 @@ class AppBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-        if (actions != null) divider,
+        if (actions != null) divider(),
         if (actions != null) actionsWidget!,
       ];
     } else {
@@ -220,7 +236,7 @@ class AppBottomSheet extends StatelessWidget {
         if (title != null || content != null) anchor,
         if (title != null) titleWidget!,
         if (content != null) Flexible(child: contentWidget!),
-        if (actions != null) divider,
+        if (actions != null) divider(),
         if (actions != null) actionsWidget!,
       ];
     }
@@ -282,13 +298,13 @@ class BottomSheetCancelarConfirmar extends AppBottomSheet {
       title: title,
       content: content,
       actions: [
-        TextButton(
-          child: const Text('CANCELAR'),
-          onPressed: () => Navigator.pop<bool>(context, false),
-        ),
-        TextButton(
+        TextButtonPriario(
           child: const Text('CONFIRMAR'),
           onPressed: () => Navigator.pop<bool>(context, true),
+        ),
+        TextButtonSecundario(
+          child: const Text('CANCELAR'),
+          onPressed: () => Navigator.pop<bool>(context, false),
         ),
       ],
     );
@@ -296,6 +312,7 @@ class BottomSheetCancelarConfirmar extends AppBottomSheet {
 }
 
 /// Uma página inferior que exibe um [CircularProgressIndicator].
+/// Retorna o resultado de [future].
 class BottomSheetCarregando extends AppBottomSheet {
   const BottomSheetCarregando({
     Key? key,
@@ -308,15 +325,43 @@ class BottomSheetCarregando extends AppBottomSheet {
 
   @override
   Widget build(BuildContext context) {
-    return AppBottomSheet(
+    return _ChildBottomSheetCarregando(
+      future: future,
       title: title,
+    );
+  }
+}
+
+class _ChildBottomSheetCarregando extends StatefulWidget {
+  const _ChildBottomSheetCarregando({
+    Key? key,
+    this.title,
+    required this.future,
+  }) : super(key: key);
+
+  final Widget? title;
+  final Future future;
+
+  @override
+  __ChildBottomSheetCarregandoState createState() =>
+      __ChildBottomSheetCarregandoState();
+}
+
+class __ChildBottomSheetCarregandoState
+    extends State<_ChildBottomSheetCarregando> {
+  @override
+  Widget build(BuildContext context) {
+    return AppBottomSheet(
+      title: widget.title,
       content: FutureBuilder(
-        future: future,
+        future: widget.future,
         builder: (context, snapshot) {
           final size = 56.0;
           if (snapshot.hasData) {
-            Future.delayed(Duration(seconds: 1))
-                .then((_) => Navigator.pop(context));
+            Future.delayed(Duration(seconds: 1)).then((_) {
+              if (mounted && Navigator.canPop(context))
+                Navigator.pop(context, snapshot.data);
+            });
           }
           return Container(
             alignment: Alignment.center,

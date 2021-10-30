@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../shared/theme/appTheme.dart';
-import '../../../shared/models/clube.dart';
-import '../home_clubes_controller.dart';
-import 'bottom_sheets.dart';
+import '../../../../shared/theme/appTheme.dart';
+import '../../../perfil/models/userapp.dart';
+import '../../pages/home/home_clubes_controller.dart';
+import '../../pages/home/widgets/bottom_sheets.dart';
+import '../models/clube.dart';
 
 /// O botão para o menu de opções do clube.
-class ClubeCardOptionsButton extends StatelessWidget {
-  const ClubeCardOptionsButton({
+class ClubeOptionsButton extends StatelessWidget {
+  const ClubeOptionsButton({
     Key? key,
     required this.clube,
-    required this.userId,
     this.textStyle,
-    required this.controller,
+    required this.onSair,
+    required this.onEditar,
+    required this.onCompartilharCodigo,
   }) : super(key: key);
   final Clube clube;
-  final int userId;
   final TextStyle? textStyle;
-  final HomeClubesController controller;
+  final VoidCallback onSair;
+  final VoidCallback onEditar;
+  final VoidCallback onCompartilharCodigo;
+
+  /// ID do usuário do aplicativo.
+  int get idUsuarioApp => UserApp.instance.id!;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +33,7 @@ class ClubeCardOptionsButton extends StatelessWidget {
           fontSize: AppTheme.escala * 26,
           fontWeight: FontWeight.w400,
         );
-    final permissao = clube.permissao(userId);
+    final permissao = clube.permissao(idUsuarioApp);
     final proprietario = permissao == PermissoesClube.proprietario;
     final administrador = permissao == PermissoesClube.administrador;
 
@@ -48,24 +54,25 @@ class ClubeCardOptionsButton extends StatelessWidget {
             value: OpcoesClube.editar,
             child: Text(OpcoesClube.editar.textButton),
           ),
-        PopupMenuItem<OpcoesClube>(
-          value: OpcoesClube.sair,
-          child: Text(OpcoesClube.sair.textButton),
-        ),
+        if (!proprietario)
+          PopupMenuItem<OpcoesClube>(
+            value: OpcoesClube.sair,
+            child: Text(OpcoesClube.sair.textButton),
+          ),
       ],
       onSelected: (opcao) async {
         switch (opcao) {
           case OpcoesClube.compartilharCodigo:
             await BottomSheetCodigoClube(clube).showModal(context);
-            controller.compartilharCodigo(clube);
+            onCompartilharCodigo();
             break;
           case OpcoesClube.editar:
-            controller.editar(context, clube);
+            onEditar();
             break;
           case OpcoesClube.sair:
             final sair =
                 await BottomSheetSairClube(clube).showModal<bool>(context);
-            if (sair ?? false) await controller.sair(clube);
+            if (sair ?? false) onSair();
             break;
         }
       },
