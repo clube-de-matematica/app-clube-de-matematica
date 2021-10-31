@@ -6,6 +6,7 @@ import 'package:mobx/mobx.dart';
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../utils/random_colors.dart';
+import 'atividade.dart';
 import 'usuario_clube.dart';
 
 part 'clube.g.dart';
@@ -52,6 +53,7 @@ class Clube extends _ClubeBase with _$Clube {
     Color? capa,
     required String codigo,
     required bool privado,
+    List<Atividade> atividades = const [],
   }) : super(
           id: id,
           nome: nome,
@@ -61,6 +63,7 @@ class Clube extends _ClubeBase with _$Clube {
           capa: capa,
           codigo: codigo,
           privado: privado,
+          atividades: atividades,
         );
 
   /// Cria um objeto [Clube] a partir do [DataClube] [map].
@@ -98,7 +101,8 @@ class Clube extends _ClubeBase with _$Clube {
     try {
       _capa = Color(int.parse(map[DbConst.kDbDataClubeKeyCapa]));
     } catch (_) {
-      assert(Debug.print('[ATTENTION] Não foi possível gerar a cor da capa a partir de '
+      assert(Debug.print(
+          '[ATTENTION] Não foi possível gerar a cor da capa a partir de '
           '${map[DbConst.kDbDataClubeKeyCapa]}.'));
     }
 
@@ -149,14 +153,17 @@ abstract class _ClubeBase with Store {
   /// * Se `true`, o clube é privado. O ingresso depende da permissão de um administrador.
   bool privado;
 
+  /// Lista com as atividades do clube.
+  final List<Atividade> atividades;
+
   /// Uma lista com o objeto [UsuarioClube] de cada participantes do deste clube.
-  /// 
+  ///
   /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
   ObservableList<UsuarioClube> get usuarios => ObservableList.of(_usuarios);
 
   /// Uma lista com o objeto [UsuarioClube] de cada administrador do clube.
-  /// 
+  ///
   /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
   ObservableList<UsuarioClube> get administradores =>
@@ -164,7 +171,7 @@ abstract class _ClubeBase with Store {
 
   /// Uma lista com o objeto [UsuarioClube] de cada membro (excluindo-se
   /// proprietário e administradores) do clube.
-  /// 
+  ///
   /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
   ObservableList<UsuarioClube> get membros => ObservableList.of(_usuarios
@@ -179,6 +186,7 @@ abstract class _ClubeBase with Store {
     Color? capa,
     required this.codigo,
     required this.privado,
+    this.atividades = const [],
   })  : this.capa = capa ?? RandomColor(),
         this.proprietario = proprietario,
         this._usuarios = ObservableSet<UsuarioClube>()

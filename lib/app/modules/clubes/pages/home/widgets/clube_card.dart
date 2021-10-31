@@ -93,7 +93,7 @@ class ClubeCard extends StatelessWidget {
           clube: clube,
           textStyle: headerTextStyle,
           onCompartilharCodigo: () {},
-          onEditar: () => controller.editar(context, clube),
+          onEditar: () => controller.abrirPaginaEditarClube(context, clube),
           onSair: () => BottomSheetCarregando(future: controller.sair(clube))
               .showModal(context),
         ),

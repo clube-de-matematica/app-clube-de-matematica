@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../../shared/models/usuario_clube.dart';
 import '../clube_page.dart';
+import 'categoria.dart';
 import 'usuario_clube_botao_opcoes.dart';
 
 /// A subpágina exibida na aba "Pessoas" da página do [clube].
@@ -39,74 +40,43 @@ class PessoasPage extends StatelessWidget {
 }
 
 /// O widget para exibir uma categoria de usuários do clube.
-class _CategoriaUsuariosClube extends StatelessWidget {
+class _CategoriaUsuariosClube extends Categoria {
   final String categoria;
   final Color cor;
   final List<UsuarioClube> usuarios;
 
-  const _CategoriaUsuariosClube({
+  _CategoriaUsuariosClube({
     Key? key,
     required this.categoria,
     required this.cor,
     this.usuarios = const [],
-  }) : super(key: key);
-
-  Color get corTexto {
-    final brightness = ThemeData.estimateBrightnessForColor(this.cor);
-    return brightness == Brightness.light ? Colors.black : this.cor;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24.0, bottom: 8.0),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              categoria,
-              style: TextStyle(
-                color: corTexto,
-                fontSize: 32.0,
-              ),
-            ),
-            subtitle: Divider(
-              color: corTexto,
-              height: 24.0,
-              thickness: 2.0,
-            ),
-          ),
-          for (final usuario in _buildUsuarios()) usuario,
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _buildUsuarios() {
-    return List.generate(
-      usuarios.length,
-      (index) {
-        return Observer(builder: (_) {
-          final usuario = usuarios[index];
-          return ListTile(
-            contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
-            title: Text(
-                usuario.nome ?? usuario.email ?? usuario.id.toString()), //TODO
-            leading: CircleAvatar(
-              child: Icon(
-                Icons.person,
-                color: corTexto,
-              ),
-              backgroundColor: cor.withOpacity(0.3),
-            ),
-            trailing: usuario.proprietario
-                ? null
-                : UsuarioClubeBotaoOpcoes(
-                    usuario: usuario,
+  }) : super(
+          key: key,
+          categoria: categoria,
+          cor: cor,
+          itens: List.generate(
+            usuarios.length,
+            (index) {
+              return Observer(builder: (context) {
+                final usuario = usuarios[index];
+                return ListTile(
+                  contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
+                  title: Text(usuario.nome ??
+                      usuario.email ??
+                      usuario.id.toString()), //TODO
+                  leading: CircleAvatar(
+                    child: Icon(
+                      Icons.person,
+                      color: ClubePage.of(context).corTexto,
+                    ),
+                    backgroundColor: cor.withOpacity(0.3),
                   ),
-          );
-        });
-      },
-    );
-  }
+                  trailing: usuario.proprietario
+                      ? null
+                      : UsuarioClubeBotaoOpcoes(usuario: usuario),
+                );
+              });
+            },
+          ),
+        );
 }

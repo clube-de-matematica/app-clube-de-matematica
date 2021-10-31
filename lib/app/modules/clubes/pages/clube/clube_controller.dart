@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../perfil/models/userapp.dart';
+import '../../shared/models/atividade.dart';
 import '../../shared/models/clube.dart';
 import '../../shared/models/usuario_clube.dart';
 import '../../shared/utils/mixin_controllers.dart';
@@ -23,10 +24,19 @@ class ClubeController extends IClubeController
   /// O [UsuarioClube] correspondente ao usuário atual do aplicativo para [clube].
   UsuarioClube get usuarioApp => clube.getUsuario(UserApp.instance.id!)!;
 
+  /// Lista com as atividades do clube.
+  List<Atividade> get atividades => clube.atividades;
+
   @override
-  void editar(BuildContext context, [Clube? clube]) {
-    super.editar(context, clube ?? this.clube);
+  void abrirPaginaEditarClube(BuildContext context, [Clube? clube]) {
+    super.abrirPaginaEditarClube(context, clube ?? this.clube);
   }
+
+  /// Abre a página para criar uma nova atividade.
+  void abrirPaginaCriarAtividade(BuildContext context) {}
+
+  /// Abre a página para [atividade].
+  void abrirPaginaAtividade(BuildContext context, Atividade atividade) {}
 
   @override
   Future<bool> sair([Clube? clube]) async {

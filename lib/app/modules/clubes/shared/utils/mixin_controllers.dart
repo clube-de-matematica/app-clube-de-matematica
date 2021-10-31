@@ -12,7 +12,7 @@ abstract class IClubeController {
 
 mixin IClubeControllerMixinShowPageEditar on IClubeController {
   /// Abre a página para editar as informações do [clube].
-  void editar(BuildContext context, Clube clube) {
+  void abrirPaginaEditarClube(BuildContext context, Clube clube) {
     Navigation.showPage(context, RoutePage.editarClube, arguments: clube);
   }
 }

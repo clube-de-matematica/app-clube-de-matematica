@@ -18,15 +18,15 @@ class ClubePage extends InheritedWidget {
 
   final ClubeController controller;
 
-  Color get _capa => controller.clube.capa;
-  Brightness get _brightness => ThemeData.estimateBrightnessForColor(_capa);
+  Color get corCapa => controller.clube.capa;
+  Brightness get _brightness => ThemeData.estimateBrightnessForColor(corCapa);
 
   Color get corTextoCapa {
     return _brightness == Brightness.light ? Colors.black : Colors.white;
   }
 
   Color get corTexto {
-    return _brightness == Brightness.light ? Colors.black : _capa;
+    return _brightness == Brightness.light ? Colors.black : corCapa;
   }
 
   static ClubePage of(BuildContext context) {
@@ -92,7 +92,7 @@ class _ClubePageState extends State<_ClubePage> {
                     .showModal<bool>(context);
                 if (await sair) Navigator.pop(context);
               },
-              onEditar: () => controller.editar(context),
+              onEditar: () => controller.abrirPaginaEditarClube(context),
               onCompartilharCodigo: () {},
             );
           }),
