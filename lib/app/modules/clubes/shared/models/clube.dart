@@ -6,7 +6,7 @@ import 'package:mobx/mobx.dart';
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../utils/random_colors.dart';
-import 'atividade.dart';
+import '../../modules/atividades/models/atividade.dart';
 import 'usuario_clube.dart';
 
 part 'clube.g.dart';

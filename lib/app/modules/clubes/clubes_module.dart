@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'modules/atividades/atividades_module.dart';
 import 'pages/adicionar/adicionar_clube_page.dart';
 import 'pages/clube/clube_page.dart';
 import 'pages/editar/editar_clube_page.dart';
@@ -45,12 +46,16 @@ class ClubesModule extends Module {
   //Lista de rotas.
   List<ModularRoute> get routes => [
         ChildRoute(kRelativeRouteHomePage, child: (_, __) => HomeClubesPage()),
-        ChildRoute(kRelativeRouteCriarPage, child: (_, __) => AdicionarClubePage()),
-        ChildRoute(kRelativeRouteEditarPage, child: (_, args) => EditarClubePage(args.data)),
+        ChildRoute(kRelativeRouteCriarPage,
+            child: (_, __) => AdicionarClubePage()),
+        ChildRoute(kRelativeRouteEditarPage,
+            child: (_, args) => EditarClubePage(args.data)),
         ChildRoute(
           '/:id',
           child: (_, args) => ClubePage(args.data),
         ),
+        ModuleRoute(AtividadesModule.kRelativeRouteModule,
+            module: AtividadesModule()),
         // Redirecionar para a página inicial quando uma rota não for encontrada.
         //WildcardRoute(child: (_, __) => HomeClubesPage()),
       ];

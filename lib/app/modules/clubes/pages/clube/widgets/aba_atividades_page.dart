@@ -1,4 +1,4 @@
-import 'package:clubedematematica/app/modules/clubes/shared/models/atividade.dart';
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
 import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
 import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
 import 'package:flutter/material.dart';
