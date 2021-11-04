@@ -20,4 +20,8 @@ mixin DbSqlMixin {
 
   /// Nome da coluna para o ID de acesso do usuário ao clube na tabela [tbClubeXUsuario].
   final tbClubeXUsuarioColIdPermissao = 'id_permissao';
+
+  /// Nome da visualização que consolida os dados das atividades.
+  /// Criada para facilitar as consultas de dados.
+  final viewAtividades = 'view_atividades';
 }

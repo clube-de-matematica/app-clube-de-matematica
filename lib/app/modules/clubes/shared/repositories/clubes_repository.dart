@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -187,7 +188,6 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
         return temp;
       } else {
         final clube = _clubes[indice];
-        // TODO: Testar se o mobx reconhece essas mudanças.
         clube.sobrescrever(temp);
         return clube;
       }
@@ -265,6 +265,27 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     } else {
       return false;
     }
+  }
+
+  Future<List<Atividade>> carregarAtividades(Clube clube) async {
+    if (usuarioApp.id == null) return List<Atividade>.empty();
+    DataCollection resultado;
+    try {
+      resultado = await dbRepository.getAtividades(clube.id);
+    } catch (e) {
+      assert(Debug.printBetweenLine(
+          "Erro a buscar os dados da coleção ${CollectionType.atividades.name}."));
+      assert(Debug.print(e));
+      return List<Atividade>.empty();
+    }
+    if (resultado.isEmpty) return List<Atividade>.empty();
+
+    final temp = List<Atividade>.from(resultado
+        .map((dataAtividade) => Atividade.fromDataAtividade(dataAtividade)));
+
+    clube.sobrescrever(clube.copyWith(atividades: temp));
+
+    return clube.atividades;
   }
 
   /// Encerrar as reações em execução.

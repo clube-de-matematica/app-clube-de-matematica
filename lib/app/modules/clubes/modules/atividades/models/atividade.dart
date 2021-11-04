@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
+
+import '../../../../../shared/utils/strings_db.dart';
 
 /// Modelo para os dados das atividades dos clubes.
 class Atividade {
@@ -63,43 +66,52 @@ class Atividade {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  DataAtividade toDataAtividade() {
     return {
-      'id': id,
-      'nome': nome,
-      'descricao': descricao,
-      'idClube': idClube,
-      'idAutor': idAutor,
-      'criacao': criacao.millisecondsSinceEpoch,
-      'publicacao': publicacao?.millisecondsSinceEpoch,
-      'encerramento': encerramento?.millisecondsSinceEpoch,
-      'questoes': questoes.map((x) => x.toMap()).toList(),
+      DbConst.kDbDataAtividadeKeyId: id,
+      DbConst.kDbDataAtividadeKeyNome: nome,
+      DbConst.kDbDataAtividadeKeyDescricao: descricao,
+      DbConst.kDbDataAtividadeKeyIdClube: idClube,
+      DbConst.kDbDataAtividadeKeyIdAutor: idAutor,
+      DbConst.kDbDataAtividadeKeyDataCriacao: criacao.millisecondsSinceEpoch,
+      DbConst.kDbDataAtividadeKeyDataPublicacao:
+          publicacao?.millisecondsSinceEpoch,
+      DbConst.kDbDataAtividadeKeyDataEncerramento:
+          encerramento?.millisecondsSinceEpoch,
+      DbConst.kDbDataAtividadeKeyQuestoes:
+          questoes.map((x) => x.toMap()).toList(),
     };
   }
 
-  factory Atividade.fromMap(Map<String, dynamic> map) {
+  factory Atividade.fromDataAtividade(DataAtividade map) {
     return Atividade(
-      id: map['id'],
-      nome: map['nome'],
-      descricao: map['descricao'] != null ? map['descricao'] : null,
-      idClube: map['idClube'],
-      idAutor: map['idAutor'],
-      criacao: DateTime.fromMillisecondsSinceEpoch(map['criacao']),
-      publicacao: map['publicacao'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['publicacao'])
+      id: map[DbConst.kDbDataAtividadeKeyId],
+      nome: map[DbConst.kDbDataAtividadeKeyNome],
+      descricao: map[DbConst.kDbDataAtividadeKeyDescricao] != null
+          ? map[DbConst.kDbDataAtividadeKeyDescricao]
           : null,
-      encerramento: map['encerramento'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['encerramento'])
+      idClube: map[DbConst.kDbDataAtividadeKeyIdClube],
+      idAutor: map[DbConst.kDbDataAtividadeKeyIdAutor],
+      criacao: DateTime.parse(
+          map[DbConst.kDbDataAtividadeKeyDataCriacao]),
+      publicacao: map[DbConst.kDbDataAtividadeKeyDataPublicacao] != null
+          ? DateTime.parse(
+              map[DbConst.kDbDataAtividadeKeyDataPublicacao])
+          : null,
+      encerramento: map[DbConst.kDbDataAtividadeKeyDataEncerramento] != null
+          ? DateTime.parse(
+              map[DbConst.kDbDataAtividadeKeyDataEncerramento])
           : null,
       questoes: List<QuestaoAtividade>.from(
-          map['questoes']?.map((x) => QuestaoAtividade.fromMap(x))),
+          map[DbConst.kDbDataAtividadeKeyQuestoes]
+              ?.map((x) => QuestaoAtividade.fromMap(x))),
     );
   }
 
-  String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toDataAtividade());
 
   factory Atividade.fromJson(String source) =>
-      Atividade.fromMap(json.decode(source));
+      Atividade.fromDataAtividade(json.decode(source));
 
   @override
   String toString() {

@@ -1,4 +1,4 @@
-import 'package:clubedematematica/app/modules/clubes/shared/models/atividade.dart';
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
 import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
 import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
 import 'package:flutter/material.dart';
@@ -63,8 +63,18 @@ class _CategoriaAtividade extends Categoria {
                 final atividade = atividades[index];
                 return ListTile(
                   contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
-                  title: Text(atividade.nome),
+                  title: Text(
+                    atividade.nome,
+                    style: Theme.of(context).textTheme.headline2,
+                  ),
                   subtitle: Text(atividade.descricao ?? ''),
+                  leading: CircleAvatar(
+                    child: Icon(
+                      Icons.task_outlined,
+                      color: ClubePage.of(context).corTexto,
+                    ),
+                    backgroundColor: cor.withOpacity(0.3),
+                  ),
                   onTap: () => ClubePage.of(context)
                       .controller
                       .abrirPaginaAtividade(context, atividade),

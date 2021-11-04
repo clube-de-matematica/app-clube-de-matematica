@@ -9,6 +9,13 @@ part of 'clube.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$Clube on _ClubeBase, Store {
+  Computed<ObservableList<Atividade>>? _$atividadesComputed;
+
+  @override
+  ObservableList<Atividade> get atividades => (_$atividadesComputed ??=
+          Computed<ObservableList<Atividade>>(() => super.atividades,
+              name: '_ClubeBase.atividades'))
+      .value;
   Computed<ObservableList<UsuarioClube>>? _$usuariosComputed;
 
   @override
@@ -92,6 +99,21 @@ mixin _$Clube on _ClubeBase, Store {
     });
   }
 
+  final _$_atividadesAtom = Atom(name: '_ClubeBase._atividades');
+
+  @override
+  ObservableSet<Atividade> get _atividades {
+    _$_atividadesAtom.reportRead();
+    return super._atividades;
+  }
+
+  @override
+  set _atividades(ObservableSet<Atividade> value) {
+    _$_atividadesAtom.reportWrite(value, super._atividades, () {
+      super._atividades = value;
+    });
+  }
+
   final _$_ClubeBaseActionController = ActionController(name: '_ClubeBase');
 
   @override
@@ -133,6 +155,7 @@ mixin _$Clube on _ClubeBase, Store {
 nome: ${nome},
 descricao: ${descricao},
 capa: ${capa},
+atividades: ${atividades},
 usuarios: ${usuarios},
 administradores: ${administradores},
 membros: ${membros}

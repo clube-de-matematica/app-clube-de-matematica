@@ -3,6 +3,10 @@ import 'package:flutter/widgets.dart';
 
 import 'clube_de_matematica_module.dart';
 import 'modules/clubes/clubes_module.dart';
+import 'modules/clubes/modules/atividades/atividades_module.dart';
+import 'modules/clubes/modules/atividades/pages/atividade/atividade_page.dart';
+import 'modules/clubes/modules/atividades/pages/criar/criar_atividade_page.dart';
+import 'modules/clubes/modules/atividades/pages/editar/editar_atividade_page.dart';
 import 'modules/clubes/pages/adicionar/adicionar_clube_page.dart';
 import 'modules/clubes/pages/clube/clube_page.dart';
 import 'modules/clubes/pages/editar/editar_clube_page.dart';
@@ -38,6 +42,9 @@ enum RouteModule {
 
   /// Representa a rota para o módulo [ClubesModule].
   clubes,
+
+  /// Representa a rota para o módulo [AtividadesModule].
+  atividades,
 }
 
 extension RouteModuleExtension on RouteModule {
@@ -55,6 +62,8 @@ extension RouteModuleExtension on RouteModule {
         return PerfilModule.kAbsoluteRouteModule;
       case RouteModule.clubes:
         return ClubesModule.kAbsoluteRouteModule;
+      case RouteModule.atividades:
+        return AtividadesModule.kAbsoluteRouteModule;
     }
   }
 }
@@ -87,6 +96,15 @@ enum RoutePage {
 
   /// Representa a rota para a página [EditarClubePage].
   editarClube,
+
+  /// Representa a rota para a página [AtividadePage].
+  atividade,
+
+  /// Representa a rota para a página [CriarAtividadePage].
+  criarAtividade,
+
+  /// Representa a rota para a página [EditarAtividadePage].
+  editarAtividade,
 }
 
 extension RoutePageExtension on RoutePage {
@@ -108,6 +126,12 @@ extension RoutePageExtension on RoutePage {
         return ClubesModule.kAbsoluteRouteCriarPage;
       case RoutePage.editarClube:
         return ClubesModule.kAbsoluteRouteEditarPage;
+      case RoutePage.atividade:
+        return AtividadesModule.kAbsoluteRouteAtividadePage;
+      case RoutePage.criarAtividade:
+        return AtividadesModule.kAbsoluteRouteCriarPage;
+      case RoutePage.editarAtividade:
+        return AtividadesModule.kAbsoluteRouteEditarPage;
       case RoutePage.clube:
         throw MyException(
             'RoutePage.clube não possui um nome estático, pois representa uma rota dinâmica.');
@@ -125,6 +149,9 @@ extension RoutePageExtension on RoutePage {
       case RoutePage.homeClubes:
       case RoutePage.adicionarClube:
       case RoutePage.editarClube:
+      case RoutePage.atividade:
+      case RoutePage.criarAtividade:
+      case RoutePage.editarAtividade:
         return false;
       case RoutePage.clube:
         return true;
@@ -139,12 +166,15 @@ extension RoutePageExtension on RoutePage {
       case RoutePage.filtrosTipos:
       case RoutePage.homeClubes:
       case RoutePage.clube:
+      case RoutePage.atividade:
         return true;
       case RoutePage.filtrosOpcoes:
       case RoutePage.login:
       case RoutePage.perfil:
       case RoutePage.adicionarClube:
       case RoutePage.editarClube:
+      case RoutePage.criarAtividade:
+      case RoutePage.editarAtividade:
         return false;
     }
   }
@@ -267,6 +297,12 @@ abstract class Navigation {
           case RoutePage.adicionarClube:
             return navigator.pushNamed(newPage, arguments: arguments);
           case RoutePage.editarClube:
+            return navigator.pushNamed(newPage, arguments: arguments);
+          case RoutePage.atividade:
+            return navigator.pushNamed(newPage, arguments: arguments);
+          case RoutePage.criarAtividade:
+            return navigator.pushNamed(newPage, arguments: arguments);
+          case RoutePage.editarAtividade:
             return navigator.pushNamed(newPage, arguments: arguments);
           default:
             // TODO

@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
 
+import '../../../../navigation.dart';
 import '../../../perfil/models/userapp.dart';
-import '../../shared/models/atividade.dart';
+import '../../modules/atividades/models/atividade.dart';
 import '../../shared/models/clube.dart';
 import '../../shared/models/usuario_clube.dart';
 import '../../shared/utils/mixin_controllers.dart';
@@ -20,12 +21,17 @@ class ClubeController extends IClubeController
   ClubeController(this.clube);
 
   final Clube clube;
+  bool _carregarAtividades = true;
 
   /// O [UsuarioClube] correspondente ao usuário atual do aplicativo para [clube].
   UsuarioClube get usuarioApp => clube.getUsuario(UserApp.instance.id!)!;
 
   /// Lista com as atividades do clube.
-  List<Atividade> get atividades => clube.atividades;
+  List<Atividade> get atividades {
+    if (_carregarAtividades) repository.carregarAtividades(clube);
+    _carregarAtividades = false;
+    return clube.atividades;
+  }
 
   @override
   void abrirPaginaEditarClube(BuildContext context, [Clube? clube]) {
@@ -33,10 +39,14 @@ class ClubeController extends IClubeController
   }
 
   /// Abre a página para criar uma nova atividade.
-  void abrirPaginaCriarAtividade(BuildContext context) {}
+  void abrirPaginaCriarAtividade(BuildContext context) {
+    Navigation.showPage(context, RoutePage.criarAtividade, arguments: clube);
+  }
 
   /// Abre a página para [atividade].
-  void abrirPaginaAtividade(BuildContext context, Atividade atividade) {}
+  void abrirPaginaAtividade(BuildContext context, Atividade atividade) {
+    Navigation.showPage(context, RoutePage.atividade, arguments: atividade);
+  }
 
   @override
   Future<bool> sair([Clube? clube]) async {

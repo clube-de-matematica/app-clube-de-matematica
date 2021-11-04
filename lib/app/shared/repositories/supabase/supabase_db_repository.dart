@@ -384,4 +384,31 @@ class SupabaseDbRepository
       rethrow;
     }
   }
+
+  @override
+  Future<DataCollection> getAtividades(int idClube) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.getAtividades()...'));
+    _checkAuthentication('getAtividades()');
+    try {
+      assert(Debug.print(
+          '[INFO] Solicitando os dados da tabela "$viewAtividades"...'));
+      final response = await _client
+          .from(viewAtividades)
+          .select()
+          .eq(DbConst.kDbDataAtividadeKeyIdClube, idClube)
+          .execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(Debug.print(
+            '[ERROR] Erro ao solicitar as atividades para o clube com o ID $idClube. '
+            '\n${error.toString()}'));
+        return DataCollection.empty();
+      }
+      return (response.data as List).cast<DataAtividade>();
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao solicitar os dados da tabela "$viewAtividades".'));
+      rethrow;
+    }
+  }
 }

@@ -6,7 +6,7 @@ import 'package:mobx/mobx.dart';
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../utils/random_colors.dart';
-import 'atividade.dart';
+import '../../modules/atividades/models/atividade.dart';
 import 'usuario_clube.dart';
 
 part 'clube.g.dart';
@@ -53,7 +53,7 @@ class Clube extends _ClubeBase with _$Clube {
     Color? capa,
     required String codigo,
     required bool privado,
-    List<Atividade> atividades = const [],
+    List<Atividade>? atividades,
   }) : super(
           id: id,
           nome: nome,
@@ -120,6 +120,30 @@ class Clube extends _ClubeBase with _$Clube {
 
   factory Clube.fromJsonDataClube(String source) =>
       Clube.fromDataClube(json.decode(source));
+
+  Clube copyWith({
+    int? id,
+    String? nome,
+    String? descricao,
+    UsuarioClube? proprietario,
+    Iterable<UsuarioClube>? usuarios,
+    Color? capa,
+    String? codigo,
+    bool? privado,
+    List<Atividade>? atividades,
+  }) {
+    return Clube(
+      id: id ?? this.id,
+      nome: nome ?? this.nome,
+      descricao: descricao ?? this.descricao,
+      proprietario: proprietario ?? this.proprietario,
+      usuarios: usuarios ?? this.usuarios,
+      capa: capa ?? this.capa,
+      codigo: codigo ?? this.codigo,
+      privado: privado ?? this.privado,
+      atividades: atividades ?? this.atividades,
+    );
+  }
 }
 
 abstract class _ClubeBase with Store {
@@ -153,16 +177,23 @@ abstract class _ClubeBase with Store {
   /// * Se `true`, o clube é privado. O ingresso depende da permissão de um administrador.
   bool privado;
 
-  /// Lista com as atividades do clube.
-  final List<Atividade> atividades;
+  /// Conjunto com as atividades do clube.
+  @observable
+  ObservableSet<Atividade> _atividades;
 
-  /// Uma lista com o objeto [UsuarioClube] de cada participantes do deste clube.
+  /// Uma lista com as atividades deste clube.
+  ///
+  /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
+  @computed
+  ObservableList<Atividade> get atividades => ObservableList.of(_atividades);
+
+  /// Uma lista com o objeto [UsuarioClube] de cada participantes deste clube.
   ///
   /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
   ObservableList<UsuarioClube> get usuarios => ObservableList.of(_usuarios);
 
-  /// Uma lista com o objeto [UsuarioClube] de cada administrador do clube.
+  /// Uma lista com o objeto [UsuarioClube] de cada administrador deste clube.
   ///
   /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
@@ -170,7 +201,7 @@ abstract class _ClubeBase with Store {
       ObservableList.of(_usuarios.where((usuario) => usuario.administrador));
 
   /// Uma lista com o objeto [UsuarioClube] de cada membro (excluindo-se
-  /// proprietário e administradores) do clube.
+  /// proprietário e administradores) deste clube.
   ///
   /// ***ATENÇÃO!*** *Esta lista não deve ser alterada.*
   @computed
@@ -186,22 +217,13 @@ abstract class _ClubeBase with Store {
     Color? capa,
     required this.codigo,
     required this.privado,
-    this.atividades = const [],
+    List<Atividade>? atividades,
   })  : this.capa = capa ?? RandomColor(),
         this.proprietario = proprietario,
+        this._atividades = ObservableSet<Atividade>.of(atividades ?? []),
         this._usuarios = ObservableSet<UsuarioClube>()
           ..add(proprietario)
           ..addAll(usuarios?.where((usuario) => !usuario.proprietario) ?? []);
-  /* 
-  {
-    if (usuarios?.contains(proprietario) ?? false) {
-      addUsuarios(usuarios!);
-    } else {
-      if (usuarios != null) _usuarios.addAll(usuarios);
-      addUsuarios([proprietario]);
-    }
-  }
-   */
 
   DataClube toDataClube() {
     final administradores =
@@ -236,6 +258,9 @@ abstract class _ClubeBase with Store {
       _usuarios.removeWhere((usuario) => !usuario.proprietario);
       _usuarios
           .addAll(outro._usuarios.where((usuario) => !usuario.proprietario));
+      _atividades
+        ..clear()
+        ..addAll(outro.atividades);
     }
   }
 
