@@ -1,3 +1,7 @@
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/pages/selecionar_questoes/selecionar_questoes_page.dart';
+import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
+import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../clubes_module.dart';
@@ -34,6 +38,13 @@ class AtividadesModule extends Module {
   static const kAbsoluteRouteEditarPage =
       kAbsoluteRouteModule + kRelativeRouteEditarPage;
 
+  ///Rota relativa.
+  static const kRelativeRouteSelecionarQuestoesPage = '/selecionarquestoes';
+
+  ///Rota absoluta.
+  static const kAbsoluteRouteSelecionarQuestoesPage =
+      kAbsoluteRouteModule + kRelativeRouteSelecionarQuestoesPage;
+
   @override
   //Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
@@ -47,8 +58,26 @@ class AtividadesModule extends Module {
         ChildRoute(kAbsoluteRouteAtividadePage,
             child: (_, args) => AtividadePage(args.data)),
         ChildRoute(kRelativeRouteCriarPage,
-            child: (_, args) => CriarAtividadePage(args.data)),
+            child: (_, args) => CriarAtividadePage(args.data ??
+            // TODO: Remover
+                Clube(
+                  id: 14,
+                  nome: 'Quarto Clube',
+                  proprietario: UsuarioClube(
+                    id: 1,
+                    idClube: 14,
+                    permissao: PermissoesClube.administrador,
+                    nome: 'Aluno de Desenvolvimento',
+                    email: 'alunodedesenvolvimento@gmail.com',
+                  ),
+                  codigo: 'J5lSts',
+                  privado: false,
+                  descricao: 'Descrevendo o quarto clubes.',
+                  capa: Color(4284513675),
+                ))),
         ChildRoute(kRelativeRouteEditarPage,
             child: (_, args) => EditarAtividadePage(args.data)),
+        ChildRoute(kRelativeRouteSelecionarQuestoesPage,
+            child: (_, args) => SelecionarQuestoesPage()),
       ];
 }

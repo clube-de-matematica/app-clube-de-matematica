@@ -95,12 +95,15 @@ class AppTheme {
         size: 24.0,
       ),
       inputDecorationTheme: temp.inputDecorationTheme.copyWith(
+        border: const OutlineInputBorder(),
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        labelStyle: temp.inputDecorationTheme.labelStyle
+            ?.setEscalaFontSize(_escala, 16.0),
         hintStyle:
             temp.inputDecorationTheme.hintStyle?.setEscalaFontSize(_escala),
         errorStyle:
             temp.inputDecorationTheme.errorStyle?.setEscalaFontSize(_escala),
-        labelStyle:
-            temp.inputDecorationTheme.labelStyle?.setEscalaFontSize(_escala),
         helperStyle:
             temp.inputDecorationTheme.helperStyle?.setEscalaFontSize(_escala),
         prefixStyle:

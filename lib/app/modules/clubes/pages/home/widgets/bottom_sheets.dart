@@ -28,7 +28,8 @@ class BottomSheetCodigoClube extends AppBottomSheet {
         child: SelectableText('${clube.codigo}'),
       ),
       actions: [
-        TextButtonPriario(
+        AppTextButton(
+          primary: true,
           child: const Text('FECHAR'),
           onPressed: () => Navigator.pop(context),
         ),

@@ -14,7 +14,8 @@ class BottomSheetErro extends AppBottomSheet {
       title: const Text('Falha na operação'),
       content: Text(mensagem),
       actions: [
-        TextButtonPriario(
+        AppTextButton(
+          primary: true,
           child: const Text('FECHAR'),
           onPressed: () => Navigator.pop(context),
         ),

@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// URL do projeto do Supabase.
 /// 
 /// TODO: NÃO CONSEGUI CORRIGIR O ERRO DE CERTIFICADO USANDO `https`.
-const _kSupabaseUrl = 'http://dlhhqapgjuyvzxktohck.supabase.co';
+const _kSupabaseUrl = 'https://dlhhqapgjuyvzxktohck.supabase.co';
 
 /// Anon key do projeto do Supabase.
 const _kSupabaseAnonKey =

@@ -190,12 +190,14 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         textAlign: TextAlign.justify,
       ),
       actions: [
-        TextButtonPriario(
+        AppTextButton(
+          primary: true,
           child: const Text(UIStrings
               .LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CONFIRM),
           onPressed: () => Navigator.pop<bool>(context, true),
         ),
-        TextButtonSecundario(
+        AppTextButton(
+          primary: false,
           child: const Text(
               UIStrings.LOGIN_DIALOG_CONFIRM_USER_ANONYMOUS_TEXT_BUTTON_CANCEL),
           onPressed: () => Navigator.pop<bool>(context, false),
@@ -227,7 +229,8 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         ),
       ),
       actions: [
-        TextButtonPriario(
+        AppTextButton(
+          primary: true,
           child: const Text(UIStrings.LOGIN_DIALOG_ERROR_TEXT_BUTTON_CLOSE),
           onPressed: () => Navigator.pop(context),
         ),

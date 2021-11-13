@@ -70,7 +70,8 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
   @override
   bool get logged => _currentUser != null;
 
-  /// TODO: O [Supabase] ainda não oferece suporte a usuário anônimo.
+  /// TODO: O [Supabase] ainda não oferece suporte ao registro de usuário anônimo, em vez 
+  /// disso ele disponibiliza a `anon key`.
   @override
   Future<bool> signInAnonymously() async {
     if (isAnonymous) return true;
@@ -90,6 +91,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       assert(Debug.print(e.toString()));
       rethrow;
     }
+print(session.error?.message);//TODO
     assert(session.user != null && session.error == null);
     if (session.user == null || session.error != null) {
       _controller.add(StatusSignIn.error);
@@ -136,7 +138,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       _controller.add(StatusSignIn.error);
     }
 
-    launch(session.url!).catchError((error, stack) {
+    launch(session.url!, webOnlyWindowName: '_self').catchError((error, stack) {
       assert(Debug.print(
         'Erro ao abrir o URL em AuthSupabaseRepository.signInWithGoogle(). \n'
         'Erro: ${error.toString()}.\n'

@@ -198,11 +198,13 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
         textAlign: TextAlign.justify,
       ),
       actions: [
-        TextButtonPriario(
+        AppTextButton(
+          primary: true,
           child: const Text(UIStrings.kConfirmButtonTitle),
           onPressed: () => Navigator.pop<bool>(context, true),
         ),
-        TextButtonSecundario(
+        AppTextButton(
+          primary: false,
           child: const Text(UIStrings.kCancelButtonTitle),
           onPressed: () => Navigator.pop<bool>(context, false),
         ),

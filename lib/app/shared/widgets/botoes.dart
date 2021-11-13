@@ -18,10 +18,12 @@ class BotaoPrimario extends ElevatedButton {
         );
 }
 
-class TextButtonPriario extends TextButton {
+class AppTextButton extends TextButton {
   /// Um [TextButton] com base na cor primária do tema do aplicativo.
-  TextButtonPriario({
+  /// Se [style] não for `null`, [primary] será ignorado.
+  AppTextButton({
     Key? key,
+    bool primary = true,
     ButtonStyle? style,
     required Widget child,
     required VoidCallback? onPressed,
@@ -29,25 +31,10 @@ class TextButtonPriario extends TextButton {
           key: key,
           style: style ??
               TextButton.styleFrom(
-                primary: AppTheme.instance.temaClaro.colorScheme.primary,
+                primary: primary
+                    ? AppTheme.instance.temaClaro.colorScheme.primary
+                    : AppTheme.instance.temaClaro.textTheme.button?.color,
               ),
-          onPressed: onPressed,
-          child: child,
-        );
-}
-
-class TextButtonSecundario extends TextButton {
-  /// Um [TextButton] com base na cor do estilo de texto do tema do aplicativo.
-  TextButtonSecundario({
-    Key? key,
-    ButtonStyle? style,
-    required Widget child,
-    required VoidCallback? onPressed,
-  }) : super(
-          key: key,
-          style: style ??
-              TextButton.styleFrom(
-                  primary: AppTheme.instance.temaClaro.textTheme.button?.color),
           onPressed: onPressed,
           child: child,
         );

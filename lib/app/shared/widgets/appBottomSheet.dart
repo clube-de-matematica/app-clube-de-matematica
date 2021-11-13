@@ -270,45 +270,123 @@ class AppBottomSheet extends StatelessWidget {
   }
 }
 
-/// Uma página inferior para confirmar ou cancelar uma ação.
-/// Ao ser fechada, retorna `true` se o usuário confirmar a ação.
-class BottomSheetCancelarConfirmar extends AppBottomSheet {
-  const BottomSheetCancelarConfirmar({
+/// Uma página inferior que exibe dois botões de ação.
+/// Ao ser fechada, retorna:
+/// * [resultActionFirst] se o primeiro botão for acionado;
+/// * [resultActionLast] se o último botão for acionado; ou
+/// * `null` nos demais casos.
+class BottomSheetAcoes extends AppBottomSheet {
+  const BottomSheetAcoes({
     Key? key,
     this.title,
     this.content,
-    this.message,
-  })  : assert(!(content != null && message != null)),
-        super(key: key);
+    this.labelActionFirst = 'CONFIRMAR',
+    this.labelActionLast = 'CANCELAR',
+    this.actionFirstIsPrimary = true,
+    this.actionLastIsPrimary = false,
+    this.resultActionFirst = true,
+    this.resultActionLast = false,
+  }) : super(key: key);
 
+  /// O título desta página inferior.
   final Widget? title;
+
+  /// O conteúdo desta página inferior.
   final Widget? content;
-  final String? message;
+
+  /// Texto do primeiro botão.
+  final String labelActionFirst;
+
+  /// Texto do último botão.
+  final String labelActionLast;
+
+  /// Se o primeiro botão é primário.
+  final bool actionFirstIsPrimary;
+
+  /// Se o último botão é primário.
+  final bool actionLastIsPrimary;
+
+  /// Retorno da página quando o primeiro botão é acionado.
+  final resultActionFirst;
+
+  /// Retorno da página quando o último botão é acionado.
+  final resultActionLast;
 
   @override
   Widget build(BuildContext context) {
-    var content = this.content;
-    content ??= message == null
-        ? null
-        : Text(
-            message!,
-            textAlign: TextAlign.justify,
-          );
     return AppBottomSheet(
       title: title,
       content: content,
       actions: [
-        TextButtonPriario(
-          child: const Text('CONFIRMAR'),
-          onPressed: () => Navigator.pop<bool>(context, true),
+        AppTextButton(
+          primary: actionFirstIsPrimary,
+          child: Text(labelActionFirst),
+          onPressed: () => Navigator.pop<bool>(context, resultActionFirst),
         ),
-        TextButtonSecundario(
-          child: const Text('CANCELAR'),
-          onPressed: () => Navigator.pop<bool>(context, false),
+        AppTextButton(
+          primary: actionLastIsPrimary,
+          child: Text(labelActionLast),
+          onPressed: () => Navigator.pop<bool>(context, resultActionLast),
         ),
       ],
     );
   }
+}
+
+/// Uma página inferior para confirmar ou cancelar uma ação.
+/// Ao ser fechada, retorna `true` se o usuário confirmar a ação.
+class BottomSheetCancelarConfirmar extends BottomSheetAcoes {
+  BottomSheetCancelarConfirmar({
+    Key? key,
+    Widget? title,
+    Widget? content,
+    String? message,
+  })  : assert(!(content != null && message != null)),
+        super(
+          key: key,
+          title: title,
+          content: content ??
+              (message == null
+                  ? null
+                  : Text(
+                      message,
+                      textAlign: TextAlign.justify,
+                    )),
+          labelActionFirst: 'CONFIRMAR',
+          labelActionLast: 'CANCELAR',
+          actionFirstIsPrimary: true,
+          actionLastIsPrimary: false,
+          resultActionFirst: true,
+          resultActionLast: false,
+        );
+}
+
+/// Uma página inferior para confirmar ou cancelar uma ação de sair.
+/// Ao ser fechada, retorna `true` se o usuário confirmar a ação.
+class BottomSheetCancelarSair extends BottomSheetAcoes {
+  BottomSheetCancelarSair({
+    Key? key,
+    Widget? title,
+    Widget? content,
+    String? message,
+  })  : assert(!(content != null && message != null)),
+        super(
+          key: key,
+          title: title,
+          content: content ??
+              (message == null
+                  ? null
+                  : Text(
+                      message,
+                      textAlign: TextAlign.justify,
+                    )),
+          labelActionFirst: 'SAIR',
+          labelActionLast: 'CANCELAR',
+          actionFirstIsPrimary: false,
+          actionLastIsPrimary: false,
+          resultActionFirst: true,
+          resultActionLast: false,
+        );
 }
 
 /// Uma página inferior que exibe um [CircularProgressIndicator].
