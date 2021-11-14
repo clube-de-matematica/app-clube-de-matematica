@@ -1,5 +1,6 @@
-import 'package:clubedematematica/app/modules/quiz/shared/models/questao_model.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../../../modules/quiz/shared/models/questao_model.dart';
 
 class SelecionarQuestoesPage extends StatefulWidget {
   const SelecionarQuestoesPage({

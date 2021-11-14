@@ -9,13 +9,6 @@ part of 'quiz_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$QuizController on _QuizControllerBase, Store {
-  Computed<int?>? _$alternativaSelecionadaComputed;
-
-  @override
-  int? get alternativaSelecionada => (_$alternativaSelecionadaComputed ??=
-          Computed<int?>(() => super.alternativaSelecionada,
-              name: '_QuizControllerBase.alternativaSelecionada'))
-      .value;
   Computed<List<Questao>>? _$itensFiltradosComputed;
 
   @override
@@ -81,20 +74,20 @@ mixin _$QuizController on _QuizControllerBase, Store {
     });
   }
 
-  final _$_alternativaSelecionadaAtom =
-      Atom(name: '_QuizControllerBase._alternativaSelecionada');
+  final _$alternativaSelecionadaAtom =
+      Atom(name: '_QuizControllerBase.alternativaSelecionada');
 
   @override
-  int? get _alternativaSelecionada {
-    _$_alternativaSelecionadaAtom.reportRead();
-    return super._alternativaSelecionada;
+  int? get alternativaSelecionada {
+    _$alternativaSelecionadaAtom.reportRead();
+    return super.alternativaSelecionada;
   }
 
   @override
-  set _alternativaSelecionada(int? value) {
-    _$_alternativaSelecionadaAtom
-        .reportWrite(value, super._alternativaSelecionada, () {
-      super._alternativaSelecionada = value;
+  set alternativaSelecionada(int? value) {
+    _$alternativaSelecionadaAtom
+        .reportWrite(value, super.alternativaSelecionada, () {
+      super.alternativaSelecionada = value;
     });
   }
 
@@ -107,17 +100,6 @@ mixin _$QuizController on _QuizControllerBase, Store {
         name: '_QuizControllerBase._setIndice');
     try {
       return super._setIndice(valor, force: force);
-    } finally {
-      _$_QuizControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void _setAlternativaSelecionada(int? valor) {
-    final _$actionInfo = _$_QuizControllerBaseActionController.startAction(
-        name: '_QuizControllerBase._setAlternativaSelecionada');
-    try {
-      return super._setAlternativaSelecionada(valor);
     } finally {
       _$_QuizControllerBaseActionController.endAction(_$actionInfo);
     }

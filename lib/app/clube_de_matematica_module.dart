@@ -1,9 +1,11 @@
 import 'package:clubedematematica/app/navigation.dart';
+import 'package:clubedematematica/app/shared/repositories/interface_db_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'clube_de_matematica_controller.dart';
 import 'deep_links.dart';
+import 'mock_db_repository.dart';
 import 'modules/clubes/clubes_module.dart';
 import 'modules/clubes/shared/repositories/clubes_repository.dart';
 import 'modules/login/login_module.dart';
@@ -35,12 +37,17 @@ class ClubeDeMatematicaModule extends Module {
         //Repositórios
         //Bind<IAuthRepository>((i) => AuthFirebaseRepository(i.get<FirebaseAuth>())),
         Bind<IAuthRepository>((i) => AuthSupabaseRepository(i.get<Supabase>())),
-        Bind((i) => SupabaseDbRepository(
+        /* Bind((i) => SupabaseDbRepository(
               i.get<Supabase>(),
               i.get<IAuthRepository>(),
             )),
         Bind.lazySingleton((i) => ClubesRepository(
               i.get<SupabaseDbRepository>(),
+              i.get<UserApp>(),
+            )), */
+        Bind<IDbRepository>((i) => MockDbRepository()),
+        Bind.lazySingleton((i) => ClubesRepository(
+              i.get<MockDbRepository>(),
               i.get<UserApp>(),
             )),
 

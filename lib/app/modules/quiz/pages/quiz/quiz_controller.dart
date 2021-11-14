@@ -7,7 +7,6 @@ import 'package:mobx/mobx.dart';
 import '../../../../navigation.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
-import '../../shared/models/alternativa_questao_model.dart';
 import '../../shared/models/imagem_questao_model.dart';
 import '../../shared/models/opcoesQuestao.dart';
 import '../../shared/models/questao_model.dart';
@@ -28,9 +27,9 @@ abstract class _QuizControllerBase with Store {
   @observable
   int _indice = 0;
 
-  /// Indica qual altenativa está selecionada;
+  /// O sequencial da altenativa selecionada;
   @observable
-  int? _alternativaSelecionada;
+  int? alternativaSelecionada;
 
   _QuizControllerBase(this.imagemQuestaoRepository, this.filtros) {
     _inicializar();
@@ -51,10 +50,6 @@ abstract class _QuizControllerBase with Store {
 
   /// Quando incompleto indica que ainda não há itens para serem exibidos.
   Future<bool> get initialized => _initialized.future;
-
-  /// Indica qual altenativa está selecionada;
-  @computed
-  int? get alternativaSelecionada => _alternativaSelecionada;
 
   /// Itens selecionado para serem exibidos.
   @computed
@@ -79,24 +74,10 @@ abstract class _QuizControllerBase with Store {
   void _setIndice(int valor, {bool force = false}) {
     if (_indice != valor || force) {
       _indice = valor;
-      _setAlternativaSelecionada(null);
+      alternativaSelecionada = null;
       _carregarImagens();
     }
   }
-
-  /// Atribui um novo valor para [_alternativaSelecionada].
-  @action
-  void _setAlternativaSelecionada(int? valor) {
-    if (_alternativaSelecionada == valor) {
-      _alternativaSelecionada = null;
-    } else {
-      _alternativaSelecionada = valor;
-    }
-  }
-
-  /// Será executado quanda [alternativa] for pressionada.
-  void onTapAlternativa(Alternativa alternativa) =>
-      _setAlternativaSelecionada(alternativa.sequencial);
 
   /// Retorna um `bool` que define se há um próximo item.
   @computed
@@ -123,7 +104,7 @@ abstract class _QuizControllerBase with Store {
 
   /// Retorna um `bool` que define se há uma resposta a ser confirmada.
   @computed
-  bool get podeConfirmar => _alternativaSelecionada != null;
+  bool get podeConfirmar => alternativaSelecionada != null;
 
   /// Ações a serem executada ao confirmar uma resposta.
   void confirmar() {

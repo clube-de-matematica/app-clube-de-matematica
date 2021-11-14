@@ -1,6 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../shared/repositories/supabase/supabase_db_repository.dart';
+import '../../shared/repositories/interface_db_repository.dart';
 import '../filtros/filtros_module.dart';
 import '../filtros/shared/models/filtros_model.dart';
 import 'pages/quiz/quiz_controller.dart';
@@ -37,10 +37,10 @@ class QuizModule extends Module {
 
         // Repositórios
         Bind((i) => QuestoesRepository(
-              i.get<SupabaseDbRepository>(),
+              i.get<IDbRepository>(),
               i.get<AssuntosRepository>(),
             )),
-        Bind((i) => AssuntosRepository(i.get<SupabaseDbRepository>())),
+        Bind((i) => AssuntosRepository(i.get<IDbRepository>())),
         Bind((i) => ImagemQuestaoRepository()),
       ];
 

@@ -38,13 +38,6 @@ class AtividadesModule extends Module {
   static const kAbsoluteRouteEditarPage =
       kAbsoluteRouteModule + kRelativeRouteEditarPage;
 
-  ///Rota relativa.
-  static const kRelativeRouteSelecionarQuestoesPage = '/selecionarquestoes';
-
-  ///Rota absoluta.
-  static const kAbsoluteRouteSelecionarQuestoesPage =
-      kAbsoluteRouteModule + kRelativeRouteSelecionarQuestoesPage;
-
   @override
   //Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
@@ -77,7 +70,5 @@ class AtividadesModule extends Module {
                 ))),
         ChildRoute(kRelativeRouteEditarPage,
             child: (_, args) => EditarAtividadePage(args.data)),
-        ChildRoute(kRelativeRouteSelecionarQuestoesPage,
-            child: (_, args) => SelecionarQuestoesPage()),
       ];
 }

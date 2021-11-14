@@ -6,14 +6,13 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/utils/ui_strings.dart' as uiStringsApp;
+import '../../../../shared/widgets/questao_widget.dart';
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
 import '../../shared/utils/ui_strings.dart';
 import 'quiz_controller.dart';
-import 'widgets/quiz_alternativas.dart';
 import 'widgets/quiz_appbar.dart';
 import 'widgets/quiz_bar_opcoes_item.dart';
 import 'widgets/quiz_bottom_bar.dart';
-import 'widgets/quiz_enunciado_item.dart';
 
 /// Esta é a página de exibição de cada item a ser resolvido.
 class QuizPage extends StatefulWidget {
@@ -56,18 +55,13 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                       return const Text(
                           uiStringsApp.UIStrings.APP_MSG_ERRO_INESPERADO);
                     } else if (snapshot.hasData) {
-                      return Expanded(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.only(top: 8, bottom: 72),
-                          child: Observer(builder: (_) {
-                            return Column(
-                              children: controller.itensFiltrados.isEmpty
-                                  ? _ifItensFiltradosIsEmpty(context)
-                                  : _ifItensFiltradosIsNotEmpty(),
-                            );
-                          }),
-                        ),
-                      );
+                      return Observer(builder: (_) {
+                        return Expanded(
+                          child: controller.itensFiltrados.isEmpty
+                              ? _construirSeSemQuestoes(context)
+                              : _questaoWidget(),
+                        );
+                      });
                     } else
                       return Container(
                           padding: EdgeInsets.only(top: 100),
@@ -102,38 +96,38 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
     );
   }
 
-  /// Retorna uma lista com os componentes do item e um botão para confirmar a alternativa
-  /// escolhida.
-  List<Widget> _ifItensFiltradosIsNotEmpty() {
-    return <Widget>[
-      // Enunciado da questão.
-      Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: EnunciadoItem(controller),
-      ),
-
-      // Opções de resposta.
-      QuizAlternativas(controller),
-    ];
+  /// Retorna o [Widget] da questão a ser exibida.
+  QuestaoWidget _questaoWidget() {
+    return QuestaoWidget(
+      questao: controller.questao,
+      selecionavel: true,
+      alternativaSelecionada: controller.alternativaSelecionada,
+      alterandoAlternativa: (alternativa) =>
+          controller.alternativaSelecionada = alternativa?.sequencial,
+      rolavel: true,
+    );
   }
 
-  /// Retorna uma lista com um botão para exibir a página de filtros e um texto informando
+  /// Retorna um [Widget] com um botão para exibir a página de filtros e um texto informando
   /// que não foram encontrados itens a serem exibidos.
-  List<Widget> _ifItensFiltradosIsEmpty(BuildContext context) {
-    return <Widget>[
-      Text(
-        UIStrings.QUIZ_MSG_ITENS_NAO_ENCONTRADOS,
-        style: textStyle,
-        textAlign: TextAlign.justify,
-      ),
-      TextButton(
-        style: TextButton.styleFrom(
-          primary: tema.colorScheme.primary,
-          padding: const EdgeInsets.only(top: 40),
+  Widget _construirSeSemQuestoes(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text(
+          UIStrings.QUIZ_MSG_ITENS_NAO_ENCONTRADOS,
+          style: textStyle,
+          textAlign: TextAlign.justify,
         ),
-        child: const Text(UIStrings.QUIZ_TEXTO_BOTAO_FILTRAR),
-        onPressed: () => controller.onTapFiltrar(context),
-      )
-    ];
+        TextButton(
+          style: TextButton.styleFrom(
+            primary: tema.colorScheme.primary,
+            padding: const EdgeInsets.only(top: 40),
+          ),
+          child: const Text(UIStrings.QUIZ_TEXTO_BOTAO_FILTRAR),
+          onPressed: () => controller.onTapFiltrar(context),
+        )
+      ],
+    );
   }
 }
+
