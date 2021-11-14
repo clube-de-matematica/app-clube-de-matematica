@@ -12,21 +12,21 @@ class KaTeX extends StatelessWidget {
   /// The delimiter to be used for Display (centered, "important") LaTeX
   final String displayDelimiter;
 
-  ////////////////SAMY/////////////////
-  ///Estilo do texto.
+  ////////////////ALTERADO/////////////////
+  /// Estilo do texto.
   final TextStyle? style;
 
   final List<InlineSpan> _blocosDoTexto = <InlineSpan>[];
 
-  ///Se `true`, indica que [laTeXCode] contém texto LaTex.
+  /// Se `true`, indica que [laTeXCode] contém texto LaTex.
   late final bool _temLaTex;
 
-  ///Uma lista com as partes de [laTeXCode].
+  /// Uma lista com as partes de [laTeXCode].
   List<InlineSpan> get blocosDoTexto => _blocosDoTexto;
 
-  ///Se `true`, indica que [laTeXCode] contém texto LaTex.
+  /// Se `true`, indica que [laTeXCode] contém texto LaTex.
   bool get temLaTex => _temLaTex;
-  ////////////////SAMY/////////////////
+  ////////////////ALTERADO/////////////////
 
   KaTeX({
     Key? key,

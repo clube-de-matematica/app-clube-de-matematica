@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../modules/quiz/pages/quiz/widgets/katex_flutter.dart';
 import '../../modules/quiz/shared/models/alternativa_questao_model.dart';
 import '../../modules/quiz/shared/models/imagem_questao_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
 import '../theme/appTheme.dart';
 import '../utils/strings_db.dart';
 import 'appShimmer.dart';
+import 'katex_flutter.dart';
 
 /// Se [selecionavel] for `false`, [alterandoAlternativa] e [alternativaSelecionada]
 /// serão ignorados.
@@ -21,6 +21,7 @@ class QuestaoWidget extends StatelessWidget {
     this.alternativaSelecionada,
     this.alterandoAlternativa,
     this.rolavel = true,
+    this.padding = const EdgeInsets.symmetric(vertical: 8.0),
   })  : assert(!(!selecionavel &&
             (alternativaSelecionada != null || alterandoAlternativa != null))),
         super(key: key);
@@ -37,41 +38,36 @@ class QuestaoWidget extends StatelessWidget {
   final void Function(Alternativa?)? alterandoAlternativa;
 
   final bool rolavel;
+  final EdgeInsetsGeometry padding;
 
-  /// Retorna uma lista com os componentes do item e um botão para confirmar a alternativa
-  /// escolhida.
-  List<Widget> _children() {
-    return <Widget>[
-      // Enunciado da questão.
-      Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: _Enunciado(questao),
-      ),
+  Widget _corpo() {
+    return Padding(
+      padding: padding,
+      child: Column(children: [
+        // Enunciado da questão.
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: _Enunciado(questao),
+        ),
 
-      // Opções de resposta.
-      _Alternativas(
-        alternativas: questao.alternativas,
-        alternativaSelecionada: alternativaSelecionada,
-        alterando: alterandoAlternativa,
-      ),
-    ];
+        // Opções de resposta.
+        _Alternativas(
+          alternativas: questao.alternativas,
+          alternativaSelecionada: alternativaSelecionada,
+          alterando: alterandoAlternativa,
+        ),
+      ]),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     if (rolavel) {
       return SingleChildScrollView(
-        padding: const EdgeInsets.only(top: 8, bottom: 72),
-        child: Observer(builder: (_) {
-          return Column(
-            children: _children(),
-          );
-        }),
+        child: _corpo(),
       );
     }
-    return Column(
-      children: _children(),
-    );
+    return _corpo();
   }
 }
 
@@ -129,16 +125,16 @@ class _Enunciado extends StatelessWidget {
       else if (texto == DbConst.kDbStringImagemNaoDestacada) {
         textAlign = TextAlign.start;
         blocosDeTexto.add(
-
-            // Estrutura que conterá a imagem.
-            WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: Container(
-                  //height: 24,
-                  //margin: const EdgeInsets.only(top: 4, bottom: 4),
-                  child:
-                      _ComponenteImagem(questao.imagensEnunciado[contador]),
-                )));
+          // Estrutura que conterá a imagem.
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Container(
+              //height: 24,
+              //margin: const EdgeInsets.only(top: 4, bottom: 4),
+              child: _ComponenteImagem(questao.imagensEnunciado[contador]),
+            ),
+          ),
+        );
         contador++;
       }
 

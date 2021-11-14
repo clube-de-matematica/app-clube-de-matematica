@@ -12,7 +12,7 @@ import '../../shared/utils/ui_strings.dart';
 import 'quiz_controller.dart';
 import 'widgets/quiz_appbar.dart';
 import 'widgets/quiz_bar_opcoes_item.dart';
-import 'widgets/quiz_bottom_bar.dart';
+import '../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 
 /// Esta é a página de exibição de cada item a ser resolvido.
 class QuizPage extends StatefulWidget {
@@ -69,7 +69,14 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                   }),
             ],
           )),
-      bottomNavigationBar: QuizBottomBar(controller),
+      bottomNavigationBar: Observer(builder: (_) {
+        return BarraIferiorAteriorProximo(
+          ativarVoltar: controller.podeVoltar,
+          ativarProximo: controller.podeAvancar,
+          acionarVoltar: controller.voltar,
+          acionarProximo: controller.avancar,
+        );
+      }),
       floatingActionButton: Observer(builder: (_) {
         final ativo = controller.podeConfirmar;
         return !ativo
@@ -130,4 +137,3 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
     );
   }
 }
-
