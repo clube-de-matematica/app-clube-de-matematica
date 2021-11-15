@@ -5,12 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../../navigation.dart';
+import '../../../../shared/repositories/questoes/imagem_questao_repository.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
 import '../../shared/models/imagem_questao_model.dart';
 import '../../shared/models/opcoesQuestao.dart';
 import '../../shared/models/questao_model.dart';
-import '../../shared/repositories/imagem_questao_repository.dart';
 import '../../shared/utils/assets_quiz.dart';
 
 part 'quiz_controller.g.dart';

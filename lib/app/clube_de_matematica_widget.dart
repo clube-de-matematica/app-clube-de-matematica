@@ -18,10 +18,10 @@ class ClubeDeMatematicaWidget extends StatelessWidget {
       title: APP_NOME,
       theme: AppTheme.instance.temaClaro,
       //TODO: alterar quando o erro de autenticação do supabase for corrigido
-      initialRoute: //RoutePage.criarAtividade.name,
-      Modular.get<IAuthRepository>().logged
+      initialRoute: RoutePage.criarAtividade.name,
+      /* Modular.get<IAuthRepository>().logged
           ? RouteModule.quiz.name
-          : RouteModule.login.name,
+          : RouteModule.login.name, */
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

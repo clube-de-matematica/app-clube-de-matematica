@@ -55,6 +55,7 @@ class QuestaoWidget extends StatelessWidget {
           alternativas: questao.alternativas,
           alternativaSelecionada: alternativaSelecionada,
           alterando: alterandoAlternativa,
+          selecionavel: selecionavel,
         ),
       ]),
     );

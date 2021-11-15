@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import '../../../../shared/models/debug.dart';
-import '../../../../shared/repositories/interface_db_repository.dart';
-import '../../../../shared/utils/strings_db.dart';
-import '../models/assunto_model.dart';
+import '../../../modules/quiz/shared/models/assunto_model.dart';
+import '../../models/debug.dart';
+import '../../utils/strings_db.dart';
+import '../interface_db_repository.dart';
 
 ///Responsável por intermediar a relação entre o aplicativo e o banco de dados no que se
 ///refere aos assuntos.

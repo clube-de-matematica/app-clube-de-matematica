@@ -10,8 +10,10 @@ class BarraIferiorAteriorProximo extends BottomAppBar {
     required bool ativarProximo,
     required VoidCallback acionarVoltar,
     required VoidCallback acionarProximo,
+    NotchedShape? shape,
   }) : super(
           key: key,
+          shape: shape,
           child: _Child(
             ativarVoltar: ativarVoltar,
             ativarProximo: ativarProximo,

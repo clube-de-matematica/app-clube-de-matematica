@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../shared/repositories/local_storage_repository.dart';
-import '../models/imagem_questao_model.dart';
+import '../../../modules/quiz/shared/models/imagem_questao_model.dart';
+import '../local_storage_repository.dart';
 
 part 'imagem_questao_repository.g.dart';
 

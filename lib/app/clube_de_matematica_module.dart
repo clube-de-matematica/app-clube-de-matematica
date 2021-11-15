@@ -1,5 +1,3 @@
-import 'package:clubedematematica/app/navigation.dart';
-import 'package:clubedematematica/app/shared/repositories/interface_db_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -12,9 +10,13 @@ import 'modules/login/login_module.dart';
 import 'modules/perfil/models/userapp.dart';
 import 'modules/perfil/perfil_module.dart';
 import 'modules/quiz/quiz_module.dart';
+import 'navigation.dart';
 import 'shared/repositories/interface_auth_repository.dart';
+import 'shared/repositories/interface_db_repository.dart';
+import 'shared/repositories/questoes/assuntos_repository.dart';
+import 'shared/repositories/questoes/imagem_questao_repository.dart';
+import 'shared/repositories/questoes/questoes_repository.dart';
 import 'shared/repositories/supabase/auth_supabase_repository.dart';
-import 'shared/repositories/supabase/supabase_db_repository.dart';
 
 class ClubeDeMatematicaModule extends Module {
   /// Rota relativa.
@@ -50,6 +52,12 @@ class ClubeDeMatematicaModule extends Module {
               i.get<MockDbRepository>(),
               i.get<UserApp>(),
             )),
+        Bind.lazySingleton((i) => QuestoesRepository(
+              i.get<IDbRepository>(),
+              i.get<AssuntosRepository>(),
+            )),
+        Bind.lazySingleton((i) => AssuntosRepository(i.get<IDbRepository>())),
+        Bind.lazySingleton((i) => ImagemQuestaoRepository()),
 
         //Supabase
         Bind((_) => Supabase.instance),

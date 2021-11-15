@@ -1,7 +1,7 @@
 import 'package:mobx/mobx.dart';
 
+import '../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../quiz/shared/models/questao_model.dart';
-import '../../../quiz/shared/repositories/questoes_repository.dart';
 import 'opcao_filtro_model.dart';
 
 part 'filtros_model.g.dart';

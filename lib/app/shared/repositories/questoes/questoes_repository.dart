@@ -1,9 +1,9 @@
 import 'package:mobx/mobx.dart';
 
-import '../../../../shared/models/debug.dart';
-import '../../../../shared/repositories/interface_db_repository.dart';
-import '../../../../shared/utils/strings_db.dart';
-import '../models/questao_model.dart';
+import '../../../modules/quiz/shared/models/questao_model.dart';
+import '../../models/debug.dart';
+import '../../utils/strings_db.dart';
+import '../interface_db_repository.dart';
 import 'assuntos_repository.dart';
 
 part 'questoes_repository.g.dart';
