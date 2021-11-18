@@ -9,6 +9,13 @@ import 'filtro_tipos_controller.dart';
 
 ///Esta é a página onde são listadas os tipos de filtro disponíveis: ano, assunto, nível, etc.
 class FiltroTiposPage extends StatefulWidget {
+  const FiltroTiposPage({
+    Key? key,
+    required this.filtro,
+  }) : super(key: key);
+
+  final Filtros filtro;
+
   @override
   _FiltroTiposPageState createState() => _FiltroTiposPageState();
 }
@@ -17,8 +24,12 @@ class FiltroTiposPage extends StatefulWidget {
 ///[FiltroTiposController] disponível em um dos módulos da hierarquia (quando houver mais de
 ///um). A vantagem de usar [ModularState] é que automáticamente será feito o `dispose` de
 ///[controller] junto com o de [_FiltroTiposPageState].
-class _FiltroTiposPageState
-    extends ModularState<FiltroTiposPage, FiltroTiposController> {
+class _FiltroTiposPageState extends State<FiltroTiposPage> {
+  late final controller = FiltroTiposController(
+    filtrosAplicados: widget.filtro,
+    filtrosTemp: Filtros.from(widget.filtro),
+  );
+
   List<TiposFiltro> get tipos => controller.tiposFiltroInOrder;
 
   @override

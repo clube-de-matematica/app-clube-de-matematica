@@ -65,12 +65,28 @@ abstract class _FiltrosBase with Store {
   }
 
   /// Adiciona [opcao] ao filtro correspondente.
+  /// 
+  /// **ATENÇÃO:** a propriedade [opcao.isSelected] não será atualizada.
   @action
   void add(OpcaoFiltro opcao) => allFilters[opcao.tipo]!.add(opcao);
 
   /// Remove [opcao] do filtro correspondente.
+  /// 
+  /// **ATENÇÃO:** a propriedade [opcao.isSelected] não será atualizada.
   @action
   void remove(OpcaoFiltro opcao) => allFilters[opcao.tipo]!.remove(opcao);
+
+  /// Limpa os filtros selecionados correspondentes a [tipo].
+  /// Se [tipo] for `null`, todos os filtros serão excluídos.
+  /// 
+  /// **ATENÇÃO:** a propriedade [OpcaoFiltro.isSelected] de cada elemento do filtro não 
+  /// será atualizada.
+  @action
+  void limpar([TiposFiltro? tipo]) {
+    allFilters.forEach((_tipo, opcoes) {
+      if (tipo == null || tipo == _tipo) opcoes.clear();
+    });
+  }
 
   /// Atribui os valores de [anos], [assuntos] e [niveis] em [other] a essa intância.
   @action

@@ -61,7 +61,7 @@ class PerfilController {
     await auth.signOut();
     /* Modular.to.pushNamedAndRemoveUntil(
         LoginModule.kAbsoluteRouteLoginPage, (_) => false); */
-    Navigation.showPage(context, RoutePage.login);
+    Navegacao.abrirPagina(context, RotaPagina.login);
   }
 
   /// Entrar com outra conta do Google.
@@ -70,7 +70,7 @@ class PerfilController {
     if (result != StatusSignIn.success) {
       /* Modular.to.pushNamedAndRemoveUntil(
           LoginModule.kAbsoluteRouteLoginPage, (_) => false); */
-      Navigation.showPage(context, RoutePage.login);
+      Navegacao.abrirPagina(context, RotaPagina.login);
     }
     return result;
   }
@@ -112,10 +112,10 @@ class PerfilController {
       } else {
         navigatorState.pushNamedAndRemoveUntil(quizRoute, (route) => false);
       } */
-      if (Navigation.previousPage(context) != null) {
+      if (Navegacao.paginaAnterior(context) != null) {
         Navigator.of(context).pop();
       } else {
-        Navigation.showPage(context, RoutePage.quiz);
+        Navegacao.abrirPagina(context, RotaPagina.quiz);
       }
       //navigatorState.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Teste()), (route) => false);
     }

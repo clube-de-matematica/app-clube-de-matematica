@@ -24,7 +24,7 @@ import 'shared/models/debug.dart';
 import 'shared/models/exceptions/my_exception.dart';
 
 /// Enumeração para as rotas dos módulos.
-enum RouteModule {
+enum RotaModulo {
   /// Representa a rota para o módulo [ClubeDeMatematicaModule].
   clubeDeMatematica,
 
@@ -47,29 +47,29 @@ enum RouteModule {
   atividades,
 }
 
-extension RouteModuleExtension on RouteModule {
-  String get name {
+extension ExtensaoRotaModulo on RotaModulo {
+  String get nome {
     switch (this) {
-      case RouteModule.clubeDeMatematica:
+      case RotaModulo.clubeDeMatematica:
         return ClubeDeMatematicaModule.kAbsoluteRouteModule;
-      case RouteModule.quiz:
+      case RotaModulo.quiz:
         return QuizModule.kAbsoluteRouteModule;
-      case RouteModule.filtros:
+      case RotaModulo.filtros:
         return FiltrosModule.kAbsoluteRouteModule;
-      case RouteModule.login:
+      case RotaModulo.login:
         return LoginModule.kAbsoluteRouteModule;
-      case RouteModule.perfil:
+      case RotaModulo.perfil:
         return PerfilModule.kAbsoluteRouteModule;
-      case RouteModule.clubes:
+      case RotaModulo.clubes:
         return ClubesModule.kAbsoluteRouteModule;
-      case RouteModule.atividades:
+      case RotaModulo.atividades:
         return AtividadesModule.kAbsoluteRouteModule;
     }
   }
 }
 
 /// Enumeração para as rotas das páginas.
-enum RoutePage {
+enum RotaPagina {
   /// Representa a rota para a página [QuizPage].
   quiz,
 
@@ -107,222 +107,222 @@ enum RoutePage {
   editarAtividade,
 }
 
-extension RoutePageExtension on RoutePage {
-  String get name {
+extension ExtensaoRotaPagina on RotaPagina {
+  String get nome {
     switch (this) {
-      case RoutePage.quiz:
+      case RotaPagina.quiz:
         return QuizModule.kAbsoluteRouteQuizPage;
-      case RoutePage.filtrosTipos:
+      case RotaPagina.filtrosTipos:
         return FiltrosModule.kAbsoluteRouteFiltroTiposPage;
-      case RoutePage.filtrosOpcoes:
+      case RotaPagina.filtrosOpcoes:
         return FiltrosModule.kAbsoluteRouteFiltroOpcoesPage;
-      case RoutePage.login:
+      case RotaPagina.login:
         return LoginModule.kAbsoluteRouteLoginPage;
-      case RoutePage.perfil:
+      case RotaPagina.perfil:
         return PerfilModule.kAbsoluteRoutePerfilPage;
-      case RoutePage.homeClubes:
+      case RotaPagina.homeClubes:
         return ClubesModule.kAbsoluteRouteHomePage;
-      case RoutePage.adicionarClube:
+      case RotaPagina.adicionarClube:
         return ClubesModule.kAbsoluteRouteCriarPage;
-      case RoutePage.editarClube:
+      case RotaPagina.editarClube:
         return ClubesModule.kAbsoluteRouteEditarPage;
-      case RoutePage.atividade:
+      case RotaPagina.atividade:
         return AtividadesModule.kAbsoluteRouteAtividadePage;
-      case RoutePage.criarAtividade:
+      case RotaPagina.criarAtividade:
         return AtividadesModule.kAbsoluteRouteCriarPage;
-      case RoutePage.editarAtividade:
+      case RotaPagina.editarAtividade:
         return AtividadesModule.kAbsoluteRouteEditarPage;
-      case RoutePage.clube:
+      case RotaPagina.clube:
         throw MyException(
-            'RoutePage.clube não possui um nome estático, pois representa uma rota dinâmica.');
+            'RotaPagina.clube não possui um nome estático, pois representa uma rota dinâmica.');
     }
   }
 
-  /// Verdadeiro para os valores de [RoutePage] que representam rotas dinamicas.
-  bool get isDynamic {
+  /// Verdadeiro para os valores de [RotaPagina] que representam rotas dinamicas.
+  bool get dinamica {
     switch (this) {
-      case RoutePage.quiz:
-      case RoutePage.filtrosTipos:
-      case RoutePage.filtrosOpcoes:
-      case RoutePage.login:
-      case RoutePage.perfil:
-      case RoutePage.homeClubes:
-      case RoutePage.adicionarClube:
-      case RoutePage.editarClube:
-      case RoutePage.atividade:
-      case RoutePage.criarAtividade:
-      case RoutePage.editarAtividade:
+      case RotaPagina.quiz:
+      case RotaPagina.filtrosTipos:
+      case RotaPagina.filtrosOpcoes:
+      case RotaPagina.login:
+      case RotaPagina.perfil:
+      case RotaPagina.homeClubes:
+      case RotaPagina.adicionarClube:
+      case RotaPagina.editarClube:
+      case RotaPagina.atividade:
+      case RotaPagina.criarAtividade:
+      case RotaPagina.editarAtividade:
         return false;
-      case RoutePage.clube:
+      case RotaPagina.clube:
         return true;
     }
   }
 
-  /// Falso para os valores de [RoutePage] que representam páginas que devem ser fechadas
+  /// Falso para os valores de [RotaPagina] que representam páginas que devem ser fechadas
   /// sempre que uma nova página for aberta.
-  bool get isStackable {
+  bool get empilhavel {
     switch (this) {
-      case RoutePage.quiz:
-      case RoutePage.filtrosTipos:
-      case RoutePage.homeClubes:
-      case RoutePage.clube:
-      case RoutePage.atividade:
+      case RotaPagina.quiz:
+      case RotaPagina.filtrosTipos:
+      case RotaPagina.homeClubes:
+      case RotaPagina.clube:
+      case RotaPagina.atividade:
+      case RotaPagina.criarAtividade:
         return true;
-      case RoutePage.filtrosOpcoes:
-      case RoutePage.login:
-      case RoutePage.perfil:
-      case RoutePage.adicionarClube:
-      case RoutePage.editarClube:
-      case RoutePage.criarAtividade:
-      case RoutePage.editarAtividade:
+      case RotaPagina.filtrosOpcoes:
+      case RotaPagina.login:
+      case RotaPagina.perfil:
+      case RotaPagina.adicionarClube:
+      case RotaPagina.editarClube:
+      case RotaPagina.editarAtividade:
         return false;
     }
   }
 }
 
-abstract class Navigation {
+abstract class Navegacao {
   /// Lista com os nomes das páginas empilhadas.
-  static List<String?> pages(BuildContext context) {
-    return Navigator.of(context).widget.pages.map((page) {
-      String? name;
+  static List<String?> paginas(BuildContext context) {
+    return Navigator.of(context).widget.pages.map((pagina) {
+      String? nome;
       //TODO: Incluído após uma atualização do Modular.
-      final list = page.name?.split('@');
+      final list = pagina.name?.split('@');
       if (list != null) {
-        final nameTemp = list[0];
-        name = nameTemp.replaceFirst('/', '', nameTemp.length - 1);
+        final nomeTemp = list[0];
+        nome = nomeTemp.replaceFirst('/', '', nomeTemp.length - 1);
       }
-      return name;
+      return nome;
     }).toList();
   }
 
   /// Penúltima página da pilha.
-  static String? previousPage(BuildContext context) {
-    final _pages = pages(context);
-    return _pages.length < 2 ? null : _pages[_pages.length - 2];
+  static String? paginaAnterior(BuildContext context) {
+    final _paginas = paginas(context);
+    return _paginas.length < 2 ? null : _paginas[_paginas.length - 2];
   }
 
   /// Última página da pilha.
-  static String? currentPage(BuildContext context) {
-    final _pages = pages(context);
-    return _pages.isEmpty ? null : _pages[_pages.length - 1];
+  static String? paginaAtual(BuildContext context) {
+    final _paginas = paginas(context);
+    return _paginas.isEmpty ? null : _paginas[_paginas.length - 1];
   }
 
-  static bool Function(Route<dynamic>) _routeWithName(String name) {
-    return (Route route) {
-      if (ModalRoute.withName(name)(route)) return true;
-      return ModalRoute.withName('$name/')(route);
+  static bool Function(Route<dynamic>) _haRotaComNome(String nome) {
+    return (Route rota) {
+      if (ModalRoute.withName(nome)(rota)) return true;
+      return ModalRoute.withName('$nome/')(rota);
     };
   }
 
   /// Abre a página correspondente aos parâmetros dados.
-  static showPage<T extends Object?>(
+  static abrirPagina<T extends Object?>(
     BuildContext context,
-    RoutePage route, {
-    String? routeName,
-    Object? arguments,
-    T? result,
+    RotaPagina rota, {
+    String? nomeRota,
+    Object? argumentos,
+    T? retorno,
   }) {
-    assert(!(route.isDynamic && routeName == null));
+    assert(!(rota.dinamica && nomeRota == null));
 
-    if (!route.isDynamic) routeName = route.name;
-    final navigator = Navigator.of(context);
-    final pages = Navigation.pages(context);
-    final previousPage = Navigation.previousPage(context);
-    final currentPage = Navigation.currentPage(context);
-    final newPage = routeName!;
-    final currentPageIsClube =
-        currentPage?.startsWith('${RoutePage.homeClubes.name}/') ?? false;
+    if (!rota.dinamica) nomeRota = rota.nome;
+    final navegador = Navigator.of(context);
+    final paginas = Navegacao.paginas(context);
+    final paginaAnterior = Navegacao.paginaAnterior(context);
+    final paginaAtual = Navegacao.paginaAtual(context);
+    final novaPagina = nomeRota!;
+    final paginaAtualEClube =
+        paginaAtual?.startsWith('${RotaPagina.homeClubes.nome}/') ?? false;
     
-    if (newPage != currentPage) {
-      if (newPage == RoutePage.login.name) {
-        return navigator.pushNamedAndRemoveUntil(
-          newPage,
+    if (novaPagina != paginaAtual) {
+      if (novaPagina == RotaPagina.login.nome) {
+        return navegador.pushNamedAndRemoveUntil(
+          novaPagina,
           (_) => false,
-          arguments: arguments,
+          arguments: argumentos,
         );
       }
       // Se a nova página está na pilha e é a anterior.
-      if (newPage == previousPage) {
-        return navigator.pop(result);
+      if (novaPagina == paginaAnterior) {
+        return navegador.pop(retorno);
       }
       // Se a nova página está na pilha mas não é a anterior.
-      else if (pages.contains(newPage)) {
-        return navigator.popUntil(_routeWithName(newPage));
+      else if (paginas.contains(novaPagina)) {
+        return navegador.popUntil(_haRotaComNome(novaPagina));
       }
       //
-      else if (currentPage == RoutePage.quiz.name) {
-        return navigator.pushNamed(newPage, arguments: arguments);
+      else if (paginaAtual == RotaPagina.quiz.nome) {
+        return navegador.pushNamed(novaPagina, arguments: argumentos);
       }
       // Se a página atual é não empilhável (não deve ser posta sob outra).
-      else if (currentPage != null &&
-          !(_getRoutePage(currentPage)?.isStackable ?? true)) {
-        return navigator.pushReplacementNamed(newPage,
-            arguments: arguments, result: result);
+      else if (paginaAtual != null &&
+          !(_buscarRotaPagina(paginaAtual)?.empilhavel ?? true)) {
+        return navegador.pushReplacementNamed(novaPagina,
+            arguments: argumentos, result: retorno);
       }
       //
       else {
-        switch (route) {
-          case RoutePage.quiz:
+        switch (rota) {
+          case RotaPagina.quiz:
             // Se a nova página é a de questões (página do quiz) e não está na pilha.
-            return navigator.pushNamedAndRemoveUntil(
-              newPage,
+            return navegador.pushNamedAndRemoveUntil(
+              novaPagina,
               (_) => false,
-              arguments: arguments,
+              arguments: argumentos,
             );
-          case RoutePage.filtrosTipos:
-            return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.filtrosOpcoes:
-            return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.perfil:
-            if (currentPage == RoutePage.login.name) {
-              return navigator.pushReplacementNamed(newPage,
-                  arguments: arguments, result: result);
+          case RotaPagina.filtrosTipos:
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
+          case RotaPagina.filtrosOpcoes:
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
+          case RotaPagina.perfil:
+            if (paginaAtual == RotaPagina.login.nome) {
+              return navegador.pushReplacementNamed(novaPagina,
+                  arguments: argumentos, result: retorno);
             } else {
-              return navigator.pushNamed(newPage, arguments: arguments);
+              return navegador.pushNamed(novaPagina, arguments: argumentos);
             }
-          case RoutePage.homeClubes:
-            if (currentPageIsClube) {
+          case RotaPagina.homeClubes:
+            if (paginaAtualEClube) {
               // Se a página atual for de um clube.
-              return navigator.pushReplacementNamed(newPage,
-                  arguments: arguments, result: result);
+              return navegador.pushReplacementNamed(novaPagina,
+                  arguments: argumentos, result: retorno);
             }
-            return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.clube:
-            if (currentPageIsClube) {
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
+          case RotaPagina.clube:
+            if (paginaAtualEClube) {
               // Se a página atual for de um clube.
-              return navigator.pushReplacementNamed(newPage,
-                  arguments: arguments, result: result);
+              return navegador.pushReplacementNamed(novaPagina,
+                  arguments: argumentos, result: retorno);
             }
-            return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.adicionarClube:
-            return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.editarClube:
-            return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.atividade:
-            return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.criarAtividade:
-            return navigator.pushNamed(newPage, arguments: arguments);
-          case RoutePage.editarAtividade:
-            return navigator.pushNamed(newPage, arguments: arguments);
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
+          case RotaPagina.adicionarClube:
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
+          case RotaPagina.editarClube:
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
+          case RotaPagina.atividade:
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
+          case RotaPagina.criarAtividade:
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
+          case RotaPagina.editarAtividade:
+            return navegador.pushNamed(novaPagina, arguments: argumentos);
           default:
             // TODO
-            throw UnimplementedError('A rota $newPage não foi implementada.');
+            throw UnimplementedError('A rota $novaPagina não foi implementada.');
         }
       }
     }
   }
 
-  /// Retorna o valor de [RoutePage] correspondente a [name].
+  /// Retorna o valor de [RotaPagina] correspondente a [nome].
   /// Se nenhum valor correspondente for encontrado, retorna `null`.
-  static RoutePage? _getRoutePage(String name) {
+  static RotaPagina? _buscarRotaPagina(String nome) {
     try {
-      return RoutePage.values.where((e) => !e.isDynamic).firstWhere(
-        (e) => e.name == name,
+      return RotaPagina.values.where((e) => !e.dinamica).firstWhere(
+        (e) => e.nome == nome,
         orElse: () {
-          if (name.startsWith('${RoutePage.homeClubes.name}/')) {
-            return RoutePage.clube;
+          if (nome.startsWith('${RotaPagina.homeClubes.nome}/')) {
+            return RotaPagina.clube;
           }
-          throw 'Não foi encontrado um RoutePage correspondente à rota "$name".';
+          throw 'Não foi encontrado um RoutePage correspondente à rota "$nome".';
         },
       );
     } catch (e) {

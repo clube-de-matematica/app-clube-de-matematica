@@ -1,18 +1,18 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/utils/ui_strings.dart' as uiStringsApp;
+import '../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../shared/widgets/questao_widget.dart';
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
+import '../../../filtros/shared/widgets/feedback_filtragem_vazia.dart';
+import '../../shared/models/questao_model.dart';
 import '../../shared/utils/ui_strings.dart';
 import 'quiz_controller.dart';
 import 'widgets/quiz_appbar.dart';
 import 'widgets/quiz_bar_opcoes_item.dart';
-import '../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 
 /// Esta é a página de exibição de cada item a ser resolvido.
 class QuizPage extends StatefulWidget {
@@ -37,38 +37,53 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
       page: AppDrawerPage.quiz,
       appBar: QuizAppBar(controller),
       body: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: Column(
-            children: <Widget>[
-              // Contém um indicador do número de questões à esquerda e, à direita,
-              // um botão para exibir as opções disponíveis para a questão.
-              QuizBarOpcoesItem(controller),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        child: FutureBuilder(
+          future: controller.inicializandoRepositorioQuestoes,
+          builder: (_, snapshot) {
+            // Antes do futuro ser concluído.
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Center(child: const CircularProgressIndicator());
+            }
+            // Quando o futuro for concluído com erro.
+            if (snapshot.hasError) {
+              return Expanded(
+                child: Center(
+                  child: Text(
+                    uiStringsApp.UIStrings.APP_MSG_ERRO_INESPERADO,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontSize: 24.0),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+            // Quando o futuro for concluído sem erro.
+            return Column(
+              children: <Widget>[
+                // Contém um indicador do número de questões à esquerda e, à direita,
+                // um botão para exibir as opções disponíveis para a questão.
+                QuizBarOpcoesItem(controller),
 
-              // Linha divisória.
-              const Divider(height: double.minPositive),
+                // Linha divisória.
+                const Divider(height: double.minPositive),
 
-              // O `FutureBuilder` aguardará até que os itens sejam carregados.
-              FutureBuilder(
-                  future: controller.initialized,
-                  builder: (_, snapshot) {
-                    if (snapshot.hasError) {
-                      return const Text(
-                          uiStringsApp.UIStrings.APP_MSG_ERRO_INESPERADO);
-                    } else if (snapshot.hasData) {
-                      return Observer(builder: (_) {
-                        return Expanded(
-                          child: controller.itensFiltrados.isEmpty
-                              ? _construirSeSemQuestoes(context)
-                              : _questaoWidget(),
-                        );
-                      });
-                    } else
-                      return Container(
-                          padding: EdgeInsets.only(top: 100),
-                          child: const CircularProgressIndicator());
-                  }),
-            ],
-          )),
+                // Corpo
+                Observer(builder: (_) {
+                  return Expanded(
+                    child: controller.questao == null
+                        ? FeedbackFiltragemVazia(
+                            onPressed: () => controller.abrirPaginaFiltros(context))
+                        : _questaoWidget(controller.questao!),
+                  );
+                }),
+              ],
+            );
+          },
+        ),
+      ),
       bottomNavigationBar: Observer(builder: (_) {
         return BarraIferiorAteriorProximo(
           ativarVoltar: controller.podeVoltar,
@@ -104,36 +119,14 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
   }
 
   /// Retorna o [Widget] da questão a ser exibida.
-  QuestaoWidget _questaoWidget() {
+  QuestaoWidget _questaoWidget(Questao questao) {
     return QuestaoWidget(
-      questao: controller.questao,
+      questao: questao,
       selecionavel: true,
       alternativaSelecionada: controller.alternativaSelecionada,
       alterandoAlternativa: (alternativa) =>
           controller.alternativaSelecionada = alternativa?.sequencial,
       rolavel: true,
-    );
-  }
-
-  /// Retorna um [Widget] com um botão para exibir a página de filtros e um texto informando
-  /// que não foram encontrados itens a serem exibidos.
-  Widget _construirSeSemQuestoes(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text(
-          UIStrings.QUIZ_MSG_ITENS_NAO_ENCONTRADOS,
-          style: textStyle,
-          textAlign: TextAlign.justify,
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-            primary: tema.colorScheme.primary,
-            padding: const EdgeInsets.only(top: 40),
-          ),
-          child: const Text(UIStrings.QUIZ_TEXTO_BOTAO_FILTRAR),
-          onPressed: () => controller.onTapFiltrar(context),
-        )
-      ],
     );
   }
 }

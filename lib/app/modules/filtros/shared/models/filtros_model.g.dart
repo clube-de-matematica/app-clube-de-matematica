@@ -108,6 +108,17 @@ mixin _$Filtros on _FiltrosBase, Store {
   }
 
   @override
+  void limpar([TiposFiltro? tipo]) {
+    final _$actionInfo =
+        _$_FiltrosBaseActionController.startAction(name: '_FiltrosBase.limpar');
+    try {
+      return super.limpar(tipo);
+    } finally {
+      _$_FiltrosBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void aplicar(Filtros other) {
     final _$actionInfo = _$_FiltrosBaseActionController.startAction(
         name: '_FiltrosBase.aplicar');

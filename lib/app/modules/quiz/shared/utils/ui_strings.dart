@@ -22,8 +22,4 @@ abstract class UIStrings {
 
   /// Título da opção para abrir a página de fitros.
   static const QUIZ_OPCAO_ITEM_FILTRAR = "Filtrar";
-
-  /// Mensagem exibida quando a lista de itens filtrados está vazia.
-  static const QUIZ_MSG_ITENS_NAO_ENCONTRADOS =
-      "Nenhum item encontrado. Altere as condições de filtragem.";
 }

@@ -6,6 +6,7 @@ import '../../../../navigation.dart';
 import '../../shared/models/filtro_controller_model.dart';
 import '../../shared/models/filtros_model.dart';
 import '../../shared/utils/ui_strings.dart';
+import '../opcoes/filtro_opcoes_page.dart';
 
 part 'filtro_tipos_controller.g.dart';
 
@@ -13,12 +14,17 @@ class FiltroTiposController = _FiltroTiposControllerBase
     with _$FiltroTiposController;
 
 abstract class _FiltroTiposControllerBase extends FiltroController with Store {
-  //final Filtros _filtrosAplicados;
+  final Filtros _filtrosAplicados;
   final Filtros filtrosTemp;
 
-  _FiltroTiposControllerBase(
-      {required Filtros filtrosAplicados, required this.filtrosTemp})
-      : super(filtrosAplicados: filtrosAplicados, filtrosTemp: filtrosTemp);
+  _FiltroTiposControllerBase({
+    required Filtros filtrosAplicados,
+    required this.filtrosTemp,
+  })  : _filtrosAplicados = filtrosAplicados,
+        super(
+          filtrosAplicados: filtrosAplicados,
+          filtrosTemp: filtrosTemp,
+        );
 
   ///Ação a ser executada quando um item da lista de tipos é pressionado.
   void onTap(BuildContext context, TiposFiltro tipo) async {
@@ -29,13 +35,18 @@ abstract class _FiltroTiposControllerBase extends FiltroController with Store {
             arguments: tipo)) ??
         false;
     if (retorno) Modular.to.pop(true); */
-    final retorno = (await Navigation.showPage<bool>(
+    // A nova página fará as devidas alterações nos filtros passados no parâmetro. 
+    // Essa rota retornará verdadeito apenas se a ação de aplicar os filtros for acionada.
+    final Filtros? retorno = (await Navegacao.abrirPagina<Filtros>(
           context,
-          RoutePage.filtrosOpcoes,
-          arguments: tipo,
-        )) ??
-        false;
-    if (retorno) Modular.to.pop(true);
+          RotaPagina.filtrosOpcoes,
+          argumentos: ArgumentosFiltroOpcoesPage(
+            tipo: tipo,
+            filtrosAplicados: _filtrosAplicados,
+            filtrosTemp: filtrosTemp,
+          ),
+        ));
+    if (retorno != null) Modular.to.pop(retorno);
   }
 
   @override
@@ -59,7 +70,6 @@ abstract class _FiltroTiposControllerBase extends FiltroController with Store {
   @override
   @action
 
-  ///Limpa os filtros selecionados.
   void limpar() {
     ///`toList()` é usado para criar outro `Iterable` que não será afetado quando `opcao`
     ///for removodo de `element`, evitando que o `forEach` emita um erro de interação.

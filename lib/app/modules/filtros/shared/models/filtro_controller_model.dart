@@ -8,7 +8,7 @@ import 'opcao_filtro_model.dart';
 
 part 'filtro_controller_model.g.dart';
 
-///A superclasse para os controles das páginas de filtro.
+/// A superclasse para os controles das páginas de filtro.
 abstract class FiltroController = _FiltroControllerBase with _$FiltroController;
 
 abstract class _FiltroControllerBase with Store {
@@ -19,35 +19,35 @@ abstract class _FiltroControllerBase with Store {
       {required Filtros filtrosAplicados, required this.filtrosTemp})
       : this._filtrosAplicados = filtrosAplicados;
 
-  ///***************************************************************************************
-  ///Devem ser sobrescritos:
+  /// ***************************************************************************************
+  /// Devem ser sobrescritos:
   ///
-  ///Retorna a quantidade total de opções de filtro selecionadas.
+  /// Retorna a quantidade total de opções de filtro selecionadas.
   int get totalSelecinado;
 
-  ///Verifica se o estado do botão "Limpar" deve ser ativo.
-  ///Retorna `true` se houver filtros selecionados.
+  /// Verifica se o estado do botão "Limpar" deve ser ativo.
+  /// Retorna `true` se houver filtros selecionados.
   bool get ativarLimpar;
 
-  ///Retorna o título usado na `AppBar` das páginas de filtro.
+  /// Retorna o título usado na `AppBar` das páginas de filtro.
   String get tituloAppBar;
 
-  ///Limpa os filtros selecionados.
+  /// Limpa os filtros selecionados.
   void limpar();
 
   ///
-  ///***************************************************************************************
+  /// ***************************************************************************************
 
+
+  /// Retorna um [Map] com todos os filtros selecionados, inclusive os que ainda não foram
+  /// aplicados.
   @computed
-
-  ///Retorna um [Map] com todos os filtros selecionados, inclusive os que ainda não foram
-  ///aplicados.
   Map<TiposFiltro, Set<OpcaoFiltro>> get allFilters => filtrosTemp.allFilters;
 
-  @computed
 
-  ///Verifica se o estado do botão "Aplicar" deve ser ativo.
-  ///Retorna `true` se houver alteração nos filtros já aplicados.
+  /// Verifica se o estado do botão "Aplicar" deve ser ativo.
+  /// Retorna `true` se houver alteração nos filtros já aplicados.
+  @computed
   bool get ativarAplicar {
     for (TiposFiltro key in allFilters.keys) {
       if ((allFilters[key]!.isNotEmpty ||
@@ -60,7 +60,7 @@ abstract class _FiltroControllerBase with Store {
     return false;
   }
 
-  ///Retorna a string correspondente a [tipoFiltro].
+  /// Retorna a string correspondente a [tipoFiltro].
   String tiposFiltroToString(TiposFiltro tipoFiltro) {
     switch (tipoFiltro) {
       case TiposFiltro.assunto:
@@ -73,23 +73,23 @@ abstract class _FiltroControllerBase with Store {
     }
   }
 
-  ///Retorna uma lista com os valores de [TiposFiltro] classificados em ordem alfabética
-  ///de acordo com a string retornada por [tiposFiltroToString].
+  /// Retorna uma lista com os valores de [TiposFiltro] classificados em ordem alfabética
+  /// de acordo com a string retornada por [tiposFiltroToString].
   List<TiposFiltro> get tiposFiltroInOrder {
     final tipos = List<TiposFiltro>.from(TiposFiltro.values)
 
-      ///Reordenar.
-      ///`removeDiacritics` é usado para desconsiderar os acentos.
+      // Reordenar.
+      // `removeDiacritics` é usado para desconsiderar os acentos.
       ..sort((a, b) => removeDiacritics(tiposFiltroToString(a))
           .compareTo(removeDiacritics(tiposFiltroToString(b))));
     return tipos;
   }
 
-  @action
 
-  ///Aplica os filtros selecionados.
+  /// Aplica os filtros selecionados.
+  @action
   void aplicar() {
     _filtrosAplicados.aplicar(filtrosTemp);
-    Modular.to.pop(true);
+    Modular.to.pop(_filtrosAplicados);
   }
 }

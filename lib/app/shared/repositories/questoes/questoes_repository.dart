@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:mobx/mobx.dart';
 
 import '../../../modules/quiz/shared/models/questao_model.dart';
@@ -17,7 +19,9 @@ abstract class _QuestoesRepositoryBase with Store {
   final AssuntosRepository assuntosRepository;
 
   _QuestoesRepositoryBase(this.dbRepository, this.assuntosRepository) {
-    carregarQuestoes();
+    carregarQuestoes().whenComplete(() {
+      if (!_inicializando.isCompleted) _inicializando.complete();
+    });
   }
 
   /// Lista com as quetões já carregadas.
@@ -28,12 +32,24 @@ abstract class _QuestoesRepositoryBase with Store {
   @computed
   List<Questao> get questoes => _questoes;
 
-  /// Lista com as quetões já carregadas.
+  /// Um [Future] que será concluído após a primeira chamada de [carregarQuestoes].
+  /// Nunca será concluído com um erro.
+  Future<void> get inicializando => _inicializando.future;
+  final _inicializando = Completer<void>();
+
+  /// Lista assíncrona com as quetões já carregadas.
+  Future<List<Questao>> get questoesAsync => () async {
+        await inicializando;
+        return _questoes;
+      }();
+
+  /* 
   /// A [Reaction] `asyncWhen` é usada para esperar uma condição em um [Observable].
   /// Ficará ativa até que a condição seja satisfeita pela primeira vez.
   /// Após isso ela executa o seu método `dispose`.
   Future<List<Questao>> get questoesAsync =>
       asyncWhen((_) => _questoes.isNotEmpty).then((_) => _questoes);
+   */
 
   /// Adiciona um novo [Questao] a [questoes].
   @action
@@ -78,8 +94,7 @@ abstract class _QuestoesRepositoryBase with Store {
       if (!_existeQuestao(data[DbConst.kDbDataQuestaoKeyId])) {
         // Criar um `Questao` com base no `data` e incluir na lista de questões carregadas.
         // Não será emitido várias notificações, pois `carregarQuestoes` também é um `action`.
-        _addInQuestoes(
-            Questao.fromJson(data));
+        _addInQuestoes(Questao.fromJson(data));
       }
     }
     return _questoes;

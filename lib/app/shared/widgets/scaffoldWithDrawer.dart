@@ -75,19 +75,19 @@ class _AppDrawerState extends State<_AppDrawer> {
   /// Abre a página correspondente aos parâmetros dados.
   showPage<T extends Object?>(
     BuildContext context,
-    RoutePage route, {
+    RotaPagina route, {
     String? routeName,
     Object? arguments,
     T? result,
     bool popDrawer = true,
   }) {
     if (popDrawer) Navigator.of(context).pop();
-    return Navigation.showPage<T>(
+    return Navegacao.abrirPagina<T>(
       context,
       route,
-      routeName: routeName,
-      arguments: arguments,
-      result: result,
+      nomeRota: routeName,
+      argumentos: arguments,
+      retorno: result,
     );
   }
 
@@ -99,7 +99,7 @@ class _AppDrawerState extends State<_AppDrawer> {
           StatusSignIn.success;
     }
     if (result) {
-      showPage(context, RoutePage.perfil);
+      showPage(context, RotaPagina.perfil);
     }
   }
 
@@ -143,7 +143,7 @@ class _AppDrawerState extends State<_AppDrawer> {
             ListTile(
               title: Text('Clubes'),
               leading: const Icon(Icons.groups),
-              onTap: () => showPage(context, RoutePage.homeClubes),
+              onTap: () => showPage(context, RotaPagina.homeClubes),
             ),
           //if (widget.page == MyDrawerPage.clubes)
           for (var clube in clubes) clube,
@@ -152,7 +152,7 @@ class _AppDrawerState extends State<_AppDrawer> {
             ListTile(
               title: Text('Questões'),
               leading: const Icon(Icons.quiz_outlined),
-              onTap: () => showPage(context, RoutePage.quiz),
+              onTap: () => showPage(context, RotaPagina.quiz),
             ),
           ListTile(
             title: Text('Favoritos 3'),
@@ -221,8 +221,8 @@ class _AppDrawerState extends State<_AppDrawer> {
         onTap: () {
           showPage(
             context,
-            RoutePage.clube,
-            routeName: '${RoutePage.homeClubes.name}/${clube.id}',
+            RotaPagina.clube,
+            routeName: '${RotaPagina.homeClubes.nome}/${clube.id}',
             arguments: clube,
           );
         },

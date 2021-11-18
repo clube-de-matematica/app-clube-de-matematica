@@ -64,7 +64,7 @@ abstract class _LoginControllerBase with Store {
         Modular.to.pushNamedAndRemoveUntil(
             PerfilModule.kAbsoluteRoutePerfilPage, (_) => false);
       }); */
-      Navigation.showPage(context, RoutePage.perfil);
+      Navegacao.abrirPagina(context, RotaPagina.perfil);
     }
   }
 
@@ -81,7 +81,7 @@ abstract class _LoginControllerBase with Store {
     }
     if (result) {
       //Modular.to.pushReplacementNamed(QuizModule.kAbsoluteRouteQuizPage);
-      Navigation.showPage(context, RoutePage.quiz);
+      Navegacao.abrirPagina(context, RotaPagina.quiz);
     }
     _setIsLoading(false);
     _setSelectedMethod(Login.none);

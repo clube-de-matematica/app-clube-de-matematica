@@ -67,10 +67,10 @@ class ClubeDeMatematicaModule extends Module {
   //Lista de rotas.
   List<ModularRoute> get routes => [
         //ModuleRoute(Modular.initialRoute, module: LoginModule()),
-        ModuleRoute(RouteModule.login.name, module: LoginModule()),
-        ModuleRoute(RouteModule.perfil.name, module: PerfilModule()),
-        ModuleRoute(RouteModule.quiz.name, module: QuizModule()),
-        ModuleRoute(RouteModule.clubes.name, module: ClubesModule()),
+        ModuleRoute(RotaModulo.login.nome, module: LoginModule()),
+        ModuleRoute(RotaModulo.perfil.nome, module: PerfilModule()),
+        ModuleRoute(RotaModulo.quiz.nome, module: QuizModule()),
+        ModuleRoute(RotaModulo.clubes.nome, module: ClubesModule()),
         //WildcardRoute(child: (_, args) => Scaffold()),
       ];
 }

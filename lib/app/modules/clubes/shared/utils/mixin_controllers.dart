@@ -13,18 +13,18 @@ abstract class IClubeController {
 mixin IClubeControllerMixinShowPageEditar on IClubeController {
   /// Abre a página para editar as informações do [clube].
   void abrirPaginaEditarClube(BuildContext context, Clube clube) {
-    Navigation.showPage(context, RoutePage.editarClube, arguments: clube);
+    Navegacao.abrirPagina(context, RotaPagina.editarClube, argumentos: clube);
   }
 }
 
 mixin IClubeControllerMixinShowPageClube on IClubeController {
   /// Abre uma página para [clube].
   void abrirPaginaClube(BuildContext context, Clube clube) {
-    Navigation.showPage(
+    Navegacao.abrirPagina(
       context,
-      RoutePage.clube,
-      routeName: '${RoutePage.homeClubes.name}/${clube.id}',
-      arguments: clube,
+      RotaPagina.clube,
+      nomeRota: '${RotaPagina.homeClubes.nome}/${clube.id}',
+      argumentos: clube,
     );
   }
 }

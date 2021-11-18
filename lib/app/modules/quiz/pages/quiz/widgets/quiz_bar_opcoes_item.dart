@@ -16,8 +16,7 @@ class QuizBarOpcoesItem extends StatelessWidget {
 
   final QuizController controller;
 
-  TextStyle? get textStyle =>
-      AppTheme.instance.temaClaro.textTheme.bodyText2;
+  TextStyle? get textStyle => AppTheme.instance.temaClaro.textTheme.bodyText2;
 
   ///As opções do popup de opções do item.
   static const _popupMenuItens = <PopupMenuItem<OpcoesQuestao>>[
@@ -25,7 +24,7 @@ class QuizBarOpcoesItem extends StatelessWidget {
       value: OpcoesQuestao.filter,
       child: ListTile(
         leading: const Icon(
-          Icons.filter_list,
+          Icons.filter_alt,
           //color: Colors.white,
         ),
         title: const Text(UIStrings.QUIZ_OPCAO_ITEM_FILTRAR),
@@ -42,9 +41,9 @@ class QuizBarOpcoesItem extends StatelessWidget {
         Observer(builder: (_) {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            child: controller.itensFiltrados.isNotEmpty
+            child: controller.questoesFiltradas.isNotEmpty
                 ? Text(
-                    controller.textoContadorBarOpcoesItem,
+                    '${controller.indice + 1} de ${controller.questoesFiltradas.length}',
                     style: textStyle,
                   )
                 : const Text(""),

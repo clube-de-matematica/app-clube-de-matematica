@@ -57,7 +57,7 @@ abstract class _HomeClubesControllerBase extends IClubeController
 
   /// Criar ou participar de um clube.
   void addClube(BuildContext context) {
-    Navigation.showPage(context, RoutePage.adicionarClube);
+    Navegacao.abrirPagina(context, RotaPagina.adicionarClube);
   }
 
   /// Atualizar a lista de clubes do usuário do aplicativo.

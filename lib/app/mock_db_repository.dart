@@ -142,6 +142,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
 
   @override
   Future<DataCollection> getQuestoes() async {
+    await Future.delayed(const Duration(seconds: 5));
     return [
       {
         DbConst.kDbDataQuestaoKeyId: '2019PF1N1Q01',
@@ -260,6 +261,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
       } */
     ];
   }
+
 /* 
   @override
   Future<DataClube> enterClube(String accessCode, int idUser) {

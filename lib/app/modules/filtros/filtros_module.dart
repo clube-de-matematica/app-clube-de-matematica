@@ -3,9 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../navigation.dart';
 import '../quiz/quiz_module.dart';
 import 'pages/opcoes/filtro_opcoes_page.dart';
-import 'pages/tipos/filtro_tipos_controller.dart';
 import 'pages/tipos/filtro_tipos_page.dart';
-import 'shared/models/filtros_model.dart';
 
 ///Um submódulo de [QuizModule].
 class FiltrosModule extends Module {
@@ -14,7 +12,7 @@ class FiltrosModule extends Module {
 
   ///Rota absoluta.
   static final kAbsoluteRouteModule =
-      RouteModule.quiz.name + kRelativeRouteModule;
+      RotaModulo.quiz.nome + kRelativeRouteModule;
 
   ///Rota relativa.
   static const kRelativeRouteFiltroTiposPage = "";
@@ -32,12 +30,7 @@ class FiltrosModule extends Module {
 
   @override
   //Um Bind é uma injeção de dependência.
-  List<Bind> get binds => [
-        //Controles
-        Bind((i) => FiltroTiposController(
-            filtrosAplicados: i.get<Filtros>(),
-            filtrosTemp: Filtros.from(i.get<Filtros>()))),
-      ];
+  List<Bind> get binds => [];
 
   @override
   //Lista de rotas.
@@ -45,7 +38,7 @@ class FiltrosModule extends Module {
         //ChildRoute(Modular.initialRoute, child: (_, __) => FiltroTiposPage()),
         ChildRoute(
           kRelativeRouteFiltroTiposPage,
-          child: (_, __) => FiltroTiposPage(),
+          child: (_, args) => FiltroTiposPage(filtro: args.data),
         ),
         ChildRoute(
           kRelativeRouteFiltroOpcoesPage,

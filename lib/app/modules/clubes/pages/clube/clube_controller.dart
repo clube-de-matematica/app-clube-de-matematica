@@ -40,12 +40,12 @@ class ClubeController extends IClubeController
 
   /// Abre a página para criar uma nova atividade.
   void abrirPaginaCriarAtividade(BuildContext context) {
-    Navigation.showPage(context, RoutePage.criarAtividade, arguments: clube);
+    Navegacao.abrirPagina(context, RotaPagina.criarAtividade, argumentos: clube);
   }
 
   /// Abre a página para [atividade].
   void abrirPaginaAtividade(BuildContext context, Atividade atividade) {
-    Navigation.showPage(context, RoutePage.atividade, arguments: atividade);
+    Navegacao.abrirPagina(context, RotaPagina.atividade, argumentos: atividade);
   }
 
   @override

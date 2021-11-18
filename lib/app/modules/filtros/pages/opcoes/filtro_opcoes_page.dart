@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/utils/ui_strings.dart';
@@ -9,29 +8,40 @@ import '../../shared/models/opcao_filtro_model.dart';
 import '../../shared/widgets/expansion_tile_personalizado.dart';
 import '../../shared/widgets/filtro_listtile.dart';
 import '../../shared/widgets/filtro_page_model.dart';
-import '../tipos/filtro_tipos_controller.dart';
 import 'filtro_opcoes_controller.dart';
+
+@immutable
+class ArgumentosFiltroOpcoesPage {
+  const ArgumentosFiltroOpcoesPage({
+    required this.tipo,
+    required this.filtrosAplicados,
+    required this.filtrosTemp,
+  });
+  final TiposFiltro tipo;
+  final Filtros filtrosAplicados;
+  final Filtros filtrosTemp;
+}
 
 ///Esta é a página onde são listadas as opções disponíveis para cada tipo de filtro:
 ///ano, assunto, nível, etc.
 class FiltroOpcoesPage extends StatefulWidget {
-  ///O tipo de filtro que será exibido na página.
-  final TiposFiltro tipo;
+  const FiltroOpcoesPage(
+    this.argumentos, {
+    Key? key,
+  }) : super(key: key);
 
-  const FiltroOpcoesPage(this.tipo, {Key? key}) : super(key: key);
+  final ArgumentosFiltroOpcoesPage argumentos;
 
   @override
-  _FiltroOpcoesPageState createState() => _FiltroOpcoesPageState(tipo);
+  _FiltroOpcoesPageState createState() => _FiltroOpcoesPageState();
 }
 
 class _FiltroOpcoesPageState extends State<FiltroOpcoesPage> {
-  _FiltroOpcoesPageState(TiposFiltro tipo)
-      : controller = FiltroOpcoesController(
-            tipo: tipo,
-            filtrosAplicados: Modular.get<Filtros>(),
-            filtrosTemp: Modular.get<FiltroTiposController>().filtrosTemp);
-
-  final FiltroOpcoesController controller;
+  late final controller = FiltroOpcoesController(
+    tipo: widget.argumentos.tipo,
+    filtrosAplicados: widget.argumentos.filtrosAplicados,
+    filtrosTemp: widget.argumentos.filtrosTemp,
+  );
 
   ThemeData get tema => AppTheme.instance.temaClaro;
 
@@ -40,7 +50,7 @@ class _FiltroOpcoesPageState extends State<FiltroOpcoesPage> {
   Color get textColor => Colors.black.withOpacity(0.8);
 
   ///O tipo de filtro que a página irá exibir.
-  TiposFiltro get tipo => widget.tipo;
+  TiposFiltro get tipo => widget.argumentos.tipo;
 
   ///A instância de [Filtros] para os filtros temporários.
   Filtros get filtrosTemp => controller.filtrosTemp;
