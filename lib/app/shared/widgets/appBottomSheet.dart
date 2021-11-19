@@ -270,6 +270,27 @@ class AppBottomSheet extends StatelessWidget {
   }
 }
 
+/// Uma página inferior para exibir uma mensagem de erro [mensagem].
+class BottomSheetErro extends AppBottomSheet {
+  const BottomSheetErro(this.mensagem, {Key? key}) : super(key: key);
+  final String mensagem;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBottomSheet(
+      title: const Text('Falha na operação'),
+      content: Text(mensagem),
+      actions: [
+        AppTextButton(
+          primary: true,
+          child: const Text('FECHAR'),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    );
+  }
+}
+
 /// Uma página inferior que exibe dois botões de ação.
 /// Ao ser fechada, retorna:
 /// * [resultActionFirst] se o primeiro botão for acionado;

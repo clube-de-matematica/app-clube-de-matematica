@@ -190,4 +190,19 @@ abstract class IDbRepository {
   );
 
   Future<DataCollection> getAtividades(int idClube);
+
+  /// {@template app.IDbRepository.insertAtividade}
+  /// Criar um novo clube com as informações dos parâmetros.
+  /// Se o processo for bem sucedido, retorna o clube criado.
+  /// {@endtemplate}
+  Future<DataAtividade> insertAtividade({
+    required int idClube,
+    required int idAutor,
+    required String nome,
+    String? descricao,
+    List<String>? questoes,
+    //TODO: verificar se o postgre aceitará essa tipação.
+    required DateTime dataPublicacao,
+    DateTime? dataEncerramento,
+  });
 }

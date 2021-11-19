@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:supabase/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -218,14 +217,14 @@ class SupabaseDbRepository
     _checkAuthentication('insertClube()');
     // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
     final data = {
-      'nome': nome,
-      'proprietario': proprietario,
-      'codigo': codigo,
-      'descricao': descricao,
-      'privado': privado,
-      'administradores': administradores,
-      'membros': membros,
-      'capa': capa,
+      DbConst.kDbDataClubeKeyNome: nome,
+      DbConst.kDbDataClubeKeyProprietario: proprietario,
+      DbConst.kDbDataClubeKeyCodigo: codigo,
+      DbConst.kDbDataClubeKeyDescricao: descricao,
+      DbConst.kDbDataClubeKeyPrivado: privado,
+      DbConst.kDbDataClubeKeyAdministradores: administradores,
+      DbConst.kDbDataClubeKeyMembros: membros,
+      DbConst.kDbDataClubeKeyCapa: capa,
     };
     try {
       assert(Debug.print('[INFO] Inserindo o clube ${data.toString()}...'));
@@ -408,6 +407,50 @@ class SupabaseDbRepository
     } catch (_) {
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$viewAtividades".'));
+      rethrow;
+    }
+  }
+
+  /// {@macro app.IDbRepository.insertAtividade}
+  @override
+  Future<DataAtividade> insertAtividade({
+    required int idClube,
+    required int idAutor,
+    required String nome,
+    String? descricao,
+    List<String>? questoes,
+    //TODO: verificar se o postgre aceitará essa tipação.
+    required DateTime dataPublicacao,
+    DateTime? dataEncerramento,
+  }) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.insertAtividade()...'));
+    _checkAuthentication('insertAtividade()');
+    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
+    final data = {
+      DbConst.kDbDataAtividadeKeyIdClube: idClube,
+      DbConst.kDbDataAtividadeKeyIdAutor: idAutor,
+      DbConst.kDbDataAtividadeKeyNome: nome,
+      DbConst.kDbDataAtividadeKeyDescricao: descricao,
+      DbConst.kDbDataAtividadeKeyQuestoes: questoes,
+      DbConst.kDbDataAtividadeKeyDataPublicacao: dataPublicacao,
+      DbConst.kDbDataAtividadeKeyDataEncerramento: dataEncerramento,
+    };
+    try {
+      assert(Debug.print('[INFO] Inserindo a atividade ${data.toString()}...'));
+      final response =
+          await _client.rpc('inserir_atividade', params: data).execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(Debug.print(
+            '[ERROR] Erro ao inserir a atividade ${data.toString()}. '
+            '\n${error.toString()}'));
+        return DataAtividade();
+      }
+      final list = (response.data as List).cast<DataAtividade>();
+      return list.isNotEmpty ? list[0] : DataAtividade();
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao inserir a atividade ${data.toString()}.'));
       rethrow;
     }
   }

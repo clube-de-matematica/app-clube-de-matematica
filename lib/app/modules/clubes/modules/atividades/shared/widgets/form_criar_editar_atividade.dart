@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../../../../shared/widgets/appBottomSheet.dart';
@@ -18,7 +20,7 @@ class FormCriarEditarAtividade extends StatefulWidget {
     this.encerramento,
     this.questoes,
     this.validarTitulo,
-    this.onCriar,
+    this.salvar,
   }) : super(key: key);
 
   final String? titulo;
@@ -32,12 +34,13 @@ class FormCriarEditarAtividade extends StatefulWidget {
   final String? Function(String?)? validarTitulo;
 
   /// Ação executada ao precionar o botão de confirmação.
-  final Future Function({
+  final FutureOr<void> Function({
     required String titulo,
-    String? descricao,
+    required String? descricao,
     required DateTime liberacao,
-    DateTime? encerramento,
-  })? onCriar;
+    required DateTime? encerramento,
+    required List<Questao> questoes,
+  })? salvar;
 
   @override
   State<FormCriarEditarAtividade> createState() =>
@@ -54,16 +57,16 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
   String? descricao;
   late DateTime liberacao;
   DateTime? encerramento;
-  ValorSelecionarQuestoesFormField? questoes;
+  late ValorSelecionarQuestoesFormField questoes;
 
   @override
   void initState() {
     super.initState();
-    if (widget.titulo != null) titulo = widget.titulo!;
+    titulo = widget.titulo ?? '';
     descricao = widget.descricao;
-    if (widget.liberacao != null) liberacao = widget.liberacao!;
+    liberacao = widget.liberacao ?? DateUtils.dateOnly(DateTime.now());
     encerramento = widget.encerramento;
-    questoes = widget.questoes;
+    questoes = widget.questoes ?? [];
   }
 
   @override
@@ -81,11 +84,12 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
       if (form?.validate() ?? false) {
         setState(() => carregando = true);
         form?.save();
-        await widget.onCriar?.call(
+        await widget.salvar?.call(
           descricao: descricao,
           encerramento: encerramento,
           liberacao: liberacao,
           titulo: titulo,
+          questoes: questoes,
         );
         if (mounted) setState(() => carregando = false);
       }
@@ -135,51 +139,54 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
                 onSaved: (valor) => descricao = valor?.trim(),
               ),
               sizedBox(),
-              DataLiberacaoAtividadeTextFormField(
-                focusNode: focoLiberacao,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(focoEncerramento);
-                },
-                onSaved: (valor) {
-                  if (valor != null) liberacao = valor;
-                },
-              ),
-              const SizedBox(height: 30.0),
-              DataEncerramentoAtividadeTextFormField(
-                focusNode: focoEncerramento,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).unfocus();
-                },
-                onSaved: (valor) => encerramento = valor,
-              ),
+              Builder(builder: (context) {
+                final liberacaoTemp = ValueNotifier(liberacao);
+                return Column(
+                  children: [
+                    DataLiberacaoAtividadeTextFormField(
+                      initialDate: liberacao,
+                      focusNode: focoLiberacao,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(focoEncerramento);
+                      },
+                      onSaved: (valor) {
+                        if (valor != null) liberacao = valor;
+                      },
+                      // Capiturar o valor que está sendo atualizado.
+                      selectableDayPredicate: (novaData) {
+                        liberacaoTemp.value = novaData;
+                        return true;
+                      },
+                    ),
+                    const SizedBox(height: 30.0),
+                    ValueListenableBuilder(
+                      valueListenable: liberacaoTemp,
+                      builder: (context, DateTime data, _) {
+                        final encerramento =
+                            (this.encerramento?.isAfter(data) ?? true)
+                                ? this.encerramento
+                                : data;
+                        return DataEncerramentoAtividadeTextFormField(
+                          firstDate: data,
+                          initialDate: encerramento,
+                          focusNode: focoEncerramento,
+                          textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).unfocus();
+                          },
+                          onSaved: (valor) => this.encerramento = valor,
+                        );
+                      },
+                    ),
+                  ],
+                );
+              }),
               const SizedBox(height: 30.0),
               SelecionarQuestoesFormField(
                 questoes: questoes,
-                onSaved: (valor) => questoes = valor,
+                onSaved: (valor) => questoes = valor ?? [],
               ),
-/* 
-              ListTile(
-                title: const Text('Questões'),
-                visualDensity: VisualDensity.compact,
-                trailing: Icon(Icons.chevron_right),
-                shape: Theme.of(context).inputDecorationTheme.border?.copyWith(
-                      borderSide: BorderSide(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.4),
-                      ),
-                    ),
-                onTap: () {
-                  FocusScope.of(context).unfocus();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) =>
-                          SelecionarQuestoesPage(questoes: questoes)));
-                },
-              ),
-               */
             ],
           ),
         );
@@ -246,6 +253,7 @@ class DataLiberacaoAtividadeTextFormField extends AppInputDatePickerFormField {
     FocusNode? focusNode,
     void Function(DateTime?)? onSaved,
     void Function(DateTime?)? onFieldSubmitted,
+    bool Function(DateTime)? selectableDayPredicate,
   }) : super(
           key: key,
           initialDate: initialDate,
@@ -258,6 +266,7 @@ class DataLiberacaoAtividadeTextFormField extends AppInputDatePickerFormField {
           focusNode: focusNode,
           onDateSaved: onSaved,
           onDateSubmitted: onFieldSubmitted,
+          selectableDayPredicate: selectableDayPredicate,
         );
 }
 
@@ -273,6 +282,7 @@ class DataEncerramentoAtividadeTextFormField
     FocusNode? focusNode,
     void Function(DateTime?)? onSaved,
     void Function(DateTime?)? onFieldSubmitted,
+    bool Function(DateTime)? selectableDayPredicate,
   }) : super(
           key: key,
           initialDate: initialDate,
@@ -286,6 +296,7 @@ class DataEncerramentoAtividadeTextFormField
           nullable: true,
           onDateSaved: onSaved,
           onDateSubmitted: onFieldSubmitted,
+          selectableDayPredicate: selectableDayPredicate,
         );
 }
 
@@ -295,6 +306,7 @@ class SelecionarQuestoesFormField
   SelecionarQuestoesFormField({
     Key? key,
     ValorSelecionarQuestoesFormField? questoes,
+    FocusNode? focusNode,
     void Function(ValorSelecionarQuestoesFormField?)? onSaved,
   }) : super(
           key: key,
@@ -302,29 +314,49 @@ class SelecionarQuestoesFormField
           initialValue: questoes,
           builder: (field) {
             return Builder(builder: (context) {
+              final InputDecorationTheme inputTheme =
+                  Theme.of(context).inputDecorationTheme;
               final numQuestoes = field.value?.length ?? 0;
-              return ListTile(
-                title: Text(numQuestoes == 0
-                    ? 'Nenhuma questão selecionada'
-                    : '$numQuestoes selecionada(s)'),
-                visualDensity: VisualDensity.compact,
-                trailing: Icon(Icons.chevron_right),
-                shape: Theme.of(context).inputDecorationTheme.border?.copyWith(
-                      borderSide: BorderSide(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.4),
-                      ),
-                    ),
-                onTap: () async {
-                  FocusScope.of(context).unfocus();
-                  final questoesSelecionadas = await Navigator.of(context)
-                      .push<ValorSelecionarQuestoesFormField>(MaterialPageRoute(
-                          builder: (_) =>
-                              SelecionarQuestoesPage(questoes: field.value)));
-                  field.didChange(questoesSelecionadas);
-                },
+              return InputDecorator(
+                decoration: InputDecoration(
+                  border: inputTheme.border ?? const UnderlineInputBorder(),
+                  filled: inputTheme.filled,
+                  labelText: 'Questões',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.chevron_right),
+                    onPressed: () async {
+                      FocusScope.of(context).unfocus();
+                      // Se retornar `null`, a página foi fechada sem confimar a seleção.
+                      final questoesSelecionadas = await Navigator.of(context)
+                          .push<List<Questao>>(MaterialPageRoute(
+                              builder: (_) => SelecionarQuestoesPage(
+                                  questoes: field.value)));
+                      if (questoesSelecionadas != null) {
+                        field.didChange(questoesSelecionadas);
+                      }
+                    },
+                  ),
+                ),
+                isFocused: focusNode?.hasFocus ?? false,
+                isEmpty: false,
+                child: InkWell(
+                  child: Text(
+                    numQuestoes == 0
+                        ? 'Nenhuma selecionada'
+                        : '$numQuestoes ${numQuestoes == 1 ? 'selecionada' : 'selecionadas'}',
+                  ),
+                  onTap: () async {
+                    FocusScope.of(context).unfocus();
+                    // Se retornar `null`, a página foi fechada sem confimar a seleção.
+                    final questoesSelecionadas = await Navigator.of(context)
+                        .push<List<Questao>>(MaterialPageRoute(
+                            builder: (_) =>
+                                SelecionarQuestoesPage(questoes: field.value)));
+                    if (questoesSelecionadas != null) {
+                      field.didChange(questoesSelecionadas);
+                    }
+                  },
+                ),
               );
             });
           },

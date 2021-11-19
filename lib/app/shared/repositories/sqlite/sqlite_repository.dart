@@ -302,4 +302,10 @@ class SqliteRepository
     // TODO: implement getAtividades
     throw UnimplementedError();
   }
+
+  @override
+  Future<DataAtividade> insertAtividade({required int idClube, required int idAutor, required String nome, String? descricao, List<String>? questoes, required DateTime dataPublicacao, DateTime? dataEncerramento}) {
+    // TODO: implement insertAtividade
+    throw UnimplementedError();
+  }
 }

@@ -1,5 +1,5 @@
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
@@ -8,6 +8,8 @@ import '../../../../shared/repositories/id_base62.dart';
 import '../../../../shared/repositories/interface_db_repository.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../../../perfil/models/userapp.dart';
+import '../../../quiz/shared/models/questao_model.dart';
+import '../../modules/atividades/models/atividade.dart';
 import '../models/clube.dart';
 import '../models/usuario_clube.dart';
 
@@ -286,6 +288,41 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     clube.sobrescrever(clube.copyWith(atividades: temp));
 
     return clube.atividades;
+  }
+
+  /// Criar um novo clube com as informações dos parâmetros.
+  /// Se o processo for bem sucedido, retorna o [Clube] criado.
+  Future<Atividade?> criarAtividades({
+    required Clube clube,
+    required String nome,
+    String? descricao,
+    List<Questao>? questoes,
+    required DateTime dataPublicacao,
+    DateTime? dataEncerramento,
+  }) async {
+    if (usuarioApp.id == null) return null;
+    assert(!dataPublicacao.isBefore(DateUtils.dateOnly(DateTime.now())));
+    assert(
+        dataEncerramento == null || dataEncerramento.isBefore(dataPublicacao));
+    final idAutor = usuarioApp.id!;
+    if(!clube.permissaoCriarAtividade(idAutor)) return null;
+    if (questoes != null && questoes.isEmpty) questoes = null;
+    final dataAtividade = await dbRepository.insertAtividade(
+      idClube: clube.id,
+      idAutor: idAutor,
+      nome: nome,
+      descricao: descricao,
+      questoes: questoes?.map((questao) => questao.id).toList(),
+      dataPublicacao: dataPublicacao,
+      dataEncerramento: dataEncerramento,
+    );
+    if (dataAtividade.isNotEmpty) {
+      final atividade = Atividade.fromDataAtividade(dataAtividade);
+      clube.addAtividade(atividade);
+      return atividade;
+    } else {
+      return null;
+    }
   }
 
   /// Encerrar as reações em execução.

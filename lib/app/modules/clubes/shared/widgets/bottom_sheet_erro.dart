@@ -1,28 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/widgets/appBottomSheet.dart';
-import '../../../../shared/widgets/botoes.dart';
-
-/// Uma página inferior para exibir uma mensagem de erro [mensagem].
-class BottomSheetErro extends AppBottomSheet {
-  const BottomSheetErro(this.mensagem, {Key? key}) : super(key: key);
-  final String mensagem;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBottomSheet(
-      title: const Text('Falha na operação'),
-      content: Text(mensagem),
-      actions: [
-        AppTextButton(
-          primary: true,
-          child: const Text('FECHAR'),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ],
-    );
-  }
-}
 
 /// Uma página inferior para exibir uma mensagem de erro quando o ingresso em um clube não for
 /// bem sucedido.

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -93,12 +92,12 @@ class AppInputDatePickerFormField extends StatefulWidget {
   /// An optional method to call when the user indicates they are done editing
   /// the text in the field. Will only be called if the input represents a valid
   /// [DateTime].
-  final ValueChanged<DateTime>? onDateSubmitted;
+  final ValueChanged<DateTime?>? onDateSubmitted;
 
   /// An optional method to call with the final date when the form is
   /// saved via [FormState.save]. Will only be called if the input represents
   /// a valid [DateTime].
-  final ValueChanged<DateTime>? onDateSaved;
+  final ValueChanged<DateTime?>? onDateSaved;
 
   /// Function to provide full control over which [DateTime] can be selected.
   final SelectableDayPredicate? selectableDayPredicate;
@@ -206,6 +205,7 @@ class _AppInputDatePickerFormFieldState
   }
 
   bool _isValidAcceptableDate(DateTime? date) {
+    if (date == null && widget.nullable) return true;
     return date != null &&
         !date.isBefore(widget.firstDate) &&
         !date.isAfter(widget.lastDate) &&
@@ -229,12 +229,12 @@ class _AppInputDatePickerFormFieldState
     return null;
   }
 
-  void _updateDate(String? text, ValueChanged<DateTime>? callback) {
+  void _updateDate(String? text, ValueChanged<DateTime?>? callback) {
     final DateTime? date = _parseDate(text);
     if (_isValidAcceptableDate(date)) {
       _selectedDate = date;
       _inputText = text;
-      callback?.call(_selectedDate!);
+      callback?.call(_selectedDate);
     }
   }
 
@@ -244,6 +244,10 @@ class _AppInputDatePickerFormFieldState
 
   void _handleSubmitted(String text) {
     _updateDate(text, widget.onDateSubmitted);
+  }
+
+  void _handleChanged(String text) {
+    _updateDate(text, null);
   }
 
   @override
@@ -263,7 +267,10 @@ class _AppInputDatePickerFormFieldState
           onPressed: () async {
             final date = await showDatePicker(
               context: context,
-              initialDate: _selectedDate ?? DateUtils.dateOnly(DateTime.now()),
+              initialDate: _selectedDate ??
+                  (DateUtils.dateOnly(DateTime.now()).isAfter(widget.firstDate)
+                      ? DateUtils.dateOnly(DateTime.now())
+                      : widget.firstDate),
               firstDate: widget.firstDate,
               lastDate: widget.lastDate,
             );
@@ -285,6 +292,7 @@ class _AppInputDatePickerFormFieldState
       autofocus: widget.autofocus,
       focusNode: widget.focusNode,
       controller: _controller,
+      onChanged: _handleChanged,
     );
   }
 }

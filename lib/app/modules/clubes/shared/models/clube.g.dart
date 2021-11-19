@@ -150,6 +150,17 @@ mixin _$Clube on _ClubeBase, Store {
   }
 
   @override
+  void addAtividade(Atividade atividade) {
+    final _$actionInfo = _$_ClubeBaseActionController.startAction(
+        name: '_ClubeBase.addAtividade');
+    try {
+      return super.addAtividade(atividade);
+    } finally {
+      _$_ClubeBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 nome: ${nome},

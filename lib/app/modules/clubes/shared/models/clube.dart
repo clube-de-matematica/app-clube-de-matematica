@@ -303,4 +303,15 @@ abstract class _ClubeBase with Store {
   PermissoesClube permissao(int id) {
     return getUsuario(id)?.permissao ?? PermissoesClube.externo;
   }
+
+  /// Retorna `true` se o usuário correspondente ao [id] tiver permissão para criar atividade.
+  bool permissaoCriarAtividade(int id) {
+    final permissaoClube = getUsuario(id)?.permissao;
+    return permissaoClube == PermissoesClube.proprietario ||
+        permissaoClube == PermissoesClube.administrador;
+  }
+
+  /// Adiciona [atividade] às [atividades].
+  @action
+  void addAtividade(Atividade atividade) => _atividades.add(atividade);
 }
