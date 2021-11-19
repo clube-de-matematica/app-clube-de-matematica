@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../../../shared/widgets/appInputDatePickerFormField.dart';
 import '../../../../../../shared/widgets/app_text_form_field.dart';
 import '../../../../../quiz/shared/models/questao_model.dart';
+import '../../models/atividade.dart';
 import '../../pages/selecionar_questoes/selecionar_questoes_page.dart';
 
 typedef ValorSelecionarQuestoesFormField = List<Questao>;
@@ -27,7 +30,7 @@ class FormCriarEditarAtividade extends StatefulWidget {
   final String? descricao;
   final DateTime? liberacao;
   final DateTime? encerramento;
-  final ValorSelecionarQuestoesFormField? questoes;
+  final List<QuestaoAtividade>? questoes;
 
   /// Deve retornar uma string de erro quando o valor recebido no parâmetro for inválido,
   /// ou, caso contrário, `null`.
@@ -57,7 +60,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
   String? descricao;
   late DateTime liberacao;
   DateTime? encerramento;
-  late ValorSelecionarQuestoesFormField questoes;
+  late List<Questao> questoes;
 
   @override
   void initState() {
@@ -66,7 +69,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
     descricao = widget.descricao;
     liberacao = widget.liberacao ?? DateUtils.dateOnly(DateTime.now());
     encerramento = widget.encerramento;
-    questoes = widget.questoes ?? [];
+    questoes = _obterQuestoes(widget.questoes?.map((e) => e.idQuestao) ?? []);
   }
 
   @override
@@ -76,6 +79,14 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
     focoLiberacao.dispose();
     focoEncerramento.dispose();
     super.dispose();
+  }
+
+  List<Questao> _obterQuestoes(Iterable<String> ids) {
+    if (ids.isEmpty) return <Questao>[];
+    return Modular.get<QuestoesRepository>()
+        .questoes
+        .where((element) => ids.contains(element.id))
+        .toList();
   }
 
   void _salvar(BuildContext context) async {

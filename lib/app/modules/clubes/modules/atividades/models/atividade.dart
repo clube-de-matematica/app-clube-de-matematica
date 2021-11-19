@@ -83,27 +83,28 @@ class Atividade {
   }
 
   factory Atividade.fromDataAtividade(DataAtividade map) {
+    final int idAtividade = map[DbConst.kDbDataAtividadeKeyId];
     return Atividade(
-      id: map[DbConst.kDbDataAtividadeKeyId],
+      id: idAtividade,
       nome: map[DbConst.kDbDataAtividadeKeyNome],
       descricao: map[DbConst.kDbDataAtividadeKeyDescricao] != null
           ? map[DbConst.kDbDataAtividadeKeyDescricao]
           : null,
       idClube: map[DbConst.kDbDataAtividadeKeyIdClube],
       idAutor: map[DbConst.kDbDataAtividadeKeyIdAutor],
-      criacao: DateTime.parse(
-          map[DbConst.kDbDataAtividadeKeyDataCriacao]),
+      criacao: DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataCriacao]),
       publicacao: map[DbConst.kDbDataAtividadeKeyDataPublicacao] != null
-          ? DateTime.parse(
-              map[DbConst.kDbDataAtividadeKeyDataPublicacao])
+          ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataPublicacao])
           : null,
       encerramento: map[DbConst.kDbDataAtividadeKeyDataEncerramento] != null
-          ? DateTime.parse(
-              map[DbConst.kDbDataAtividadeKeyDataEncerramento])
+          ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataEncerramento])
           : null,
       questoes: List<QuestaoAtividade>.from(
-          map[DbConst.kDbDataAtividadeKeyQuestoes]
-              ?.map((x) => QuestaoAtividade.fromMap(x))),
+          map[DbConst.kDbDataAtividadeKeyQuestoes]?.map((dados) => QuestaoAtividade(
+                id: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
+                idQuestao: dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno],
+                idAtividade: idAtividade,
+              ))),
     );
   }
 
@@ -150,7 +151,7 @@ class Atividade {
 /// Modelo para as questões usadas em uma atividade.
 class QuestaoAtividade {
   final int id;
-  final int idQuestao;
+  final String idQuestao;
   final int idAtividade;
   final List<Resposta> respostas;
 
@@ -163,7 +164,7 @@ class QuestaoAtividade {
 
   QuestaoAtividade copyWith({
     int? id,
-    int? idQuestao,
+    String? idQuestao,
     int? idAtividade,
     List<Resposta>? respostas,
   }) {
