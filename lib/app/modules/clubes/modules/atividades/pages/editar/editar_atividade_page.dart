@@ -35,9 +35,9 @@ class EditarAtividadePage extends StatefulWidget {
 }
 
 class _EditarAtividadePageState extends State<EditarAtividadePage> {
-  late final controller = EditarAtividadeController(widget.clube);
+  late final controller = EditarAtividadeController(widget.clube, widget.atividade);
   bool _salvando = false;
-  Atividade get atividade => widget.atividade;
+  Atividade get atividade => controller.atividade;
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +46,9 @@ class _EditarAtividadePageState extends State<EditarAtividadePage> {
         title: const Text('Editar atividade'),
       ),
       body: FormCriarEditarAtividade(
-        titulo: atividade.nome,
+        titulo: atividade.titulo,
         descricao: atividade.descricao,
-        liberacao: atividade.publicacao,
+        liberacao: atividade.liberacao,
         encerramento: atividade.encerramento,
         questoes: atividade.questoes,
         validarTitulo: controller.validarTitulo,

@@ -7,7 +7,7 @@ import '../../../../../shared/utils/strings_db.dart';
 /// Modelo para os dados das atividades dos clubes.
 class Atividade {
   final int id;
-  String nome;
+  String titulo;
   String? descricao;
 
   /// ID do clube ao qual esta atividade pertence.
@@ -19,9 +19,9 @@ class Atividade {
   /// Data/hora (no fuso horário UTC) da criação desta atividade.
   final DateTime criacao;
 
-  /// Data/hora (no fuso horário UTC) da publicação desta atividade para os usuários do clube.
-  /// Será `NULL` se ainda não tiver sido publicada.
-  DateTime? publicacao;
+  /// Data/hora (no fuso horário UTC) da liberação desta atividade para os usuários do clube.
+  /// Será `NULL` se ainda não tiver sido liberada.
+  DateTime? liberacao;
 
   /// Data/hora (no fuso horário UTC) final para que esta atividade seja concluída.
   DateTime? encerramento;
@@ -31,12 +31,12 @@ class Atividade {
 
   Atividade({
     required this.id,
-    required this.nome,
+    required this.titulo,
     this.descricao,
     required this.idClube,
     required this.idAutor,
     required this.criacao,
-    this.publicacao,
+    this.liberacao,
     this.encerramento,
     this.questoes = const [],
   });
@@ -54,12 +54,12 @@ class Atividade {
   }) {
     return Atividade(
       id: id ?? this.id,
-      nome: nome ?? this.nome,
+      titulo: nome ?? this.titulo,
       descricao: descricao ?? this.descricao,
       idClube: idClube ?? this.idClube,
       idAutor: idAutor ?? this.idAutor,
       criacao: criacao ?? this.criacao,
-      publicacao: publicacao ?? this.publicacao,
+      liberacao: publicacao ?? this.liberacao,
       encerramento: encerramento ?? this.encerramento,
       questoes: questoes ?? this.questoes,
     );
@@ -68,13 +68,13 @@ class Atividade {
   DataAtividade toDataAtividade() {
     return {
       DbConst.kDbDataAtividadeKeyId: id,
-      DbConst.kDbDataAtividadeKeyNome: nome,
+      DbConst.kDbDataAtividadeKeyTitulo: titulo,
       DbConst.kDbDataAtividadeKeyDescricao: descricao,
       DbConst.kDbDataAtividadeKeyIdClube: idClube,
       DbConst.kDbDataAtividadeKeyIdAutor: idAutor,
       DbConst.kDbDataAtividadeKeyDataCriacao: criacao.millisecondsSinceEpoch,
-      DbConst.kDbDataAtividadeKeyDataPublicacao:
-          publicacao?.millisecondsSinceEpoch,
+      DbConst.kDbDataAtividadeKeyDataLiberacao:
+          liberacao?.millisecondsSinceEpoch,
       DbConst.kDbDataAtividadeKeyDataEncerramento:
           encerramento?.millisecondsSinceEpoch,
       DbConst.kDbDataAtividadeKeyQuestoes:
@@ -86,23 +86,25 @@ class Atividade {
     final int idAtividade = map[DbConst.kDbDataAtividadeKeyId];
     return Atividade(
       id: idAtividade,
-      nome: map[DbConst.kDbDataAtividadeKeyNome],
+      titulo: map[DbConst.kDbDataAtividadeKeyTitulo],
       descricao: map[DbConst.kDbDataAtividadeKeyDescricao] != null
           ? map[DbConst.kDbDataAtividadeKeyDescricao]
           : null,
       idClube: map[DbConst.kDbDataAtividadeKeyIdClube],
       idAutor: map[DbConst.kDbDataAtividadeKeyIdAutor],
       criacao: DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataCriacao]),
-      publicacao: map[DbConst.kDbDataAtividadeKeyDataPublicacao] != null
-          ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataPublicacao])
+      liberacao: map[DbConst.kDbDataAtividadeKeyDataLiberacao] != null
+          ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataLiberacao])
           : null,
       encerramento: map[DbConst.kDbDataAtividadeKeyDataEncerramento] != null
           ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataEncerramento])
           : null,
-      questoes: List<QuestaoAtividade>.from(
-          map[DbConst.kDbDataAtividadeKeyQuestoes]?.map((dados) => QuestaoAtividade(
+      questoes: List<QuestaoAtividade>.from(map[
+              DbConst.kDbDataAtividadeKeyQuestoes]
+          ?.map((dados) => QuestaoAtividade(
                 id: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
-                idQuestao: dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno],
+                idQuestao:
+                    dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno],
                 idAtividade: idAtividade,
               ))),
     );
@@ -113,9 +115,23 @@ class Atividade {
   factory Atividade.fromJson(String source) =>
       Atividade.fromDataAtividade(json.decode(source));
 
+  /// Sobrescreve os campos desta atividade com os respectivos valores em [outra], desde que
+  /// tenham o mesmo ID.
+  void sobrescrever(Atividade outra) {
+    if (this.id == outra.id) {
+      titulo = outra.titulo;
+      descricao = outra.descricao;
+      liberacao = outra.liberacao;
+      encerramento = outra.encerramento;
+      questoes
+        ..clear()
+        ..addAll(outra.questoes);
+    }
+  }
+
   @override
   String toString() {
-    return 'Atividade(id: $id, nome: $nome, descricao: $descricao, idClube: $idClube, idAutor: $idAutor, criacao: $criacao, publicacao: $publicacao, encerramento: $encerramento, questoes: $questoes)';
+    return 'Atividade(id: $id, nome: $titulo, descricao: $descricao, idClube: $idClube, idAutor: $idAutor, criacao: $criacao, publicacao: $liberacao, encerramento: $encerramento, questoes: $questoes)';
   }
 
   @override
@@ -124,12 +140,12 @@ class Atividade {
 
     return other is Atividade &&
         other.id == id &&
-        other.nome == nome &&
+        other.titulo == titulo &&
         other.descricao == descricao &&
         other.idClube == idClube &&
         other.idAutor == idAutor &&
         other.criacao == criacao &&
-        other.publicacao == publicacao &&
+        other.liberacao == liberacao &&
         other.encerramento == encerramento &&
         listEquals(other.questoes, questoes);
   }
@@ -137,12 +153,12 @@ class Atividade {
   @override
   int get hashCode {
     return id.hashCode ^
-        nome.hashCode ^
+        titulo.hashCode ^
         descricao.hashCode ^
         idClube.hashCode ^
         idAutor.hashCode ^
         criacao.hashCode ^
-        publicacao.hashCode ^
+        liberacao.hashCode ^
         encerramento.hashCode ^
         questoes.hashCode;
   }

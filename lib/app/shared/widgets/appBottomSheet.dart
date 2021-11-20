@@ -456,7 +456,7 @@ class __ChildBottomSheetCarregandoState
         future: widget.future,
         builder: (context, snapshot) {
           final size = 56.0;
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.done) {
             Future.delayed(Duration(seconds: 1)).then((_) {
               if (mounted && Navigator.canPop(context))
                 Navigator.pop(context, snapshot.data);

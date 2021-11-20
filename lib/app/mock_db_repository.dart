@@ -4,6 +4,7 @@ import 'package:mockito/mockito.dart';
 
 /// Mock para a classe [AuthFirebaseRepository].
 class MockDbRepository extends Fake implements IRemoteDbRepository {
+  final future = Future<void>.delayed(const Duration(seconds: 5));
   @override
   Future<DataCollection> getAssuntos() async {
     return [
@@ -142,7 +143,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
 
   @override
   Future<DataCollection> getQuestoes() async {
-    await Future.delayed(const Duration(seconds: 5));
+    await future;
     return [
       {
         DbConst.kDbDataQuestaoKeyId: '2019PF1N1Q01',
@@ -262,6 +263,90 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
     ];
   }
 
+  @override
+  Future<DataCollection> getClubes(int idUsuario) async {
+    await future;
+    return [
+      {
+        DbConst.kDbDataClubeKeyId: 11,
+        DbConst.kDbDataClubeKeyNome: 'clube 12',
+        DbConst.kDbDataClubeKeyDescricao: 'descrevendo 12 12',
+        DbConst.kDbDataClubeKeyDataCriacao: '2021-10-15T21:55:18.818Z',
+        DbConst.kDbDataClubeKeyPrivado: false,
+        DbConst.kDbDataClubeKeyCodigo: 'lb4BlA',
+        DbConst.kDbDataClubeKeyCapa: 4287349578,
+        DbConst.kDbDataClubeKeyProprietario: 1,
+        DbConst.kDbDataClubeKeyAdministradores: [],
+        DbConst.kDbDataClubeKeyMembros: [],
+      },
+      {
+        DbConst.kDbDataClubeKeyId: 12,
+        DbConst.kDbDataClubeKeyNome: 'Segundo Clube',
+        DbConst.kDbDataClubeKeyDescricao: 'Descrição Clube 2',
+        DbConst.kDbDataClubeKeyDataCriacao: '2021-10-15T21:55:18.818Z',
+        DbConst.kDbDataClubeKeyPrivado: false,
+        DbConst.kDbDataClubeKeyCodigo: 'Clube2',
+        DbConst.kDbDataClubeKeyCapa: null,
+        DbConst.kDbDataClubeKeyProprietario: 2,
+        DbConst.kDbDataClubeKeyAdministradores: [],
+        DbConst.kDbDataClubeKeyMembros: [1],
+      },
+      {
+        DbConst.kDbDataClubeKeyId: 13,
+        DbConst.kDbDataClubeKeyNome: 'Clube 3',
+        DbConst.kDbDataClubeKeyDescricao:
+            'Aqui temos uma descriçao de várias linhas para o Clube 3',
+        DbConst.kDbDataClubeKeyDataCriacao: '2021-10-15T21:55:18.818Z',
+        DbConst.kDbDataClubeKeyPrivado: false,
+        DbConst.kDbDataClubeKeyCodigo: 'Clube3',
+        DbConst.kDbDataClubeKeyCapa: 4286141768,
+        DbConst.kDbDataClubeKeyProprietario: 2,
+        DbConst.kDbDataClubeKeyAdministradores: [1],
+        DbConst.kDbDataClubeKeyMembros: [],
+      },
+      {
+        DbConst.kDbDataClubeKeyId: 14,
+        DbConst.kDbDataClubeKeyNome: 'Quarto Clube',
+        DbConst.kDbDataClubeKeyDescricao: 'Descrevendo o quarto clubes.',
+        DbConst.kDbDataClubeKeyDataCriacao: '2021-10-19T19:49:13.816Z',
+        DbConst.kDbDataClubeKeyPrivado: false,
+        DbConst.kDbDataClubeKeyCodigo: 'J5lSts',
+        DbConst.kDbDataClubeKeyCapa: 4284513675,
+        DbConst.kDbDataClubeKeyProprietario: 1,
+        DbConst.kDbDataClubeKeyAdministradores: [2],
+        DbConst.kDbDataClubeKeyMembros: [9],
+      }
+    ];
+  }
+
+  @override
+  Future<DataCollection> getAtividades(int idClube) async {
+    await future;
+    return [
+      {
+        DbConst.kDbDataAtividadeKeyId: 1,
+        DbConst.kDbDataAtividadeKeyIdClube: 14,
+        DbConst.kDbDataAtividadeKeyTitulo: 'Atividade 1 do Clube 4',
+        DbConst.kDbDataAtividadeKeyDescricao:
+            'Descrição da Atividade 1 do Clube 4',
+        DbConst.kDbDataAtividadeKeyDataCriacao: '2021-11-07T17:08:23.604Z',
+        DbConst.kDbDataAtividadeKeyIdAutor: 1,
+        DbConst.kDbDataAtividadeKeyDataLiberacao: '2021-11-07T17:08:23.604Z',
+        DbConst.kDbDataAtividadeKeyDataEncerramento: null,
+      },
+      {
+        DbConst.kDbDataAtividadeKeyId: 3,
+        DbConst.kDbDataAtividadeKeyIdClube: 14,
+        DbConst.kDbDataAtividadeKeyTitulo: 'Atividade 2 do Clube 4',
+        DbConst.kDbDataAtividadeKeyDescricao: null,
+        DbConst.kDbDataAtividadeKeyDataCriacao: '2021-11-07T19:38:24.557Z',
+        DbConst.kDbDataAtividadeKeyIdAutor: 1,
+        DbConst.kDbDataAtividadeKeyDataLiberacao: '2021-11-07T19:38:24.557Z',
+        DbConst.kDbDataAtividadeKeyDataEncerramento: null,
+      }
+    ];
+  }
+
 /* 
   @override
   Future<DataClube> enterClube(String accessCode, int idUser) {
@@ -272,18 +357,6 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
   @override
   Future<bool> exitClube(int idClube, int idUser) {
     // TODO: implement exitClube
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<DataCollection> getAtividades(int idClube) {
-    // TODO: implement getAtividades
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<DataCollection> getClubes(int idUsuario) {
-    // TODO: implement getClubes
     throw UnimplementedError();
   }
 

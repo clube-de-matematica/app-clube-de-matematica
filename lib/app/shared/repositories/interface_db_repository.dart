@@ -192,17 +192,33 @@ abstract class IDbRepository {
   Future<DataCollection> getAtividades(int idClube);
 
   /// {@template app.IDbRepository.insertAtividade}
-  /// Criar um novo clube com as informações dos parâmetros.
+  /// Criar uma nova atividade com as informações dos parâmetros.
+  /// 
   /// Se o processo for bem sucedido, retorna o clube criado.
   /// {@endtemplate}
   Future<DataAtividade> insertAtividade({
     required int idClube,
     required int idAutor,
-    required String nome,
+    required String titulo,
     String? descricao,
     List<String>? questoes,
-    //TODO: verificar se o postgre aceitará essa tipação.
-    required DateTime dataPublicacao,
+    required DateTime dataLiberacao,
+    DateTime? dataEncerramento,
+  });
+
+  /// {@template app.IDbRepository.updateAtividade}
+  /// Atualiza os dados da atividade com base nas informações dos parâmetros.
+  /// 
+  /// A descrição não será atualizada se for uma string vazia.
+  /// 
+  /// As demais propriedades não serão atualizados se forem `null`.
+  /// {@endtemplate}
+  Future<DataAtividade> updateAtividade({
+    required int id,
+    required String titulo,
+    String? descricao,
+    List<String>? questoes,
+    DateTime? dataLiberacao,
     DateTime? dataEncerramento,
   });
 }

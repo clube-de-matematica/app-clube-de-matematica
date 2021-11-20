@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gotrue/gotrue.dart';
@@ -120,7 +121,6 @@ print(session.error?.message);//TODO
     // await Future.delayed(Duration(seconds: 20));
     final _return = _listen();
     GotrueSessionResponse session;
-
     try {
       if (replaceUser && logged) await signOut();
       _controller.add(StatusSignIn.inProgress);

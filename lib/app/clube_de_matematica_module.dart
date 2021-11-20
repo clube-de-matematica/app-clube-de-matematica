@@ -17,6 +17,7 @@ import 'shared/repositories/questoes/assuntos_repository.dart';
 import 'shared/repositories/questoes/imagem_questao_repository.dart';
 import 'shared/repositories/questoes/questoes_repository.dart';
 import 'shared/repositories/supabase/auth_supabase_repository.dart';
+import 'shared/repositories/supabase/supabase_db_repository.dart';
 
 class ClubeDeMatematicaModule extends Module {
   /// Rota relativa.
@@ -39,19 +40,19 @@ class ClubeDeMatematicaModule extends Module {
         //Repositórios
         //Bind<IAuthRepository>((i) => AuthFirebaseRepository(i.get<FirebaseAuth>())),
         Bind<IAuthRepository>((i) => AuthSupabaseRepository(i.get<Supabase>())),
-        /* Bind((i) => SupabaseDbRepository(
+        Bind((i) => SupabaseDbRepository(
               i.get<Supabase>(),
               i.get<IAuthRepository>(),
             )),
         Bind.lazySingleton((i) => ClubesRepository(
               i.get<SupabaseDbRepository>(),
               i.get<UserApp>(),
-            )), */
-        Bind<IDbRepository>((i) => MockDbRepository()),
+            )),
+        /* Bind<IDbRepository>((i) => MockDbRepository()),
         Bind.lazySingleton((i) => ClubesRepository(
               i.get<MockDbRepository>(),
               i.get<UserApp>(),
-            )),
+            )), */
         Bind.lazySingleton((i) => QuestoesRepository(
               i.get<IDbRepository>(),
               i.get<AssuntosRepository>(),

@@ -329,8 +329,7 @@ class SupabaseDbRepository
       return DataClube();
     }
     try {
-      assert(Debug.print(
-          '[INFO] Atualizando os dados do clube cujo "id = $id" do clube cujo '
+      assert(Debug.print('[INFO] Atualizando os dados do clube cujo "id = $id" '
           'na tabela "$tbClubes"...'));
       final response =
           await _client.rpc('atualizar_clube', params: data).execute();
@@ -343,7 +342,7 @@ class SupabaseDbRepository
       final list = (response.data as List).cast<DataClube>();
       return list.isNotEmpty ? list[0] : DataClube();
     } catch (_) {
-      assert(Debug.print('[ERROR] Erro ao atualizar o clube cujo com os dados: '
+      assert(Debug.print('[ERROR] Erro ao atualizar o clube com os dados: '
           '\n${data.toString()}'));
       rethrow;
     }
@@ -416,11 +415,10 @@ class SupabaseDbRepository
   Future<DataAtividade> insertAtividade({
     required int idClube,
     required int idAutor,
-    required String nome,
+    required String titulo,
     String? descricao,
     List<String>? questoes,
-    //TODO: verificar se o postgre aceitará essa tipação.
-    required DateTime dataPublicacao,
+    required DateTime dataLiberacao,
     DateTime? dataEncerramento,
   }) async {
     assert(Debug.print('[INFO] Chamando $_debugName.insertAtividade()...'));
@@ -429,11 +427,14 @@ class SupabaseDbRepository
     final data = {
       DbConst.kDbDataAtividadeKeyIdClube: idClube,
       DbConst.kDbDataAtividadeKeyIdAutor: idAutor,
-      DbConst.kDbDataAtividadeKeyNome: nome,
+      DbConst.kDbDataAtividadeKeyTitulo: titulo,
       DbConst.kDbDataAtividadeKeyDescricao: descricao,
       DbConst.kDbDataAtividadeKeyQuestoes: questoes,
-      DbConst.kDbDataAtividadeKeyDataPublicacao: dataPublicacao,
-      DbConst.kDbDataAtividadeKeyDataEncerramento: dataEncerramento,
+      DbConst.kDbDataAtividadeKeyDataLiberacao:
+          dataLiberacao.millisecondsSinceEpoch / 1000,
+      DbConst.kDbDataAtividadeKeyDataEncerramento: dataEncerramento == null
+          ? null
+          : dataEncerramento.millisecondsSinceEpoch / 1000,
     };
     try {
       assert(Debug.print('[INFO] Inserindo a atividade ${data.toString()}...'));
@@ -451,6 +452,51 @@ class SupabaseDbRepository
     } catch (_) {
       assert(Debug.print(
           '[ERROR] Erro ao inserir a atividade ${data.toString()}.'));
+      rethrow;
+    }
+  }
+
+  /// {@macro app.IDbRepository.updateAtividade}
+  @override
+  Future<DataAtividade> updateAtividade({
+    required int id,
+    required String titulo,
+    String? descricao,
+    List<String>? questoes,
+    DateTime? dataLiberacao,
+    DateTime? dataEncerramento,
+  }) async {
+    assert(Debug.print('[INFO] Chamando $_debugName.updateAtividade()...'));
+    _checkAuthentication('updateAtividade()');
+    final data = {
+      DbConst.kDbDataAtividadeKeyId: id,
+      DbConst.kDbDataAtividadeKeyTitulo: titulo,
+      DbConst.kDbDataAtividadeKeyDescricao: descricao,
+      DbConst.kDbDataAtividadeKeyQuestoes: questoes,
+      DbConst.kDbDataAtividadeKeyDataLiberacao: dataLiberacao == null
+          ? null
+          : dataLiberacao.millisecondsSinceEpoch / 1000,
+      DbConst.kDbDataAtividadeKeyDataEncerramento: dataEncerramento == null
+          ? null
+          : dataEncerramento.millisecondsSinceEpoch / 1000,
+    };
+
+    try {
+      assert(Debug.print(
+          '[INFO] Atualizando os dados da atividade cujo "id = $id".'));
+      final response =
+          await _client.rpc('atualizar_atividade', params: data).execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(Debug.print(
+            '[ERROR] Erro ao atualizar a atividade. \n${error.toString()}'));
+        return DataAtividade();
+      }
+      final list = (response.data as List).cast<DataAtividade>();
+      return list.isNotEmpty ? list[0] : DataAtividade();
+    } catch (_) {
+      assert(Debug.print('[ERROR] Erro ao atualizar a atividade com os dados: '
+          '\n${data.toString()}'));
       rethrow;
     }
   }

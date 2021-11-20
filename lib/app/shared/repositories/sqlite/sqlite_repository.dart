@@ -304,8 +304,14 @@ class SqliteRepository
   }
 
   @override
-  Future<DataAtividade> insertAtividade({required int idClube, required int idAutor, required String nome, String? descricao, List<String>? questoes, required DateTime dataPublicacao, DateTime? dataEncerramento}) {
+  Future<DataAtividade> insertAtividade({required int idClube, required int idAutor, required String titulo, String? descricao, List<String>? questoes, required DateTime dataLiberacao, DateTime? dataEncerramento}) {
     // TODO: implement insertAtividade
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DataAtividade> updateAtividade({required int id, required String titulo, String? descricao, List<String>? questoes, DateTime? dataLiberacao, DateTime? dataEncerramento}) {
+    // TODO: implement updateAtividade
     throw UnimplementedError();
   }
 }

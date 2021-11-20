@@ -132,6 +132,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
             padding: const EdgeInsets.all(16.0),
             children: [
               TituloAtividadeTextFormField(
+                initialValue: titulo,
                 focusNode: focoNome,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(focoDescricao);
@@ -143,6 +144,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
               ),
               sizedBox(),
               DescricaoAtividadeTextFormField(
+                initialValue: descricao,
                 focusNode: focoDescricao,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(focoLiberacao);

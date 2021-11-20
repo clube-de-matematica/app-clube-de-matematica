@@ -15,12 +15,12 @@ class CriarAtividadeController extends CriarEditarAtividadeController {
     List<Questao> questoes = const [],
   }) {
     if (descricao?.isEmpty ?? false) descricao = null;
-   return repositorio.criarAtividades(
+   return repositorio.criarAtividade(
       clube: clube,
-      nome: titulo,
+      titulo: titulo,
       descricao: descricao,
       questoes: questoes,
-      dataPublicacao: liberacao,
+      dataLiberacao: liberacao,
       dataEncerramento: encerramento,
     );
   }

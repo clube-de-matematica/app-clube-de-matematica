@@ -290,35 +290,66 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     return clube.atividades;
   }
 
-  /// Criar um novo clube com as informações dos parâmetros.
-  /// Se o processo for bem sucedido, retorna o [Clube] criado.
-  Future<Atividade?> criarAtividades({
+  /// {@macro app.IDbRepository.insertAtividade}
+  Future<Atividade?> criarAtividade({
     required Clube clube,
-    required String nome,
+    required String titulo,
     String? descricao,
     List<Questao>? questoes,
-    required DateTime dataPublicacao,
+    required DateTime dataLiberacao,
     DateTime? dataEncerramento,
   }) async {
     if (usuarioApp.id == null) return null;
-    assert(!dataPublicacao.isBefore(DateUtils.dateOnly(DateTime.now())));
+    assert(!dataLiberacao.isBefore(DateUtils.dateOnly(DateTime.now())));
     assert(
-        dataEncerramento == null || dataEncerramento.isBefore(dataPublicacao));
+        dataEncerramento == null || !dataEncerramento.isBefore(dataLiberacao));
     final idAutor = usuarioApp.id!;
     if(!clube.permissaoCriarAtividade(idAutor)) return null;
     if (questoes != null && questoes.isEmpty) questoes = null;
     final dataAtividade = await dbRepository.insertAtividade(
       idClube: clube.id,
       idAutor: idAutor,
-      nome: nome,
+      titulo: titulo,
       descricao: descricao,
       questoes: questoes?.map((questao) => questao.id).toList(),
-      dataPublicacao: dataPublicacao,
+      dataLiberacao: dataLiberacao,
       dataEncerramento: dataEncerramento,
     );
     if (dataAtividade.isNotEmpty) {
       final atividade = Atividade.fromDataAtividade(dataAtividade);
       clube.addAtividade(atividade);
+      return atividade;
+    } else {
+      return null;
+    }
+  }
+
+  /// {@macro app.IDbRepository.updateAtividade}
+  Future<Atividade?> atualizarAtividade({
+    required Atividade atividade,
+    required String titulo,
+    String? descricao,
+    List<Questao>? questoes,
+    required DateTime dataLiberacao,
+    DateTime? dataEncerramento,
+  }) async {
+    if (usuarioApp.id == null) return null;
+    assert(!dataLiberacao.isBefore(DateUtils.dateOnly(DateTime.now())));
+    assert(
+        dataEncerramento == null || !dataEncerramento.isBefore(dataLiberacao));
+    final permitirUsuario = atividade.idAutor==usuarioApp.id!;
+    assert(permitirUsuario);
+    if (questoes != null && questoes.isEmpty) questoes = null;
+    final dataAtividade = await dbRepository.updateAtividade(
+      id: atividade.id,
+      titulo: titulo,
+      descricao: descricao,
+      questoes: questoes?.map((questao) => questao.id).toList(),
+      dataLiberacao: dataLiberacao,
+      dataEncerramento: dataEncerramento,
+    );
+    if (dataAtividade.isNotEmpty) {
+      atividade.sobrescrever(Atividade.fromDataAtividade(dataAtividade));
       return atividade;
     } else {
       return null;

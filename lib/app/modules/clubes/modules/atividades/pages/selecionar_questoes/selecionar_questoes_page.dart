@@ -10,8 +10,8 @@ import '../../../../../../shared/widgets/questao_widget.dart';
 import '../../../../../filtros/shared/widgets/feedback_filtragem_vazia.dart';
 import 'selecionar_questoes_controller.dart';
 
-/// Páfina utilizada para selecionar questões. 
-/// Ao ser fechada usando o botão de confirmação ([Icons.done] na [AppBar]), retorna a 
+/// Páfina utilizada para selecionar questões.
+/// Ao ser fechada usando o botão de confirmação ([Icons.done] na [AppBar]), retorna a
 /// lista de questões selecionadas.
 class SelecionarQuestoesPage extends StatefulWidget {
   const SelecionarQuestoesPage({
@@ -192,6 +192,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
         ),
         PopupMenuItem(
           value: 3,
+          enabled: controle.filtros.totalSelecinado > 0,
           child: const Text('Limpar filtros'),
         ),
       ],

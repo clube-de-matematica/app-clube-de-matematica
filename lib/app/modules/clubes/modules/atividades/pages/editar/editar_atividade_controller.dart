@@ -1,11 +1,12 @@
-
 import '../../../../../quiz/shared/models/questao_model.dart';
 import '../../../../shared/models/clube.dart';
 import '../../models/atividade.dart';
 import '../../shared/models/criar_editar_aticidade_controler.dart';
 
 class EditarAtividadeController extends CriarEditarAtividadeController {
-  EditarAtividadeController(Clube clube) : super(clube);
+  EditarAtividadeController(Clube clube, this.atividade) : super(clube);
+
+  final Atividade atividade;
 
   @override
   Future<Atividade?> salvar({
@@ -16,14 +17,13 @@ class EditarAtividadeController extends CriarEditarAtividadeController {
     List<Questao> questoes = const [],
   }) {
     if (descricao?.isEmpty ?? false) descricao = null;
-   /* return _repositorio.criarAtividades(
-      clube: clube,
-      nome: titulo,
+    return repositorio.atualizarAtividade(
+      atividade: atividade,
+      titulo: titulo,
       descricao: descricao,
       questoes: questoes,
-      dataPublicacao: liberacao,
+      dataLiberacao: liberacao,
       dataEncerramento: encerramento,
-    ); */
-    throw UnimplementedError();
+    );
   }
 }

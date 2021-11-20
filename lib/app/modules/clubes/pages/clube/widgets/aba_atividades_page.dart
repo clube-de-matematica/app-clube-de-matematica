@@ -64,7 +64,7 @@ class _CategoriaAtividade extends Categoria {
                 return ListTile(
                   contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
                   title: Text(
-                    atividade.nome,
+                    atividade.titulo,
                     style: Theme.of(context).textTheme.headline2,
                   ),
                   subtitle: Text(atividade.descricao ?? ''),

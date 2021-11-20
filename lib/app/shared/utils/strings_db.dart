@@ -75,9 +75,9 @@ typedef DataResposta = Map<String, int>;
 /// O valor [dynamic] pode ser:
 /// * [int] para [DbConst.kDbDataAtividadeKeyId], [DbConst.kDbDataAtividadeKeyIdClube], 
 /// [DbConst.kDbDataAtividadeKeyIdAutor], [DbConst.kDbDataAtividadeKeyDataCriacao] 
-/// [DbConst.kDbDataAtividadeKeyDataPublicacao] e 
+/// [DbConst.kDbDataAtividadeKeyDataLiberacao] e 
 /// [DbConst.kDbDataAtividadeKeyDataEncerramento]; 
-/// * [String] para [DbConst.kDbDataAtividadeKeyNome] e 
+/// * [String] para [DbConst.kDbDataAtividadeKeyTitulo] e 
 /// [DbConst.kDbDataAtividadeKeyDescricao]; 
 /// * [List]<[String]> para [DbConst.kDbDataAtividadeKeyQuestoes]; ou 
 /// * [List]<[DataResposta]> para [DbConst.kDbDataAtividadeKeyRespostas].
@@ -324,9 +324,9 @@ abstract class DbConst {
   /// Os valores desse campo são do tipo [int].
   static const kDbDataAtividadeKeyIdClube = 'id_clube';
 
-  /// Nome do campo para o nome da atividade.
+  /// Nome do campo para o titulo da atividade.
   /// Os valores desse campo são do tipo [String].
-  static const kDbDataAtividadeKeyNome = 'nome';
+  static const kDbDataAtividadeKeyTitulo = 'titulo';
 
   /// Nome do campo para a descrição da atividade.
   /// Os valores desse campo são do tipo [String].
@@ -341,14 +341,15 @@ abstract class DbConst {
   /// milisegundos a partir de 0001-01-01T00:00:00Z, geralmente um [int] com esse número.
   static const kDbDataAtividadeKeyDataCriacao = 'data_criacao';
 
-  /// Nome do campo para o carimbo de data/hora da publicação da atividade.
+  /// Nome do campo para o carimbo de data/hora da liberação da atividade.
   /// Os valores desse campo são de algum tipo que possa ser convertido no número de
   /// milisegundos a partir de 0001-01-01T00:00:00Z, geralmente um [int] com esse número.
-  static const kDbDataAtividadeKeyDataPublicacao = 'data_publicacao';
+  static const kDbDataAtividadeKeyDataLiberacao = 'data_liberacao';
 
   /// Nome do campo para o carimbo de data/hora do prazo final para a entrega da atividade.
   /// Os valores desse campo são de algum tipo que possa ser convertido no número de
   /// milisegundos a partir de 0001-01-01T00:00:00Z, geralmente um [int] com esse número.
+  /// Será `NULL` se ainda não tiver sido liberada.
   static const kDbDataAtividadeKeyDataEncerramento = 'data_encerramento';
 
   /// Nome do campo para uma lista com o ID de cada questão da atividades.
