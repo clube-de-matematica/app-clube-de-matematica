@@ -5,7 +5,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../clubes_module.dart';
-import 'pages/atividade/atividade_page.dart';
+import 'pages/responder/reponder_atividade_page.dart';
 import 'pages/criar/criar_atividade_page.dart';
 import 'pages/editar/editar_atividade_page.dart';
 
@@ -49,7 +49,7 @@ class AtividadesModule extends Module {
   //Lista de rotas.
   List<ModularRoute> get routes => [
         ChildRoute(kAbsoluteRouteAtividadePage,
-            child: (_, args) => AtividadePage(args.data)),
+            child: (_, args) => ResponderAtividadePage(args.data)),
         ChildRoute(kRelativeRouteCriarPage,
             child: (_, args) => CriarAtividadePage(args.data ??
             // TODO: Remover

@@ -20,6 +20,7 @@ class QuestaoWidget extends StatelessWidget {
     this.selecionavel = true,
     this.alternativaSelecionada,
     this.alterandoAlternativa,
+    this.barraOpcoes,
     this.rolavel = true,
     this.padding = const EdgeInsets.symmetric(vertical: 8.0),
   })  : assert(!(!selecionavel &&
@@ -37,12 +38,15 @@ class QuestaoWidget extends StatelessWidget {
   /// Chamado quando a alternativa selecionada é modificada.
   final void Function(Alternativa?)? alterandoAlternativa;
 
+  /// Um widget colocado acima do corpo da questão.
+  final Widget? barraOpcoes;
+
   final bool rolavel;
   final EdgeInsetsGeometry padding;
 
   Widget _corpo() {
-    return Padding(
-      padding: padding,
+    return Container(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
       child: Column(children: [
         // Enunciado da questão.
         Padding(
@@ -63,12 +67,18 @@ class QuestaoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (rolavel) {
-      return SingleChildScrollView(
-        child: _corpo(),
-      );
-    }
-    return _corpo();
+    return Padding(
+      padding: padding,
+      child: Column(
+        children: [
+          if (barraOpcoes != null) barraOpcoes!,
+          if (barraOpcoes != null) Divider(height: 4.0),
+          Expanded(
+            child: !rolavel ? _corpo() : SingleChildScrollView(child: _corpo()),
+          ),
+        ],
+      ),
+    );
   }
 }
 

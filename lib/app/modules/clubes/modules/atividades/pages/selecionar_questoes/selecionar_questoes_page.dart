@@ -10,7 +10,7 @@ import '../../../../../../shared/widgets/questao_widget.dart';
 import '../../../../../filtros/shared/widgets/feedback_filtragem_vazia.dart';
 import 'selecionar_questoes_controller.dart';
 
-/// Páfina utilizada para selecionar questões.
+/// Página utilizada para selecionar questões.
 /// Ao ser fechada usando o botão de confirmação ([Icons.done] na [AppBar]), retorna a
 /// lista de questões selecionadas.
 class SelecionarQuestoesPage extends StatefulWidget {
@@ -116,7 +116,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
           padding: const EdgeInsets.only(right: 16.0),
           child: Observer(builder: (_) {
             return Text(
-                '${controle.indice + 1} de ${controle.questoesFiltradas.length}');
+                '${controle.indice + 1} de ${controle.questoes.length}');
           }),
         ),
       ],

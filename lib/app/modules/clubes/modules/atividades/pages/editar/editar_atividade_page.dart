@@ -50,7 +50,7 @@ class _EditarAtividadePageState extends State<EditarAtividadePage> {
         descricao: atividade.descricao,
         liberacao: atividade.liberacao,
         encerramento: atividade.encerramento,
-        questoes: atividade.questoes,
+        questoes: atividade.obterQuestoes(),
         validarTitulo: controller.validarTitulo,
         salvar: ({
           String? descricao,

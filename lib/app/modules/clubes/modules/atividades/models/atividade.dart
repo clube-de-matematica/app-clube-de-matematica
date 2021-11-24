@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../shared/utils/strings_db.dart';
+import '../../../../quiz/shared/models/questao_model.dart';
 
 /// Modelo para os dados das atividades dos clubes.
 class Atividade {
@@ -127,6 +130,16 @@ class Atividade {
         ..clear()
         ..addAll(outra.questoes);
     }
+  }
+
+  /// Retorna uma lista com os objetos [Questao] correspondentes a [questoes].
+  List<Questao> obterQuestoes() {
+    if (questoes.isEmpty) return <Questao>[];
+    return Modular.get<QuestoesRepository>()
+        .questoes
+        .where((questao) =>
+            questoes.any((element) => element.idQuestao == questao.id))
+        .toList();
   }
 
   @override

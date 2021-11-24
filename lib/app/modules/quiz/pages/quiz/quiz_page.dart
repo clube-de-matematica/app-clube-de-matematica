@@ -97,7 +97,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
         return !ativo
             ? const SizedBox()
             : FloatingActionButton.extended(
-                icon: const Icon(Icons.check),
+                icon: const Icon(Icons.done),
                 label: const Text(UIStrings.QUIZ_TEXTO_BOTAO_CONFIRMAR),
                 onPressed: !ativo
                     ? null

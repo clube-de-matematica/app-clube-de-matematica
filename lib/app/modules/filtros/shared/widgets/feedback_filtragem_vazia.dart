@@ -34,11 +34,6 @@ class FeedbackFiltragemVazia extends StatelessWidget {
                 primary: true,
                 child: const Text('ALTERAR FILTRO'),
                 onPressed: onPressed,
-                /* 
-                (){
-                  Navigator.of(context).pushNamed(FiltrosModule.kAbsoluteRouteFiltroTiposPage);
-                  //Navigation.showPage(context, RoutePage.filtrosTipos);
-                }, */
               ),
             ),
           ),

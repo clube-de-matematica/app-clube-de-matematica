@@ -9,13 +9,6 @@ part of 'exibir_questao_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
-  Computed<List<Questao>>? _$questoesFiltradasComputed;
-
-  @override
-  List<Questao> get questoesFiltradas => (_$questoesFiltradasComputed ??=
-          Computed<List<Questao>>(() => super.questoesFiltradas,
-              name: '_ExibirQuestaoControllerBase.questoesFiltradas'))
-      .value;
   Computed<Questao?>? _$questaoComputed;
 
   @override
@@ -59,11 +52,11 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
       ActionController(name: '_ExibirQuestaoControllerBase');
 
   @override
-  void _definirIndice(int valor, {bool forcar = false}) {
+  void definirIndice(int valor, {bool forcar = false}) {
     final _$actionInfo = _$_ExibirQuestaoControllerBaseActionController
-        .startAction(name: '_ExibirQuestaoControllerBase._definirIndice');
+        .startAction(name: '_ExibirQuestaoControllerBase.definirIndice');
     try {
-      return super._definirIndice(valor, forcar: forcar);
+      return super.definirIndice(valor, forcar: forcar);
     } finally {
       _$_ExibirQuestaoControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -72,7 +65,6 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
   @override
   String toString() {
     return '''
-questoesFiltradas: ${questoesFiltradas},
 questao: ${questao},
 podeAvancar: ${podeAvancar},
 podeVoltar: ${podeVoltar}

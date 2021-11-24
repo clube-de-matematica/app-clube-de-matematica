@@ -30,7 +30,7 @@ class FormCriarEditarAtividade extends StatefulWidget {
   final String? descricao;
   final DateTime? liberacao;
   final DateTime? encerramento;
-  final List<QuestaoAtividade>? questoes;
+  final List<Questao>? questoes;
 
   /// Deve retornar uma string de erro quando o valor recebido no parâmetro for inválido,
   /// ou, caso contrário, `null`.
@@ -69,7 +69,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
     descricao = widget.descricao;
     liberacao = widget.liberacao ?? DateUtils.dateOnly(DateTime.now());
     encerramento = widget.encerramento;
-    questoes = _obterQuestoes(widget.questoes?.map((e) => e.idQuestao) ?? []);
+    questoes = widget.questoes ?? [];
   }
 
   @override
@@ -79,14 +79,6 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
     focoLiberacao.dispose();
     focoEncerramento.dispose();
     super.dispose();
-  }
-
-  List<Questao> _obterQuestoes(Iterable<String> ids) {
-    if (ids.isEmpty) return <Questao>[];
-    return Modular.get<QuestoesRepository>()
-        .questoes
-        .where((element) => ids.contains(element.id))
-        .toList();
   }
 
   void _salvar(BuildContext context) async {
