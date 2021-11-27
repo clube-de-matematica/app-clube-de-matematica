@@ -217,6 +217,14 @@ class _AlternativasState extends State<_Alternativas> {
     alternativaSelecionada = widget.alternativaSelecionada;
   }
 
+  @override
+  void didUpdateWidget(covariant _Alternativas oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.alternativaSelecionada != widget.alternativaSelecionada) {
+      alternativaSelecionada = widget.alternativaSelecionada;
+    }
+  }
+
   /// Retorna `true` se [alternativa] estiver selecionada.
   bool _selecionada(Alternativa alternativa) =>
       alternativaSelecionada == alternativa.sequencial;

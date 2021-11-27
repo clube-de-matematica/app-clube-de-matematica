@@ -59,17 +59,17 @@ typedef DataUser = Map<String, dynamic>;
 typedef DataClube = Map<String, dynamic>;
 
 /// O objeto com os dados que vinculam uma questão a uma atividade.
-/// A chave pode ser: 
-/// * [DbConst.kDbDataQuestaoAtividadeKeyId] ou 
-/// * [DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno].
-typedef DataQuestaoAtividade = Map<String, int>;
+/// O valor [dynamic] pode ser:
+/// * [int] para [DbConst.kDbDataQuestaoAtividadeKeyId]; ou 
+/// * [String] para [DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno].
+typedef DataQuestaoAtividade = Map<String, dynamic>;
 
 /// O objeto com os dados de uma resposta de um usuário a uma atividade.
 /// A chave pode ser: 
-/// * [DbConst.kDbDataRespostaKeyIdQuestaoCaderno], 
-/// * [DbConst.kDbDataRespostaKeyIdUsuario] ou 
-/// * [DbConst.kDbDataRespostaKeyIdResposta].
-typedef DataResposta = Map<String, int>;
+/// * [DbConst.kDbDataRespostaQuestaoAtividadeKeyIdQuestaoAtividade], 
+/// * [DbConst.kDbDataRespostaQuestaoAtividadeKeyIdUsuario] ou 
+/// * [DbConst.kDbDataRespostaQuestaoAtividadeKeyIdResposta].
+typedef DataRespostaQuestaoAtividade = Map<String, int?>;
 
 /// O objeto com os dados de uma atividade. 
 /// O valor [dynamic] pode ser:
@@ -80,7 +80,7 @@ typedef DataResposta = Map<String, int>;
 /// * [String] para [DbConst.kDbDataAtividadeKeyTitulo] e 
 /// [DbConst.kDbDataAtividadeKeyDescricao]; 
 /// * [List]<[String]> para [DbConst.kDbDataAtividadeKeyQuestoes]; ou 
-/// * [List]<[DataResposta]> para [DbConst.kDbDataAtividadeKeyRespostas].
+/// * [List]<[DataRespostaQuestaoAtividade]> para [DbConst.kDbDataAtividadeKeyRespostas].
 typedef DataAtividade = Map<String, dynamic>;
 
 /// Objeto que contém as constantes comuns aos bancos de dados local e remoto.
@@ -289,24 +289,28 @@ abstract class DbConst {
   static const kDbDataQuestaoAtividadeKeyId = 'id';
 
   /// Nome do campo para o ID da questão incluída em uma determinada atividade.
-  /// Os valores desse campo são do tipo [int].
+  /// Os valores desse campo são do tipo [String].
   static const kDbDataQuestaoAtividadeKeyIdQuestaoCaderno = 'id_questao_caderno';
 
 /** 
  * ****************************************************************************************
 **/
 
+  /// Nome da coleção (ou tabela) para as respostas dos usuários às questões das atividades.
+  /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataRespostaQuestaoAtividade]>.
+  static const kDbDataCollectionRespostaQuestaoAtividade = 'resposta_x_questao_x_atividade';
+
   /// Nome do campo para o ID do registro de relacionamento entre uma questão e uma atividade.
   /// Os valores desse campo são do tipo [int].
-  static const kDbDataRespostaKeyIdQuestaoCaderno = 'id_questao_x_atividade';
+  static const kDbDataRespostaQuestaoAtividadeKeyIdQuestaoAtividade = 'id_questao_x_atividade';
 
   /// Nome do campo para o ID do usuário ao qual a resposta pertence.
   /// Os valores desse campo são do tipo [int].
-  static const kDbDataRespostaKeyIdUsuario = 'id_usuario';
+  static const kDbDataRespostaQuestaoAtividadeKeyIdUsuario = 'id_usuario';
 
   /// Nome do campo para o sequencial da alternativa escolhida.
-  /// Os valores desse campo são do tipo [int].
-  static const kDbDataRespostaKeyIdResposta = 'resposta';
+  /// Os valores desse campo são do tipo [int] ou `null`.
+  static const kDbDataRespostaQuestaoAtividadeKeyIdResposta = 'resposta';
 
 /** 
  * ****************************************************************************************

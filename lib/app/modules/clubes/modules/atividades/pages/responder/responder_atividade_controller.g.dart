@@ -10,6 +10,20 @@ part of 'responder_atividade_controller.dart';
 
 mixin _$ResponderAtividadeController
     on _ResponderAtividadeControllerBase, Store {
+  Computed<List<QuestaoAtividade>>? _$questoesComputed;
+
+  @override
+  List<QuestaoAtividade> get questoes => (_$questoesComputed ??=
+          Computed<List<QuestaoAtividade>>(() => super.questoes,
+              name: '_ResponderAtividadeControllerBase.questoes'))
+      .value;
+  Computed<QuestaoAtividade?>? _$questaoComputed;
+
+  @override
+  QuestaoAtividade? get questao =>
+      (_$questaoComputed ??= Computed<QuestaoAtividade?>(() => super.questao,
+              name: '_ResponderAtividadeControllerBase.questao'))
+          .value;
   Computed<bool>? _$podeConfirmarComputed;
 
   @override
@@ -18,27 +32,11 @@ mixin _$ResponderAtividadeController
               name: '_ResponderAtividadeControllerBase.podeConfirmar'))
           .value;
 
-  final _$alternativaSelecionadaAtom =
-      Atom(name: '_ResponderAtividadeControllerBase.alternativaSelecionada');
-
-  @override
-  int? get alternativaSelecionada {
-    _$alternativaSelecionadaAtom.reportRead();
-    return super.alternativaSelecionada;
-  }
-
-  @override
-  set alternativaSelecionada(int? value) {
-    _$alternativaSelecionadaAtom
-        .reportWrite(value, super.alternativaSelecionada, () {
-      super.alternativaSelecionada = value;
-    });
-  }
-
   @override
   String toString() {
     return '''
-alternativaSelecionada: ${alternativaSelecionada},
+questoes: ${questoes},
+questao: ${questao},
 podeConfirmar: ${podeConfirmar}
     ''';
   }

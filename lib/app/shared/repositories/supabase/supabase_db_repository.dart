@@ -500,4 +500,65 @@ class SupabaseDbRepository
       rethrow;
     }
   }
+
+  @override
+  Future<List<DataRespostaQuestaoAtividade>> getRespostasAtividade(
+    int idAtividade, [
+    int? idUsuario,
+  ]) async {
+    assert(
+        Debug.print('[INFO] Chamando $_debugName.getRespostasAtividade()...'));
+    _checkAuthentication('getRespostasAtividade()');
+    final table = CollectionType.respostasQuestaoAtividade.name;
+    final data = {
+      'id_atividade': idAtividade,
+      DbConst.kDbDataRespostaQuestaoAtividadeKeyIdUsuario: idUsuario,
+    };
+    try {
+      assert(Debug.print('[INFO] Solicitando os dados da tabela "$table"...'));
+      final response = await _client
+          .rpc('get_respostas_x_questoes_x_atividade', params: data)
+          .execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(Debug.print(
+            '[ERROR] Erro ao solicitar as respostas para a atividade com o '
+            'ID $idAtividade para o usuário com o ID $idUsuario.'
+            '\n${error.toString()}'));
+        return List<DataRespostaQuestaoAtividade>.empty();
+      }
+      return (response.data as List)
+          .cast<Map>()
+          .map((e) => e.cast<String, int>())
+          .toList();
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao solicitar os dados da tabela "$table".'));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> upsertRespostasAtividade(
+      List<DataRespostaQuestaoAtividade> data) async {
+    assert(Debug.print(
+        '[INFO] Chamando $_debugName.upsertRespostasAtividade()...'));
+    _checkAuthentication('upsertRespostasAtividade()');
+    final table = CollectionType.respostasQuestaoAtividade.name;
+    try {
+      assert(Debug.print('[INFO] Inserindo os dados na tabela "$table"...'));
+      final response = await _client.from(table).upsert(data).execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'
+            '\n${error.toString()}'));
+        return false;
+      }
+      return true;
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao solicitar os dados da tabela "$table".'));
+      rethrow;
+    }
+  }
 }

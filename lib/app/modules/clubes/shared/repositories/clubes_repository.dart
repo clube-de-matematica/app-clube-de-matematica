@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -10,6 +9,7 @@ import '../../../../shared/utils/strings_db.dart';
 import '../../../perfil/models/userapp.dart';
 import '../../../quiz/shared/models/questao_model.dart';
 import '../../modules/atividades/models/atividade.dart';
+import '../../modules/atividades/models/questao_atividade.dart';
 import '../models/clube.dart';
 import '../models/usuario_clube.dart';
 
@@ -276,7 +276,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       resultado = await dbRepository.getAtividades(clube.id);
     } catch (e) {
       assert(Debug.printBetweenLine(
-          "Erro a buscar os dados da coleção ${CollectionType.atividades.name}."));
+          "Erro ao buscar os dados da coleção ${CollectionType.atividades.name}."));
       assert(Debug.print(e));
       return List<Atividade>.empty();
     }
@@ -304,7 +304,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     assert(
         dataEncerramento == null || !dataEncerramento.isBefore(dataLiberacao));
     final idAutor = usuarioApp.id!;
-    if(!clube.permissaoCriarAtividade(idAutor)) return null;
+    if (!clube.permissaoCriarAtividade(idAutor)) return null;
     if (questoes != null && questoes.isEmpty) questoes = null;
     final dataAtividade = await dbRepository.insertAtividade(
       idClube: clube.id,
@@ -337,7 +337,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     assert(!dataLiberacao.isBefore(DateUtils.dateOnly(DateTime.now())));
     assert(
         dataEncerramento == null || !dataEncerramento.isBefore(dataLiberacao));
-    final permitirUsuario = atividade.idAutor==usuarioApp.id!;
+    final permitirUsuario = atividade.idAutor == usuarioApp.id!;
     assert(permitirUsuario);
     if (questoes != null && questoes.isEmpty) questoes = null;
     final dataAtividade = await dbRepository.updateAtividade(
@@ -354,6 +354,53 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     } else {
       return null;
     }
+  }
+
+  Future<Atividade?> carregarRespostasAtividade(Atividade atividade) async {
+    if (usuarioApp.id == null) return null;
+    List<DataRespostaQuestaoAtividade> dataRespostas;
+    try {
+      dataRespostas = await dbRepository.getRespostasAtividade(
+        atividade.id,
+        atividade.idAutor == usuarioApp.id ? null : usuarioApp.id!,
+      );
+    } catch (e) {
+      assert(Debug.printBetweenLine(
+          "Erro ao buscar os dados da coleção ${CollectionType.respostasQuestaoAtividade.name}."));
+      assert(Debug.print(e));
+      return null;
+    }
+    if (dataRespostas.isNotEmpty) {
+      // Carregar as respostas.
+      atividade.respostas.replaceRange(
+        0,
+        atividade.respostas.length,
+        dataRespostas.map((dados) =>
+            RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(dados)),
+      );
+    }
+    return atividade;
+  }
+
+  /// {@macro app.IDbRepository.upsertRespostasAtividade}
+  Future<bool> atualizarInserirRespostaAtividade(Atividade atividade) async {
+    if (usuarioApp.id == null) return false;
+    final dados = atividade.questoes
+        .where((questao) => questao.resposta?.idUsuario == usuarioApp.id)
+        .map((questao) => questao.resposta!
+            .copyWith(sequencial: questao.sequencialRespostaTemporaria)
+            .toDataRespostaQuestaoAtividade())
+        .toList();
+    bool retorno;
+    try {
+      retorno = await dbRepository.upsertRespostasAtividade(dados);
+    } catch (e) {
+      assert(Debug.printBetweenLine(
+          "Erro ao inserir os dados na coleção ${CollectionType.respostasQuestaoAtividade.name}."));
+      assert(Debug.print(e));
+      return false;
+    }
+    return retorno;
   }
 
   /// Encerrar as reações em execução.

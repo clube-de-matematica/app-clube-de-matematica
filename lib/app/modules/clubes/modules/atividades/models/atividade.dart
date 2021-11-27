@@ -5,7 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../shared/utils/strings_db.dart';
-import '../../../../quiz/shared/models/questao_model.dart';
+import 'questao_atividade.dart';
 
 /// Modelo para os dados das atividades dos clubes.
 class Atividade {
@@ -32,6 +32,9 @@ class Atividade {
   /// Lista com as questões incluídas nesta atividade.
   final List<QuestaoAtividade> questoes;
 
+  /// Lista com as respostas dos usuários às questões incluídas nesta atividade.
+  final List<RespostaQuestaoAtividade> respostas; // TODO
+
   Atividade({
     required this.id,
     required this.titulo,
@@ -42,6 +45,7 @@ class Atividade {
     this.liberacao,
     this.encerramento,
     this.questoes = const [],
+    this.respostas = const [],
   });
 
   Atividade copyWith({
@@ -54,6 +58,7 @@ class Atividade {
     DateTime? publicacao,
     DateTime? encerramento,
     List<QuestaoAtividade>? questoes,
+    List<RespostaQuestaoAtividade>? respostas,
   }) {
     return Atividade(
       id: id ?? this.id,
@@ -65,6 +70,7 @@ class Atividade {
       liberacao: publicacao ?? this.liberacao,
       encerramento: encerramento ?? this.encerramento,
       questoes: questoes ?? this.questoes,
+      respostas: respostas ?? this.respostas,
     );
   }
 
@@ -81,12 +87,39 @@ class Atividade {
       DbConst.kDbDataAtividadeKeyDataEncerramento:
           encerramento?.millisecondsSinceEpoch,
       DbConst.kDbDataAtividadeKeyQuestoes:
-          questoes.map((x) => x.toMap()).toList(),
+          questoes.map((x) => x.toDataQuestaoAtividade()).toList(),
+      DbConst.kDbDataAtividadeKeyRespostas:
+          respostas.map((x) => x.toDataRespostaQuestaoAtividade()).toList(),
     };
   }
 
   factory Atividade.fromDataAtividade(DataAtividade map) {
     final int idAtividade = map[DbConst.kDbDataAtividadeKeyId];
+
+    final questoes = () {
+      final dataQuestoes =
+          map[DbConst.kDbDataAtividadeKeyQuestoes] as List? ?? [];
+      return dataQuestoes.cast<Map>().map((dados) {
+        return QuestaoAtividade(
+          idQuestaoAtividade: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
+          questao: Modular.get<QuestoesRepository>().questoes.firstWhere(
+              (element) =>
+                  element.id ==
+                  dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno]),
+          idAtividade: idAtividade,
+        );
+      }).toList();
+    }();
+
+    final respostas = () {
+      final dataRespostas =
+          map[DbConst.kDbDataAtividadeKeyRespostas] as List? ?? [];
+      return dataRespostas.cast<Map>().map((dados) {
+        return RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(
+            dados.cast());
+      }).toList();
+    }();
+
     return Atividade(
       id: idAtividade,
       titulo: map[DbConst.kDbDataAtividadeKeyTitulo],
@@ -102,14 +135,8 @@ class Atividade {
       encerramento: map[DbConst.kDbDataAtividadeKeyDataEncerramento] != null
           ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataEncerramento])
           : null,
-      questoes: List<QuestaoAtividade>.from(map[
-              DbConst.kDbDataAtividadeKeyQuestoes]
-          ?.map((dados) => QuestaoAtividade(
-                id: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
-                idQuestao:
-                    dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno],
-                idAtividade: idAtividade,
-              ))),
+      questoes: questoes,
+      respostas: respostas,
     );
   }
 
@@ -126,25 +153,14 @@ class Atividade {
       descricao = outra.descricao;
       liberacao = outra.liberacao;
       encerramento = outra.encerramento;
-      questoes
-        ..clear()
-        ..addAll(outra.questoes);
+      questoes.replaceRange(0, questoes.length, outra.questoes);
+      respostas.replaceRange(0, respostas.length, outra.respostas);
     }
-  }
-
-  /// Retorna uma lista com os objetos [Questao] correspondentes a [questoes].
-  List<Questao> obterQuestoes() {
-    if (questoes.isEmpty) return <Questao>[];
-    return Modular.get<QuestoesRepository>()
-        .questoes
-        .where((questao) =>
-            questoes.any((element) => element.idQuestao == questao.id))
-        .toList();
   }
 
   @override
   String toString() {
-    return 'Atividade(id: $id, nome: $titulo, descricao: $descricao, idClube: $idClube, idAutor: $idAutor, criacao: $criacao, publicacao: $liberacao, encerramento: $encerramento, questoes: $questoes)';
+    return 'Atividade(id: $id, nome: $titulo, descricao: $descricao, idClube: $idClube, idAutor: $idAutor, criacao: $criacao, publicacao: $liberacao, encerramento: $encerramento, questoes: $questoes, respostas: $respostas)';
   }
 
   @override
@@ -160,7 +176,8 @@ class Atividade {
         other.criacao == criacao &&
         other.liberacao == liberacao &&
         other.encerramento == encerramento &&
-        listEquals(other.questoes, questoes);
+        listEquals(other.questoes, questoes) &&
+        listEquals(other.respostas, respostas);
   }
 
   @override
@@ -173,138 +190,7 @@ class Atividade {
         criacao.hashCode ^
         liberacao.hashCode ^
         encerramento.hashCode ^
-        questoes.hashCode;
-  }
-}
-
-/// Modelo para as questões usadas em uma atividade.
-class QuestaoAtividade {
-  final int id;
-  final String idQuestao;
-  final int idAtividade;
-  final List<Resposta> respostas;
-
-  QuestaoAtividade({
-    required this.id,
-    required this.idQuestao,
-    required this.idAtividade,
-    this.respostas = const [],
-  });
-
-  QuestaoAtividade copyWith({
-    int? id,
-    String? idQuestao,
-    int? idAtividade,
-    List<Resposta>? respostas,
-  }) {
-    return QuestaoAtividade(
-      id: id ?? this.id,
-      idQuestao: idQuestao ?? this.idQuestao,
-      idAtividade: idAtividade ?? this.idAtividade,
-      respostas: respostas ?? this.respostas,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'idQuestao': idQuestao,
-      'idAtividade': idAtividade,
-      'respostas': respostas.map((x) => x.toMap()).toList(),
-    };
-  }
-
-  factory QuestaoAtividade.fromMap(Map<String, dynamic> map) {
-    return QuestaoAtividade(
-      id: map['id'],
-      idQuestao: map['idQuestao'],
-      idAtividade: map['idAtividade'],
-      respostas: List<Resposta>.from(
-          map['respostas']?.map((x) => Resposta.fromMap(x))),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory QuestaoAtividade.fromJson(String source) =>
-      QuestaoAtividade.fromMap(json.decode(source));
-
-  @override
-  String toString() {
-    return 'QuestaoAtividade(id: $id, idQuestao: $idQuestao, idAtividade: $idAtividade, respostas: $respostas)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is QuestaoAtividade &&
-        other.id == id &&
-        other.idQuestao == idQuestao &&
-        other.idAtividade == idAtividade &&
-        listEquals(other.respostas, respostas);
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        idQuestao.hashCode ^
-        idAtividade.hashCode ^
+        questoes.hashCode ^
         respostas.hashCode;
   }
-}
-
-/// Modelo para as respostas dos usuários às questões de uma atividade.
-class Resposta {
-  final int idUsuario;
-  int sequencial;
-  Resposta({
-    required this.idUsuario,
-    required this.sequencial,
-  });
-
-  Resposta copyWith({
-    int? idUsuario,
-    int? sequencial,
-  }) {
-    return Resposta(
-      idUsuario: idUsuario ?? this.idUsuario,
-      sequencial: sequencial ?? this.sequencial,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'idUsuario': idUsuario,
-      'sequencial': sequencial,
-    };
-  }
-
-  factory Resposta.fromMap(Map<String, dynamic> map) {
-    return Resposta(
-      idUsuario: map['idUsuario'],
-      sequencial: map['sequencial'],
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Resposta.fromJson(String source) =>
-      Resposta.fromMap(json.decode(source));
-
-  @override
-  String toString() =>
-      'Resposta(idUsuario: $idUsuario, sequencial: $sequencial)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is Resposta &&
-        other.idUsuario == idUsuario &&
-        other.sequencial == sequencial;
-  }
-
-  @override
-  int get hashCode => idUsuario.hashCode ^ sequencial.hashCode;
 }

@@ -2,7 +2,14 @@ import 'dart:async';
 
 import '../utils/strings_db.dart';
 
-enum CollectionType { assuntos, atividades, clubes, questoes, usuarios }
+enum CollectionType {
+  assuntos,
+  atividades,
+  clubes,
+  questoes,
+  respostasQuestaoAtividade,
+  usuarios,
+}
 
 extension ExtensionCollectionType on CollectionType {
   /// Retorna o nome da coleção (ou tabela) correspondente a [this].
@@ -16,6 +23,8 @@ extension ExtensionCollectionType on CollectionType {
         return DbConst.kDbDataCollectionClubes;
       case CollectionType.questoes:
         return DbConst.kDbDataCollectionQuestoes;
+      case CollectionType.respostasQuestaoAtividade:
+        return DbConst.kDbDataCollectionRespostaQuestaoAtividade;
       case CollectionType.usuarios:
         return DbConst.kDbDataCollectionUsuarios;
     }
@@ -62,6 +71,11 @@ class DataWhere {
               ];
               break;
             case CollectionType.atividades:
+              keys = [
+                //TODO
+              ];
+              break;
+            case CollectionType.respostasQuestaoAtividade:
               keys = [
                 //TODO
               ];
@@ -124,9 +138,9 @@ abstract class IDbRepository {
   /// Retorna o id do documento cuja referência é [ref].
   //String getDocId(ref);
 
-  /// Salvar [data] se ainda não existir o documento [id] na coleção (ou tabrla) correspondente
+  /// Salvar [data] se ainda não existir o documento [idQuestaoAtividade] na coleção (ou tabrla) correspondente
   /// a [collection].
-  /// Se [id] for `null`, será gerado um id automaticamente.
+  /// Se [idQuestaoAtividade] for `null`, será gerado um id automaticamente.
   /* Future<bool> setDocumentIfNotExist(
     CollectionType collection,
     Map<String, dynamic> data, {
@@ -193,7 +207,7 @@ abstract class IDbRepository {
 
   /// {@template app.IDbRepository.insertAtividade}
   /// Criar uma nova atividade com as informações dos parâmetros.
-  /// 
+  ///
   /// Se o processo for bem sucedido, retorna o clube criado.
   /// {@endtemplate}
   Future<DataAtividade> insertAtividade({
@@ -208,9 +222,9 @@ abstract class IDbRepository {
 
   /// {@template app.IDbRepository.updateAtividade}
   /// Atualiza os dados da atividade com base nas informações dos parâmetros.
-  /// 
+  ///
   /// A descrição não será atualizada se for uma string vazia.
-  /// 
+  ///
   /// As demais propriedades não serão atualizados se forem `null`.
   /// {@endtemplate}
   Future<DataAtividade> updateAtividade({
@@ -221,4 +235,21 @@ abstract class IDbRepository {
     DateTime? dataLiberacao,
     DateTime? dataEncerramento,
   });
+
+  /// {@template app.IDbRepository.getRespostasAtividade}
+  /// Função para retornar as repostas dos usuários a uma atividade.
+  ///
+  /// Se [idUsuario] for `null`, será retornado as respostas de todos os usuários.
+  /// {@endtemplate}
+  Future<List<DataRespostaQuestaoAtividade>> getRespostasAtividade(
+    int idAtividade, [
+    int? idUsuario,
+  ]);
+
+  /// {@template app.IDbRepository.upsertRespostasAtividade}
+  /// Insere as respostas da atividade, caso ainda não existam, ou atualiza-as, 
+  /// caso já existam.
+  /// {@endtemplate}
+  Future<bool> upsertRespostasAtividade(
+      List<DataRespostaQuestaoAtividade> data);
 }

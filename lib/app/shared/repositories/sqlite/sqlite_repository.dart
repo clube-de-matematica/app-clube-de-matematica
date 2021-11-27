@@ -222,6 +222,8 @@ class SqliteRepository
         return false; //TODO
       case CollectionType.atividades:
         return false; //TODO
+      case CollectionType.respostasQuestaoAtividade:
+        return false; //TODO
       case CollectionType.usuarios:
         return true;
     }
@@ -312,6 +314,18 @@ class SqliteRepository
   @override
   Future<DataAtividade> updateAtividade({required int id, required String titulo, String? descricao, List<String>? questoes, DateTime? dataLiberacao, DateTime? dataEncerramento}) {
     // TODO: implement updateAtividade
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<DataRespostaQuestaoAtividade>> getRespostasAtividade(int idAtividade, [int? idUsuario]) {
+    // TODO: implement getRespostasAtividade
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> upsertRespostasAtividade(List<DataRespostaQuestaoAtividade> data) {
+    // TODO: implement upsertRespostasAtividade
     throw UnimplementedError();
   }
 }

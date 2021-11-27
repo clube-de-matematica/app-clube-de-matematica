@@ -134,7 +134,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
           .forEach((assunto) {
         ///Pegar a unidade correspondente ao assunto.
         (allOpcoes.firstWhere(
-                    (element) => assunto.unidade.id == element.opcao.id)
+                    (element) => assunto.unidade.id == element.opcao.idQuestaoAtividade)
                 as OpcaoFiltroAssuntoUnidade)
             .assuntos
             .add(OpcaoFiltroAssunto(assunto));
