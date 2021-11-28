@@ -60,6 +60,7 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
         }),
       );
     });
+    //TODO: .catchError(onError);
   }
 
   @override

@@ -91,7 +91,7 @@ class _AppDrawerState extends State<_AppDrawer> {
     );
   }
 
-  /// Abre a oágina de perfil, solicitando o login, caso este ainda não tenha ocorrido.
+  /// Abre a página de perfil, solicitando o login, caso este ainda não tenha ocorrido.
   void _loadProfile(BuildContext context) async {
     bool result = true;
     if (widget.user.isAnonymous) {

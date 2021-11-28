@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
 
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gotrue/gotrue.dart';
 import 'package:supabase/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -10,32 +8,37 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../configure_supabase.dart';
 import '../../../modules/perfil/models/userapp.dart';
 import '../../models/debug.dart';
-import '../../utils/strings_db.dart';
 import '../interface_auth_repository.dart';
-import 'supabase_db_repository.dart';
 
 /// Gerencia processos de autenticação com o Supabase Auth.
 class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
   final GoTrueClient _auth;
+  final GotrueSubscription _subscription;
 
-  AuthSupabaseRepository(Supabase supabase) : _auth = supabase.client.auth {
-    _auth.onAuthStateChange((event, session) {
-      if (session?.user?.email == null) {
-        user.id = null;
-      }
-      user.email = session?.user?.email;
-      user.name = session?.user?.userMetadata['full_name'];
-      user.urlAvatar = session?.user?.userMetadata['avatar_url'];
-      switch (event) {
-        case AuthChangeEvent.signedIn:
-          user.isAnonymous = false;
-          break;
-        case AuthChangeEvent.signedOut:
-          user.isAnonymous = true;
-          break;
-        default:
-      }
-    });
+  AuthSupabaseRepository(Supabase supabase)
+      : _auth = supabase.client.auth,
+        _subscription = supabase.client.auth.onAuthStateChange((_, __) {
+          setUserApp();
+        });
+
+  /// Atribui os dados do usuário do supabase para o usuário do aplicativo.
+  static void setUserApp() {
+    final user = Supabase.instance.client.auth.currentUser;
+    final userApp = UserApp.instance;
+    if (user?.email == null) {
+      userApp
+        ..email = null
+        ..id = null
+        ..name = null
+        ..urlAvatar = null
+        ..isAnonymous = true;
+    }
+    userApp
+      ..email = user?.email
+      ..id = user?.appMetadata['id_usuario']
+      ..name = user?.userMetadata['full_name']
+      ..urlAvatar = user?.userMetadata['avatar_url']
+      ..isAnonymous = false;
   }
 
   /// Controle para o stream de alterações no estado de autenticação.
@@ -46,7 +49,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
   Stream<StatusSignIn> get status => _controller.stream;
 
   /// Usuário do aplicativo.
-  final _user = UserApp();
+  final _user = UserApp.instance;
 
   @override
   UserApp get user => _user;
@@ -71,7 +74,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
   @override
   bool get logged => _currentUser != null;
 
-  /// TODO: O [Supabase] ainda não oferece suporte ao registro de usuário anônimo, em vez 
+  /// TODO: O [Supabase] ainda não oferece suporte ao registro de usuário anônimo, em vez
   /// disso ele disponibiliza a `anon key`.
   @override
   Future<bool> signInAnonymously() async {
@@ -92,25 +95,11 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       assert(Debug.print(e.toString()));
       rethrow;
     }
-print(session.error?.message);//TODO
     assert(session.user != null && session.error == null);
     if (session.user == null || session.error != null) {
       _controller.add(StatusSignIn.error);
       return StatusSignIn.error;
     } else {
-      final email = session.user?.email;
-      if (email != null) {
-        try {
-          final userData =
-              await Modular.get<SupabaseDbRepository>().getUser(email);
-          user.id = userData[DbConst.kDbDataUserKeyId];
-        } catch (e) {
-          assert(Debug.print(e));
-          user.id = null;
-          rethrow;
-        }
-      }
-
       _controller.add(StatusSignIn.success);
       return StatusSignIn.success;
     }
@@ -194,6 +183,7 @@ print(session.error?.message);//TODO
 
   @override
   void dispose() {
+    _subscription.data?.unsubscribe();
     _controller.close();
   }
 }
