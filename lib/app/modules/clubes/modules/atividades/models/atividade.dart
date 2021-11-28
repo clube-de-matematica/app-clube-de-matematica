@@ -102,6 +102,7 @@ class Atividade {
       return dataQuestoes.cast<Map>().map((dados) {
         return QuestaoAtividade(
           idQuestaoAtividade: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
+          // TODO: Tratar o erro que pode ser gerado por firstWhere.
           questao: Modular.get<QuestoesRepository>().questoes.firstWhere(
               (element) =>
                   element.id ==

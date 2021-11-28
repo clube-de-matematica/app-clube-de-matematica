@@ -133,17 +133,16 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
           ///Adicionar cada um desses assuntos em sua respectiva unidade.
           .forEach((assunto) {
         ///Pegar a unidade correspondente ao assunto.
-        (allOpcoes.firstWhere(
-                    (element) => assunto.unidade.id == element.opcao.idQuestaoAtividade)
-                as OpcaoFiltroAssuntoUnidade)
+        allOpcoes.cast<OpcaoFiltroAssuntoUnidade>().firstWhere(
+                    (element) => assunto.unidade.id == element.opcao.id)
             .assuntos
             .add(OpcaoFiltroAssunto(assunto));
       });
 
       ///Ordenar os subassuntos.
       ///`removeDiacritics` é usado para desconsiderar os acentos.
-      allOpcoes.forEach((e) {
-        (e as OpcaoFiltroAssuntoUnidade).assuntos.sort((a, b) =>
+      allOpcoes.cast<OpcaoFiltroAssuntoUnidade>().forEach((e) {
+        e.assuntos.sort((a, b) =>
             removeDiacritics(a.opcao.toString())
                 .compareTo(removeDiacritics(b.opcao.toString())));
       });
