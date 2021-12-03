@@ -1,8 +1,8 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'modules/atividades/atividades_module.dart';
-import 'pages/adicionar/adicionar_clube_page.dart';
 import 'pages/clube/clube_page.dart';
+import 'pages/criar/criar_clube_page.dart';
 import 'pages/editar/editar_clube_page.dart';
 import 'pages/home/home_clubes_controller.dart';
 import 'pages/home/home_clubes_page.dart';
@@ -47,7 +47,7 @@ class ClubesModule extends Module {
   List<ModularRoute> get routes => [
         ChildRoute(kRelativeRouteHomePage, child: (_, __) => HomeClubesPage()),
         ChildRoute(kRelativeRouteCriarPage,
-            child: (_, __) => AdicionarClubePage()),
+            child: (_, __) => CriarClubePage()),
         ChildRoute(kRelativeRouteEditarPage,
             child: (_, args) => EditarClubePage(args.data)),
         ChildRoute(

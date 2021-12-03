@@ -53,47 +53,23 @@ class Avatar extends StatelessWidget {
     return AnimatedBuilder(
       animation: user,
       builder: (_, __) {
+        final provider = _getImage(user);
         return CircleAvatar(
           radius: radius,
           backgroundColor:
               backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
-          child: _buildChild(),
+          backgroundImage: provider,
+          child: provider != null
+              ? null
+              : IconTheme(
+                  data: Theme.of(context).iconTheme,
+                  child: Icon(
+                    Icons.person,
+                    size: 1.5 * (radius ?? 30.0),
+                  ),
+                ),
         );
       },
     );
-  }
-
-  Widget _buildChild() {
-    final provider = _getImage(user);
-    late final icon = Icon(
-      Icons.person,
-      size: 1.5 * (radius ?? 30.0),
-    );
-    if (provider != null) {
-      return ClipOval(
-        child: Image(
-          image: provider,
-          errorBuilder: (_, __, ___) => icon,
-          frameBuilder: (_, child, frame, wasSynchronouslyLoaded) {
-            if (wasSynchronouslyLoaded) {
-              return child;
-            } else {
-              final size = radius == null ? null : radius! * 2;
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
-                child: frame != null
-                    ? child
-                    : AppShimmer(
-                        height: size,
-                        width: size,
-                      ),
-              );
-            }
-          },
-        ),
-      );
-    } else {
-      return icon;
-    }
   }
 }

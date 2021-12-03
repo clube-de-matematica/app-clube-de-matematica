@@ -33,7 +33,7 @@ class Atividade {
   final List<QuestaoAtividade> questoes;
 
   /// Lista com as respostas dos usuários às questões incluídas nesta atividade.
-  final List<RespostaQuestaoAtividade> respostas; // TODO
+  final List<RespostaQuestaoAtividade> respostas; // TODO: Não está sendo usado.
 
   Atividade({
     required this.id,

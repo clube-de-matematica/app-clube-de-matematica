@@ -1,7 +1,7 @@
 /// Strings para a página de perfil.
 abstract class UIStrings {
   /// Rótulo para a caixa de texto do nome do usuário.
-  static const kNameLabelText = "Nome";
+  static const kNameLabelText = "Como deseja ser chamado";
 
   /// Mensagem na caixa de texto quando ela estiver vazia.
   static const kNameHintText = "Como deseja ser chamado?";

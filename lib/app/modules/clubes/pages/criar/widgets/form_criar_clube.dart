@@ -42,14 +42,7 @@ class _FormCriarClubeState extends State<FormCriarClube> {
       child: Builder(builder: (context) {
         return Column(
           children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Text(
-                'Crie um clube:',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
+            const SizedBox(height: 8.0),
             NomeClubeTextFormField(
               onSaved: (valor) => nome = valor?.trim(),
               validator: widget.validarNome,

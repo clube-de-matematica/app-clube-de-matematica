@@ -126,7 +126,6 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     if (session.error != null || session.url == null) {
       _controller.add(StatusSignIn.error);
     }
-
     launch(session.url!, webOnlyWindowName: '_self').catchError((error, stack) {
       assert(Debug.print(
         'Erro ao abrir o URL em AuthSupabaseRepository.signInWithGoogle(). \n'
@@ -142,7 +141,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
   /// [StatusSignIn.canceled] ou [StatusSignIn.error] por [status], ou após o tempo limite
   /// [duration]. Neste caso, o futuro será concluído com [StatusSignIn.timeout].
   Future<StatusSignIn> _listen(
-      [Duration duration = const Duration(seconds: 30)]) {
+      [Duration duration = const Duration(seconds: 30)]) {//TODO: verificar duração
     final completer = Completer<StatusSignIn>();
     final listen = status.listen((_) {});
     listen.onData((status) {

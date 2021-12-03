@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../shared/repositories/questoes/imagem_questao_repository.dart';
 import '../../../../shared/models/exibir_questao_com_filtro_controller.dart';
+import '../../../../shared/repositories/questoes/imagem_questao_repository.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
 import '../../shared/models/opcoesQuestao.dart';
-import '../../shared/models/questao_model.dart';
 
 part 'quiz_controller.g.dart';
 

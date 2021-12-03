@@ -55,14 +55,19 @@ abstract class _HomeClubesControllerBase extends IClubeController
   /// Lista com os clubes do usuário.
   List<Clube> get clubes => repository.clubes;
 
-  /// Criar ou participar de um clube.
-  void addClube(BuildContext context) {
-    Navegacao.abrirPagina(context, RotaPagina.adicionarClube);
+  /// Abre a página para criar um clube.
+  void criarClube(BuildContext context) {
+    Navegacao.abrirPagina(context, RotaPagina.criarClube);
   }
 
   /// Atualizar a lista de clubes do usuário do aplicativo.
   Future<bool> atualizarListaDeClubes() async {
     final clubes = await repository.carregarClubes();
     return clubes.isNotEmpty;
+  }
+
+  /// Inclui o usuário atual no clube correspondente a [codigo].
+  Future<Clube?> participar(String codigo) async {
+    return repository.entrarClube(codigo);
   }
 }

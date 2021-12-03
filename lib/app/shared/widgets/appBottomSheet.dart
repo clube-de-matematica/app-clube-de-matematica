@@ -31,8 +31,10 @@ class AppBottomSheet extends StatelessWidget {
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
     ),
-    this.scrollable = false,
+    //this.scrollable = false,
     this.transitionAnimationController,
+    this.isScrollControlled = false,
+    this.builder,
   }) : super(key: key);
 
   final Widget? title;
@@ -47,14 +49,19 @@ class AppBottomSheet extends StatelessWidget {
   final VerticalDirection? actionsOverflowDirection;
   final double? actionsOverflowButtonSpacing;
   final EdgeInsetsGeometry? buttonPadding;
-  final Color? backgroundColor;
-  final double? elevation;
   final String? semanticLabel;
   final EdgeInsets insetPadding;
+  final Color? backgroundColor;
+  final double? elevation;
   final Clip? clipBehavior;
   final ShapeBorder shape;
-  final bool scrollable;
+  //final bool scrollable;
   final AnimationController? transitionAnimationController;
+  final bool isScrollControlled;
+
+  /// Usado para expor o [BuildContext] do construtor de [showModal] e [show].
+  /// O [Widget] do parâmetro é o retorno de [AppBottomSheet.build].
+  final Widget Function(BuildContext context, Widget child)? builder;
 
   /// Exibir bottom sheet modal.
   Future<T?> showModal<T>(BuildContext context) {
@@ -65,7 +72,9 @@ class AppBottomSheet extends StatelessWidget {
       backgroundColor: backgroundColor,
       clipBehavior: clipBehavior,
       transitionAnimationController: transitionAnimationController,
-      builder: (context) => build(context),
+      isScrollControlled: isScrollControlled,
+      builder: (context) =>
+          builder?.call(context, build(context)) ?? build(context),
     );
   }
 
@@ -78,7 +87,8 @@ class AppBottomSheet extends StatelessWidget {
       backgroundColor: backgroundColor,
       clipBehavior: clipBehavior,
       transitionAnimationController: transitionAnimationController,
-      builder: (context) => build(context),
+      builder: (context) =>
+          builder?.call(context, build(context)) ?? build(context),
     );
   }
 
@@ -212,7 +222,7 @@ class AppBottomSheet extends StatelessWidget {
     );
 
     List<Widget> columnChildren;
-    if (scrollable) {
+    /* if (scrollable) {
       columnChildren = <Widget>[
         if (title != null || content != null) anchor,
         if (title != null || content != null)
@@ -231,15 +241,14 @@ class AppBottomSheet extends StatelessWidget {
         if (actions != null) divider(),
         if (actions != null) actionsWidget!,
       ];
-    } else {
-      columnChildren = <Widget>[
-        if (title != null || content != null) anchor,
-        if (title != null) titleWidget!,
-        if (content != null) Flexible(child: contentWidget!),
-        if (actions != null) divider(),
-        if (actions != null) actionsWidget!,
-      ];
-    }
+    } else */
+    columnChildren = <Widget>[
+      if (title != null || content != null) anchor,
+      if (title != null) titleWidget!,
+      if (content != null) Flexible(child: contentWidget!),
+      if (actions != null) divider(),
+      if (actions != null) actionsWidget!,
+    ];
 
     Widget dialogChild = IntrinsicWidth(
       child: Column(
@@ -407,6 +416,55 @@ class BottomSheetCancelarSair extends BottomSheetAcoes {
           actionLastIsPrimary: false,
           resultActionFirst: true,
           resultActionLast: false,
+        );
+}
+
+/// Uma página inferior para confirmar ou cancelar uma ação de sair.
+/// Inclui uma opção para salvar os dados modificados
+/// Ao ser fechada, retorna:
+/// * 0 se o usuário escolher cancelar;
+/// * 1 se o usuário escolher sair; e
+/// * 2 se o usuário escolher salvar.
+class BottomSheetSalvarSairCancelar extends AppBottomSheet {
+  BottomSheetSalvarSairCancelar({
+    Key? key,
+    Widget? title,
+    Widget? content,
+    String? message,
+  })  : assert(!(content != null && message != null)),
+        super(
+          key: key,
+          title: title,
+          content: content ??
+              (message == null
+                  ? null
+                  : Text(
+                      message,
+                      textAlign: TextAlign.justify,
+                    )),
+          actions: [
+            Builder(builder: (context) {
+              return AppTextButton(
+                primary: true,
+                child: const Text('SALVAR'),
+                onPressed: () => Navigator.pop<int>(context, 2),
+              );
+            }),
+            Builder(builder: (context) {
+              return AppTextButton(
+                primary: false,
+                child: const Text('SAIR'),
+                onPressed: () => Navigator.pop<int>(context, 1),
+              );
+            }),
+            Builder(builder: (context) {
+              return AppTextButton(
+                primary: false,
+                child: const Text('CANCELAR'),
+                onPressed: () => Navigator.pop<int>(context, 0),
+              );
+            }),
+          ],
         );
 }
 

@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../../modules/quiz/shared/models/questao_model.dart';
 import '../../../../../../shared/repositories/questoes/questoes_repository.dart';
+import '../../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../../../shared/widgets/checkbox_popup_menu_item.dart';
 import '../../../../../../shared/widgets/questao_widget.dart';
@@ -38,57 +40,73 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Questões'),
-        actions: [
-          _construirChip(),
-          _construirBotaoMenuFiltro(),
-          _construirBotaoAplicar(),
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        final modificado =
+            !listEquals(widget.questoes, controle.filtros.questoesSelecionadas);
+        if (!modificado) return true;
+        final retorno = await BottomSheetSalvarSairCancelar(
+          title: const Text('As questões não foram salvas'),
+          message: 'Ao sair as questões selecionadas não serão salvas.',
+        ).showModal<int>(context);
+        if (retorno == 2) {
+          Navigator.of(context).pop(controle.aplicar());
+          return true;
+        }
+        return retorno == 1;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Questões'),
+          actions: [
+            _construirChip(),
+            _construirBotaoMenuFiltro(),
+            _construirBotaoAplicar(),
+          ],
+        ),
+        body: FutureBuilder(
+            future: Modular.get<QuestoesRepository>().inicializando,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                // Carregando...
+                return Center(child: const CircularProgressIndicator());
+              } else {
+                return Observer(builder: (_) {
+                  if (controle.questao == null) {
+                    // Carregado sem questões a serem exibidas.
+                    return _corpoSemQuestao();
+                  }
+                  // Carregado com questões a serem exibidas.
+                  return _corpoComQuestao();
+                });
+              }
+            }),
+        bottomNavigationBar: _barraInferior(),
+        //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        //floatingActionButton: _botaoFlutuante(),
       ),
-      body: FutureBuilder(
-          future: Modular.get<QuestoesRepository>().inicializando,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              // Carregando...
-              return Center(child: const CircularProgressIndicator());
-            } else {
-              return Observer(builder: (_) {
-                if (controle.questao == null) {
-                  // Carregado sem questões a serem exibidas.
-                  return _corpoSemQuestao();
-                }
-                // Carregado com questões a serem exibidas.
-                return _corpoComQuestao();
-              });
-            }
-          }),
-      bottomNavigationBar: _barraInferior(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: _botaoFlutuante(),
     );
   }
 
   /// Corpo da página exibido quando o filtro retorna questões.
-  Column _corpoComQuestao() {
-    return Column(
-      children: [
-        _construirCabecalho(),
-        Divider(
-          height: 0,
-          indent: 16.0,
-          endIndent: 16.0,
-        ),
-        Expanded(
-          child: QuestaoWidget(
-            questao: controle.questao!,
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
-            selecionavel: false,
-            rolavel: true,
+  Widget _corpoComQuestao() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _construirCabecalho(),
+          Divider(
+            height: 0,
+            indent: 16.0,
+            endIndent: 16.0,
           ),
-        ),
-      ],
+          QuestaoWidget(
+            questao: controle.questao!,
+            padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+            selecionavel: false,
+            rolavel: false,
+          ),
+        ],
+      ),
     );
   }
 
@@ -98,7 +116,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
+        /* Container(
           child: Observer(builder: (_) {
             return Row(
               children: [
@@ -110,6 +128,12 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
                 Text(controle.questao?.id ?? ''),
               ],
             );
+          }),
+        ), */
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+          child: Observer(builder: (_) {
+            return Text('OBMEP (${controle.questao?.ano})');
           }),
         ),
         Padding(
@@ -132,16 +156,40 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
 
   Widget _barraInferior() {
     return Observer(builder: (_) {
-      return BarraIferiorAteriorProximo(
-        ativarVoltar: controle.podeVoltar,
-        ativarProximo: controle.podeAvancar,
-        acionarVoltar: controle.voltar,
-        acionarProximo: controle.avancar,
-        shape: const CircularNotchedRectangle(),
+      return Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          BarraIferiorAteriorProximo(
+            ativarVoltar: controle.podeVoltar,
+            ativarProximo: controle.podeAvancar,
+            acionarVoltar: controle.voltar,
+            acionarProximo: controle.avancar,
+          ),
+          Tooltip(
+            message:'Toque para alternar a seleção dessa questão',
+            child: MaterialButton(
+              child: Observer(builder: (_) {
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  child: Icon(
+                    controle.selecionada
+                        ? Icons.radio_button_on
+                        : Icons.radio_button_off,
+                    size: 28.0,
+                    color: controle.selecionada
+                        ? tema.colorScheme.primary
+                        : tema.colorScheme.onSurface,
+                  ),
+                );
+              }),
+              onPressed: controle.alterarSelecao,
+            ),
+          ),
+        ],
       );
     });
   }
-
+/* 
   FloatingActionButton _botaoFlutuante() {
     return FloatingActionButton.small(
       backgroundColor: tema.colorScheme.surface,
@@ -162,10 +210,10 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
       onPressed: controle.alterarSelecao,
     );
   }
-
+ */
   IconButton _construirBotaoAplicar() {
     return IconButton(
-      icon: Icon(Icons.done_rounded),
+      icon: Icon(Icons.save),
       onPressed: () {
         Navigator.of(context).pop(controle.aplicar());
       },

@@ -3,7 +3,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'clube_de_matematica_controller.dart';
 import 'deep_links.dart';
-import 'mock_db_repository.dart';
 import 'modules/clubes/clubes_module.dart';
 import 'modules/clubes/shared/repositories/clubes_repository.dart';
 import 'modules/login/login_module.dart';

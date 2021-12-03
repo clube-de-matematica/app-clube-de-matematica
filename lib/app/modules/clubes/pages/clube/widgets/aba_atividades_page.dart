@@ -1,9 +1,7 @@
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
-import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
-import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../../../modules/atividades/models/atividade.dart';
 import '../clube_page.dart';
 import 'categoria.dart';
 

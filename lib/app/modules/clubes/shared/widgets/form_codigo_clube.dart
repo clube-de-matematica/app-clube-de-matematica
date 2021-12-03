@@ -26,6 +26,7 @@ class _FormCodigoClubeState extends State<FormCodigoClube> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           alignment: Alignment.centerLeft,

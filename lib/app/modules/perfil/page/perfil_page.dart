@@ -150,13 +150,14 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
     );
   }
 
-  Stack _avatar() {
-    return Stack(
-      alignment: AlignmentDirectional.centerEnd,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(18.0, 12.0, 18.0, 12.0),
-          child: FormField(
+  Widget _avatar() {
+    final radius = 48.0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 18.0),
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          FormField(
             onSaved: (_) => controller.saveImage(),
             builder: (_) {
               return AnimatedBuilder(
@@ -168,7 +169,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                       controller.user,
                       backgroundColor: Colors.black12,
                       backgroundImage: controller.image.value,
-                      radius: 48.0,
+                      radius: radius,
                     ),
                     transitionOnUserGestures: true,
                   );
@@ -176,15 +177,38 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
               );
             },
           ),
-        ),
-        GestureDetector(
-          onTap: controller.getImage,
-          child: CircleAvatar(
-            child: Icon(Icons.camera_alt),
-            radius: 18.0,
+          _alterarFoto(),
+        ],
+      ),
+    );
+  }
+
+  Widget _alterarFoto() {
+    final iconTheme = tema.iconTheme;
+    final icon = Icons.camera_alt;
+    final iconSize = 24.0;
+    return Positioned(
+      bottom: -(iconSize / 2 + 2),
+      right: -(iconSize / 2 + 2),
+      child: IconButton(
+        iconSize: iconSize,
+        onPressed: controller.getImage,
+        icon: IconTheme(
+          data: iconTheme,
+          child: Stack(
+            children: <Widget>[
+              Center(
+                child: Icon(
+                  icon,
+                  color: Colors.white70,
+                  size: (iconTheme.size ?? 0) + 6,
+                ),
+              ),
+              Center(child: Icon(icon)),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 

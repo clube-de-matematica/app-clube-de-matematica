@@ -4,11 +4,11 @@ import 'package:flutter/widgets.dart';
 import 'clube_de_matematica_module.dart';
 import 'modules/clubes/clubes_module.dart';
 import 'modules/clubes/modules/atividades/atividades_module.dart';
-import 'modules/clubes/modules/atividades/pages/responder/reponder_atividade_page.dart';
 import 'modules/clubes/modules/atividades/pages/criar/criar_atividade_page.dart';
 import 'modules/clubes/modules/atividades/pages/editar/editar_atividade_page.dart';
-import 'modules/clubes/pages/adicionar/adicionar_clube_page.dart';
+import 'modules/clubes/modules/atividades/pages/responder/reponder_atividade_page.dart';
 import 'modules/clubes/pages/clube/clube_page.dart';
+import 'modules/clubes/pages/criar/criar_clube_page.dart';
 import 'modules/clubes/pages/editar/editar_clube_page.dart';
 import 'modules/clubes/pages/home/home_clubes_page.dart';
 import 'modules/filtros/filtros_module.dart';
@@ -91,8 +91,8 @@ enum RotaPagina {
   /// Representa a rota para a página [ClubePage].
   clube,
 
-  /// Representa a rota para a página [AdicionarClubePage].
-  adicionarClube,
+  /// Representa a rota para a página [CriarClubePage].
+  criarClube,
 
   /// Representa a rota para a página [EditarClubePage].
   editarClube,
@@ -122,7 +122,7 @@ extension ExtensaoRotaPagina on RotaPagina {
         return PerfilModule.kAbsoluteRoutePerfilPage;
       case RotaPagina.homeClubes:
         return ClubesModule.kAbsoluteRouteHomePage;
-      case RotaPagina.adicionarClube:
+      case RotaPagina.criarClube:
         return ClubesModule.kAbsoluteRouteCriarPage;
       case RotaPagina.editarClube:
         return ClubesModule.kAbsoluteRouteEditarPage;
@@ -147,7 +147,7 @@ extension ExtensaoRotaPagina on RotaPagina {
       case RotaPagina.login:
       case RotaPagina.perfil:
       case RotaPagina.homeClubes:
-      case RotaPagina.adicionarClube:
+      case RotaPagina.criarClube:
       case RotaPagina.editarClube:
       case RotaPagina.atividade:
       case RotaPagina.criarAtividade:
@@ -172,7 +172,7 @@ extension ExtensaoRotaPagina on RotaPagina {
       case RotaPagina.filtrosOpcoes:
       case RotaPagina.login:
       case RotaPagina.perfil:
-      case RotaPagina.adicionarClube:
+      case RotaPagina.criarClube:
       case RotaPagina.editarClube:
       case RotaPagina.editarAtividade:
         return false;
@@ -294,7 +294,7 @@ abstract class Navegacao {
                   arguments: argumentos, result: retorno);
             }
             return navegador.pushNamed(novaPagina, arguments: argumentos);
-          case RotaPagina.adicionarClube:
+          case RotaPagina.criarClube:
             return navegador.pushNamed(novaPagina, arguments: argumentos);
           case RotaPagina.editarClube:
             return navegador.pushNamed(novaPagina, arguments: argumentos);

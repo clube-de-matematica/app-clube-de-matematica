@@ -33,7 +33,7 @@ class SupabaseDbRepository
     _authRepository.checkAuthentication(_debugName, memberName);
   }
 
-  /// TODO: Retorna, assincronamente um [DataUser] apenas com o ID do usuário.
+  /// Retorna, assincronamente um [DataUser] apenas com o ID do usuário.
   Future<DataDocument> getUser(String email) async {
     assert(Debug.print('[INFO] Chamando $_debugName.getUser()...'));
     _checkAuthentication('getUser()');

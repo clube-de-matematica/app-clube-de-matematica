@@ -3,28 +3,8 @@ import 'package:flutter/material.dart';
 import '../../modules/quiz/shared/utils/ui_strings.dart';
 
 /// Barra contendo os botões para avançar e voltar na lista de itens.
-class BarraIferiorAteriorProximo extends BottomAppBar {
+class BarraIferiorAteriorProximo extends StatelessWidget {
   BarraIferiorAteriorProximo({
-    Key? key,
-    required bool ativarVoltar,
-    required bool ativarProximo,
-    required VoidCallback acionarVoltar,
-    required VoidCallback acionarProximo,
-    NotchedShape? shape,
-  }) : super(
-          key: key,
-          shape: shape,
-          child: _Child(
-            ativarVoltar: ativarVoltar,
-            ativarProximo: ativarProximo,
-            acionarVoltar: acionarVoltar,
-            acionarProximo: acionarProximo,
-          ),
-        );
-}
-
-class _Child extends StatelessWidget {
-  const _Child({
     Key? key,
     required this.ativarVoltar,
     required this.ativarProximo,
@@ -39,51 +19,62 @@ class _Child extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final estiloBotao = TextButton.styleFrom(
-      primary: Theme.of(context).colorScheme.onSurface,
-      padding: const EdgeInsets.only(right: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-    );
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          // Estrutura para o botão de voltar.
-          AnimatedOpacity(
-            opacity: ativarVoltar ? 1 : 0,
-            duration: const Duration(milliseconds: 300),
-            child: TextButton(
-              style: estiloBotao,
-              onPressed: ativarVoltar ? acionarVoltar : null,
-              child: Row(
-                children: <Widget>[
-                  const Icon(Icons.chevron_left),
-                  const SizedBox(width: 4),
-                  const Text(UIStrings.QUIZ_TEXTO_BOTAO_VOLTAR),
-                ],
+    final altura = 48.0;
+    final duracao = const Duration(milliseconds: 300);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Divider(
+          height: 0,
+          thickness: 1,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            // Estrutura para o botão de voltar.
+            Expanded(
+              child: AnimatedOpacity(
+                opacity: ativarVoltar ? 1 : 0.75,
+                duration: duracao,
+                child: MaterialButton(
+                  height: altura,
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  onPressed: ativarVoltar ? acionarVoltar : null,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      const Icon(Icons.chevron_left),
+                      const SizedBox(width: 4),
+                      Text(UIStrings.QUIZ_TEXTO_BOTAO_VOLTAR),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
 
-          // Estrutura para o botão de avançar.
-          AnimatedOpacity(
-            opacity: ativarProximo ? 1 : 0,
-            duration: const Duration(milliseconds: 300),
-            child: TextButton(
-              style: estiloBotao,
-              onPressed: ativarProximo ? acionarProximo : null,
-              child: Row(
-                children: <Widget>[
-                  const Text(UIStrings.QUIZ_TEXTO_BOTAO_AVANCAR),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.chevron_right),
-                ],
+            // Estrutura para o botão de avançar.
+            Expanded(
+              child: AnimatedOpacity(
+                opacity: ativarProximo ? 1 : 0.75,
+                duration: duracao,
+                child: MaterialButton(
+                  height: altura,
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  onPressed: ativarProximo ? acionarProximo : null,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      const Text(UIStrings.QUIZ_TEXTO_BOTAO_AVANCAR),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.chevron_right),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 }

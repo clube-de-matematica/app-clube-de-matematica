@@ -2,31 +2,26 @@ import 'package:flutter/material.dart';
 
 import '../../../../shared/widgets/appBottomSheet.dart';
 import '../../shared/widgets/bottom_sheet_erro.dart';
-import 'adicionar_clube_controller.dart';
-import 'widgets/form_codigo_clube.dart';
+import 'criar_clube_controller.dart';
 import 'widgets/form_criar_clube.dart';
 
-class AdicionarClubePage extends StatefulWidget {
-  const AdicionarClubePage({Key? key}) : super(key: key);
+class CriarClubePage extends StatefulWidget {
+  const CriarClubePage({Key? key}) : super(key: key);
 
   @override
-  _AdicionarClubePageState createState() => _AdicionarClubePageState();
+  _CriarClubePageState createState() => _CriarClubePageState();
 }
 
-class _AdicionarClubePageState extends State<AdicionarClubePage> {
+class _CriarClubePageState extends State<CriarClubePage> {
   final controller = AdicionarClubeController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('Criar clube')),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          FormCodigoClube(
-            onParticipar: (codigo) => _onParticipar(context, codigo),
-          ),
-          const Divider(height: 48.0),
           FormCriarClube(
             validarNome: (nome) => controller.validarNome(nome),
             onCriar: (nome, descricao, corTema, privado) =>
@@ -35,17 +30,6 @@ class _AdicionarClubePageState extends State<AdicionarClubePage> {
         ],
       ),
     );
-  }
-
-  Future _onParticipar(BuildContext context, String codigo) async {
-    final future = controller.participar(codigo);
-    await BottomSheetCarregando(future: future).showModal(context);
-    final clube = await future;
-    if (clube != null) {
-      controller.abrirPaginaClube(context, clube);
-    } else {
-      await BottomSheetErroParticiparClube().showModal(context);
-    }
   }
 
   Future _onCriar(

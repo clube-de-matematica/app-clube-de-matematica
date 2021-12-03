@@ -1,14 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../../../shared/widgets/appInputDatePickerFormField.dart';
 import '../../../../../../shared/widgets/app_text_form_field.dart';
 import '../../../../../quiz/shared/models/questao_model.dart';
-import '../../models/atividade.dart';
 import '../../pages/selecionar_questoes/selecionar_questoes_page.dart';
 
 typedef ValorSelecionarQuestoesFormField = List<Questao>;
@@ -61,6 +58,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
   late DateTime liberacao;
   DateTime? encerramento;
   late List<Questao> questoes;
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -81,9 +79,10 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
     super.dispose();
   }
 
-  void _salvar(BuildContext context) async {
+  FutureOr<void> _salvar() async {
     if (!carregando) {
-      final form = Form.of(context);
+      //final form = Form.of(contexto);
+      final form = formKey.currentState;
       if (form?.validate() ?? false) {
         setState(() => carregando = true);
         form?.save();
@@ -102,11 +101,19 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: formKey,
       onWillPop: () async {
-        final sair = await BottomSheetCancelarSair(
-          message: 'Há dados não salvos que serão descartados',
-        ).showModal<bool>(context);
-        return sair ?? false;
+        final retorno = await BottomSheetSalvarSairCancelar(
+          title: const Text('Há dados não salvos'),
+          message: 'Ao sair os dados não salvos serão descartados.',
+        ).showModal<int>(context);
+        if (retorno == 2) {
+          final validado = formKey.currentState?.validate() ?? false;
+          if (!validado) return false;
+          await _salvar();
+          return true;
+        }
+        return retorno == 1;
       },
       child: Builder(builder: (context) {
         final sizedBox = () => const SizedBox(height: 8.0);
@@ -114,11 +121,11 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
           floatingActionButton: FloatingActionButton(
             //backgroundColor: ,
             child: Icon(
-              Icons.check,
+              Icons.done,
               //color: ,
               size: 28.0,
             ),
-            onPressed: () => _salvar(context),
+            onPressed: () => _salvar(),
           ),
           body: ListView(
             padding: const EdgeInsets.all(16.0),

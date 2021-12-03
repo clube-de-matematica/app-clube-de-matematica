@@ -6,11 +6,6 @@ import '../../shared/utils/mixin_controllers.dart';
 class AdicionarClubeController extends IClubeController
     with IClubeControllerMixinValidar, IClubeControllerMixinShowPageClube {
 
-  /// Inclui o usuário atual no clube correspondente a [codigo].
-  Future<Clube?> participar(String codigo) async {
-    return repository.entrarClube(codigo);
-  }
-
   /// Cria um clube com as informações dos parâmetros.
   Future<Clube?> criar(
     String nome,

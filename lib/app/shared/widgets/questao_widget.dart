@@ -73,9 +73,11 @@ class QuestaoWidget extends StatelessWidget {
         children: [
           if (barraOpcoes != null) barraOpcoes!,
           if (barraOpcoes != null) Divider(height: 4.0),
-          Expanded(
-            child: !rolavel ? _corpo() : SingleChildScrollView(child: _corpo()),
-          ),
+          !rolavel
+              ? _corpo()
+              : Expanded(
+                  child: SingleChildScrollView(child: _corpo()),
+                ),
         ],
       ),
     );

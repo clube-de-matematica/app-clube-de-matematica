@@ -1,5 +1,3 @@
-import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
-import 'package:clubedematematica/app/modules/clubes/shared/models/usuario_clube.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -17,10 +15,7 @@ class ClubeDeMatematicaWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
       theme: AppTheme.instance.temaClaro,
-      //TODO: alterar quando o erro de autenticação do supabase for corrigido
-      initialRoute: //RotaPagina.criarAtividade.nome,
-      //RotaPagina.quiz.nome,
-      Modular.get<IAuthRepository>().logged
+      initialRoute: Modular.get<IAuthRepository>().logged
           ? RotaPagina.quiz.nome
           : RotaPagina.login.nome,
       localizationsDelegates: [
@@ -38,7 +33,6 @@ class ClubeDeMatematicaWidget extends StatelessWidget {
       }, */
     ).modular();
   }
-
 }
 /* 
 openRootDrawer(BuildContext context) {
