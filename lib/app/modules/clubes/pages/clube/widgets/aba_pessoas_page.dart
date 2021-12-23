@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../shared/models/usuario_clube.dart';
-import '../clube_page.dart';
+import '../../../shared/utils/tema_clube.dart';
+import '../clube_controller.dart';
 import 'categoria.dart';
 import 'usuario_clube_botao_opcoes.dart';
 
@@ -12,7 +14,7 @@ class PessoasPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clube = ClubePage.of(context).controller.clube;
+    final clube = Modular.get<ClubeController>().clube;
     return Observer(builder: (context) {
       final administradores = clube.administradores;
       return ListView(
@@ -67,7 +69,7 @@ class _CategoriaUsuariosClube extends Categoria {
                   leading: CircleAvatar(
                     child: Icon(
                       Icons.person,
-                      color: ClubePage.of(context).corTexto,
+                      color: Modular.get<TemaClube>().texto,
                     ),
                     backgroundColor: cor.withOpacity(0.3),
                   ),

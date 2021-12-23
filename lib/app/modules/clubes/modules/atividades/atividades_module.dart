@@ -1,6 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../perfil/models/userapp.dart';
 import '../../clubes_module.dart';
+import '../../shared/models/clube.dart';
+import 'models/argumentos_atividade_page.dart';
+import 'pages/consolidar/consolidar_atividade_page.dart';
 import 'pages/criar/criar_atividade_page.dart';
 import 'pages/editar/editar_atividade_page.dart';
 import 'pages/responder/reponder_atividade_page.dart';
@@ -44,8 +49,19 @@ class AtividadesModule extends Module {
   @override
   //Lista de rotas.
   List<ModularRoute> get routes => [
-        ChildRoute(kAbsoluteRouteAtividadePage,
-            child: (_, args) => ResponderAtividadePage(args.data)),
+        ChildRoute(kRelativeRouteAtividadePage, child: (context, args) {
+          final argumentos = args.data as ArgumentosAtividadePage;
+          final permissao = argumentos.clube.permissao(UserApp.instance.id!);
+          switch (permissao) {
+            case PermissoesClube.proprietario:
+            case PermissoesClube.administrador:
+              return ConsolidarAtividadePage(argumentos);
+            case PermissoesClube.membro:
+              return ResponderAtividadePage(argumentos);
+            default:
+              return Scaffold(body: Center(child: Text('Permissão negada.')));
+          }
+        }),
         ChildRoute(kRelativeRouteCriarPage,
             child: (_, args) => CriarAtividadePage(args.data)),
         ChildRoute(kRelativeRouteEditarPage,

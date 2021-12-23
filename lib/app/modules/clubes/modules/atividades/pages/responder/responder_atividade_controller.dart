@@ -8,6 +8,7 @@ import '../../../../../perfil/models/userapp.dart';
 import '../../../../shared/repositories/clubes_repository.dart';
 import '../../models/atividade.dart';
 import '../../models/questao_atividade.dart';
+import '../../models/resposta_questao_atividade.dart';
 
 part 'responder_atividade_controller.g.dart';
 
@@ -40,8 +41,7 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
               (questao) =>
                   questao?.idQuestaoAtividade == resposta.idQuestaoAtividade,
               orElse: () => null);
-          questao?.sequencialRespostaTemporaria ??= resposta.sequencial;
-          questao?.resposta = resposta;
+          questao?.respostas.add(resposta);
         },
       );
 
@@ -49,11 +49,15 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
         autorun((_) {
           if (this.questao != null) {
             final questao = this.questao!;
-            if (questao.resposta == null) {
-              questao.resposta = RespostaQuestaoAtividade(
-                idQuestaoAtividade: questao.idQuestaoAtividade,
-                idUsuario: UserApp.instance.id!,
-                sequencial: null,
+            final respostaInstanciada = questao.respostas
+                .any((resposta) => resposta.idUsuario == UserApp.instance.id);
+            if (!respostaInstanciada) {
+              questao.respostas.add(
+                RespostaQuestaoAtividade(
+                  idQuestaoAtividade: questao.idQuestaoAtividade,
+                  idUsuario: UserApp.instance.id!,
+                  sequencial: null,
+                ),
               );
             }
           }
@@ -71,21 +75,48 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
   @computed
   QuestaoAtividade? get questao => super.questao as QuestaoAtividade?;
 
+  @computed
+  RespostaQuestaoAtividade? get resposta {
+    return questao?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
+          (resposta) => resposta?.idUsuario == UserApp.instance.id,
+          orElse: () => null,
+        );
+  }
+
   /// Lista com as questões não respondidas.
-  List<QuestaoAtividade> get questoesEmBranco => questoes
-      .where((questao) => questao.sequencialRespostaTemporaria == null)
-      .toList();
+  List<QuestaoAtividade> get questoesEmBranco {
+    return questoes.where((questao) {
+      final resposta =
+          questao.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
+                (resposta) => resposta?.idUsuario == UserApp.instance.id,
+                orElse: () => null,
+              );
+      return resposta?.sequencialTemporario == null;
+    }).toList();
+  }
 
   /// Lista com as questões em que as respostas foram modificas.
-  List<QuestaoAtividade> get questoesModificadas => questoes
-      .where((questao) =>
-          questao.sequencialRespostaTemporaria !=
-          questao.sequencialRespostaSalva)
-      .toList();
+  List<QuestaoAtividade> get questoesModificadas {
+    return questoes.where((questao) {
+      final resposta =
+          questao.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
+                (resposta) => resposta?.idUsuario == UserApp.instance.id,
+                orElse: () => null,
+              );
+      return resposta?.sequencialTemporario != resposta?.sequencial;
+    }).toList();
+  }
 
   /// Retorna um `bool` que define se há uma resposta a ser confirmada.
   @computed
-  bool get podeConfirmar => questao?.sequencialRespostaTemporaria != null;
+  bool get podeConfirmar {
+    final resposta =
+        questao?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
+              (resposta) => resposta?.idUsuario == UserApp.instance.id,
+              orElse: () => null,
+            );
+    return resposta?.sequencialTemporario != null;
+  }
 
   /// Ações a serem executada ao concluir a atividade.
   Future<bool> concluir() async {

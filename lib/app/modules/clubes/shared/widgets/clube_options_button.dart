@@ -5,6 +5,7 @@ import '../../../perfil/models/userapp.dart';
 import '../../pages/home/home_clubes_controller.dart';
 import '../../pages/home/widgets/bottom_sheets.dart';
 import '../models/clube.dart';
+import '../utils/tema_clube.dart';
 
 /// O botão para o menu de opções do clube.
 class ClubeOptionsButton extends StatelessWidget {
@@ -29,7 +30,7 @@ class ClubeOptionsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = this.textStyle ??
         TextStyle(
-          color: AppTheme.instance.temaClaro.colorScheme.onPrimary,
+          color: TemaClube(clube.capa).textoPrimaria,
           fontSize: AppTheme.escala * 26,
           fontWeight: FontWeight.w400,
         );
@@ -38,10 +39,13 @@ class ClubeOptionsButton extends StatelessWidget {
     final administrador = permissao == PermissoesClube.administrador;
 
     return PopupMenuButton<OpcoesClube>(
-      child: Icon(
-        Icons.more_vert,
-        size: textStyle.fontSize,
-        color: textStyle.color,
+      child: IconButton(
+        onPressed: null,
+        icon: Icon(
+          Icons.more_vert,
+          size: textStyle.fontSize,
+          color: textStyle.color,
+        ),
       ),
       itemBuilder: (context) => [
         if (proprietario || administrador)

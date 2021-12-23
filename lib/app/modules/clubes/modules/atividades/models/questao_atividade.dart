@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:mobx/mobx.dart';
 
 import '../../../../../shared/utils/strings_db.dart';
@@ -9,6 +7,7 @@ import '../../../../quiz/shared/models/assunto_model.dart';
 import '../../../../quiz/shared/models/imagem_questao_model.dart';
 import '../../../../quiz/shared/models/nivel_questao_model.dart';
 import '../../../../quiz/shared/models/questao_model.dart';
+import 'resposta_questao_atividade.dart';
 
 part 'questao_atividade.g.dart';
 
@@ -26,13 +25,14 @@ abstract class _QuestaoAtividadeBase with Store implements Questao {
     required this.idAtividade,
   });
 
-  int? sequencialRespostaTemporaria;
+  final Set<RespostaQuestaoAtividade> respostas = Set();
 
-  @observable
-  RespostaQuestaoAtividade? resposta;
-  
-  @computed
-  int? get sequencialRespostaSalva => resposta?.sequencial;
+  RespostaQuestaoAtividade? resposta(int idUsuario) {
+    return respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
+      (resposta) => resposta?.idUsuario == idUsuario,
+      orElse: () => null,
+    );
+  }
 
   @override
   List<Alternativa> get alternativas => questao.alternativas;
@@ -92,71 +92,4 @@ abstract class _QuestaoAtividadeBase with Store implements Questao {
         questao.hashCode ^
         idAtividade.hashCode;
   }
-}
-
-/// Modelo para as respostas dos usuários às questões de uma atividade.
-class RespostaQuestaoAtividade {
-  final int idQuestaoAtividade;
-  final int idUsuario;
-  int? sequencial;
-  RespostaQuestaoAtividade({
-    required this.idQuestaoAtividade,
-    required this.idUsuario,
-    required this.sequencial,
-  });
-
-  RespostaQuestaoAtividade copyWith({
-    int? idQuestaoAtividade,
-    int? idUsuario,
-    int? sequencial,
-  }) {
-    return RespostaQuestaoAtividade(
-      idQuestaoAtividade: idQuestaoAtividade ?? this.idQuestaoAtividade,
-      idUsuario: idUsuario ?? this.idUsuario,
-      sequencial: sequencial ?? this.sequencial,
-    );
-  }
-
-  DataRespostaQuestaoAtividade toDataRespostaQuestaoAtividade() {
-    return {
-      DbConst.kDbDataRespostaQuestaoAtividadeKeyIdQuestaoAtividade:
-          idQuestaoAtividade,
-      DbConst.kDbDataRespostaQuestaoAtividadeKeyIdUsuario: idUsuario,
-      DbConst.kDbDataRespostaQuestaoAtividadeKeyIdResposta: sequencial,
-    };
-  }
-
-  factory RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(
-      DataRespostaQuestaoAtividade map) {
-    return RespostaQuestaoAtividade(
-      idQuestaoAtividade:
-          map[DbConst.kDbDataRespostaQuestaoAtividadeKeyIdQuestaoAtividade]!,
-      idUsuario: map[DbConst.kDbDataRespostaQuestaoAtividadeKeyIdUsuario]!,
-      sequencial: map[DbConst.kDbDataRespostaQuestaoAtividadeKeyIdResposta],
-    );
-  }
-
-  String toJson() => json.encode(toDataRespostaQuestaoAtividade());
-
-  factory RespostaQuestaoAtividade.fromJson(String source) =>
-      RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(
-          json.decode(source));
-
-  @override
-  String toString() =>
-      'Resposta(idQuestaoAtividade: $idQuestaoAtividade, idUsuario: $idUsuario, sequencial: $sequencial)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is RespostaQuestaoAtividade &&
-        other.idQuestaoAtividade == idQuestaoAtividade &&
-        other.idUsuario == idUsuario &&
-        other.sequencial == sequencial;
-  }
-
-  @override
-  int get hashCode =>
-      idQuestaoAtividade.hashCode ^ idUsuario.hashCode ^ sequencial.hashCode;
 }

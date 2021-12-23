@@ -1,10 +1,6 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../modules/quiz/shared/models/imagem_questao_model.dart';
-import '../local_storage_repository.dart';
 
 part 'imagem_questao_repository.g.dart';
 
@@ -33,24 +29,5 @@ abstract class _ImagemQuestaoRepositoryBase with Store {
       return false;
     else
       return imagens.any((element) => element.name == nome);
-  }
-
-  /// Somente para Android e IOS.
-  /// Retorna um arquivo de imágem.
-  /// Se o arquivo da imágem não estiver salvo no dispositivo, isso será feito.
-  /// Retorna `null` se ocorrer algo errado.
-  Future<File?> getImagemFile(ImagemQuestao image) async {
-    if (!kIsWeb) {
-      // Criar uma referência a um arquivo no armazenamento local.
-      final file = await LocalStorageRepository.getFile(image.name);
-
-      // Se o arquivo não existe, ele será criado.
-      if (!(await file.exists())) {
-        // Salvar os bytes da imagem no arquivo.
-        await file.writeAsBytes(image.uint8List);
-      }
-      return file;
-    }
-    return null;
   }
 }

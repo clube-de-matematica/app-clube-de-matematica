@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -9,7 +11,7 @@ import '../../../../shared/utils/strings_db.dart';
 import '../../../perfil/models/userapp.dart';
 import '../../../quiz/shared/models/questao_model.dart';
 import '../../modules/atividades/models/atividade.dart';
-import '../../modules/atividades/models/questao_atividade.dart';
+import '../../modules/atividades/models/resposta_questao_atividade.dart';
 import '../models/clube.dart';
 import '../models/usuario_clube.dart';
 
@@ -372,12 +374,12 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     }
     if (dataRespostas.isNotEmpty) {
       // Carregar as respostas.
-      atividade.respostas.replaceRange(
-        0,
-        atividade.respostas.length,
-        dataRespostas.map((dados) =>
-            RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(dados)),
-      );
+      atividade.respostas
+        ..clear()
+        ..addAll(
+          dataRespostas.map((dados) =>
+              RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(dados)),
+        );
     }
     return atividade;
   }
@@ -385,12 +387,18 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// {@macro app.IDbRepository.upsertRespostasAtividade}
   Future<bool> atualizarInserirRespostaAtividade(Atividade atividade) async {
     if (usuarioApp.id == null) return false;
-    final dados = atividade.questoes
-        .where((questao) => questao.resposta?.idUsuario == usuarioApp.id)
-        .map((questao) => questao.resposta!
-            .copyWith(sequencial: questao.sequencialRespostaTemporaria)
-            .toDataRespostaQuestaoAtividade())
-        .toList();
+    debugger(); //TODO
+    final List<Map<String, int?>> dados = [];
+    atividade.questoes.forEach((questao) {
+      final resposta = questao.resposta(usuarioApp.id!);
+      if (resposta != null) {
+        dados.add(
+          resposta
+              .copyWith(sequencial: resposta.sequencialTemporario)
+              .toDataRespostaQuestaoAtividade(),
+        );
+      }
+    });
     bool retorno;
     try {
       retorno = await dbRepository.upsertRespostasAtividade(dados);

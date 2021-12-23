@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../modules/atividades/models/atividade.dart';
-import '../clube_page.dart';
+import '../../../shared/utils/tema_clube.dart';
+import '../clube_controller.dart';
 import 'categoria.dart';
 
 /// A subpágina exibida na aba "Atividades" da página do [clube].
@@ -11,15 +13,15 @@ class AtividadesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final widget = ClubePage.of(context);
-    final controle = widget.controller;
+  final temaClube = Modular.get<TemaClube>();
+    final controle = Modular.get<ClubeController>();
     final clube = controle.clube;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: clube.capa,
         child: Icon(
           Icons.add,
-          color: widget.corTextoCapa,
+          color: temaClube.textoPrimaria,
           size: 28.0,
         ),
         onPressed: () => controle.abrirPaginaCriarAtividade(context),
@@ -69,12 +71,11 @@ class _CategoriaAtividade extends Categoria {
                   leading: CircleAvatar(
                     child: Icon(
                       Icons.task_outlined,
-                      color: ClubePage.of(context).corTexto,
+                      color: Modular.get<TemaClube>().texto,
                     ),
                     backgroundColor: cor.withOpacity(0.3),
                   ),
-                  onTap: () => ClubePage.of(context)
-                      .controller
+                  onTap: () => Modular.get<ClubeController>()
                       .abrirPaginaAtividade(context, atividade),
                 );
               });

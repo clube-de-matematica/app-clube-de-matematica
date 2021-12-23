@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gotrue/gotrue.dart';
 import 'package:supabase/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../configure_supabase.dart';
 import '../../../modules/perfil/models/userapp.dart';
@@ -95,6 +99,14 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       assert(Debug.print(e.toString()));
       rethrow;
     }
+//TODO: notificar o usuário.
+    if (session.error != null) {
+      if (session.error!.message.startsWith(r'<!DOCTYPE html>')) {
+      _controller.add(StatusSignIn.error);
+      return StatusSignIn.error;
+      }
+    }
+
     assert(session.user != null && session.error == null);
     if (session.user == null || session.error != null) {
       _controller.add(StatusSignIn.error);
@@ -126,6 +138,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     if (session.error != null || session.url == null) {
       _controller.add(StatusSignIn.error);
     }
+
     launch(session.url!, webOnlyWindowName: '_self').catchError((error, stack) {
       assert(Debug.print(
         'Erro ao abrir o URL em AuthSupabaseRepository.signInWithGoogle(). \n'
@@ -137,11 +150,59 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     return _return;
   }
 
+/* 
+  Future<StatusSignIn> signInWithWebView([bool replaceUser = false]) async {
+    // await Future.delayed(Duration(seconds: 20));
+    final _return = _listen();
+    GotrueSessionResponse session;
+    try {
+      if (replaceUser && logged) await signOut();
+      _controller.add(StatusSignIn.inProgress);
+      session = await _auth.signIn(
+        provider: Provider.google,
+        options: AuthOptions(redirectTo: authRedirectUri),
+      );
+    } catch (e) {
+      assert(Debug.print(e.toString()));
+      rethrow;
+    }
+
+    assert(session.error == null && session.url != null);
+    if (session.error != null || session.url == null) {
+      _controller.add(StatusSignIn.error);
+    }
+
+    await Modular.to.push(
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          body: WebView(
+            initialUrl: session.url,
+            userAgent: 'random',
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebResourceError: (erro) {
+              debugger();
+              var url = erro.failingUrl;
+              if (url != null) {
+                if (url.startsWith(authRedirectUri ?? 'tornar false')) {
+                  //launch(url);
+                }
+              }
+            },
+          ),
+        ),
+      ),
+    );
+
+    return _return;
+  }
+ */
+
   /// Retorna um futuro que será concluido com a próxima emissão de [StatusSignIn.success],
   /// [StatusSignIn.canceled] ou [StatusSignIn.error] por [status], ou após o tempo limite
   /// [duration]. Neste caso, o futuro será concluído com [StatusSignIn.timeout].
   Future<StatusSignIn> _listen(
-      [Duration duration = const Duration(seconds: 30)]) {//TODO: verificar duração
+      [Duration duration = const Duration(seconds: 30)]) {
+    //TODO: verificar duração
     final completer = Completer<StatusSignIn>();
     final listen = status.listen((_) {});
     listen.onData((status) {

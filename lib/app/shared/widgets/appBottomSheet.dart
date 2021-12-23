@@ -31,9 +31,9 @@ class AppBottomSheet extends StatelessWidget {
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
     ),
-    //this.scrollable = false,
     this.transitionAnimationController,
     this.isScrollControlled = false,
+    this.maximize = false,
     this.builder,
   }) : super(key: key);
 
@@ -55,9 +55,9 @@ class AppBottomSheet extends StatelessWidget {
   final double? elevation;
   final Clip? clipBehavior;
   final ShapeBorder shape;
-  //final bool scrollable;
   final AnimationController? transitionAnimationController;
   final bool isScrollControlled;
+  final bool maximize;
 
   /// Usado para expor o [BuildContext] do construtor de [showModal] e [show].
   /// O [Widget] do parâmetro é o retorno de [AppBottomSheet.build].
@@ -90,6 +90,88 @@ class AppBottomSheet extends StatelessWidget {
       builder: (context) =>
           builder?.call(context, build(context)) ?? build(context),
     );
+  }
+
+  Widget _buildDraggableScrollable(Widget child) {
+    final maxChildSize = 0.9;
+    return DraggableScrollableSheet(
+      initialChildSize: maximize ? maxChildSize : 0.4,
+      minChildSize: 0.2,
+      maxChildSize: maxChildSize,
+      expand: false,
+      builder: (context, controller) => _buildContainer(
+        context: context,
+        ancorar: true,
+        child: Expanded(
+          child: ListView(
+            controller: controller,
+            children: [
+              child,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContainer({
+    required BuildContext context,
+    required Widget child,
+    required bool ancorar,
+  }) {
+    assert(debugCheckHasMaterialLocalizations(context));
+    final ThemeData theme = Theme.of(context);
+
+    String? label = semanticLabel;
+    switch (theme.platform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+        break;
+      case TargetPlatform.android:
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.windows:
+        label ??= MaterialLocalizations.of(context).alertDialogLabel;
+    }
+
+    final anchor = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          width: 48.0,
+          child: const Divider(
+            height: 10.0,
+            thickness: 3.0,
+          ),
+        ),
+      ],
+    );
+
+    List<Widget> columnChildren;
+    columnChildren = <Widget>[
+      if (ancorar) anchor,
+      child,
+    ];
+
+    Widget dialogChild = IntrinsicWidth(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: columnChildren,
+      ),
+    );
+
+    if (label != null)
+      dialogChild = Semantics(
+        scopesRoute: true,
+        explicitChildNodes: true,
+        namesRoute: true,
+        label: label,
+        child: dialogChild,
+      );
+
+    return dialogChild;
   }
 
   @override
@@ -207,67 +289,23 @@ class AppBottomSheet extends StatelessWidget {
       );
     }
 
-    final anchor = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.only(top: 8.0),
-          width: 48.0,
-          child: const Divider(
-            height: 10.0,
-            thickness: 3.0,
-          ),
-        ),
-      ],
-    );
-
     List<Widget> columnChildren;
-    /* if (scrollable) {
-      columnChildren = <Widget>[
-        if (title != null || content != null) anchor,
-        if (title != null || content != null)
-          Flexible(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  if (title != null) titleWidget!,
-                  if (content != null) contentWidget!,
-                ],
-              ),
-            ),
-          ),
-        if (actions != null) divider(),
-        if (actions != null) actionsWidget!,
-      ];
-    } else */
     columnChildren = <Widget>[
-      if (title != null || content != null) anchor,
       if (title != null) titleWidget!,
       if (content != null) Flexible(child: contentWidget!),
       if (actions != null) divider(),
       if (actions != null) actionsWidget!,
     ];
 
-    Widget dialogChild = IntrinsicWidth(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: columnChildren,
-      ),
+    Widget columnChild = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: columnChildren,
     );
 
-    if (label != null)
-      dialogChild = Semantics(
-        scopesRoute: true,
-        explicitChildNodes: true,
-        namesRoute: true,
-        label: label,
-        child: dialogChild,
-      );
-
-    return dialogChild;
+    return isScrollControlled
+        ? _buildDraggableScrollable(columnChild)
+        : _buildContainer(context: context, child: columnChild, ancorar: true);
   }
 
   /// Copiado de [AlertDialog].

@@ -4,12 +4,15 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import '../../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../../../shared/widgets/questao_widget.dart';
+import '../../models/argumentos_atividade_page.dart';
 import '../../models/atividade.dart';
 import 'responder_atividade_controller.dart';
 
 /// Página destinada a responder às questões de uma atividade.
 class ResponderAtividadePage extends StatefulWidget {
-  ResponderAtividadePage(this.atividade, {Key? key}) : super(key: key);
+  ResponderAtividadePage(ArgumentosAtividadePage args, {Key? key})
+      : atividade = args.atividade,
+        super(key: key);
 
   final Atividade atividade;
 
@@ -33,7 +36,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
         title: Text(widget.atividade.titulo),
         actions: [
           IconButton(
-            icon: Icon(Icons.done),
+            icon: Icon(Icons.save),
             onPressed: _concluir,
           ),
         ],
@@ -121,12 +124,10 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
       return QuestaoWidget(
         barraOpcoes: _construirCabecalho(),
         questao: controle.questao!,
-        alternativaSelecionada:
-            controle.questao?.sequencialRespostaTemporaria ??
-                controle.questao?.sequencialRespostaSalva,
+        alternativaSelecionada: controle.resposta?.sequencialTemporario ??
+            controle.resposta?.sequencial,
         alterandoAlternativa: (alternativa) {
-          controle.questao?.sequencialRespostaTemporaria =
-              alternativa?.sequencial;
+          controle.resposta?.sequencialTemporario = alternativa?.sequencial;
         },
         padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
         selecionavel: true,

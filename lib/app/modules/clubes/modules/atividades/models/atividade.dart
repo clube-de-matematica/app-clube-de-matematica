@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../shared/utils/strings_db.dart';
 import 'questao_atividade.dart';
+import 'resposta_questao_atividade.dart';
 
 /// Modelo para os dados das atividades dos clubes.
 class Atividade {
@@ -33,7 +34,7 @@ class Atividade {
   final List<QuestaoAtividade> questoes;
 
   /// Lista com as respostas dos usuários às questões incluídas nesta atividade.
-  final List<RespostaQuestaoAtividade> respostas; // TODO: Não está sendo usado.
+  final Set<RespostaQuestaoAtividade> respostas; // TODO: Não está sendo usado.
 
   Atividade({
     required this.id,
@@ -45,8 +46,8 @@ class Atividade {
     this.liberacao,
     this.encerramento,
     this.questoes = const [],
-    this.respostas = const [],
-  });
+    Iterable<RespostaQuestaoAtividade>? respostas,
+  }) : respostas = Set.from(respostas ?? Iterable.empty());
 
   Atividade copyWith({
     int? id,
@@ -155,7 +156,9 @@ class Atividade {
       liberacao = outra.liberacao;
       encerramento = outra.encerramento;
       questoes.replaceRange(0, questoes.length, outra.questoes);
-      respostas.replaceRange(0, respostas.length, outra.respostas);
+      respostas
+        ..clear()
+        ..addAll(outra.respostas);
     }
   }
 
@@ -178,7 +181,7 @@ class Atividade {
         other.liberacao == liberacao &&
         other.encerramento == encerramento &&
         listEquals(other.questoes, questoes) &&
-        listEquals(other.respostas, respostas);
+        setEquals(other.respostas, respostas);
   }
 
   @override

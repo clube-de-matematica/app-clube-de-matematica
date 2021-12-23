@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/argumentos_atividade_page.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../../navigation.dart';
@@ -46,7 +47,14 @@ class ClubeController extends IClubeController
 
   /// Abre a página para [atividade].
   void abrirPaginaAtividade(BuildContext context, Atividade atividade) {
-    Navegacao.abrirPagina(context, RotaPagina.atividade, argumentos: atividade);
+    Navegacao.abrirPagina(
+      context,
+      RotaPagina.atividade,
+      argumentos: ArgumentosAtividadePage(
+        clube: clube,
+        atividade: atividade,
+      ),
+    );
   }
 
   @override

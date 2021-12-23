@@ -2,11 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../modules/quiz/shared/models/imagem_questao_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
 import '../repositories/questoes/imagem_questao_repository.dart';
 import '../repositories/questoes/questoes_repository.dart';
-import '../utils/app_assets.dart';
 import 'exibir_questao_com_filtro_controller.dart';
 
 part 'exibir_questao_controller.g.dart';
@@ -34,7 +32,6 @@ abstract class _ExibirQuestaoControllerBase with Store {
 
   Future<void> _inicializar() async {
     await inicializandoRepositorioQuestoes;
-    await _carregarImagens();
   }
 
   /// Quando incompleto indica que o repositório de questões ainda não terminou de fazer a
@@ -61,7 +58,6 @@ abstract class _ExibirQuestaoControllerBase with Store {
   void definirIndice(int valor, {bool forcar = false}) {
     if (_indice != valor || forcar) {
       _indice = valor;
-      _carregarImagens();
     }
   }
 
@@ -84,42 +80,6 @@ abstract class _ExibirQuestaoControllerBase with Store {
   void voltar() {
     if (podeVoltar) {
       definirIndice(_indice - 1);
-      _carregarImagens();
-    }
-  }
-
-  /// Carregar os [ImageProvider] das imágens de [questao], caso ainda não tenham sido carregados.
-  Future<void> _carregarImagens() async {
-    if (questao != null) {
-      final questao = this.questao!;
-
-      // Carregar imágens do ecunciado.
-      if (questao.imagensEnunciado.isNotEmpty) {
-        for (var imagem in questao.imagensEnunciado) {
-          if (imagem.provider == null) await _definirProvedorImagem(imagem);
-        }
-      }
-
-      // Carregar imágens das alternativas.
-      for (var alternativa in questao.alternativas) {
-        if (alternativa.isTipoImagem) {
-          final imagem = alternativa.conteudo as ImagemQuestao;
-          if (imagem.provider == null) await _definirProvedorImagem(imagem);
-        }
-      }
-    }
-  }
-
-  /// Atribui o valor da propriedade [imagem.provider].
-  Future<void> _definirProvedorImagem(ImagemQuestao imagem) async {
-    if (kIsWeb)
-      imagem.provider = MemoryImage(imagem.uint8List, scale: 0.99);
-    else {
-      final file = await _imagemQuestaoRepository.getImagemFile(imagem);
-      imagem.provider = file != null
-          ? FileImage(file, scale: 0.99)
-          : Image.asset(AppAssets.BASELINE_IMAGE_NOT_SUPPORTED_BLACK_24DP)
-              .image;
     }
   }
 }

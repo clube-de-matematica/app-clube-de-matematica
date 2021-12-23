@@ -24,6 +24,13 @@ mixin _$ResponderAtividadeController
       (_$questaoComputed ??= Computed<QuestaoAtividade?>(() => super.questao,
               name: '_ResponderAtividadeControllerBase.questao'))
           .value;
+  Computed<RespostaQuestaoAtividade?>? _$respostaComputed;
+
+  @override
+  RespostaQuestaoAtividade? get resposta => (_$respostaComputed ??=
+          Computed<RespostaQuestaoAtividade?>(() => super.resposta,
+              name: '_ResponderAtividadeControllerBase.resposta'))
+      .value;
   Computed<bool>? _$podeConfirmarComputed;
 
   @override
@@ -37,6 +44,7 @@ mixin _$ResponderAtividadeController
     return '''
 questoes: ${questoes},
 questao: ${questao},
+resposta: ${resposta},
 podeConfirmar: ${podeConfirmar}
     ''';
   }

@@ -9,34 +9,10 @@ part of 'questao_atividade.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$QuestaoAtividade on _QuestaoAtividadeBase, Store {
-  Computed<int?>? _$sequencialRespostaSalvaComputed;
-
-  @override
-  int? get sequencialRespostaSalva => (_$sequencialRespostaSalvaComputed ??=
-          Computed<int?>(() => super.sequencialRespostaSalva,
-              name: '_QuestaoAtividadeBase.sequencialRespostaSalva'))
-      .value;
-
-  final _$respostaAtom = Atom(name: '_QuestaoAtividadeBase.resposta');
-
-  @override
-  RespostaQuestaoAtividade? get resposta {
-    _$respostaAtom.reportRead();
-    return super.resposta;
-  }
-
-  @override
-  set resposta(RespostaQuestaoAtividade? value) {
-    _$respostaAtom.reportWrite(value, super.resposta, () {
-      super.resposta = value;
-    });
-  }
-
   @override
   String toString() {
     return '''
-resposta: ${resposta},
-sequencialRespostaSalva: ${sequencialRespostaSalva}
+
     ''';
   }
 }

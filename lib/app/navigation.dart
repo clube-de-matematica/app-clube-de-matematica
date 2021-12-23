@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'clube_de_matematica_module.dart';
 import 'modules/clubes/clubes_module.dart';
 import 'modules/clubes/modules/atividades/atividades_module.dart';
+import 'modules/clubes/modules/atividades/pages/consolidar/consolidar_atividade_page.dart';
 import 'modules/clubes/modules/atividades/pages/criar/criar_atividade_page.dart';
 import 'modules/clubes/modules/atividades/pages/editar/editar_atividade_page.dart';
 import 'modules/clubes/modules/atividades/pages/responder/reponder_atividade_page.dart';
@@ -97,7 +98,8 @@ enum RotaPagina {
   /// Representa a rota para a página [EditarClubePage].
   editarClube,
 
-  /// Representa a rota para a página [ResponderAtividadePage].
+  /// Representa a rota para a página [ResponderAtividadePage] ou [ConsolidarAtividadePage], 
+  /// dependendo da permissão do usuário.
   atividade,
 
   /// Representa a rota para a página [CriarAtividadePage].

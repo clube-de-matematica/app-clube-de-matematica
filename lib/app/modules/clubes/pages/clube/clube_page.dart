@@ -1,41 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
 import '../../shared/models/clube.dart';
+import '../../shared/utils/tema_clube.dart';
 import '../../shared/widgets/clube_options_button.dart';
 import 'clube_controller.dart';
 import 'widgets/aba_atividades_page.dart';
 import 'widgets/aba_pessoas_page.dart';
 
 /// Página para exibir o [clube].
-class ClubePage extends InheritedWidget {
-  ClubePage(Clube clube, {Key? key})
-      : this.controller = ClubeController(clube),
-        super(child: _ClubePage(key: key));
+class ClubePage extends WidgetModule {
+  ClubePage(this.clube, {Key? key});
 
-  final ClubeController controller;
-
-  Color get corCapa => controller.clube.capa;
-  Brightness get _brightness => ThemeData.estimateBrightnessForColor(corCapa);
-
-  Color get corTextoCapa {
-    return _brightness == Brightness.light ? Colors.black : Colors.white;
-  }
-
-  Color get corTexto {
-    return _brightness == Brightness.light ? Colors.black : corCapa;
-  }
-
-  static ClubePage of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<ClubePage>() as ClubePage;
-  }
+  final Clube clube;
 
   @override
-  bool updateShouldNotify(covariant ClubePage oldWidget) =>
-      controller != oldWidget.controller;
+  List<Bind<Object>> get binds => [
+        Bind.singleton((i) => TemaClube(clube.capa)),
+        Bind.singleton((i) => ClubeController(clube)),
+      ];
+
+  @override
+  Widget get view => _ClubePage();
 }
 
 /// Página para exibir o [clube].
@@ -47,10 +36,11 @@ class _ClubePage extends StatefulWidget {
 }
 
 class _ClubePageState extends State<_ClubePage> {
-  ClubeController get controller => ClubePage.of(context).controller;
-  Color get corTextoCapa => ClubePage.of(context).corTextoCapa;
-  Color get corTexto => ClubePage.of(context).corTexto;
-  Color get capa => controller.clube.capa;
+  ClubeController get controller => Modular.get<ClubeController>();
+  final temaClube = Modular.get<TemaClube>();
+  Color get corTextoCapa => temaClube.textoPrimaria;
+  Color get corTexto => temaClube.texto;
+  Color get capa => temaClube.primaria;
 
   @override
   Widget build(BuildContext context) {
@@ -81,22 +71,19 @@ class _ClubePageState extends State<_ClubePage> {
         style: TextStyle(color: corTextoCapa),
       ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Builder(builder: (context) {
-            return ClubeOptionsButton(
-              clube: controller.clube,
-              onSair: () async {
-                final sair = controller.sair();
-                await BottomSheetCarregando(future: sair)
-                    .showModal<bool>(context);
-                if (await sair) Navigator.pop(context);
-              },
-              onEditar: () => controller.abrirPaginaEditarClube(context),
-              onCompartilharCodigo: () {},
-            );
-          }),
-        )
+        Builder(builder: (context) {
+          return ClubeOptionsButton(
+            clube: controller.clube,
+            onSair: () async {
+              final sair = controller.sair();
+              await BottomSheetCarregando(future: sair)
+                  .showModal<bool>(context);
+              if (await sair) Navigator.pop(context);
+            },
+            onEditar: () => controller.abrirPaginaEditarClube(context),
+            onCompartilharCodigo: () {},
+          );
+        })
       ],
     );
   }

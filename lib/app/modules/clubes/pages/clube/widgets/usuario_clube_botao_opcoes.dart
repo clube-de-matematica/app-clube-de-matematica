@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../shared/models/usuario_clube.dart';
 import '../clube_controller.dart';
-import '../clube_page.dart';
 
 /// O botão para o menu de opções do usuário do clube.
 class UsuarioClubeBotaoOpcoes extends StatelessWidget {
@@ -17,7 +17,7 @@ class UsuarioClubeBotaoOpcoes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     this.context = context;
-    final controller = ClubePage.of(context).controller;
+    final controller = Modular.get<ClubeController>();
     final usuarioApp = controller.usuarioApp;
     assert(usuarioApp.idClube == usuario.idClube);
     if (usuarioApp.idClube != usuario.idClube) return const SizedBox();
