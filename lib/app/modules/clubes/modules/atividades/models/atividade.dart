@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mobx/mobx.dart';
 
 import '../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../shared/utils/strings_db.dart';
@@ -34,7 +35,7 @@ class Atividade {
   final List<QuestaoAtividade> questoes;
 
   /// Lista com as respostas dos usuários às questões incluídas nesta atividade.
-  final Set<RespostaQuestaoAtividade> respostas; // TODO: Não está sendo usado.
+  final ObservableSet<RespostaQuestaoAtividade> respostas;
 
   Atividade({
     required this.id,
@@ -47,7 +48,7 @@ class Atividade {
     this.encerramento,
     this.questoes = const [],
     Iterable<RespostaQuestaoAtividade>? respostas,
-  }) : respostas = Set.from(respostas ?? Iterable.empty());
+  }) : respostas = ObservableSet.of(respostas ?? Iterable.empty());
 
   Atividade copyWith({
     int? id,
@@ -97,22 +98,6 @@ class Atividade {
   factory Atividade.fromDataAtividade(DataAtividade map) {
     final int idAtividade = map[DbConst.kDbDataAtividadeKeyId];
 
-    final questoes = () {
-      final dataQuestoes =
-          map[DbConst.kDbDataAtividadeKeyQuestoes] as List? ?? [];
-      return dataQuestoes.cast<Map>().map((dados) {
-        return QuestaoAtividade(
-          idQuestaoAtividade: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
-          // TODO: Tratar o erro que pode ser gerado por firstWhere.
-          questao: Modular.get<QuestoesRepository>().questoes.firstWhere(
-              (element) =>
-                  element.id ==
-                  dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno]),
-          idAtividade: idAtividade,
-        );
-      }).toList();
-    }();
-
     final respostas = () {
       final dataRespostas =
           map[DbConst.kDbDataAtividadeKeyRespostas] as List? ?? [];
@@ -122,7 +107,7 @@ class Atividade {
       }).toList();
     }();
 
-    return Atividade(
+    final retorno = Atividade(
       id: idAtividade,
       titulo: map[DbConst.kDbDataAtividadeKeyTitulo],
       descricao: map[DbConst.kDbDataAtividadeKeyDescricao] != null
@@ -137,9 +122,29 @@ class Atividade {
       encerramento: map[DbConst.kDbDataAtividadeKeyDataEncerramento] != null
           ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataEncerramento])
           : null,
-      questoes: questoes,
+      questoes: [],
       respostas: respostas,
     );
+
+    final questoes = () {
+      final dataQuestoes =
+          map[DbConst.kDbDataAtividadeKeyQuestoes] as List? ?? [];
+      return dataQuestoes.cast<Map>().map((dados) {
+        return QuestaoAtividade(
+          idQuestaoAtividade: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
+          // TODO: Tratar o erro que pode ser gerado por firstWhere.
+          questao: Modular.get<QuestoesRepository>().questoes.firstWhere(
+              (element) =>
+                  element.id ==
+                  dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno]),
+          atividade: retorno,
+        );
+      }).toList();
+    }();
+
+    retorno.questoes.addAll(questoes);
+
+    return retorno;
   }
 
   String toJson() => json.encode(toDataAtividade());

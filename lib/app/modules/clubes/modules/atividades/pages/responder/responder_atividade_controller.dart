@@ -32,6 +32,7 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
 
   void _inicializar() {
     _clubesRepositorio.carregarRespostasAtividade(atividade).then((atividade) {
+      /* TODO: Removido após a atualização de QuestaoAtividade.respostas retornar um filtro de Atividade.respostas.
       final filtradas = atividade?.respostas
           .where((resposta) => resposta.idUsuario == UserApp.instance.id);
       filtradas?.forEach(
@@ -44,13 +45,14 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
           questao?.respostas.add(resposta);
         },
       );
+       */
 
       _disposers.add(
         autorun((_) {
           if (this.questao != null) {
             final questao = this.questao!;
-            final respostaInstanciada = questao.respostas
-                .any((resposta) => resposta.idUsuario == UserApp.instance.id);
+            final respostaInstanciada =
+                questao.resposta(UserApp.instance.id!) != null;
             if (!respostaInstanciada) {
               questao.respostas.add(
                 RespostaQuestaoAtividade(
@@ -75,6 +77,7 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
   @computed
   QuestaoAtividade? get questao => super.questao as QuestaoAtividade?;
 
+  /// Mesmo código de [QuestaoAtividade].resposta().
   @computed
   RespostaQuestaoAtividade? get resposta {
     return questao?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(

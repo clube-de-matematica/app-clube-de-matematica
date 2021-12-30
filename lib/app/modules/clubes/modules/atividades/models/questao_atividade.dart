@@ -7,6 +7,7 @@ import '../../../../quiz/shared/models/assunto_model.dart';
 import '../../../../quiz/shared/models/imagem_questao_model.dart';
 import '../../../../quiz/shared/models/nivel_questao_model.dart';
 import '../../../../quiz/shared/models/questao_model.dart';
+import 'atividade.dart';
 import 'resposta_questao_atividade.dart';
 
 part 'questao_atividade.g.dart';
@@ -17,21 +18,24 @@ class QuestaoAtividade = _QuestaoAtividadeBase with _$QuestaoAtividade;
 abstract class _QuestaoAtividadeBase with Store implements Questao {
   final int idQuestaoAtividade;
   final Questao questao;
-  final int idAtividade;
+  final Atividade atividade;
 
   _QuestaoAtividadeBase({
     required this.idQuestaoAtividade,
     required this.questao,
-    required this.idAtividade,
+    required this.atividade,
   });
 
-  final Set<RespostaQuestaoAtividade> respostas = Set();
+  @computed
+  Set<RespostaQuestaoAtividade> get respostas => atividade.respostas
+      .where((resp) => resp.idQuestaoAtividade == idQuestaoAtividade)
+      .toSet();
 
   RespostaQuestaoAtividade? resposta(int idUsuario) {
     return respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
-      (resposta) => resposta?.idUsuario == idUsuario,
-      orElse: () => null,
-    );
+          (resposta) => resposta?.idUsuario == idUsuario,
+          orElse: () => null,
+        );
   }
 
   @override
@@ -73,7 +77,7 @@ abstract class _QuestaoAtividadeBase with Store implements Questao {
 
   @override
   String toString() {
-    return 'QuestaoAtividade(id: $idQuestaoAtividade, idQuestao: ${questao.id}, idAtividade: $idAtividade)';
+    return 'QuestaoAtividade(id: $idQuestaoAtividade, idQuestao: ${questao.id}, atividade: ${atividade.toString()})';
   }
 
   @override
@@ -83,13 +87,11 @@ abstract class _QuestaoAtividadeBase with Store implements Questao {
     return other is QuestaoAtividade &&
         other.idQuestaoAtividade == idQuestaoAtividade &&
         other.questao == questao &&
-        other.idAtividade == idAtividade;
+        other.atividade == atividade;
   }
 
   @override
   int get hashCode {
-    return idQuestaoAtividade.hashCode ^
-        questao.hashCode ^
-        idAtividade.hashCode;
+    return idQuestaoAtividade.hashCode ^ questao.hashCode ^ atividade.hashCode;
   }
 }
