@@ -7,7 +7,7 @@ abstract class UIStrings {
 
   /// Mensagem orientando para conectar-se com a conta Google.
   static const LOGIN_MSG_SOB_BEM_VINDO =
-      "Entre com a sua conta Google para ter acesso a todos os reccursos.";
+      "Entre com a sua conta Google para ter acesso a todos os recursos.";
 
   /// Título do botão para conectar-se anonimamente.
   static const LOGIN_TEXT_BUTTON_USER_ANONYMOUS = "Fazer isso mais tarde";

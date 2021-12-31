@@ -36,7 +36,7 @@ dependencies:
   #google_sign_in: ^5.0.4 #Login com uma conta Google
   firebase_crashlytics: ^2.0.7 #Relatório de erros
   #catex: ^0.0.1+8 #^0.0.1+6
-  flutter_math_fork: ^0.3.3 #Renderização de equações matemáticas em puro Dart & Flutter.
+  flutter_math_fork: ^0.6.0 #Renderização de equações matemáticas em puro Dart & Flutter.
   #progressive_image: ^2.0.0 #Um widget de vibração que carrega progressivamente imagens grandes usando espaços reservados para imagens de baixa qualidade.
   path: ^1.8.0 #Fornece operações comuns para manipulação de caminhos: junção, divisão, normalização, etc.
   path_provider: ^2.0.2 #Um plugin Flutter para encontrar locais comumente usados ​​no sistema de arquivos. Suporta iOS, Android, Linux e MacOS. Nem todos os métodos são suportados em todas as plataformas.

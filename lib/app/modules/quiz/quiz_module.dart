@@ -1,6 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../shared/repositories/questoes/imagem_questao_repository.dart';
 import '../../shared/repositories/questoes/questoes_repository.dart';
 import '../filtros/filtros_module.dart';
 import '../filtros/shared/models/filtros_model.dart';
@@ -28,10 +27,7 @@ class QuizModule extends Module {
         Bind((i) => Filtros(i.get<QuestoesRepository>())),
 
         // Controles
-        Bind((i) => QuizController(
-              i.get<ImagemQuestaoRepository>(),
-              i.get<Filtros>(),
-            )),
+        Bind((i) => QuizController(i.get<Filtros>())),
       ];
 
   @override

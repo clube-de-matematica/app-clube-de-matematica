@@ -1,13 +1,7 @@
 import 'dart:async';
-import 'dart:developer';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
-import 'package:gotrue/gotrue.dart';
-import 'package:supabase/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../configure_supabase.dart';
 import '../../../modules/perfil/models/userapp.dart';
@@ -102,8 +96,8 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
 //TODO: notificar o usuário.
     if (session.error != null) {
       if (session.error!.message.startsWith(r'<!DOCTYPE html>')) {
-      _controller.add(StatusSignIn.error);
-      return StatusSignIn.error;
+        _controller.add(StatusSignIn.error);
+        return StatusSignIn.error;
       }
     }
 

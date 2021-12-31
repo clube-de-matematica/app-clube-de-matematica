@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -20,11 +18,12 @@ class QuestaoWidget extends StatelessWidget {
     this.selecionavel = true,
     this.alternativaSelecionada,
     this.alterandoAlternativa,
+    this.verificar = false,
     this.barraOpcoes,
     this.rolavel = true,
     this.padding = const EdgeInsets.symmetric(vertical: 8.0),
-  })  : assert(!(!selecionavel &&
-            (alternativaSelecionada != null || alterandoAlternativa != null))),
+  })  : assert(selecionavel || alterandoAlternativa == null),
+        assert(!(verificar && selecionavel)),
         super(key: key);
 
   final Questao questao;
@@ -35,13 +34,21 @@ class QuestaoWidget extends StatelessWidget {
   /// O sequencial da alternativa selecionada.
   final int? alternativaSelecionada;
 
+  /// {@template app.QuestaoWidget.verificar}
+  /// Indica se a alternativa selecionada e o gabarito devem ser destacados.
+  /// {@endtemplate}
+  final bool verificar;
+
   /// Chamado quando a alternativa selecionada é modificada.
   final void Function(Alternativa?)? alterandoAlternativa;
 
   /// Um widget colocado acima do corpo da questão.
   final Widget? barraOpcoes;
 
+  /// Se verdadeiro, o corpo da questão (não inclui [barraOpcoes]) será incluído em um
+  /// [SingleChildScrollView].
   final bool rolavel;
+
   final EdgeInsetsGeometry padding;
 
   Widget _corpo() {
@@ -60,6 +67,8 @@ class QuestaoWidget extends StatelessWidget {
           alternativaSelecionada: alternativaSelecionada,
           alterando: alterandoAlternativa,
           selecionavel: selecionavel,
+          verificar: verificar,
+          gabarito: questao.gabarito,
         ),
       ]),
     );
@@ -185,6 +194,8 @@ class _Alternativas extends StatefulWidget {
     this.alterando,
     this.alternativaSelecionada,
     this.selecionavel = true,
+    this.verificar = false,
+    required this.gabarito,
   }) : super(key: key);
 
   final List<Alternativa> alternativas;
@@ -197,6 +208,11 @@ class _Alternativas extends StatefulWidget {
 
   /// Indica se as alternativas são selecionáveis.
   final bool selecionavel;
+
+  /// {@macro app.QuestaoWidget.verificar}
+  final bool verificar;
+
+  final int gabarito;
 
   @override
   State<_Alternativas> createState() => _AlternativasState();
@@ -258,12 +274,20 @@ class _AlternativasState extends State<_Alternativas> {
     final padding = const EdgeInsets.all(8);
     final decoration = BoxDecoration(
       borderRadius: const BorderRadius.all(const Radius.circular(4)),
-      color: !selecionavel
-          ? corNaoSelecionada
-          : _selecionada(alternativa)
-              ? corSelecionada
-              : corNaoSelecionada,
+      color: () {
+        final selecionada = _selecionada(alternativa);
+        if (selecionavel) {
+          return selecionada ? corSelecionada : corNaoSelecionada;
+        }
+        if (widget.verificar) {
+          if (alternativa.verificar(widget.gabarito)) return AppTheme.corAcerto;
+          return selecionada ? AppTheme.corErro : corNaoSelecionada;
+        }
+
+        return corNaoSelecionada;
+      }(),
     );
+
     if (selecionavel) {
       return GestureDetector(
         onTap: () {
@@ -278,6 +302,7 @@ class _AlternativasState extends State<_Alternativas> {
         ),
       );
     }
+
     return Container(
       margin: margin,
       padding: padding,
@@ -290,15 +315,10 @@ class _AlternativasState extends State<_Alternativas> {
     return Row(
       children: <Widget>[
         // Estrutura do indicador da alternativa.
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            CircleAvatar(
-              radius: 15,
-              backgroundColor: tema.scaffoldBackgroundColor,
-              child: Text(alternativa.identificador, style: textStyle),
-            ),
-          ],
+        CircleAvatar(
+          radius: 15,
+          backgroundColor: tema.scaffoldBackgroundColor,
+          child: Text(alternativa.identificador, style: textStyle),
         ),
         // Estrutura do conteúdo da alternativa.
         Expanded(

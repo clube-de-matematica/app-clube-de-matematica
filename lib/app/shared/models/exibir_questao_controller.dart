@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../modules/quiz/shared/models/questao_model.dart';
-import '../repositories/questoes/imagem_questao_repository.dart';
 import '../repositories/questoes/questoes_repository.dart';
 import 'exibir_questao_com_filtro_controller.dart';
 
@@ -15,14 +14,10 @@ abstract class ExibirQuestaoController = _ExibirQuestaoControllerBase
     with _$ExibirQuestaoController;
 
 abstract class _ExibirQuestaoControllerBase with Store {
-  final ImagemQuestaoRepository _imagemQuestaoRepository;
   final QuestoesRepository _questoesRepository;
 
-  _ExibirQuestaoControllerBase(
-    ImagemQuestaoRepository imagemQuestaoRepository,
-    QuestoesRepository questoesRepository,
-  )   : _imagemQuestaoRepository = imagemQuestaoRepository,
-        _questoesRepository = questoesRepository {
+  _ExibirQuestaoControllerBase(QuestoesRepository questoesRepository)
+      : _questoesRepository = questoesRepository {
     definirIndice(
       questoes.isEmpty ? -1 : 0,
       forcar: true,

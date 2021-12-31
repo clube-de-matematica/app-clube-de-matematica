@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:clubedematematica/app/shared/widgets/appShimmer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

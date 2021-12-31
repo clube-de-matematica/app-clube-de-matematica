@@ -12,6 +12,8 @@ import 'resposta_questao_atividade.dart';
 
 part 'questao_atividade.g.dart';
 
+enum EstadoResposta { correta, incorreta, emBranco }
+
 /// Modelo para as questões usadas em uma atividade.
 class QuestaoAtividade = _QuestaoAtividadeBase with _$QuestaoAtividade;
 
@@ -26,16 +28,27 @@ abstract class _QuestaoAtividadeBase with Store implements Questao {
     required this.atividade,
   });
 
+  /// Conjunto com as respostas atibuídas a essa questõ.
   @computed
   Set<RespostaQuestaoAtividade> get respostas => atividade.respostas
       .where((resp) => resp.idQuestaoAtividade == idQuestaoAtividade)
       .toSet();
 
+  /// Resposta atribuída a essa questão pelo usuário correspondente a [idUsuario].
   RespostaQuestaoAtividade? resposta(int idUsuario) {
     return respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
           (resposta) => resposta?.idUsuario == idUsuario,
           orElse: () => null,
         );
+  }
+
+  /// Retorna o [EstadoResposta] para a resposta atribuída a essa questão pelo usuário
+  /// correspondente a [idUsuario].
+  EstadoResposta resultado(int idUsuario) {
+    final resposta = this.resposta(idUsuario);
+    if (resposta == null) return EstadoResposta.emBranco;
+    if (resposta.sequencial == gabarito) return EstadoResposta.correta;
+    return EstadoResposta.incorreta;
   }
 
   @override

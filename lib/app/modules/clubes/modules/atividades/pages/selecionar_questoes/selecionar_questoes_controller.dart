@@ -2,7 +2,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../../../../shared/models/exibir_questao_com_filtro_controller.dart';
-import '../../../../../../shared/repositories/questoes/imagem_questao_repository.dart';
 import '../../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../filtros/shared/models/filtros_model.dart';
 import '../../../../../quiz/shared/models/questao_model.dart';
@@ -15,13 +14,10 @@ class SelecionarQuestoesController = _SelecionarQuestoesControllerBase
 abstract class _SelecionarQuestoesControllerBase
     extends ExibirQuestaoComFiltroController with Store {
   _SelecionarQuestoesControllerBase(Iterable<Questao> questoesSelecionadas)
-      : super(
-          imagemQuestaoRepository: Modular.get<ImagemQuestaoRepository>(),
-          filtros: _Filtros(
-            Modular.get<QuestoesRepository>(),
-            questoesSelecionadas: questoesSelecionadas,
-          ),
-        );
+      : super(_Filtros(
+          Modular.get<QuestoesRepository>(),
+          questoesSelecionadas: questoesSelecionadas,
+        ));
 
   @override
   _Filtros get filtros => super.filtros as _Filtros;

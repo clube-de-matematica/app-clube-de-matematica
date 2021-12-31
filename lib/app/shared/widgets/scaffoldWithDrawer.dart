@@ -155,7 +155,7 @@ class _AppDrawerState extends State<_AppDrawer> {
               onTap: () => showPage(context, RotaPagina.quiz),
             ),
           ListTile(
-            title: Text('Favoritos 3'),
+            title: Text('Favoritos'),
             leading: const Icon(Icons.favorite_outline),
             onTap: () {
               // TODO

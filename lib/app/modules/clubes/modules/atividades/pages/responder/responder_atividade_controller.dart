@@ -2,7 +2,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../../../../shared/models/exibir_questao_controller.dart';
-import '../../../../../../shared/repositories/questoes/imagem_questao_repository.dart';
 import '../../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../perfil/models/userapp.dart';
 import '../../../../shared/repositories/clubes_repository.dart';
@@ -19,10 +18,7 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
     with Store
     implements Disposable {
   _ResponderAtividadeControllerBase(this.atividade)
-      : super(
-          Modular.get<ImagemQuestaoRepository>(),
-          Modular.get<QuestoesRepository>(),
-        ) {
+      : super(Modular.get<QuestoesRepository>()) {
     _inicializar();
   }
 
@@ -32,21 +28,6 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
 
   void _inicializar() {
     _clubesRepositorio.carregarRespostasAtividade(atividade).then((atividade) {
-      /* TODO: Removido após a atualização de QuestaoAtividade.respostas retornar um filtro de Atividade.respostas.
-      final filtradas = atividade?.respostas
-          .where((resposta) => resposta.idUsuario == UserApp.instance.id);
-      filtradas?.forEach(
-        (resposta) {
-          // O cast() foi usado para forçar a permissão do retorno null em orElse.
-          final questao = this.questoes.cast<QuestaoAtividade?>().firstWhere(
-              (questao) =>
-                  questao?.idQuestaoAtividade == resposta.idQuestaoAtividade,
-              orElse: () => null);
-          questao?.respostas.add(resposta);
-        },
-      );
-       */
-
       _disposers.add(
         autorun((_) {
           if (this.questao != null) {
@@ -65,8 +46,7 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
           }
         }),
       );
-    });
-    //TODO: .catchError(onError);
+    }) /* TODO: .catchError(onError) */;
   }
 
   @override

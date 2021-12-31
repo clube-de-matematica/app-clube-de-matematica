@@ -61,6 +61,9 @@ class Alternativa {
     );
   }
 
+  /// Verdadeiro se esta alternativa corresponder a [gabarito].
+  bool verificar(int gabarito) => gabarito == sequencial;
+
   /// Retorna um [TypeAlternativa] com base em [tipo].
   static TypeAlternativa parseTypeAlternativa(int tipo) {
     if (tipo == DbConst.kDbDataAlternativaKeyTipoValTexto)

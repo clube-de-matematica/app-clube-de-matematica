@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -387,7 +385,6 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// {@macro app.IDbRepository.upsertRespostasAtividade}
   Future<bool> atualizarInserirRespostaAtividade(Atividade atividade) async {
     if (usuarioApp.id == null) return false;
-    debugger(); //TODO
     final List<Map<String, int?>> dados = [];
     atividade.questoes.forEach((questao) {
       final resposta = questao.resposta(usuarioApp.id!);

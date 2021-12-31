@@ -5,7 +5,6 @@ import 'package:mobx/mobx.dart';
 import '../../modules/filtros/shared/models/filtros_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
 import '../../navigation.dart';
-import '../repositories/questoes/imagem_questao_repository.dart';
 import 'exibir_questao_controller.dart';
 
 part 'exibir_questao_com_filtro_controller.g.dart';
@@ -20,10 +19,8 @@ abstract class _ExibirQuestaoComFiltroControllerBase
   final Filtros filtros;
   final _disposers = <ReactionDisposer>[];
 
-  _ExibirQuestaoComFiltroControllerBase({
-    required ImagemQuestaoRepository imagemQuestaoRepository,
-    required this.filtros,
-  }) : super(imagemQuestaoRepository, filtros.questoesRepository) {
+  _ExibirQuestaoComFiltroControllerBase(this.filtros)
+      : super(filtros.questoesRepository) {
     _disposers.add(
       autorun((_) {
         definirIndice(

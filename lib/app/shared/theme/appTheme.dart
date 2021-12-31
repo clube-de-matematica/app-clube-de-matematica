@@ -11,6 +11,10 @@ class AppTheme {
 
   static MaterialColor get primarySwatch => Colors.teal;
 
+  static Color get corAcerto => Colors.green[200]!;
+
+  static Color get corErro => Colors.red[200]!;
+
   ///Usada para almentar a fonte de todos os [TextStyle] do tema de forma proporcional.
   static double _escala = 1.0;
 
