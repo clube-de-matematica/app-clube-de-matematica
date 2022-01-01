@@ -2,7 +2,9 @@
     package="com.sslourenco.clubedematematica">
    <application
         android:label="Clube de Matemática"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:allowBackup="true" 
+        android:fullBackupContent="@xml/regras_de_backup">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

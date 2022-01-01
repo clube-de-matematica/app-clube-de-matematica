@@ -1,4 +1,6 @@
+import 'package:clubedematematica/app/shared/models/exceptions/error_handler.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -54,21 +56,68 @@ class SecureLocalStorage extends LocalStorage {
   SecureLocalStorage()
       : super(
           initialize: () async {},
-          hasAccessToken: () {
+          hasAccessToken: () async {
             const storage = FlutterSecureStorage();
-            return storage.containsKey(key: supabasePersistSessionKey);
+            try {
+              return await storage.containsKey(
+                key: supabasePersistSessionKey,
+                aOptions: _opcoesAndroid,
+              );
+            } on PlatformException catch (_) {
+              await _deleteAll(storage);
+              return false;
+            }
           },
-          accessToken: () {
+          accessToken: () async {
             const storage = FlutterSecureStorage();
-            return storage.read(key: supabasePersistSessionKey);
+            try {
+              return await storage.read(
+                key: supabasePersistSessionKey,
+                aOptions: _opcoesAndroid,
+              );
+            } on PlatformException catch (_) {
+              await _deleteAll(storage);
+              return null;
+            }
           },
-          removePersistedSession: () {
+          removePersistedSession: () async {
             const storage = FlutterSecureStorage();
-            return storage.delete(key: supabasePersistSessionKey);
+            try {
+              return await storage.delete(
+                key: supabasePersistSessionKey,
+                aOptions: _opcoesAndroid,
+              );
+            } on PlatformException catch (_) {
+              await _deleteAll(storage);
+              return;
+            }
           },
-          persistSession: (String value) {
+          persistSession: (String value) async {
             const storage = FlutterSecureStorage();
-            return storage.write(key: supabasePersistSessionKey, value: value);
+            try {
+              return await storage.write(
+                key: supabasePersistSessionKey,
+                value: value,
+                aOptions: _opcoesAndroid,
+              );
+            } on PlatformException catch (_) {
+              await _deleteAll(storage);
+              return;
+            }
           },
         );
+
+  static const _opcoesAndroid = AndroidOptions(
+    encryptedSharedPreferences: true,
+  );
+
+  /// Usado para tratar erros.
+  static Future<void> _deleteAll(FlutterSecureStorage storage) async {
+    try {
+      return await storage.deleteAll(aOptions: _opcoesAndroid);
+    } on PlatformException catch (e, stack) {
+      ErrorHandler.reportError(ErrorHandler.getDetails(e, stack));
+      return;
+    }
+  }
 }
