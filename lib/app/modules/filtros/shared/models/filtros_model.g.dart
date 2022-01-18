@@ -23,13 +23,13 @@ mixin _$Filtros on _FiltrosBase, Store {
       (_$totalSelecinadoComputed ??= Computed<int>(() => super.totalSelecinado,
               name: '_FiltrosBase.totalSelecinado'))
           .value;
-  Computed<List<Questao>>? _$allItensComputed;
+  Computed<ObservableList<Questao>>? _$allItensComputed;
 
   @override
-  List<Questao> get allItens =>
-      (_$allItensComputed ??= Computed<List<Questao>>(() => super.allItens,
+  ObservableList<Questao> get allItens => (_$allItensComputed ??=
+          Computed<ObservableList<Questao>>(() => super.allItens,
               name: '_FiltrosBase.allItens'))
-          .value;
+      .value;
   Computed<List<Questao>>? _$itensFiltradosComputed;
 
   @override

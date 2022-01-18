@@ -17,7 +17,9 @@ enum EstadoResposta { correta, incorreta, emBranco }
 /// Modelo para as questões usadas em uma atividade.
 class QuestaoAtividade = _QuestaoAtividadeBase with _$QuestaoAtividade;
 
-abstract class _QuestaoAtividadeBase with Store implements Questao {
+abstract class _QuestaoAtividadeBase extends RawQuestaoAtividade
+    with Store
+    implements Questao {
   final int idQuestaoAtividade;
   final Questao questao;
   final Atividade atividade;
@@ -81,13 +83,6 @@ abstract class _QuestaoAtividadeBase with Store implements Questao {
   @override
   Map<String, dynamic> toJson() => questao.toJson();
 
-  DataQuestaoAtividade toDataQuestaoAtividade() {
-    return {
-      DbConst.kDbDataQuestaoAtividadeKeyId: idQuestaoAtividade,
-      DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno: questao.id,
-    };
-  }
-
   @override
   String toString() {
     return 'QuestaoAtividade(id: $idQuestaoAtividade, idQuestao: ${questao.id}, atividade: ${atividade.toString()})';
@@ -106,5 +101,25 @@ abstract class _QuestaoAtividadeBase with Store implements Questao {
   @override
   int get hashCode {
     return idQuestaoAtividade.hashCode ^ questao.hashCode ^ atividade.hashCode;
+  }
+}
+
+/// Usada para preencher parcialmente os dados de uma questão de atividade.
+class RawQuestaoAtividade {
+  final int? idQuestaoAtividade;
+  final Questao? questao;
+  final Atividade? atividade;
+
+  RawQuestaoAtividade({
+    this.idQuestaoAtividade,
+    this.questao,
+    this.atividade,
+  });
+
+  DataQuestaoAtividade toDataQuestaoAtividade() {
+    return {
+      DbConst.kDbDataQuestaoAtividadeKeyId: idQuestaoAtividade,
+      DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno: questao?.id,
+    };
   }
 }

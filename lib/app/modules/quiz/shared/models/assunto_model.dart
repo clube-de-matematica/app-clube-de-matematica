@@ -1,14 +1,15 @@
-import 'dart:ui';
+import 'dart:convert';
 
-import 'package:clubedematematica/app/shared/models/exceptions/my_exception.dart';
+import 'package:flutter/foundation.dart';
 
+import '../../../../shared/models/exceptions/my_exception.dart';
 import '../../../../shared/utils/strings_db.dart';
 
 /// Esta classe está configurada para, usando o padrão singleton, não criar duas instâncias
-/// com o mesmo título.
-class Assunto {
-  /// Lista de todas as instâncias criadas.
-  static List<Assunto> _instancias = <Assunto>[];
+/// com o mesmo [id].
+class Assunto extends RawAssunto {
+  /// Conjunto de todas as instâncias criadas.
+  static Set<Assunto> _instancias = Set<Assunto>();
 
   /// ID do assunto no banco de dados.
   final int id;
@@ -19,12 +20,17 @@ class Assunto {
   /// O título do assunto.
   final String titulo;
 
+  /// Data de modificação deste assunto no banco de dados.
+  final DateTime dataModificacao;
+
   /// Posição (iniciando em zero) do assunto em uma hierarquia completa ([hierarquia] mais
   /// [titulo]). O índice zero indica que o assunto é uma unidade.
   int get indiceHierarquia => hierarquia.length;
 
   /// Assunto no índice zero da hierarquia [hierarquia].
   /// Se [hierarquia] for vazio temos [unidade] = [this].
+  /// Lança [MyException] se [hierarquia] não for vazia e o assunto correspondente a unidade
+  /// não for encontrado.
   Assunto get unidade {
     if (hierarquia.isEmpty)
       return this;
@@ -40,6 +46,7 @@ class Assunto {
     required this.id,
     required this.hierarquia,
     required this.titulo,
+    required this.dataModificacao,
   }) {
     _instancias.add(this);
   }
@@ -49,58 +56,108 @@ class Assunto {
   /// função `orElse` será retornado.
   /// A função `orElse` retorna uma nova instância de [Assunto].
   /// Essa instância é adiciona em [_instancias].
-  factory Assunto(
-      {required int id,
-      required List<int> hierarquia,
-      required String titulo}) {
-    return _instancias.firstWhere(
-      (element) => element.id == id,
-      orElse: () => Assunto._interno(
-        id: id,
-        hierarquia: hierarquia,
-        titulo: titulo,
-      ),
-    );
+  factory Assunto({
+    required int id,
+    required List<int> hierarquia,
+    required String titulo,
+    required DateTime dataModificacao,
+  }) {
+    return get(id) ??
+        Assunto._interno(
+          id: id,
+          hierarquia: hierarquia,
+          titulo: titulo,
+          dataModificacao: dataModificacao,
+        );
   }
 
-  factory Assunto.fromJson(Map<String, dynamic> json) {
+  factory Assunto.fromDataAssunto(DataAssunto dados) {
     // `json[DbConst.kDbDataAssuntoKeyHierarquia]` é um `List<dynamic>`.
     // `cast<int>()` informa que é um `List<int>`. Ocorrerá um erro se algum dos valores
     // não for `int`.
     List<int> hierarquia =
-        (json[DbConst.kDbDataAssuntoKeyHierarquia] as List).cast<int>();
+        (dados[DbConst.kDbDataAssuntoKeyHierarquia] as List).cast<int>();
 
     return Assunto(
-      id: json[DbConst.kDbDataAssuntoKeyId],
+      id: dados[DbConst.kDbDataAssuntoKeyId] as int,
       hierarquia: hierarquia,
-      titulo: json[DbConst.kDbDataAssuntoKeyTitulo],
+      titulo: dados[DbConst.kDbDataAssuntoKeyTitulo] as String,
+      dataModificacao: DateTime.fromMillisecondsSinceEpoch(
+        dados[DbConst.kDbDataDocumentKeyDataModificacao] as int,
+        isUtc: true,
+      ),
     );
   }
 
   /// Será true se o assunto não possuir hierarquia.
   bool get isUnidade => hierarquia.isEmpty;
 
-  /// Retorna uma lista com as instâncias de [Assunto].
-  static List<Assunto> get instancias => _instancias;
+  /// Retorna um conjunto com as instâncias de [Assunto].
+  static Set<Assunto> get instancias => _instancias;
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (!isUnidade) data[DbConst.kDbDataAssuntoKeyHierarquia] = this.hierarquia;
-    data[DbConst.kDbDataAssuntoKeyTitulo] = this.titulo;
-    return data;
+  /// Retorna o assunto correspondente a [id] em [instancias].
+  /// Retorna null se o assunto não for encontrado.
+  static Assunto? get(int id) {
+    return _instancias.cast().firstWhere(
+          (element) => element.id == id,
+          orElse: () => null,
+        );
   }
+
+  String toJson() => json.encode(toDataAssunto());
+
+  factory Assunto.fromJson(String source) =>
+      Assunto.fromDataAssunto(json.decode(source));
 
   @override
   String toString() {
-    return this.titulo;
+    return 'Assunto(id: $id, hierarquia: $hierarquia, titulo: $titulo, dataModificacao: $dataModificacao)';
   }
 
-  /// Sobrescrever o operador de igualdade.
   @override
   bool operator ==(Object other) {
-    return other is Assunto && this.id == other.id;
+    if (identical(this, other)) return true;
+
+    return other is Assunto &&
+        other.id == id &&
+        listEquals(other.hierarquia, hierarquia) &&
+        other.titulo == titulo &&
+        other.dataModificacao == dataModificacao;
   }
 
   @override
-  int get hashCode => hashValues(id, hierarquia, titulo);
+  int get hashCode {
+    return id.hashCode ^
+        hierarquia.hashCode ^
+        titulo.hashCode ^
+        dataModificacao.hashCode;
+  }
+}
+
+class RawAssunto {
+  RawAssunto({
+    this.id,
+    this.hierarquia,
+    this.titulo,
+    this.dataModificacao,
+  });
+
+  final int? id;
+  final DataHierarquia? hierarquia;
+  final String? titulo;
+  final DateTime? dataModificacao;
+
+  DataAssunto toDataAssunto() {
+    final data = DataAssunto();
+    if (hierarquia?.isNotEmpty ?? false) {
+      data[DbConst.kDbDataAssuntoKeyHierarquia] = this.hierarquia;
+    }
+    data
+      ..[DbConst.kDbDataAssuntoKeyTitulo] = this.titulo
+      ..[DbConst.kDbDataAssuntoKeyId] = this.id
+      ..[DbConst.kDbDataDocumentKeyDataModificacao] =
+          this.dataModificacao?.toUtc().millisecondsSinceEpoch;
+
+    return data;
+  }
 }

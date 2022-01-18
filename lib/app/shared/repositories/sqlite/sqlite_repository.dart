@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
+import 'package:clubedematematica/app/modules/quiz/shared/models/questao_model.dart';
+import 'package:clubedematematica/app/modules/quiz/shared/models/assunto_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -230,19 +233,7 @@ class SqliteRepository
   }
 
   @override
-  Future<DataCollection> getAssuntos() {
-    // TODO: implement getAssuntos
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<DataCollection> getQuestoes() {
-    // TODO: implement getQuestoes
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> insertAssunto(DataDocument data) {
+  Future<bool> insertAssunto(RawAssunto data) {
     // TODO: implement setAssunto
     throw UnimplementedError();
   }
@@ -254,22 +245,13 @@ class SqliteRepository
   }
 
   @override
-  Future<DataCollection> getClubes(int idUsuario) {
+  Future<List<Clube>> getClubes(int idUsuario) {
     // TODO: implement getClubes
     throw UnimplementedError();
   }
 
   @override
-  Future<DataClube> insertClube({
-    required String nome,
-    required int proprietario,
-    required String codigo,
-    String? descricao,
-    bool privado = false,
-    List<int>? administradores,
-    List<int>? membros,
-    String? capa,
-  }) {
+  Future<DataClube> insertClube(DataClube data) {
     // TODO: implement setClube
     throw UnimplementedError();
   }
@@ -306,13 +288,7 @@ class SqliteRepository
   }
 
   @override
-  Future<DataAtividade> insertAtividade({required int idClube, required int idAutor, required String titulo, String? descricao, List<String>? questoes, required DateTime dataLiberacao, DateTime? dataEncerramento}) {
-    // TODO: implement insertAtividade
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<DataAtividade> updateAtividade({required int id, required String titulo, String? descricao, List<String>? questoes, DateTime? dataLiberacao, DateTime? dataEncerramento}) {
+  Future<DataAtividade> updateAtividade(DataAtividade dados) {
     // TODO: implement updateAtividade
     throw UnimplementedError();
   }
@@ -326,6 +302,24 @@ class SqliteRepository
   @override
   Future<bool> upsertRespostasAtividade(List<DataRespostaQuestaoAtividade> data) {
     // TODO: implement upsertRespostasAtividade
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DataAtividade> insertAtividade(DataAtividade data) {
+    // TODO: implement insertAtividade
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Assunto>> getAssuntos() {
+    // TODO: implement getAssuntos
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Questao>> getQuestoes() {
+    // TODO: implement getQuestoes
     throw UnimplementedError();
   }
 }

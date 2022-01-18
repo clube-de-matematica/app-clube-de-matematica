@@ -36,13 +36,13 @@ selecionada: ${selecionada}
 }
 
 mixin _$_Filtros on __FiltrosBase, Store {
-  Computed<List<Questao>>? _$allItensComputed;
+  Computed<ObservableList<Questao>>? _$allItensComputed;
 
   @override
-  List<Questao> get allItens =>
-      (_$allItensComputed ??= Computed<List<Questao>>(() => super.allItens,
+  ObservableList<Questao> get allItens => (_$allItensComputed ??=
+          Computed<ObservableList<Questao>>(() => super.allItens,
               name: '__FiltrosBase.allItens'))
-          .value;
+      .value;
 
   final _$mostrarSomenteQuestoesSelecionadasAtom =
       Atom(name: '__FiltrosBase.mostrarSomenteQuestoesSelecionadas');

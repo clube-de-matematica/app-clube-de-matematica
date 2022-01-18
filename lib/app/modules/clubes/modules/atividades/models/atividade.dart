@@ -10,7 +10,7 @@ import 'questao_atividade.dart';
 import 'resposta_questao_atividade.dart';
 
 /// Modelo para os dados das atividades dos clubes.
-class Atividade {
+class Atividade extends RawAtividade {
   final int id;
   String titulo;
   String? descricao;
@@ -50,6 +50,7 @@ class Atividade {
     Iterable<RespostaQuestaoAtividade>? respostas,
   }) : respostas = ObservableSet.of(respostas ?? Iterable.empty());
 
+/* 
   Atividade copyWith({
     int? id,
     String? nome,
@@ -75,25 +76,7 @@ class Atividade {
       respostas: respostas ?? this.respostas,
     );
   }
-
-  DataAtividade toDataAtividade() {
-    return {
-      DbConst.kDbDataAtividadeKeyId: id,
-      DbConst.kDbDataAtividadeKeyTitulo: titulo,
-      DbConst.kDbDataAtividadeKeyDescricao: descricao,
-      DbConst.kDbDataAtividadeKeyIdClube: idClube,
-      DbConst.kDbDataAtividadeKeyIdAutor: idAutor,
-      DbConst.kDbDataAtividadeKeyDataCriacao: criacao.millisecondsSinceEpoch,
-      DbConst.kDbDataAtividadeKeyDataLiberacao:
-          liberacao?.millisecondsSinceEpoch,
-      DbConst.kDbDataAtividadeKeyDataEncerramento:
-          encerramento?.millisecondsSinceEpoch,
-      DbConst.kDbDataAtividadeKeyQuestoes:
-          questoes.map((x) => x.toDataQuestaoAtividade()).toList(),
-      DbConst.kDbDataAtividadeKeyRespostas:
-          respostas.map((x) => x.toDataRespostaQuestaoAtividade()).toList(),
-    };
-  }
+ */
 
   factory Atividade.fromDataAtividade(DataAtividade map) {
     final int idAtividade = map[DbConst.kDbDataAtividadeKeyId];
@@ -201,5 +184,77 @@ class Atividade {
         encerramento.hashCode ^
         questoes.hashCode ^
         respostas.hashCode;
+  }
+}
+
+/// Usada para preencher parcialmente os dados de uma atividade.
+class RawAtividade {
+  RawAtividade({
+    this.id,
+    this.titulo,
+    this.descricao,
+    this.idClube,
+    this.idAutor,
+    this.criacao,
+    this.liberacao,
+    this.encerramento,
+    this.questoes,
+    this.respostas,
+  });
+
+  final int? id;
+  final String? titulo;
+  final String? descricao;
+  final int? idClube;
+  final int? idAutor;
+  final DateTime? criacao;
+  final DateTime? liberacao;
+  final DateTime? encerramento;
+  final List<RawQuestaoAtividade>? questoes;
+  final Set<RespostaQuestaoAtividade>? respostas;
+
+  DataAtividade toDataAtividade() {
+    return {
+      DbConst.kDbDataAtividadeKeyId: id,
+      DbConst.kDbDataAtividadeKeyTitulo: titulo,
+      DbConst.kDbDataAtividadeKeyDescricao: descricao,
+      DbConst.kDbDataAtividadeKeyIdClube: idClube,
+      DbConst.kDbDataAtividadeKeyIdAutor: idAutor,
+      DbConst.kDbDataAtividadeKeyDataCriacao: criacao?.millisecondsSinceEpoch,
+      DbConst.kDbDataAtividadeKeyDataLiberacao:
+          liberacao?.millisecondsSinceEpoch,
+      DbConst.kDbDataAtividadeKeyDataEncerramento:
+          encerramento?.millisecondsSinceEpoch,
+      DbConst.kDbDataAtividadeKeyQuestoes:
+          questoes?.map((x) => x.toDataQuestaoAtividade()).toList(),
+      DbConst.kDbDataAtividadeKeyRespostas:
+          respostas?.map((x) => x.toDataRespostaQuestaoAtividade()).toList(),
+    };
+  }
+
+  RawAtividade copyWith({
+    int? id,
+    String? titulo,
+    String? descricao,
+    int? idClube,
+    int? idAutor,
+    DateTime? criacao,
+    DateTime? liberacao,
+    DateTime? encerramento,
+    List<RawQuestaoAtividade>? questoes,
+    Set<RespostaQuestaoAtividade>? respostas,
+  }) {
+    return RawAtividade(
+      id: id ?? this.id,
+      titulo: titulo ?? this.titulo,
+      descricao: descricao ?? this.descricao,
+      idClube: idClube ?? this.idClube,
+      idAutor: idAutor ?? this.idAutor,
+      criacao: criacao ?? this.criacao,
+      liberacao: liberacao ?? this.liberacao,
+      encerramento: encerramento ?? this.encerramento,
+      questoes: questoes ?? this.questoes,
+      respostas: respostas ?? this.respostas,
+    );
   }
 }

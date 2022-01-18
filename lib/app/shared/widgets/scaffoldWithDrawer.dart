@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/services/teste.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -184,7 +185,8 @@ class _AppDrawerState extends State<_AppDrawer> {
             leading: Icon(Icons.info_outlined),
             onTap: () {
               // TODO
-              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (_)=>TesteDbPage()));
+              //Navigator.pop(context);
             },
           ),
           const Divider(thickness: 1.5),

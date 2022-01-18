@@ -44,12 +44,8 @@ mixin _$ClubesRepository on _ClubesRepositoryBase, Store {
       AsyncAction('_ClubesRepositoryBase.criarClube');
 
   @override
-  Future<Clube?> criarClube(
-      String nome, String? descricao, String? capa, bool privado,
-      {List<int>? administradores, List<int>? membros}) {
-    return _$criarClubeAsyncAction.run(() => super.criarClube(
-        nome, descricao, capa, privado,
-        administradores: administradores, membros: membros));
+  Future<Clube?> criarClube(RawClube dados) {
+    return _$criarClubeAsyncAction.run(() => super.criarClube(dados));
   }
 
   final _$sairClubeAsyncAction = AsyncAction('_ClubesRepositoryBase.sairClube');

@@ -65,7 +65,7 @@ abstract class IdBase62 {
   /// Retorna o objeto [DateTime] (UTC) associado aos oito primeiros caracteres de [idBase62].
   static DateTime toDateTime(String idBase62) {
     final miliseconds = decode(idBase62.substring(0, 8));
-    return DateTime.fromMillisecondsSinceEpoch(miliseconds);
+    return DateTime.fromMillisecondsSinceEpoch(miliseconds, isUtc: true);
   }
 
   /// A string subsequente à [base62].

@@ -25,7 +25,7 @@ class ImagemQuestao extends _ImagemQuestaoBase with _$ImagemQuestao {
           width: width,
           height: height,
         );
-  ImagemQuestao.fromJson(Map<String, dynamic> json) : super.fromJson(json);
+  ImagemQuestao.fromMap(Map<String, dynamic> map) : super.fromMap(map);
 
   /// Chave para [name] em objetos json.
   static const kKeyName = 'name';
@@ -40,14 +40,14 @@ abstract class _ImagemQuestaoBase with Store {
   });
 
   // ignore: unused_element
-  _ImagemQuestaoBase.fromJson(Map<String, dynamic> json)
-      : name = json[ImagemQuestao.kKeyName] as String,
-        base64 = json[DbConst.kDbDataImagemKeyBase64] as String,
+  _ImagemQuestaoBase.fromMap(Map<String, dynamic> map)
+      : name = (map[ImagemQuestao.kKeyName] as String?) ?? 'imagem.temp',
+        base64 = map[DbConst.kDbDataImagemKeyBase64] as String,
         // A multiplicação faz a converção para double.
-        width = json[DbConst.kDbDataImagemKeyLargura] * 1.0,
-        height = json[DbConst.kDbDataImagemKeyAltura] * 1.0;
+        width = map[DbConst.kDbDataImagemKeyLargura] * 1.0,
+        height = map[DbConst.kDbDataImagemKeyAltura] * 1.0;
 
-  Map<String, dynamic> toJson({bool includeName = false}) {
+  Map<String, dynamic> toMap({bool includeName = false}) {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (includeName) data[ImagemQuestao.kKeyName] = this.name;
     data[DbConst.kDbDataImagemKeyBase64] = this.base64;

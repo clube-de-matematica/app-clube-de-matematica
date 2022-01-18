@@ -25,7 +25,7 @@ class RespostaQuestaoAtividade extends _RespostaQuestaoAtividadeBase
       idQuestaoAtividade:
           map[DbConst.kDbDataRespostaQuestaoAtividadeKeyIdQuestaoAtividade]!,
       idUsuario: map[DbConst.kDbDataRespostaQuestaoAtividadeKeyIdUsuario]!,
-      sequencial: map[DbConst.kDbDataRespostaQuestaoAtividadeKeyIdResposta],
+      sequencial: map[DbConst.kDbDataRespostaQuestaoAtividadeKeyResposta],
     );
   }
 
@@ -64,7 +64,7 @@ abstract class _RespostaQuestaoAtividadeBase with Store {
       DbConst.kDbDataRespostaQuestaoAtividadeKeyIdQuestaoAtividade:
           idQuestaoAtividade,
       DbConst.kDbDataRespostaQuestaoAtividadeKeyIdUsuario: idUsuario,
-      DbConst.kDbDataRespostaQuestaoAtividadeKeyIdResposta: sequencial,
+      DbConst.kDbDataRespostaQuestaoAtividadeKeyResposta: sequencial,
     };
   }
 

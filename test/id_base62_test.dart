@@ -48,7 +48,8 @@ void main() {
       'O retorno de toDateTime() deve ser igual ao DateTime usado por generateId().',
       () {
         final id = IdBase62.generateId();
-        final dateTime = DateTime.fromMillisecondsSinceEpoch(IdBase62.lastTime);
+        final dateTime =
+            DateTime.fromMillisecondsSinceEpoch(IdBase62.lastTime, isUtc: true);
         expect(IdBase62.toDateTime(id), equals(dateTime));
       },
     );

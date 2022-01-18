@@ -104,7 +104,7 @@ abstract class _FiltrosBase with Store {
 
   /// Retorna uma lista com todos os itens carregados.
   @computed
-  List<Questao> get allItens => questoesRepository.questoes;
+  ObservableList<Questao> get allItens => questoesRepository.questoes.toList().asObservable();
 
   /// Retorna uma lista com os itens resultantes da aplicação dos filtros.
   /// A condição aplicada na filtragem dos itens usa o conectivo "ou" para filtros do mesmo

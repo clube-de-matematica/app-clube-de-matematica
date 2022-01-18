@@ -1,4 +1,5 @@
-import '../../../../shared/models/exceptions/my_exception.dart';
+import 'package:mobx/mobx.dart';
+
 import '../../../../shared/utils/strings_db.dart';
 import 'alternativa_questao_model.dart';
 import 'ano_questao_model.dart';
@@ -20,7 +21,15 @@ class Questao {
   /// A lista de imagens é opcional, pois alguns enunciados não contém imagem.
   final List<ImagemQuestao> imagensEnunciado;
 
-  Questao({
+  /// {@template app.Questao.instancias}
+  /// Conjunto de todas as instâncias criadas.
+  /// {@endtemplate}
+  static ObservableSet<Questao> _instancias = ObservableSet<Questao>();
+
+  /// {@macro app.Questao.instancias}
+  static ObservableSet<Questao> get instancias => _instancias;
+
+  Questao._interno({
     required this.id,
     required this.ano,
     required this.nivel,
@@ -30,43 +39,57 @@ class Questao {
     required this.alternativas,
     required this.gabarito,
     required this.imagensEnunciado,
-  });
-
-  factory Questao.fromJson(
-    Map<String, dynamic> json, {
-    List<Assunto>? assuntosCarreados,
   }) {
-    assuntosCarreados ??= Assunto.instancias;
-    assert(assuntosCarreados.isNotEmpty);
-    if (assuntosCarreados.isEmpty)
-      throw MyException(
-        "Os assuntos não foram carregados.",
-        originClass: "Questao",
-        originField: "Questao.fromJson()",
-        fieldDetails:
-            "assuntosCarreados == ${assuntosCarreados.toString()};\njson == ${json.toString()}",
-        causeError: "assuntosCarreados está vazio.",
-      );
+    _instancias.add(this);
+  }
+
+  /// Retorna o primeiro elemento que satisfaz `element.id == id`.
+  /// Se nenhum elemento satisfizer `element.id == id`, o resultado da chamada da
+  /// função `orElse` será retornado.
+  /// A função `orElse` retorna uma nova instância de [Questao].
+  /// Essa instância é adiciona em [_instancias].
+  factory Questao({
+    required String id,
+    required Ano ano,
+    required Nivel nivel,
+    required int indice,
+    required List<Assunto> assuntos,
+    required List<String> enunciado,
+    required List<Alternativa> alternativas,
+    required int gabarito,
+    required List<ImagemQuestao> imagensEnunciado,
+  }) {
+    return _instancias.firstWhere(
+      (element) => element.id == id,
+      orElse: () => Questao._interno(
+        id: id,
+        ano: ano,
+        nivel: nivel,
+        indice: indice,
+        assuntos: assuntos,
+        enunciado: enunciado,
+        alternativas: alternativas,
+        gabarito: gabarito,
+        imagensEnunciado: imagensEnunciado,
+      ),
+    );
+  }
+
+  factory Questao.fromJson(Map<String, dynamic> json) {
     final id = json[DbConst.kDbDataQuestaoKeyId] as String;
     final _assuntos = <Assunto>[];
     final _alternativas = <Alternativa>[];
 
-    json[DbConst.kDbDataQuestaoKeyAssuntos].forEach((idAssunto) {
-      // Se o assunto não for encontrado ocorrerá um erro.
-      _assuntos.add(assuntosCarreados!.firstWhere(
-        (element) => element.id == idAssunto,
-        orElse: () => throw MyException(
-          'Assunto com o ID $idAssunto não encontrado.',
-          originClass: "Questao",
-          originField: "Questao.fromJson()",
-          fieldDetails:
-              "assuntosCarreados == ${assuntosCarreados.toString()};\njson == ${json.toString()}",
-          causeError: "O assunto \"$idAssunto\" não foi encontrado.",
-        ),
-      ));
+    final idsAssuntos =
+        (json[DbConst.kDbDataQuestaoKeyAssuntos] as List).cast<int>();
+    idsAssuntos.forEach((idAssunto) {
+      final assunto = Assunto.get(idAssunto);
+      if (assunto != null) _assuntos.add(assunto);
     });
 
-    json[DbConst.kDbDataQuestaoKeyAlternativas].forEach((dataAlternativa) {
+    final dadosAlternativas =
+        json[DbConst.kDbDataQuestaoKeyAlternativas] as List;
+    dadosAlternativas.forEach((dataAlternativa) {
       _alternativas.add(Alternativa.fromJson(dataAlternativa));
     });
 
@@ -96,7 +119,7 @@ class Questao {
       final imagemInfo = dataImagensEnunciado[i];
       imagemInfo[ImagemQuestao.kKeyName] =
           '${jsonQuestao[DbConst.kDbDataQuestaoKeyId] as String}_enunciado_$i.png';
-      _imagensEnunciado.add(ImagemQuestao.fromJson(imagemInfo));
+      _imagensEnunciado.add(ImagemQuestao.fromMap(imagemInfo));
     }
     return _imagensEnunciado;
   }
@@ -119,7 +142,7 @@ class Questao {
     data[DbConst.kDbDataQuestaoKeyGabarito] = this.gabarito;
     if (this.imagensEnunciado.isNotEmpty) {
       data[DbConst.kDbDataQuestaoKeyImagensEnunciado] =
-          this.imagensEnunciado.map((v) => v.toJson()).toList();
+          this.imagensEnunciado.map((v) => v.toMap()).toList();
     }
     return data;
   }

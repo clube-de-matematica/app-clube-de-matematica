@@ -242,10 +242,10 @@ class ErrorHandler {
   }
 
   ///Produz um objeto [FlutterErrorDetails].
-  static FlutterErrorDetails getDetails(dynamic exception, dynamic stack) {
+  static FlutterErrorDetails getDetails(dynamic exception, StackTrace stack) {
     return FlutterErrorDetails(
       exception: exception,
-      stack: stack is String ? StackTrace.fromString(stack) : stack,
+      stack: stack,
       library: 'error_handler.dart',
     );
   }
@@ -298,11 +298,11 @@ class ErrorHandler {
           Debug.printBetweenLine(
               "ERRO DETECTADO PELO Isolate.current.addErrorListener"),
         );
-        var isolateError = pair as List<dynamic>;
+        var isolateError = pair as List;
         reportError(
           getDetails(
             isolateError.first.toString(),
-            isolateError.last.toString(),
+            StackTrace.fromString(isolateError.last.toString()),
           ),
         );
       }).sendPort);
@@ -361,7 +361,7 @@ class _WidgetError extends LeafRenderObjectWidget {
   final FlutterError? _flutterError;
 
   @override
-  RenderBox createRenderObject(BuildContext context) =>_ErrorBox(message);
+  RenderBox createRenderObject(BuildContext context) => _ErrorBox(message);
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

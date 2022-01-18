@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../../../services/interface_db_servicos.dart';
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/repositories/id_base62.dart';
 import '../../../../shared/repositories/interface_db_repository.dart';
@@ -9,6 +10,7 @@ import '../../../../shared/utils/strings_db.dart';
 import '../../../perfil/models/userapp.dart';
 import '../../../quiz/shared/models/questao_model.dart';
 import '../../modules/atividades/models/atividade.dart';
+import '../../modules/atividades/models/questao_atividade.dart';
 import '../../modules/atividades/models/resposta_questao_atividade.dart';
 import '../models/clube.dart';
 import '../models/usuario_clube.dart';
@@ -20,11 +22,11 @@ part 'clubes_repository.g.dart';
 class ClubesRepository = _ClubesRepositoryBase with _$ClubesRepository;
 
 abstract class _ClubesRepositoryBase with Store implements Disposable {
-  final IDbRepository dbRepository;
+  final IDbServicos dbServicos;
   final UserApp usuarioApp;
   final _disposers = <ReactionDisposer>[];
 
-  _ClubesRepositoryBase(this.dbRepository, this.usuarioApp) {
+  _ClubesRepositoryBase(this.dbServicos, this.usuarioApp) {
     _disposers.add(
       autorun(
         (_) {
@@ -79,28 +81,25 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   @action
   Future<List<Clube>> carregarClubes() async {
     if (usuarioApp.id == null) return List<Clube>.empty();
-    DataCollection resultado;
+    List<Clube> resultado;
     try {
       // Aguardar o retorno dos clubes.
-      resultado = await dbRepository.getClubes(usuarioApp.id!);
+      resultado = await dbServicos.getClubes(usuarioApp.id!);
     } catch (e) {
       assert(Debug.printBetweenLine(
           "Erro a buscar os dados da coleção ${CollectionType.clubes.name}."));
       assert(Debug.print(e));
       return List<Clube>.empty();
     }
-    if (resultado.isEmpty) return List<Clube>.empty();
-
-    final temp = List<Clube>.from(
-        resultado.map((dataClube) => Clube.fromDataClube(dataClube)));
+    if (resultado.isEmpty) return resultado;
 
     _clubes.removeWhere(
-      (clube) => temp.any(
+      (clube) => resultado.any(
         (clubeTemp) => clubeTemp.id == clube.id,
       ),
     );
 
-    temp.forEach((clubeTemp) {
+    resultado.forEach((clubeTemp) {
       try {
         _clubes
             .firstWhere((clube) => clube.id == clubeTemp.id)
@@ -117,26 +116,21 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// Criar um novo clube com as informações dos parâmetros.
   /// Se o processo for bem sucedido, retorna o [Clube] criado.
   @action
-  Future<Clube?> criarClube(
-    String nome,
-    String? descricao,
-    String? capa,
-    bool privado, {
-    List<int>? administradores,
-    List<int>? membros,
-  }) async {
+  Future<Clube?> criarClube(RawClube dados) async {
     if (usuarioApp.id == null) return null;
-    final proprietario = usuarioApp.id!;
+    final proprietario = RawUsuarioClube(id: usuarioApp.id);
     final codigo = IdBase62.getIdClube();
-    final dataClube = await dbRepository.insertClube(
-      nome: nome,
-      proprietario: proprietario,
-      codigo: codigo,
-      descricao: descricao,
-      privado: privado,
-      administradores: administradores,
-      membros: membros,
-      capa: capa,
+    final dataClube = await dbServicos.insertClube(
+      RawClube(
+        nome: dados.nome,
+        proprietario: proprietario,
+        codigo: codigo,
+        descricao: dados.descricao,
+        privado: dados.privado,
+        administradores: dados.administradores,
+        membros: dados.membros,
+        capa: dados.capa,
+      ).toDataClube(),
     );
     if (dataClube.isNotEmpty) {
       final clube = Clube.fromDataClube(dataClube);
@@ -151,7 +145,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   Future<bool> removerDoClube(Clube clube, UsuarioClube usuario) async {
     if (usuarioApp.id == null) return false;
     if (clube.id != usuario.idClube) return false;
-    final sucesso = await dbRepository.exitClube(clube.id, usuario.id);
+    final sucesso = await dbServicos.exitClube(clube.id, usuario.id);
     if (sucesso) {
       clube.removerUsuarios([usuario]);
       return true;
@@ -181,7 +175,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   @action
   Future<Clube?> entrarClube(String codigo) async {
     if (usuarioApp.id == null) return null;
-    final dataClube = await dbRepository.enterClube(codigo, usuarioApp.id!);
+    final dataClube = await dbServicos.enterClube(codigo, usuarioApp.id!);
     if (dataClube.isNotEmpty) {
       final temp = Clube.fromDataClube(dataClube);
       final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
@@ -234,7 +228,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     dados[DbConst.kDbDataClubeKeyDescricao] = descricao;
     dados[DbConst.kDbDataClubeKeyCapa] = dataCapa;
 
-    final dataResult = await dbRepository.updateClube(dados);
+    final dataResult = await dbServicos.updateClube(dados);
     if (dataResult.isNotEmpty) {
       final temp = Clube.fromDataClube(dataResult);
       final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
@@ -259,7 +253,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuarioApp.id == null) return false;
     if (clube.id != usuario.idClube) return false;
     if (usuario.permissao == permissao) return true;
-    final sucesso = await dbRepository.updatePermissionUserClube(
+    final sucesso = await dbServicos.updatePermissionUserClube(
         clube.id, usuario.id, permissao.id);
     if (sucesso) {
       usuario.permissao = permissao;
@@ -273,7 +267,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuarioApp.id == null) return List<Atividade>.empty();
     DataCollection resultado;
     try {
-      resultado = await dbRepository.getAtividades(clube.id);
+      resultado = await dbServicos.getAtividades(clube.id);
     } catch (e) {
       assert(Debug.printBetweenLine(
           "Erro ao buscar os dados da coleção ${CollectionType.atividades.name}."));
@@ -306,14 +300,16 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     final idAutor = usuarioApp.id!;
     if (!clube.permissaoCriarAtividade(idAutor)) return null;
     if (questoes != null && questoes.isEmpty) questoes = null;
-    final dataAtividade = await dbRepository.insertAtividade(
-      idClube: clube.id,
-      idAutor: idAutor,
-      titulo: titulo,
-      descricao: descricao,
-      questoes: questoes?.map((questao) => questao.id).toList(),
-      dataLiberacao: dataLiberacao,
-      dataEncerramento: dataEncerramento,
+    final dataAtividade = await dbServicos.insertAtividade(
+      RawAtividade(
+        idClube: clube.id,
+        idAutor: idAutor,
+        titulo: titulo,
+        descricao: descricao,
+        questoes: questoes?.map((questao) => RawQuestaoAtividade(questao: questao)).toList(),
+        liberacao: dataLiberacao,
+        encerramento: dataEncerramento,
+      ).toDataAtividade(),
     );
     if (dataAtividade.isNotEmpty) {
       final atividade = Atividade.fromDataAtividade(dataAtividade);
@@ -340,13 +336,15 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     final permitirUsuario = atividade.idAutor == usuarioApp.id!;
     assert(permitirUsuario);
     if (questoes != null && questoes.isEmpty) questoes = null;
-    final dataAtividade = await dbRepository.updateAtividade(
-      id: atividade.id,
-      titulo: titulo,
-      descricao: descricao,
-      questoes: questoes?.map((questao) => questao.id).toList(),
-      dataLiberacao: dataLiberacao,
-      dataEncerramento: dataEncerramento,
+    final dataAtividade = await dbServicos.updateAtividade(
+      RawAtividade(
+        id: atividade.id,
+        titulo: titulo,
+        descricao: descricao,
+        questoes: questoes?.map((questao) => RawQuestaoAtividade(questao: questao)).toList(),
+        liberacao: dataLiberacao,
+        encerramento: dataEncerramento,
+      ).toDataAtividade(),
     );
     if (dataAtividade.isNotEmpty) {
       atividade.sobrescrever(Atividade.fromDataAtividade(dataAtividade));
@@ -360,7 +358,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuarioApp.id == null) return null;
     List<DataRespostaQuestaoAtividade> dataRespostas;
     try {
-      dataRespostas = await dbRepository.getRespostasAtividade(
+      dataRespostas = await dbServicos.getRespostasAtividade(
         atividade.id,
         atividade.idAutor == usuarioApp.id ? null : usuarioApp.id!,
       );
@@ -385,7 +383,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// {@macro app.IDbRepository.upsertRespostasAtividade}
   Future<bool> atualizarInserirRespostaAtividade(Atividade atividade) async {
     if (usuarioApp.id == null) return false;
-    final List<Map<String, int?>> dados = [];
+    final List<DataRespostaQuestaoAtividade> dados = [];
     atividade.questoes.forEach((questao) {
       final resposta = questao.resposta(usuarioApp.id!);
       if (resposta != null) {
@@ -398,7 +396,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     });
     bool retorno;
     try {
-      retorno = await dbRepository.upsertRespostasAtividade(dados);
+      retorno = await dbServicos.upsertRespostasAtividade(dados);
     } catch (e) {
       assert(Debug.printBetweenLine(
           "Erro ao inserir os dados na coleção ${CollectionType.respostasQuestaoAtividade.name}."));

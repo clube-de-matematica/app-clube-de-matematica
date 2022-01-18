@@ -5,8 +5,8 @@ import 'package:mobx/mobx.dart';
 
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/utils/strings_db.dart';
-import '../utils/random_colors.dart';
 import '../../modules/atividades/models/atividade.dart';
+import '../utils/random_colors.dart';
 import 'usuario_clube.dart';
 
 part 'clube.g.dart';
@@ -146,7 +146,7 @@ class Clube extends _ClubeBase with _$Clube {
   }
 }
 
-abstract class _ClubeBase with Store {
+abstract class _ClubeBase extends RawClube with Store {
   /// ID do clube.
   final int id;
 
@@ -225,25 +225,6 @@ abstract class _ClubeBase with Store {
           ..add(proprietario)
           ..addAll(usuarios?.where((usuario) => !usuario.proprietario) ?? []);
 
-  DataClube toDataClube() {
-    final administradores =
-        this.administradores.map((usuario) => usuario.id).toList();
-    final membros = this.membros.map((usuario) => usuario.id).toList();
-    return {
-      DbConst.kDbDataClubeKeyId: id,
-      DbConst.kDbDataClubeKeyNome: nome,
-      DbConst.kDbDataClubeKeyDescricao: descricao,
-      DbConst.kDbDataClubeKeyProprietario: proprietario.id,
-      DbConst.kDbDataClubeKeyAdministradores: administradores,
-      DbConst.kDbDataClubeKeyMembros: membros,
-      DbConst.kDbDataClubeKeyCapa: '${capa.value}',
-      DbConst.kDbDataClubeKeyCodigo: codigo,
-      DbConst.kDbDataClubeKeyPrivado: privado,
-    };
-  }
-
-  String toJsonDataClube() => json.encode(toDataClube());
-
   /// Sobrescreve os campos deste clube com os respectivos valores em [outro], desde que
   /// tenham o mesmo ID.
   @action
@@ -314,4 +295,58 @@ abstract class _ClubeBase with Store {
   /// Adiciona [atividade] às [atividades].
   @action
   void addAtividade(Atividade atividade) => _atividades.add(atividade);
+}
+
+
+/// Usada para preencher parcialmente os dados de um clube.
+class RawClube {
+  RawClube({
+    this.id,
+    this.capa,
+    this.codigo,
+    this.descricao,
+    this.nome,
+    this.privado,
+    this.proprietario,
+    this.administradores,
+    this.atividades,
+    this.membros,
+  });
+
+  final int? id;
+  final Color? capa;
+  final String? codigo;
+  final String? descricao;
+  final String? nome;
+  final bool? privado;
+  final RawUsuarioClube? proprietario;
+  final List<RawUsuarioClube>? administradores;
+  final List<Atividade>? atividades;
+  final List<RawUsuarioClube>? membros;
+
+  DataClube toDataClube() {
+    final administradores = this
+        .administradores
+        ?.where((usuario) => usuario.id != null)
+        .map((usuario) => usuario.id!)
+        .toList();
+    final membros = this
+        .membros
+        ?.where((usuario) => usuario.id != null)
+        .map((usuario) => usuario.id!)
+        .toList();
+    return {
+      DbConst.kDbDataClubeKeyId: id,
+      DbConst.kDbDataClubeKeyNome: nome,
+      DbConst.kDbDataClubeKeyDescricao: descricao,
+      DbConst.kDbDataClubeKeyProprietario: proprietario?.id,
+      DbConst.kDbDataClubeKeyAdministradores: administradores,
+      DbConst.kDbDataClubeKeyMembros: membros,
+      DbConst.kDbDataClubeKeyCapa: capa?.value.toString(),
+      DbConst.kDbDataClubeKeyCodigo: codigo,
+      DbConst.kDbDataClubeKeyPrivado: privado,
+    };
+  }
+
+  String toJsonDataClube() => json.encode(toDataClube());
 }

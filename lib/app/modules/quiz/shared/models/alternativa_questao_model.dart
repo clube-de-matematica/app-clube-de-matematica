@@ -12,7 +12,7 @@ enum TypeAlternativa {
 
 extension ExtensionTypeAlternativa on TypeAlternativa {
   /// Retorna o ID correspondente ao tipo no banco de dados.
-  int toInt() {
+  int get id {
     switch (this) {
       case TypeAlternativa.texto:
         return 0;
@@ -24,7 +24,7 @@ extension ExtensionTypeAlternativa on TypeAlternativa {
 
 /// Contém as propriedades de uma alternativa do questao.
 class Alternativa {
-  final String idQuestao;
+  final int idQuestao;
   final int sequencial;
   final TypeAlternativa tipo;
   final conteudo;
@@ -34,11 +34,11 @@ class Alternativa {
     required this.sequencial,
     required this.tipo,
     required this.conteudo,
-  });
+  }) : assert(conteudo is String || conteudo is ImagemQuestao);
 
   /// Retorna uma Instância de [Alternativa] a partir de um `Map<String, dynamic>`.
   factory Alternativa.fromJson(DataAlternativa json) {
-    final idQuestao = json[DbConst.kDbDataAlternativaKeyIdQuestao] as String;
+    final idQuestao = json[DbConst.kDbDataAlternativaKeyIdQuestao] as int;
     final sequencial = json[DbConst.kDbDataAlternativaKeySequencial] as int;
     final conteudo;
     if (json[DbConst.kDbDataAlternativaKeyTipo] as int ==
@@ -49,7 +49,7 @@ class Alternativa {
           jsonDecode(json[DbConst.kDbDataAlternativaKeyConteudo]) as DataImagem;
       dataImagem[ImagemQuestao.kKeyName] =
           '${idQuestao}_alternativa_$sequencial.png';
-      conteudo = ImagemQuestao.fromJson(dataImagem);
+      conteudo = ImagemQuestao.fromMap(dataImagem);
     }
 
     return Alternativa(
@@ -92,10 +92,10 @@ class Alternativa {
     final DataAlternativa data = DataAlternativa();
     data[DbConst.kDbDataAlternativaKeyIdQuestao] = this.idQuestao;
     data[DbConst.kDbDataAlternativaKeySequencial] = this.sequencial;
-    data[DbConst.kDbDataAlternativaKeyTipo] = this.tipo.toInt();
+    data[DbConst.kDbDataAlternativaKeyTipo] = this.tipo.id;
     data[DbConst.kDbDataAlternativaKeyConteudo] = isTipoTexto
         ? this.conteudo
-        : jsonEncode((this.conteudo as ImagemQuestao).toJson());
+        : jsonEncode((this.conteudo as ImagemQuestao).toMap());
     return data;
   }
 }

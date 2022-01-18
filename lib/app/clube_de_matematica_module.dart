@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/services/db_servicos.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -10,10 +11,11 @@ import 'modules/perfil/models/userapp.dart';
 import 'modules/perfil/perfil_module.dart';
 import 'modules/quiz/quiz_module.dart';
 import 'navigation.dart';
+import 'services/interface_db_servicos.dart';
+import 'shared/repositories/drift/drift_db.dart';
 import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/repositories/interface_db_repository.dart';
 import 'shared/repositories/questoes/assuntos_repository.dart';
-import 'shared/repositories/questoes/imagem_questao_repository.dart';
 import 'shared/repositories/questoes/questoes_repository.dart';
 import 'shared/repositories/supabase/auth_supabase_repository.dart';
 import 'shared/repositories/supabase/supabase_db_repository.dart';
@@ -39,12 +41,12 @@ class ClubeDeMatematicaModule extends Module {
         //Repositórios
         //Bind<IAuthRepository>((i) => AuthFirebaseRepository(i.get<FirebaseAuth>())),
         Bind<IAuthRepository>((i) => AuthSupabaseRepository(i.get<Supabase>())),
-        Bind((i) => SupabaseDbRepository(
+        Bind<IRemoteDbRepository>((i) => SupabaseDbRepository(
               i.get<Supabase>(),
               i.get<IAuthRepository>(),
             )),
         Bind.lazySingleton((i) => ClubesRepository(
-              i.get<SupabaseDbRepository>(),
+              i.get<IDbServicos>(),
               i.get<UserApp>(),
             )),
         /* Bind<IDbRepository>((i) => MockDbRepository()),
@@ -53,11 +55,16 @@ class ClubeDeMatematicaModule extends Module {
               i.get<UserApp>(),
             )), */
         Bind.lazySingleton((i) => QuestoesRepository(
-              i.get<IDbRepository>(),
+              i.get<IDbServicos>(),
               i.get<AssuntosRepository>(),
             )),
-        Bind.lazySingleton((i) => AssuntosRepository(i.get<IDbRepository>())),
-        Bind.lazySingleton((i) => ImagemQuestaoRepository()),
+        Bind.lazySingleton((i) => AssuntosRepository(i.get<IDbServicos>())),
+
+        Bind<IDbServicos>((i) => DbServicos(
+              i.get<DriftDb>(),
+              i.get<SupabaseDbRepository>(),
+            )),
+        Bind((_) => DriftDb()),
 
         //Supabase
         Bind((_) => Supabase.instance),

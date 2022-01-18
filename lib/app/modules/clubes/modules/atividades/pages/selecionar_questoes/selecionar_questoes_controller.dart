@@ -74,7 +74,7 @@ abstract class __FiltrosBase extends Filtros with Store {
 
   @override
   @computed
-  List<Questao> get allItens => mostrarSomenteQuestoesSelecionadas
+  ObservableList<Questao> get allItens => mostrarSomenteQuestoesSelecionadas
       ? questoesSelecionadas
       : super.allItens;
 }

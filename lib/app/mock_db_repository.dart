@@ -1,12 +1,16 @@
+import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
+import 'package:clubedematematica/app/modules/quiz/shared/models/questao_model.dart';
 import 'package:clubedematematica/app/shared/repositories/interface_db_repository.dart';
 import 'package:clubedematematica/app/shared/utils/strings_db.dart';
 import 'package:mockito/mockito.dart';
+
+import 'modules/quiz/shared/models/assunto_model.dart';
 
 /// Mock para a classe [AuthFirebaseRepository].
 class MockDbRepository extends Fake implements IRemoteDbRepository {
   final future = Future<void>.delayed(const Duration(seconds: 5));
   @override
-  Future<DataCollection> getAssuntos() async {
+  Future<List<Assunto>> getAssuntos() async {
     return [
       {
         DbConst.kDbDataAssuntoKeyId: 1,
@@ -138,11 +142,11 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         DbConst.kDbDataAssuntoKeyTitulo: 'Equações diofantinas',
         DbConst.kDbDataAssuntoKeyHierarquia: [5],
       },
-    ];
+    ].map((e) => Assunto.fromDataAssunto(e)).toList();
   }
 
   @override
-  Future<DataCollection> getQuestoes() async {
+  Future<List<Questao>> getQuestoes() async {
     await future;
     return [
       {
@@ -260,11 +264,11 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         DbConst.kDbDataQuestaoKeyAssuntos: ,
         DbConst.kDbDataQuestaoKeyAlternativas: ,
       } */
-    ];
+    ].map((e) => Questao.fromJson(e)).toList();
   }
 
   @override
-  Future<DataCollection> getClubes(int idUsuario) async {
+  Future<List<Clube>> getClubes(int idUsuario) async {
     await future;
     return [
       {
@@ -316,7 +320,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         DbConst.kDbDataClubeKeyAdministradores: [2],
         DbConst.kDbDataClubeKeyMembros: [9],
       }
-    ];
+    ].map((e) => Clube.fromDataClube(e)).toList();
   }
 
   @override

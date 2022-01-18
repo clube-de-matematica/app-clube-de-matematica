@@ -8,7 +8,7 @@ part 'usuario_clube.g.dart';
 /// Modelo para os dados de um usuário de clube.
 class UsuarioClube = _UsuarioClubeBase with _$UsuarioClube;
 
-abstract class _UsuarioClubeBase with Store {
+abstract class _UsuarioClubeBase extends RawUsuarioClube with Store {
   final int id;
   @observable
   String? email;
@@ -83,5 +83,42 @@ abstract class _UsuarioClubeBase with Store {
         foto.hashCode ^
         idClube.hashCode ^
         permissao.hashCode;
+  }
+}
+
+/// Usada para preencher parcialmente os dados de um usuário de clube.
+class RawUsuarioClube {
+  RawUsuarioClube({
+    this.id,
+    this.email,
+    this.nome,
+    this.foto,
+    this.idClube,
+    this.permissao,
+  });
+
+  final int? id;
+  final String? email;
+  final String? nome;
+  final String? foto;
+  final int? idClube;
+  final PermissoesClube? permissao;
+
+  RawUsuarioClube copyWith({
+    int? id,
+    String? email,
+    String? nome,
+    String? foto,
+    int? idClube,
+    PermissoesClube? permissao,
+  }) {
+    return RawUsuarioClube(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      nome: nome ?? this.nome,
+      foto: foto ?? this.foto,
+      idClube: idClube ?? this.idClube,
+      permissao: permissao ?? this.permissao,
+    );
   }
 }
