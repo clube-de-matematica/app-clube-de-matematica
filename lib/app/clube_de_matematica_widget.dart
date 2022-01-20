@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/services/db_servicos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -8,7 +9,17 @@ import 'shared/theme/appTheme.dart';
 import 'shared/utils/constantes.dart';
 
 /// O [Widget] principal do aplicativo.
-class ClubeDeMatematicaWidget extends StatelessWidget {
+class ClubeDeMatematicaWidget extends StatefulWidget {
+  @override
+  State<ClubeDeMatematicaWidget> createState() => _ClubeDeMatematicaWidgetState();
+}
+
+class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
+  @override
+  void dispose() {
+    Modular.get<DbServicos>().close();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

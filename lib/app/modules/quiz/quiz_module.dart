@@ -24,10 +24,13 @@ class QuizModule extends Module {
   @override
   // Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
-        Bind((i) => Filtros(i.get<QuestoesRepository>())),
+        Bind((i) => Filtros()),
 
         // Controles
-        Bind((i) => QuizController(i.get<Filtros>())),
+        Bind((i) => QuizController(
+              filtros: i.get<Filtros>(),
+              questoesRepository: i.get<QuestoesRepository>(),
+            )),
       ];
 
   @override

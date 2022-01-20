@@ -14,7 +14,7 @@ import 'esquema.dart';
 part 'drift_db.g.dart';
 
 @DriftDatabase(
-  include: {'esquema_sql.drift'},
+  include: {'esquema.drift'},
   tables: [
     TbQuestoes,
     TbAssuntos,
@@ -34,7 +34,7 @@ part 'drift_db.g.dart';
 )
 class DriftDb extends _$DriftDb {
   // TODO: Definir local de armazenamento.
-  DriftDb() : super(abrirConexao()); // super(NativeDatabase.memory());
+  DriftDb() : /* super(abrirConexao()); // */ super(NativeDatabase.memory());
 
   @override
   int get schemaVersion => 1;
@@ -164,16 +164,30 @@ class DriftDb extends _$DriftDb {
   /// Retorna o número de registros diretamente excluídos (sem incluir linhas adicionais que
   /// podem ser afetadas por gatilhos ou restrições de chave estrangeira).
   ///
+  /// Se [contarInexistentes] for verdadeiro, os registros não encontrados serão contabilizados
+  /// como excluídos.
+  ///
   /// **Observação:** Não há previsão da ordem de exclusão dos registro.
   Future<int> deleteSamePrimaryKey(
-      TableInfo tabela, Iterable<Insertable> linhas) async {
+    TableInfo tabela,
+    Iterable<Insertable> linhas, {
+    bool contarInexistentes = true,
+  }) async {
     final futuros = <Future>[];
     int contador = 0;
     for (var lin in linhas) {
       futuros.add(
-        (delete(tabela)..whereSamePrimaryKey(lin))
-            .go()
-            .then((cont) => contador += cont),
+        (delete(tabela)..whereSamePrimaryKey(lin)).go().then((cont) {
+          if (cont == 0 && contarInexistentes) {
+            final query = select(tabela)
+              ..whereSamePrimaryKey(lin)
+              ..limit(1);
+            return query.getSingleOrNull().then((value) {
+              if (value == null) contador++;
+            });
+          }
+          contador += cont;
+        }),
       );
     }
     try {
@@ -186,31 +200,117 @@ class DriftDb extends _$DriftDb {
     return contador;
   }
 
-  Future<List<LinTbAssuntos>> get selectAssuntos async {
-    return select(tbAssuntos).get();
+  SimpleSelectStatement<$TbAssuntosTable, LinTbAssuntos> selectAssuntos(
+      {List<int> ids = const []}) {
+    final query = select(tbAssuntos);
+    if (ids.isNotEmpty) {
+      query
+        ..where((tbl) => tbl.id.isIn(ids))
+        ..limit(ids.length);
+    }
+    return query;
   }
 
-  Future<List<LinViewQuestoes>> get selectQuestoes async {
-    final join = selectOnly(tbQuestoesCaderno)
+  JoinedSelectStatement<$TbQuestoesCadernoTable, LinTbQuestoesCaderno>
+      _joinQuestoes({
+    List<String> ids = const [],
+    List<int> anos = const [],
+    List<int> niveis = const [],
+    List<int> assuntos = const [],
+    bool somenteIds = false,
+    int? limit,
+    int? offset,
+  }) {
+    final join = selectOnly(
+      tbQuestoesCaderno,
+      distinct: assuntos.isNotEmpty,
+    )
       ..addColumns([
         tbQuestoesCaderno.id,
-        tbQuestoesCaderno.ano,
-        tbQuestoesCaderno.nivel,
-        tbQuestoesCaderno.indice,
-        tbQuestoes.id,
-        tbQuestoes.enunciado,
-        tbQuestoes.gabarito,
-        tbQuestoes.imagensEnunciado,
+        if (!somenteIds)
+          for (var col in [
+            tbQuestoesCaderno.ano,
+            tbQuestoesCaderno.nivel,
+            tbQuestoesCaderno.indice,
+            tbQuestoes.id,
+            tbQuestoes.enunciado,
+            tbQuestoes.gabarito,
+            tbQuestoes.imagensEnunciado,
+          ])
+            col,
       ])
       ..join([
         innerJoin(
           tbQuestoes,
           tbQuestoes.id.equalsExp(tbQuestoesCaderno.idQuestao),
           useColumns: false,
-        )
-      ]);
+        ),
+        if (assuntos.isNotEmpty)
+          innerJoin(
+            tbQuestaoAssunto,
+            tbQuestaoAssunto.idQuestao.equalsExp(tbQuestoes.id) &
+                tbQuestaoAssunto.idAssunto.isIn(assuntos),
+            useColumns: false,
+          )
+      ])
+      ..orderBy([OrderingTerm(expression: tbQuestoesCaderno.id)]);
 
-    //join..limit(1); //TODO
+    if (ids.isNotEmpty) {
+      join
+        ..where(tbQuestoesCaderno.id.isIn(ids))
+        ..limit(ids.length);
+    }
+
+    if (limit != null) join.limit(limit, offset: offset);
+
+    if (anos.isNotEmpty) {
+      join.where(tbQuestoesCaderno.ano.isIn(anos));
+    }
+
+    if (niveis.isNotEmpty) {
+      join.where(tbQuestoesCaderno.nivel.isIn(niveis));
+    }
+
+    return join;
+  }
+
+  /// {@template app.DriftDb.contarQuestoes}
+  /// Retorna o número de questões que satisfazem os filtros passados.
+  ///
+  /// Usa a operação de disjunção para elementos da mesma lista, e de conjunção para
+  /// elementos de listas diferentes.
+  /// {@endtemplate}
+  Future<int> contarQuestoes({
+    List<int> anos = const [],
+    List<int> niveis = const [],
+    List<int> assuntos = const [],
+  }) async {
+    final join = _joinQuestoes(
+      anos: anos,
+      niveis: niveis,
+      assuntos: assuntos,
+      somenteIds: true,
+    );
+    final resultado = await join.get();
+    return resultado.length;
+  }
+
+  Future<List<LinViewQuestoes>> selectQuestoes({
+    List<String> ids = const [],
+    List<int> anos = const [],
+    List<int> niveis = const [],
+    List<int> assuntos = const [],
+    int? limit,
+    int? offset,
+  }) async {
+    final join = _joinQuestoes(
+      ids: ids,
+      anos: anos,
+      niveis: niveis,
+      assuntos: assuntos,
+      limit: limit,
+      offset: offset,
+    );
 
     final questoes = join.map((linha) async {
       final id = linha.read(tbQuestoes.id);

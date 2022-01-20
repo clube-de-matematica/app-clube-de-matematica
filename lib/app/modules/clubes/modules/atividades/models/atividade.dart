@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -32,7 +30,7 @@ class Atividade extends RawAtividade {
   DateTime? encerramento;
 
   /// Lista com as questões incluídas nesta atividade.
-  final List<QuestaoAtividade> questoes;
+  final ObservableList<QuestaoAtividade> questoes;
 
   /// Lista com as respostas dos usuários às questões incluídas nesta atividade.
   final ObservableSet<RespostaQuestaoAtividade> respostas;
@@ -46,9 +44,10 @@ class Atividade extends RawAtividade {
     required this.criacao,
     this.liberacao,
     this.encerramento,
-    this.questoes = const [],
+    Iterable<QuestaoAtividade>? questoes,
     Iterable<RespostaQuestaoAtividade>? respostas,
-  }) : respostas = ObservableSet.of(respostas ?? Iterable.empty());
+  })  : questoes = ObservableList.of(questoes ?? Iterable.empty()),
+        respostas = ObservableSet.of(respostas ?? Iterable.empty());
 
 /* 
   Atividade copyWith({
@@ -78,7 +77,7 @@ class Atividade extends RawAtividade {
   }
  */
 
-  factory Atividade.fromDataAtividade(DataAtividade map) {
+  static Future<Atividade> fromDataAtividade(DataAtividade map) async {
     final int idAtividade = map[DbConst.kDbDataAtividadeKeyId];
 
     final respostas = () {
@@ -109,31 +108,29 @@ class Atividade extends RawAtividade {
       respostas: respostas,
     );
 
-    final questoes = () {
+    final questoes = await () async {
       final dataQuestoes =
           map[DbConst.kDbDataAtividadeKeyQuestoes] as List? ?? [];
-      return dataQuestoes.cast<Map>().map((dados) {
-        return QuestaoAtividade(
-          idQuestaoAtividade: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
-          // TODO: Tratar o erro que pode ser gerado por firstWhere.
-          questao: Modular.get<QuestoesRepository>().questoes.firstWhere(
-              (element) =>
-                  element.id ==
-                  dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno]),
-          atividade: retorno,
+      final list = dataQuestoes.cast<Map>().map((dados) async {
+        final quest = await Modular.get<QuestoesRepository>().get(
+          dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno],
         );
-      }).toList();
+        if (quest != null)
+          return QuestaoAtividade(
+            idQuestaoAtividade: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
+            questao: quest,
+            atividade: retorno,
+          );
+      });
+      return (await Future.wait(list));
     }();
 
-    retorno.questoes.addAll(questoes);
+    retorno.questoes.addAll(
+      questoes.where((e) => e != null).cast(),
+    );
 
     return retorno;
   }
-
-  String toJson() => json.encode(toDataAtividade());
-
-  factory Atividade.fromJson(String source) =>
-      Atividade.fromDataAtividade(json.decode(source));
 
   /// Sobrescreve os campos desta atividade com os respectivos valores em [outra], desde que
   /// tenham o mesmo ID.

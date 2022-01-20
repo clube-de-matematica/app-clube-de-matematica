@@ -148,7 +148,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
   @override
   Future<List<Questao>> getQuestoes() async {
     await future;
-    return [
+    final dados = [
       {
         DbConst.kDbDataQuestaoKeyId: '2019PF1N1Q01',
         DbConst.kDbDataQuestaoKeyAno: 2019,
@@ -264,7 +264,10 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         DbConst.kDbDataQuestaoKeyAssuntos: ,
         DbConst.kDbDataQuestaoKeyAlternativas: ,
       } */
-    ].map((e) => Questao.fromJson(e)).toList();
+    ];
+    return Future.wait(
+      dados.map((e) => Questao.fromDataQuestao(e)),
+    );
   }
 
   @override

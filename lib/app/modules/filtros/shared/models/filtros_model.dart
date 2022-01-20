@@ -1,7 +1,5 @@
 import 'package:mobx/mobx.dart';
 
-import '../../../../shared/repositories/questoes/questoes_repository.dart';
-import '../../../quiz/shared/models/questao_model.dart';
 import 'opcao_filtro_model.dart';
 
 part 'filtros_model.g.dart';
@@ -13,14 +11,11 @@ enum TiposFiltro { ano, nivel, assunto }
 class Filtros = _FiltrosBase with _$Filtros;
 
 abstract class _FiltrosBase with Store {
-  final QuestoesRepository questoesRepository;
-
-  _FiltrosBase(this.questoesRepository);
+  _FiltrosBase();
 
   /// Cria uma nova instância com base em [other].
   // ignore: unused_element
-  _FiltrosBase.from(Filtros other)
-      : questoesRepository = other.questoesRepository {
+  _FiltrosBase.from(Filtros other) {
     assuntos.addAll(other.assuntos);
     anos.addAll(other.anos);
     niveis.addAll(other.niveis);
@@ -65,21 +60,21 @@ abstract class _FiltrosBase with Store {
   }
 
   /// Adiciona [opcao] ao filtro correspondente.
-  /// 
+  ///
   /// **ATENÇÃO:** a propriedade [opcao.isSelected] não será atualizada.
   @action
   void add(OpcaoFiltro opcao) => allFilters[opcao.tipo]!.add(opcao);
 
   /// Remove [opcao] do filtro correspondente.
-  /// 
+  ///
   /// **ATENÇÃO:** a propriedade [opcao.isSelected] não será atualizada.
   @action
   void remove(OpcaoFiltro opcao) => allFilters[opcao.tipo]!.remove(opcao);
 
   /// Limpa os filtros selecionados correspondentes a [tipo].
   /// Se [tipo] for `null`, todos os filtros serão excluídos.
-  /// 
-  /// **ATENÇÃO:** a propriedade [OpcaoFiltro.isSelected] de cada elemento do filtro não 
+  ///
+  /// **ATENÇÃO:** a propriedade [OpcaoFiltro.isSelected] de cada elemento do filtro não
   /// será atualizada.
   @action
   void limpar([TiposFiltro? tipo]) {
@@ -101,22 +96,4 @@ abstract class _FiltrosBase with Store {
       }
     });
   }
-
-  /// Retorna uma lista com todos os itens carregados.
-  @computed
-  ObservableList<Questao> get allItens => questoesRepository.questoes.toList().asObservable();
-
-  /// Retorna uma lista com os itens resultantes da aplicação dos filtros.
-  /// A condição aplicada na filtragem dos itens usa o conectivo "ou" para filtros do mesmo
-  /// tipo, e o conectivo "e" para tipos diferentes.
-  @computed
-  List<Questao> get itensFiltrados => allItens.where((item) {
-        return (anos.isEmpty ||
-                anos.any((element) => item.ano == element.opcao)) &&
-            (niveis.isEmpty ||
-                niveis.any((element) => item.nivel == element.opcao)) &&
-            (assuntos.isEmpty ||
-                assuntos
-                    .any((element) => item.assuntos.contains(element.opcao)));
-      }).toList();
 }

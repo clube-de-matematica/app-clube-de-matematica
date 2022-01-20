@@ -1,5 +1,7 @@
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../../../shared/repositories/questoes/assuntos_repository.dart';
 import '../../../../shared/utils/strings_db.dart';
 import 'alternativa_questao_model.dart';
 import 'ano_questao_model.dart';
@@ -75,35 +77,34 @@ class Questao {
     );
   }
 
-  factory Questao.fromJson(Map<String, dynamic> json) {
-    final id = json[DbConst.kDbDataQuestaoKeyId] as String;
-    final _assuntos = <Assunto>[];
+  static Future<Questao> fromDataQuestao(Map<String, dynamic> dados) async {
+    final id = dados[DbConst.kDbDataQuestaoKeyId] as String;
+    final List<Assunto> _assuntos;
     final _alternativas = <Alternativa>[];
 
     final idsAssuntos =
-        (json[DbConst.kDbDataQuestaoKeyAssuntos] as List).cast<int>();
-    idsAssuntos.forEach((idAssunto) {
-      final assunto = Assunto.get(idAssunto);
-      if (assunto != null) _assuntos.add(assunto);
-    });
-
+        (dados[DbConst.kDbDataQuestaoKeyAssuntos] as List).cast<int>();
+    final futuros = idsAssuntos
+        .map((idAssunto) => Modular.get<AssuntosRepository>().get(idAssunto));
+    _assuntos = (await Future.wait(futuros)).where((e) => e!=null).toList().cast();
+    
     final dadosAlternativas =
-        json[DbConst.kDbDataQuestaoKeyAlternativas] as List;
+        dados[DbConst.kDbDataQuestaoKeyAlternativas] as List;
     dadosAlternativas.forEach((dataAlternativa) {
       _alternativas.add(Alternativa.fromJson(dataAlternativa));
     });
 
     return Questao(
       id: id,
-      ano: Ano(json[DbConst.kDbDataQuestaoKeyAno]),
-      nivel: Nivel(json[DbConst.kDbDataQuestaoKeyNivel]),
-      indice: json[DbConst.kDbDataQuestaoKeyIndice] as int,
+      ano: Ano(dados[DbConst.kDbDataQuestaoKeyAno]),
+      nivel: Nivel(dados[DbConst.kDbDataQuestaoKeyNivel]),
+      indice: dados[DbConst.kDbDataQuestaoKeyIndice] as int,
       assuntos: _assuntos,
       enunciado:
-          (json[DbConst.kDbDataQuestaoKeyEnunciado] as List).cast<String>(),
+          (dados[DbConst.kDbDataQuestaoKeyEnunciado] as List).cast<String>(),
       alternativas: _alternativas,
-      gabarito: json[DbConst.kDbDataQuestaoKeyGabarito] as int,
-      imagensEnunciado: _getImagensEnunciado(json),
+      gabarito: dados[DbConst.kDbDataQuestaoKeyGabarito] as int,
+      imagensEnunciado: _getImagensEnunciado(dados),
     );
   }
 

@@ -36,14 +36,6 @@ selecionada: ${selecionada}
 }
 
 mixin _$_Filtros on __FiltrosBase, Store {
-  Computed<ObservableList<Questao>>? _$allItensComputed;
-
-  @override
-  ObservableList<Questao> get allItens => (_$allItensComputed ??=
-          Computed<ObservableList<Questao>>(() => super.allItens,
-              name: '__FiltrosBase.allItens'))
-      .value;
-
   final _$mostrarSomenteQuestoesSelecionadasAtom =
       Atom(name: '__FiltrosBase.mostrarSomenteQuestoesSelecionadas');
 
@@ -64,8 +56,7 @@ mixin _$_Filtros on __FiltrosBase, Store {
   @override
   String toString() {
     return '''
-mostrarSomenteQuestoesSelecionadas: ${mostrarSomenteQuestoesSelecionadas},
-allItens: ${allItens}
+mostrarSomenteQuestoesSelecionadas: ${mostrarSomenteQuestoesSelecionadas}
     ''';
   }
 }

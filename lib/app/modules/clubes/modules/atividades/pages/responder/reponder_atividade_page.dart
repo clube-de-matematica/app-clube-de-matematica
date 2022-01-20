@@ -44,7 +44,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
       body: WillPopScope(
         onWillPop: _onWillPop,
         child: Observer(builder: (_) {
-          return controle.questao == null
+          return controle.questaoAtual.value == null
               ? _corpoSemQuestao()
               : _corpoComQuestao();
         }),
@@ -123,7 +123,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
     return Observer(builder: (_) {
       return QuestaoWidget(
         barraOpcoes: _construirCabecalho(),
-        questao: controle.questao!,
+        questao: controle.questaoAtual.value!,
         alternativaSelecionada: controle.resposta?.sequencialTemporario ??
             controle.resposta?.sequencial,
         alterandoAlternativa: (alternativa) {
@@ -145,9 +145,9 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child:
-                Text('${controle.indice + 1} de ${controle.questoes.length}'),
+                Text('${controle.indice + 1} de ${controle.numQuestoes}'),
           ),
-          Text(controle.questao?.id ?? ''),
+          Text(controle.questaoAtual.value?.id ?? ''),
         ],
       );
     });

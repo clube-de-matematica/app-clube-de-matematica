@@ -23,20 +23,6 @@ mixin _$Filtros on _FiltrosBase, Store {
       (_$totalSelecinadoComputed ??= Computed<int>(() => super.totalSelecinado,
               name: '_FiltrosBase.totalSelecinado'))
           .value;
-  Computed<ObservableList<Questao>>? _$allItensComputed;
-
-  @override
-  ObservableList<Questao> get allItens => (_$allItensComputed ??=
-          Computed<ObservableList<Questao>>(() => super.allItens,
-              name: '_FiltrosBase.allItens'))
-      .value;
-  Computed<List<Questao>>? _$itensFiltradosComputed;
-
-  @override
-  List<Questao> get itensFiltrados => (_$itensFiltradosComputed ??=
-          Computed<List<Questao>>(() => super.itensFiltrados,
-              name: '_FiltrosBase.itensFiltrados'))
-      .value;
 
   final _$assuntosAtom = Atom(name: '_FiltrosBase.assuntos');
 
@@ -136,9 +122,7 @@ assuntos: ${assuntos},
 anos: ${anos},
 niveis: ${niveis},
 allFilters: ${allFilters},
-totalSelecinado: ${totalSelecinado},
-allItens: ${allItens},
-itensFiltrados: ${itensFiltrados}
+totalSelecinado: ${totalSelecinado}
     ''';
   }
 }

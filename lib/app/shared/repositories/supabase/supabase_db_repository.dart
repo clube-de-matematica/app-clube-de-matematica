@@ -352,8 +352,8 @@ class SupabaseDbRepository
   /// [data] tem a estrutura {"assunto": [String], "id_assunto_pai": [int?]}.
   @override
   Future<bool> insertAssunto(RawAssunto data) async {
-    assert(Debug.print(
-        '[INFO] Chamando SupabaseDbRepository.insertAssunto()...'));
+    assert(
+        Debug.print('[INFO] Chamando SupabaseDbRepository.insertAssunto()...'));
     _checkAuthentication('insertAssunto()');
     try {
       assert(Debug.print('[INFO] Inserindo o assunto ${data.toString()}...'));
@@ -394,10 +394,11 @@ class SupabaseDbRepository
           error: error,
         );
       }
-      return (response.data as List)
-          .cast<DataQuestao>()
-          .map((dados) => Questao.fromJson(dados))
-          .toList();
+      return Future.wait(
+        (response.data as List)
+            .cast<DataQuestao>()
+            .map((dados) => Questao.fromDataQuestao(dados)),
+      );
     } catch (_) {
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$viewQuestoes".'));
@@ -407,8 +408,8 @@ class SupabaseDbRepository
 
   @override
   Future<bool> insertQuestao(DataQuestao data) async {
-    assert(Debug.print(
-        '[INFO] Chamando SupabaseDbRepository.insertQuestao()...'));
+    assert(
+        Debug.print('[INFO] Chamando SupabaseDbRepository.insertQuestao()...'));
     _checkAuthentication('insertQuestao()');
     try {
       assert(Debug.print('[INFO] Inserindo a questão ${data.toString()}...'));
@@ -550,8 +551,7 @@ class SupabaseDbRepository
 
   @override
   Future<DataClube> enterClube(String accessCode, int idUser) async {
-    assert(
-        Debug.print('[INFO] Chamando SupabaseDbRepository.enterClube()...'));
+    assert(Debug.print('[INFO] Chamando SupabaseDbRepository.enterClube()...'));
     _checkAuthentication('enterClube()');
     try {
       assert(Debug.print(
@@ -658,8 +658,8 @@ class SupabaseDbRepository
 
   @override
   Future<DataCollection> getAtividades(int idClube) async {
-    assert(Debug.print(
-        '[INFO] Chamando SupabaseDbRepository.getAtividades()...'));
+    assert(
+        Debug.print('[INFO] Chamando SupabaseDbRepository.getAtividades()...'));
     _checkAuthentication('getAtividades()');
     try {
       assert(Debug.print(

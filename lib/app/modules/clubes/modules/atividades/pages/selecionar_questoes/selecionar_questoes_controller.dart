@@ -14,10 +14,13 @@ class SelecionarQuestoesController = _SelecionarQuestoesControllerBase
 abstract class _SelecionarQuestoesControllerBase
     extends ExibirQuestaoComFiltroController with Store {
   _SelecionarQuestoesControllerBase(Iterable<Questao> questoesSelecionadas)
-      : super(_Filtros(
-          Modular.get<QuestoesRepository>(),
-          questoesSelecionadas: questoesSelecionadas,
-        ));
+      : super(
+          filtros: _Filtros(
+            Modular.get<QuestoesRepository>(),
+            questoesSelecionadas: questoesSelecionadas,
+          ),
+          questoesRepository: Modular.get<QuestoesRepository>(),
+        );
 
   @override
   _Filtros get filtros => super.filtros as _Filtros;
@@ -26,13 +29,14 @@ abstract class _SelecionarQuestoesControllerBase
   int get numQuestoesSelecionadas => filtros.questoesSelecionadas.length;
 
   @computed
-  bool get selecionada =>
-      questao == null ? false : filtros.selecionada(questao!);
+  bool get selecionada => questaoAtual.value == null
+      ? false
+      : filtros.selecionada(questaoAtual.value!);
 
-  /// Alterna a [questao] entre selecionada e não selecionada.
+  /// Alterna a [questaoAtual] entre selecionada e não selecionada.
   void alterarSelecao() {
-    if (questao != null) {
-      filtros.alterarSelecao(questao!);
+    if (questaoAtual.value != null) {
+      filtros.alterarSelecao(questaoAtual.value!);
     }
   }
 
@@ -51,8 +55,7 @@ abstract class __FiltrosBase extends Filtros with Store {
   __FiltrosBase(
     QuestoesRepository questoesRepository, {
     Iterable<Questao> questoesSelecionadas = const [],
-  })  : this.questoesSelecionadas = ObservableList.of(questoesSelecionadas),
-        super(questoesRepository);
+  }) : this.questoesSelecionadas = ObservableList.of(questoesSelecionadas);
 
   final ObservableList<Questao> questoesSelecionadas;
 
@@ -71,10 +74,4 @@ abstract class __FiltrosBase extends Filtros with Store {
 
     return selecionada;
   }
-
-  @override
-  @computed
-  ObservableList<Questao> get allItens => mostrarSomenteQuestoesSelecionadas
-      ? questoesSelecionadas
-      : super.allItens;
 }

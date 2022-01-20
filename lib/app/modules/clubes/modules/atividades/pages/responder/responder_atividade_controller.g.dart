@@ -10,19 +10,34 @@ part of 'responder_atividade_controller.dart';
 
 mixin _$ResponderAtividadeController
     on _ResponderAtividadeControllerBase, Store {
-  Computed<List<QuestaoAtividade>>? _$questoesComputed;
+  Computed<ObservableList<QuestaoAtividade>>? _$questoesComputed;
 
   @override
-  List<QuestaoAtividade> get questoes => (_$questoesComputed ??=
-          Computed<List<QuestaoAtividade>>(() => super.questoes,
+  ObservableList<QuestaoAtividade> get questoes => (_$questoesComputed ??=
+          Computed<ObservableList<QuestaoAtividade>>(() => super.questoes,
               name: '_ResponderAtividadeControllerBase.questoes'))
       .value;
-  Computed<QuestaoAtividade?>? _$questaoComputed;
+  Computed<int>? _$numQuestoesComputed;
 
   @override
-  QuestaoAtividade? get questao =>
-      (_$questaoComputed ??= Computed<QuestaoAtividade?>(() => super.questao,
-              name: '_ResponderAtividadeControllerBase.questao'))
+  int get numQuestoes =>
+      (_$numQuestoesComputed ??= Computed<int>(() => super.numQuestoes,
+              name: '_ResponderAtividadeControllerBase.numQuestoes'))
+          .value;
+  Computed<QuestaoAtividade?>? _$_questaoAtualComputed;
+
+  @override
+  QuestaoAtividade? get _questaoAtual => (_$_questaoAtualComputed ??=
+          Computed<QuestaoAtividade?>(() => super._questaoAtual,
+              name: '_ResponderAtividadeControllerBase._questaoAtual'))
+      .value;
+  Computed<ObservableFuture<QuestaoAtividade?>>? _$questaoAtualComputed;
+
+  @override
+  ObservableFuture<QuestaoAtividade?> get questaoAtual =>
+      (_$questaoAtualComputed ??= Computed<ObservableFuture<QuestaoAtividade?>>(
+              () => super.questaoAtual,
+              name: '_ResponderAtividadeControllerBase.questaoAtual'))
           .value;
   Computed<RespostaQuestaoAtividade?>? _$respostaComputed;
 
@@ -43,7 +58,8 @@ mixin _$ResponderAtividadeController
   String toString() {
     return '''
 questoes: ${questoes},
-questao: ${questao},
+numQuestoes: ${numQuestoes},
+questaoAtual: ${questaoAtual},
 resposta: ${resposta},
 podeConfirmar: ${podeConfirmar}
     ''';

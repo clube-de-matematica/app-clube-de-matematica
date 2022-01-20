@@ -41,9 +41,9 @@ class QuizBarOpcoesItem extends StatelessWidget {
         Observer(builder: (_) {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            child: controller.questoes.isNotEmpty
+            child: controller.numQuestoes > 0
                 ? Text(
-                    '${controller.indice + 1} de ${controller.questoes.length}',
+                    '${controller.indice + 1} de ${controller.numQuestoes}',
                     style: textStyle,
                   )
                 : const Text(""),

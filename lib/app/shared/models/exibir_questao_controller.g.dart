@@ -9,13 +9,6 @@ part of 'exibir_questao_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
-  Computed<Questao?>? _$questaoComputed;
-
-  @override
-  Questao? get questao =>
-      (_$questaoComputed ??= Computed<Questao?>(() => super.questao,
-              name: '_ExibirQuestaoControllerBase.questao'))
-          .value;
   Computed<bool>? _$podeAvancarComputed;
 
   @override
@@ -48,6 +41,22 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
     });
   }
 
+  final _$numQuestoesAtom =
+      Atom(name: '_ExibirQuestaoControllerBase.numQuestoes');
+
+  @override
+  int get numQuestoes {
+    _$numQuestoesAtom.reportRead();
+    return super.numQuestoes;
+  }
+
+  @override
+  set numQuestoes(int value) {
+    _$numQuestoesAtom.reportWrite(value, super.numQuestoes, () {
+      super.numQuestoes = value;
+    });
+  }
+
   final _$_ExibirQuestaoControllerBaseActionController =
       ActionController(name: '_ExibirQuestaoControllerBase');
 
@@ -65,7 +74,7 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
   @override
   String toString() {
     return '''
-questao: ${questao},
+numQuestoes: ${numQuestoes},
 podeAvancar: ${podeAvancar},
 podeVoltar: ${podeVoltar}
     ''';

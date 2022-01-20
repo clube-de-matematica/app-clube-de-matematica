@@ -190,6 +190,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
+  db_viewer:
+    dependency: transitive
+    description:
+      name: db_viewer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   diacritic:
     dependency: "direct main"
     description:
@@ -211,6 +218,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
+  drift_db_viewer:
+    dependency: "direct main"
+    description:
+      name: drift_db_viewer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   drift_dev:
     dependency: "direct dev"
     description:
@@ -567,13 +581,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.3.0"
-  json_table:
-    dependency: transitive
-    description:
-      name: json_table
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.1"
   jwt_decode:
     dependency: transitive
     description:
@@ -852,13 +859,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.5.2"
-  sqlite_viewer:
-    dependency: "direct main"
-    description:
-      name: sqlite_viewer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.5"
   sqlparser:
     dependency: transitive
     description:

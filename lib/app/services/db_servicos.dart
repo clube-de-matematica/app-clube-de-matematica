@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
@@ -32,9 +33,9 @@ import '../shared/utils/strings_db_sql.dart';
 import 'interface_db_servicos.dart';
 
 class DbServicos implements IDbServicos {
-  DbServicos(this._dbLocal, this._dbRemoto) {
+  DbServicos(this.dbLocal, this._dbRemoto) {
     //debugger(); //TODO
-    _sincronizar().then((_) async {
+    _inicializando.then((_) async {
       //debugger(); //TODO
       /* await getAssuntos().then((assuntos) => assuntos.forEach((element) {
             print(element);
@@ -46,12 +47,18 @@ class DbServicos implements IDbServicos {
     });
   }
 
-  final DriftDb _dbLocal;
+  final DriftDb dbLocal;
   //TODO final IRemoteDbRepository _dbRemoto;
   final SupabaseDbRepository _dbRemoto;
 
+  late final _inicializando = _sincronizar();
+
   /// Se verdadeiro, indica que uma chamada de [_sincronizar] está em andamento;
   bool _sincronizando = false;
+
+  void close() {
+    dbLocal.close();
+  }
 
   // TODO: Envolver em um isolado.
   Future<void> _sincronizar() async {
@@ -98,10 +105,10 @@ class DbServicos implements IDbServicos {
 
   Future<void> _sincronizarTbQuestoes() async {
     final novosRegistros = await _dbRemoto.obterTbQuestoes(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.questoes),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questoes),
     );
-    final contagem = await _dbLocal.upsert(
-      _dbLocal.tbQuestoes,
+    final contagem = await dbLocal.upsert(
+      dbLocal.tbQuestoes,
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -109,10 +116,10 @@ class DbServicos implements IDbServicos {
 
   Future<void> _sincronizarTbAssuntos() async {
     final novosRegistros = await _dbRemoto.obterTbAssuntos(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.assuntos),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.assuntos),
     );
-    final contagem = await _dbLocal.upsert(
-      _dbLocal.tbAssuntos,
+    final contagem = await dbLocal.upsert(
+      dbLocal.tbAssuntos,
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -126,10 +133,10 @@ class DbServicos implements IDbServicos {
       await Future.wait([_sincronizarTbQuestoes(), _sincronizarTbAssuntos()]);
     }
     final novosRegistros = await _dbRemoto.obterTbQuestaoAssunto(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.questaoAssunto),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questaoAssunto),
     );
-    final contagem = await _dbLocal.upsert(
-      _dbLocal.tbQuestaoAssunto,
+    final contagem = await dbLocal.upsert(
+      dbLocal.tbQuestaoAssunto,
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -137,11 +144,10 @@ class DbServicos implements IDbServicos {
 
   Future<void> _sincronizarTbTiposAlternativa() async {
     final novosRegistros = await _dbRemoto.obterTbTiposAlternativa(
-      modificadoApos:
-          await _dbLocal.ultimaModificacao(Tabelas.tiposAlternativa),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.tiposAlternativa),
     );
-    final contagem = await _dbLocal.upsert(
-      _dbLocal.tbTiposAlternativa,
+    final contagem = await dbLocal.upsert(
+      dbLocal.tbTiposAlternativa,
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -156,10 +162,10 @@ class DbServicos implements IDbServicos {
           [_sincronizarTbQuestoes(), _sincronizarTbTiposAlternativa()]);
     }
     final novosRegistros = await _dbRemoto.obterTbAlternativas(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.alternativas),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.alternativas),
     );
-    final contagem = await _dbLocal.upsert(
-      _dbLocal.tbAlternativas,
+    final contagem = await dbLocal.upsert(
+      dbLocal.tbAlternativas,
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -172,10 +178,10 @@ class DbServicos implements IDbServicos {
       await _sincronizarTbQuestoes();
     }
     final novosRegistros = await _dbRemoto.obterTbQuestoesCaderno(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.questoesCaderno),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questoesCaderno),
     );
-    final contagem = await _dbLocal.upsert(
-      _dbLocal.tbQuestoesCaderno,
+    final contagem = await dbLocal.upsert(
+      dbLocal.tbQuestoesCaderno,
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -183,10 +189,10 @@ class DbServicos implements IDbServicos {
 
   Future<void> _sincronizarTbUsuarios() async {
     final novosRegistros = await _dbRemoto.obterTbUsuarios(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.usuarios),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.usuarios),
     );
-    final contagem = await _dbLocal.upsert(
-      _dbLocal.tbUsuarios,
+    final contagem = await dbLocal.upsert(
+      dbLocal.tbUsuarios,
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -194,17 +200,17 @@ class DbServicos implements IDbServicos {
 
   Future<void> _sincronizarTbClubes() async {
     final novosRegistros = await _dbRemoto.obterTbClubes(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.clubes),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.clubes),
     );
     int contagem = 0;
     // excluir os registros marcados para exclusão.
-    contagem += await _dbLocal.deleteSamePrimaryKey(
-      _dbLocal.tbClubes,
+    contagem += await dbLocal.deleteSamePrimaryKey(
+      dbLocal.tbClubes,
       novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await _dbLocal.upsert(
-      _dbLocal.tbClubes,
+    contagem += await dbLocal.upsert(
+      dbLocal.tbClubes,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -212,10 +218,10 @@ class DbServicos implements IDbServicos {
 
   Future<void> _sincronizarTbTiposPermissao() async {
     final novosRegistros = await _dbRemoto.obterTbTiposPermissao(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.tiposPermissao),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.tiposPermissao),
     );
-    final contagem = await _dbLocal.upsert(
-      _dbLocal.tbTiposPermissao,
+    final contagem = await dbLocal.upsert(
+      dbLocal.tbTiposPermissao,
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -233,17 +239,17 @@ class DbServicos implements IDbServicos {
       ]);
     }
     final novosRegistros = await _dbRemoto.obterTbClubeUsuario(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.clubeUsuario),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.clubeUsuario),
     );
     int contagem = 0;
     // excluir os registros marcados para exclusão.
-    contagem += await _dbLocal.deleteSamePrimaryKey(
-      _dbLocal.tbClubeUsuario,
+    contagem += await dbLocal.deleteSamePrimaryKey(
+      dbLocal.tbClubeUsuario,
       novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await _dbLocal.upsert(
-      _dbLocal.tbClubeUsuario,
+    contagem += await dbLocal.upsert(
+      dbLocal.tbClubeUsuario,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -257,17 +263,17 @@ class DbServicos implements IDbServicos {
       await Future.wait([_sincronizarTbUsuarios(), _sincronizarTbClubes()]);
     }
     final novosRegistros = await _dbRemoto.obterTbAtividades(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.atividades),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.atividades),
     );
     int contagem = 0;
     // excluir os registros marcados para exclusão.
-    contagem += await _dbLocal.deleteSamePrimaryKey(
-      _dbLocal.tbAtividades,
+    contagem += await dbLocal.deleteSamePrimaryKey(
+      dbLocal.tbAtividades,
       novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await _dbLocal.upsert(
-      _dbLocal.tbAtividades,
+    contagem += await dbLocal.upsert(
+      dbLocal.tbAtividades,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -284,18 +290,17 @@ class DbServicos implements IDbServicos {
       ]);
     }
     final novosRegistros = await _dbRemoto.obterTbQuestaoAtividade(
-      modificadoApos:
-          await _dbLocal.ultimaModificacao(Tabelas.questaoAtividade),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questaoAtividade),
     );
     int contagem = 0;
     // excluir os registros marcados para exclusão.
-    contagem += await _dbLocal.deleteSamePrimaryKey(
-      _dbLocal.tbQuestaoAtividade,
+    contagem += await dbLocal.deleteSamePrimaryKey(
+      dbLocal.tbQuestaoAtividade,
       novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await _dbLocal.upsert(
-      _dbLocal.tbQuestaoAtividade,
+    contagem += await dbLocal.upsert(
+      dbLocal.tbQuestaoAtividade,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
@@ -313,19 +318,21 @@ class DbServicos implements IDbServicos {
     }
     final novosRegistros = await _dbRemoto.obterTbRespostaQuestaoAtividade(
       modificadoApos:
-          await _dbLocal.ultimaModificacao(Tabelas.respostaQuestaoAtividade),
+          await dbLocal.ultimaModificacao(Tabelas.respostaQuestaoAtividade),
     );
     int contagem = 0;
+    debugger();//TODO
     // excluir os registros marcados para exclusão.
-    contagem += await _dbLocal.deleteSamePrimaryKey(
-      _dbLocal.tbRespostaQuestaoAtividade,
+    contagem += await dbLocal.deleteSamePrimaryKey(
+      dbLocal.tbRespostaQuestaoAtividade,
       novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await _dbLocal.upsert(
-      _dbLocal.tbRespostaQuestaoAtividade,
+    contagem += await dbLocal.upsert(
+      dbLocal.tbRespostaQuestaoAtividade,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
+    debugger();//TODO
     assert(contagem == novosRegistros.length);
   }
 
@@ -340,32 +347,34 @@ class DbServicos implements IDbServicos {
       ]);
     }
     final novosRegistros = await _dbRemoto.obterTbRespostaQuestao(
-      modificadoApos: await _dbLocal.ultimaModificacao(Tabelas.respostaQuestao),
+      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.respostaQuestao),
     );
     int contagem = 0;
     // excluir os registros marcados para exclusão.
-    contagem += await _dbLocal.deleteSamePrimaryKey(
-      _dbLocal.tbRespostaQuestao,
+    contagem += await dbLocal.deleteSamePrimaryKey(
+      dbLocal.tbRespostaQuestao,
       novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await _dbLocal.upsert(
-      _dbLocal.tbRespostaQuestao,
+    contagem += await dbLocal.upsert(
+      dbLocal.tbRespostaQuestao,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
     assert(contagem == novosRegistros.length);
   }
 
   @override
-  Future<List<Assunto>> getAssuntos() async {
-    final List<LinTbAssuntos> assuntos;
-    try {
-      assuntos = await _dbLocal.selectAssuntos;
-    } catch (_) {
-      return List<Assunto>.empty();
-    }
-    return assuntos.map((e) => e.toAssunto()).toList();
+  Future<Assunto?> assunto(int id) async {
+    final query = dbLocal.selectAssuntos(ids: [id])..limit(1);
+    final assunto = query.map((linha) => linha.toAssunto()).getSingleOrNull();
+    return assunto;
   }
+
+  late final _streamAssuntos =
+      dbLocal.selectAssuntos().map((linha) => linha.toAssunto()).watch();
+
+  @override
+  Stream<List<Assunto>> getAssuntos() => _streamAssuntos;
 
   @override
   Future<bool> insertAssunto(RawAssunto dados) async {
@@ -374,11 +383,55 @@ class DbServicos implements IDbServicos {
     return sucesso;
   }
 
+  /// {@macro app.DriftDb.contarQuestoes}
   @override
-  Future<List<Questao>> getQuestoes() async {
+  Future<int> contarQuestoes({
+    List<int> anos = const [],
+    List<int> niveis = const [],
+    List<int> assuntos = const [],
+  }) async {
+    return dbLocal.contarQuestoes(
+      anos: anos,
+      niveis: niveis,
+      assuntos: assuntos,
+    );
+  }
+
+  @override
+  Future<Questao?> questao(String id) async {
+    List<LinViewQuestoes> lista;
+    try {
+      lista = await dbLocal.selectQuestoes(
+        ids: [id],
+        limit: 1,
+      );
+    } catch (_) {
+      lista = [];
+    }
+    return lista.isEmpty ? null : lista[0].toQuestao();
+  }
+
+  @override
+  Future<List<Questao>> getQuestoes({
+    List<String> ids = const [],
+    List<int> anos = const [],
+    List<int> niveis = const [],
+    List<int> assuntos = const [],
+    int? limit,
+    int? offset,
+  }) async {
+    // Aguardar o fim da primeira sincronização.
+    if(_sincronizando) await _inicializando;
     final List<LinViewQuestoes> dbQuestoes;
     try {
-      dbQuestoes = await _dbLocal.selectQuestoes;
+      dbQuestoes = await dbLocal.selectQuestoes(
+        ids: ids,
+        anos: anos,
+        niveis: niveis,
+        assuntos: assuntos,
+        limit: limit,
+        offset: offset,
+      );
     } catch (_) {
       return List<Questao>.empty();
     }
@@ -396,7 +449,7 @@ class DbServicos implements IDbServicos {
   Future<List<Clube>> getClubes(int idUsuario) async {
     final List<LinViewClubes> dbClubes;
     try {
-      dbClubes = await _dbLocal.selectClubes;
+      dbClubes = await dbLocal.selectClubes;
     } catch (_) {
       return List<Clube>.empty();
     }
@@ -666,7 +719,6 @@ extension _LinTbRespostaQuestaoDbRemoto on LinTbRespostaQuestaoDbRemoto {
 extension _LinTbAssuntos on LinTbAssuntos {
   Assunto toAssunto() {
     return Assunto(
-      dataModificacao: DbLocal.decodificarData(dataModificacao),
       hierarquia: hierarquia == null
           ? []
           : DbLocal.decodificarHierarquia(hierarquia!) ?? [],

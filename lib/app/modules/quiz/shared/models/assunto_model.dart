@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:mobx/mobx.dart';
 
-import '../../../../shared/models/exceptions/my_exception.dart';
 import '../../../../shared/utils/strings_db.dart';
 
 /// Esta classe está configurada para, usando o padrão singleton, não criar duas instâncias
 /// com o mesmo [id].
 class Assunto extends RawAssunto {
   /// Conjunto de todas as instâncias criadas.
-  static Set<Assunto> _instancias = Set<Assunto>();
+  static ObservableSet<Assunto> _instancias = ObservableSet<Assunto>();
 
   /// ID do assunto no banco de dados.
   final int id;
@@ -20,33 +20,21 @@ class Assunto extends RawAssunto {
   /// O título do assunto.
   final String titulo;
 
-  /// Data de modificação deste assunto no banco de dados.
-  final DateTime dataModificacao;
-
   /// Posição (iniciando em zero) do assunto em uma hierarquia completa ([hierarquia] mais
   /// [titulo]). O índice zero indica que o assunto é uma unidade.
   int get indiceHierarquia => hierarquia.length;
 
-  /// Assunto no índice zero da hierarquia [hierarquia].
-  /// Se [hierarquia] for vazio temos [unidade] = [this].
-  /// Lança [MyException] se [hierarquia] não for vazia e o assunto correspondente a unidade
-  /// não for encontrado.
-  Assunto get unidade {
-    if (hierarquia.isEmpty)
-      return this;
-    else
-      return _instancias.firstWhere(
-        (element) => element.id == hierarquia[0],
-        orElse: () => throw MyException(
-            'A unidade do assunto $titulo (id = $id) não foi instanciada.'),
-      );
+  /// ID do assunto no índice zero da hierarquia [hierarquia].
+  /// Se [hierarquia] for vazio o assunto é uma unidade.
+  int get idUnidade {
+    if (isUnidade) return id;
+    return hierarquia[0];
   }
 
   Assunto._interno({
     required this.id,
     required this.hierarquia,
     required this.titulo,
-    required this.dataModificacao,
   }) {
     _instancias.add(this);
   }
@@ -60,14 +48,12 @@ class Assunto extends RawAssunto {
     required int id,
     required List<int> hierarquia,
     required String titulo,
-    required DateTime dataModificacao,
   }) {
-    return get(id) ??
+    return _get(id) ??
         Assunto._interno(
           id: id,
           hierarquia: hierarquia,
           titulo: titulo,
-          dataModificacao: dataModificacao,
         );
   }
 
@@ -82,10 +68,6 @@ class Assunto extends RawAssunto {
       id: dados[DbConst.kDbDataAssuntoKeyId] as int,
       hierarquia: hierarquia,
       titulo: dados[DbConst.kDbDataAssuntoKeyTitulo] as String,
-      dataModificacao: DateTime.fromMillisecondsSinceEpoch(
-        dados[DbConst.kDbDataDocumentKeyDataModificacao] as int,
-        isUtc: true,
-      ),
     );
   }
 
@@ -93,11 +75,11 @@ class Assunto extends RawAssunto {
   bool get isUnidade => hierarquia.isEmpty;
 
   /// Retorna um conjunto com as instâncias de [Assunto].
-  static Set<Assunto> get instancias => _instancias;
+  static ObservableSet<Assunto> get instancias => _instancias;
 
   /// Retorna o assunto correspondente a [id] em [instancias].
   /// Retorna null se o assunto não for encontrado.
-  static Assunto? get(int id) {
+  static Assunto? _get(int id) {
     return _instancias.cast().firstWhere(
           (element) => element.id == id,
           orElse: () => null,
@@ -111,7 +93,7 @@ class Assunto extends RawAssunto {
 
   @override
   String toString() {
-    return 'Assunto(id: $id, hierarquia: $hierarquia, titulo: $titulo, dataModificacao: $dataModificacao)';
+    return 'Assunto(id: $id, hierarquia: $hierarquia, titulo: $titulo)';
   }
 
   @override
@@ -121,16 +103,12 @@ class Assunto extends RawAssunto {
     return other is Assunto &&
         other.id == id &&
         listEquals(other.hierarquia, hierarquia) &&
-        other.titulo == titulo &&
-        other.dataModificacao == dataModificacao;
+        other.titulo == titulo;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^
-        hierarquia.hashCode ^
-        titulo.hashCode ^
-        dataModificacao.hashCode;
+    return id.hashCode ^ hierarquia.hashCode ^ titulo.hashCode;
   }
 }
 
@@ -139,13 +117,11 @@ class RawAssunto {
     this.id,
     this.hierarquia,
     this.titulo,
-    this.dataModificacao,
   });
 
   final int? id;
   final DataHierarquia? hierarquia;
   final String? titulo;
-  final DateTime? dataModificacao;
 
   DataAssunto toDataAssunto() {
     final data = DataAssunto();
@@ -154,9 +130,7 @@ class RawAssunto {
     }
     data
       ..[DbConst.kDbDataAssuntoKeyTitulo] = this.titulo
-      ..[DbConst.kDbDataAssuntoKeyId] = this.id
-      ..[DbConst.kDbDataDocumentKeyDataModificacao] =
-          this.dataModificacao?.toUtc().millisecondsSinceEpoch;
+      ..[DbConst.kDbDataAssuntoKeyId] = this.id;
 
     return data;
   }

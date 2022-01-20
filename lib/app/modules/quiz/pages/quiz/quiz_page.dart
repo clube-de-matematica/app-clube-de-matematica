@@ -39,7 +39,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
         child: FutureBuilder(
-          future: controller.inicializandoRepositorioQuestoes,
+          future: controller.questaoAtual,
           builder: (_, snapshot) {
             // Antes do futuro ser concluído.
             if (snapshot.connectionState != ConnectionState.done) {
@@ -73,10 +73,10 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                 // Corpo
                 Observer(builder: (_) {
                   return Expanded(
-                    child: controller.questao == null
+                    child: controller.questaoAtual.value == null
                         ? FeedbackFiltragemVazia(
                             onPressed: () => controller.abrirPaginaFiltros(context))
-                        : _questaoWidget(controller.questao!),
+                        : _questaoWidget(controller.questaoAtual.value!),
                   );
                 }),
               ],

@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:diacritic/diacritic.dart';
+//import 'package:diacritic/diacritic.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../quiz/shared/models/ano_questao_model.dart';
-import '../../../quiz/shared/models/assunto_model.dart';
-import '../../../quiz/shared/models/questao_model.dart';
-import '../../../quiz/shared/models/nivel_questao_model.dart';
+//import '../../../quiz/shared/models/ano_questao_model.dart';
+//import '../../../quiz/shared/models/assunto_model.dart';
+//import '../../../quiz/shared/models/questao_model.dart';
+//import '../../../quiz/shared/models/nivel_questao_model.dart';
 import '../../shared/models/filtro_controller_model.dart';
 import '../../shared/models/filtros_model.dart';
 import '../../shared/models/opcao_filtro_model.dart';
@@ -23,7 +23,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
       required Filtros filtrosAplicados,
       required Filtros filtrosTemp})
       : super(filtrosAplicados: filtrosAplicados, filtrosTemp: filtrosTemp) {
-    _setAllOpcoes();
+    //_setAllOpcoes();
   }
 
   ///Se incompeto, indica que as opções ainda estão sendo carregadas.
@@ -40,6 +40,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
   ///Nos demais casos conterá as instâncias de [OpcaoFiltro] disponíveis para o [tipo].
   final List<OpcaoFiltro> allOpcoes = <OpcaoFiltro>[];
 
+/* 
   ///Retorna um [Iterable] com os [Questao] relacionados às opções temporariamente selecionadas,
   ///excetuando-se as do tipo [tipo].
   ///A condição aplicada na filtragem dos itens usa o conectivo "ou" para filtros do mesmo
@@ -74,7 +75,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
             .where((a) => filtrosTemp.totalSelecinado == 0
                 ? true
                 : _itensRelacionados.any((questao) => questao.assuntos
-                    .any((b) => a == b || a.id == b.unidade.id)));
+                    .any((b) => a == b || a.id == b.idUnidade)));
         break;
       case TiposFiltro.nivel:
         opcoesRelacionadas = Nivel.instancias.where((nivel) =>
@@ -115,7 +116,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
                 ///Adicionar os assuntos que já estão no filtro.
                 ..assuntos.addAll(allFilters[tipo]!
                     .where((element) =>
-                        unidade.id == (element.opcao as Assunto).unidade.id)
+                        unidade.id == (element.opcao as Assunto).idUnidade)
                     .cast<OpcaoFiltroAssunto>())));
 
       ///Adicionar os assuntos que não estão nos filtros em suas respectivas unidades.
@@ -134,7 +135,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
           .forEach((assunto) {
         ///Pegar a unidade correspondente ao assunto.
         allOpcoes.cast<OpcaoFiltroAssuntoUnidade>().firstWhere(
-                    (element) => assunto.unidade.id == element.opcao.id)
+                    (element) => assunto.idUnidade == element.opcao.id)
             .assuntos
             .add(OpcaoFiltroAssunto(assunto));
       });
@@ -165,6 +166,7 @@ abstract class _FiltroOpcoesControllerBase extends FiltroController with Store {
     _loading.complete(
         await Future.delayed(const Duration(seconds: 1), () => false));
   }
+ */
 
   ///Ação a ser executada quando um item da lista de opções é pressionado.
   ///[opcao] é a opção de filtro ao qual o item pressionado corresponde.

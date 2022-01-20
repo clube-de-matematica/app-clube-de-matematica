@@ -65,14 +65,14 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
           ],
         ),
         body: FutureBuilder(
-            future: Modular.get<QuestoesRepository>().inicializando,
+            future: controle.questaoAtual,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
                 // Carregando...
                 return Center(child: const CircularProgressIndicator());
               } else {
                 return Observer(builder: (_) {
-                  if (controle.questao == null) {
+                  if (controle.numQuestoes == 0) {
                     // Carregado sem questões a serem exibidas.
                     return _corpoSemQuestao();
                   }
@@ -100,7 +100,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
             endIndent: 16.0,
           ),
           QuestaoWidget(
-            questao: controle.questao!,
+            questao: controle.questaoAtual.value!,
             padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
             selecionavel: false,
             rolavel: false,
@@ -133,14 +133,13 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
           child: Observer(builder: (_) {
-            return Text('OBMEP (${controle.questao?.ano})');
+            return Text('OBMEP (${controle.questaoAtual.value?.ano})');
           }),
         ),
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: Observer(builder: (_) {
-            return Text(
-                '${controle.indice + 1} de ${controle.questoes.length}');
+            return Text('${controle.indice + 1} de ${controle.numQuestoes}');
           }),
         ),
       ],
@@ -166,7 +165,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
             acionarProximo: controle.avancar,
           ),
           Tooltip(
-            message:'Toque para alternar a seleção dessa questão',
+            message: 'Toque para alternar a seleção dessa questão',
             child: MaterialButton(
               child: Observer(builder: (_) {
                 return AnimatedContainer(
@@ -189,6 +188,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
       );
     });
   }
+
 /* 
   FloatingActionButton _botaoFlutuante() {
     return FloatingActionButton.small(

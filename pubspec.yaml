@@ -65,7 +65,7 @@ dependencies:
   url_launcher: ^6.0.17
   drift: ^1.2.0 # Banco de dados.
   sqlite3_flutter_libs: ^0.5.0 # Inclui o sqlite mais recente no Android. Necessário para algumas funcionalidades do drift.
-  sqlite_viewer: ^1.0.5 #Um widget para exibir o conteúdo do SQLite.
+  drift_db_viewer: ^1.0.0 #Permite visualizar o banco de dados no aplicativo de desenvolvimento sem a necessidade de exportar seu arquivo de banco de dados.
   
 
 dev_dependencies:

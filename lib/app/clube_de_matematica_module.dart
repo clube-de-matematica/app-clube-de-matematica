@@ -54,10 +54,7 @@ class ClubeDeMatematicaModule extends Module {
               i.get<MockDbRepository>(),
               i.get<UserApp>(),
             )), */
-        Bind.lazySingleton((i) => QuestoesRepository(
-              i.get<IDbServicos>(),
-              i.get<AssuntosRepository>(),
-            )),
+        Bind.lazySingleton((i) => QuestoesRepository(i.get<IDbServicos>())),
         Bind.lazySingleton((i) => AssuntosRepository(i.get<IDbServicos>())),
 
         Bind<IDbServicos>((i) => DbServicos(

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../../shared/models/exibir_questao_com_filtro_controller.dart';
+import '../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
 import '../../shared/models/opcoesQuestao.dart';
 
@@ -13,10 +14,15 @@ class QuizController = _QuizControllerBase with _$QuizController;
 
 abstract class _QuizControllerBase extends ExibirQuestaoComFiltroController
     with Store {
-  _QuizControllerBase(Filtros filtros)
-      : super(filtros);
+  _QuizControllerBase({
+    required Filtros filtros,
+    required QuestoesRepository questoesRepository,
+  }) : super(
+          filtros: filtros,
+          questoesRepository: questoesRepository,
+        );
 
-  /// O sequencial da altenativa selecionada em [questao].
+  /// O sequencial da altenativa selecionada em [questaoAtual].
   @observable
   int? alternativaSelecionada;
 

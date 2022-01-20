@@ -10,18 +10,74 @@ part of 'exibir_questao_com_filtro_controller.dart';
 
 mixin _$ExibirQuestaoComFiltroController
     on _ExibirQuestaoComFiltroControllerBase, Store {
-  Computed<List<Questao>>? _$questoesComputed;
+  Computed<ObservableFuture<Questao?>>? _$questaoAtualComputed;
 
   @override
-  List<Questao> get questoes =>
-      (_$questoesComputed ??= Computed<List<Questao>>(() => super.questoes,
-              name: '_ExibirQuestaoComFiltroControllerBase.questoes'))
-          .value;
+  ObservableFuture<Questao?> get questaoAtual => (_$questaoAtualComputed ??=
+          Computed<ObservableFuture<Questao?>>(() => super.questaoAtual,
+              name: '_ExibirQuestaoComFiltroControllerBase.questaoAtual'))
+      .value;
+
+  final _$_questaoAtualAtom =
+      Atom(name: '_ExibirQuestaoComFiltroControllerBase._questaoAtual');
+
+  @override
+  ObservableFuture<Questao?> get _questaoAtual {
+    _$_questaoAtualAtom.reportRead();
+    return super._questaoAtual;
+  }
+
+  @override
+  set _questaoAtual(ObservableFuture<Questao?> value) {
+    _$_questaoAtualAtom.reportWrite(value, super._questaoAtual, () {
+      super._questaoAtual = value;
+    });
+  }
+
+  final _$_ExibirQuestaoComFiltroControllerBaseActionController =
+      ActionController(name: '_ExibirQuestaoComFiltroControllerBase');
+
+  @override
+  void voltar() {
+    final _$actionInfo = _$_ExibirQuestaoComFiltroControllerBaseActionController
+        .startAction(name: '_ExibirQuestaoComFiltroControllerBase.voltar');
+    try {
+      return super.voltar();
+    } finally {
+      _$_ExibirQuestaoComFiltroControllerBaseActionController
+          .endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void avancar() {
+    final _$actionInfo = _$_ExibirQuestaoComFiltroControllerBaseActionController
+        .startAction(name: '_ExibirQuestaoComFiltroControllerBase.avancar');
+    try {
+      return super.avancar();
+    } finally {
+      _$_ExibirQuestaoComFiltroControllerBaseActionController
+          .endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void definirIndice(int valor, {bool forcar = false}) {
+    final _$actionInfo =
+        _$_ExibirQuestaoComFiltroControllerBaseActionController.startAction(
+            name: '_ExibirQuestaoComFiltroControllerBase.definirIndice');
+    try {
+      return super.definirIndice(valor, forcar: forcar);
+    } finally {
+      _$_ExibirQuestaoComFiltroControllerBaseActionController
+          .endAction(_$actionInfo);
+    }
+  }
 
   @override
   String toString() {
     return '''
-questoes: ${questoes}
+questaoAtual: ${questaoAtual}
     ''';
   }
 }

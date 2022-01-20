@@ -276,8 +276,10 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     }
     if (resultado.isEmpty) return List<Atividade>.empty();
 
-    final temp = List<Atividade>.from(resultado
-        .map((dataAtividade) => Atividade.fromDataAtividade(dataAtividade)));
+    final futuros = resultado
+        .map((dataAtividade) => Atividade.fromDataAtividade(dataAtividade));
+
+    final temp = await Future.wait(futuros);
 
     clube.sobrescrever(clube.copyWith(atividades: temp));
 
@@ -312,7 +314,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       ).toDataAtividade(),
     );
     if (dataAtividade.isNotEmpty) {
-      final atividade = Atividade.fromDataAtividade(dataAtividade);
+      final atividade = await Atividade.fromDataAtividade(dataAtividade);
       clube.addAtividade(atividade);
       return atividade;
     } else {
@@ -347,7 +349,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       ).toDataAtividade(),
     );
     if (dataAtividade.isNotEmpty) {
-      atividade.sobrescrever(Atividade.fromDataAtividade(dataAtividade));
+      atividade.sobrescrever(await Atividade.fromDataAtividade(dataAtividade));
       return atividade;
     } else {
       return null;

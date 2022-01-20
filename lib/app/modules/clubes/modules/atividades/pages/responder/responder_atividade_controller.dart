@@ -17,8 +17,7 @@ class ResponderAtividadeController = _ResponderAtividadeControllerBase
 abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
     with Store
     implements Disposable {
-  _ResponderAtividadeControllerBase(this.atividade)
-      : super(Modular.get<QuestoesRepository>()) {
+  _ResponderAtividadeControllerBase(this.atividade) {
     _inicializar();
   }
 
@@ -30,8 +29,8 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
     _clubesRepositorio.carregarRespostasAtividade(atividade).then((atividade) {
       _disposers.add(
         autorun((_) {
-          if (this.questao != null) {
-            final questao = this.questao!;
+          questaoAtual.then((questao) {
+          if (questao != null) {
             final respostaInstanciada =
                 questao.resposta(UserApp.instance.id!) != null;
             if (!respostaInstanciada) {
@@ -44,23 +43,32 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
               );
             }
           }
+
+          });
         }),
       );
     }) /* TODO: .catchError(onError) */;
   }
 
-  @override
   @computed
-  List<QuestaoAtividade> get questoes => atividade.questoes;
+  ObservableList<QuestaoAtividade> get questoes => atividade.questoes;
 
   @override
   @computed
-  QuestaoAtividade? get questao => super.questao as QuestaoAtividade?;
+  int get numQuestoes => questoes.length;
+
+  @computed
+  QuestaoAtividade? get _questaoAtual => indice == -1 ? null : questoes[indice];
+
+  @override
+  @computed
+  ObservableFuture<QuestaoAtividade?> get questaoAtual =>
+      Future.value(_questaoAtual).asObservable();
 
   /// Mesmo código de [QuestaoAtividade].resposta().
   @computed
   RespostaQuestaoAtividade? get resposta {
-    return questao?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
+    return _questaoAtual?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
           (resposta) => resposta?.idUsuario == UserApp.instance.id,
           orElse: () => null,
         );
@@ -94,7 +102,7 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
   @computed
   bool get podeConfirmar {
     final resposta =
-        questao?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
+        _questaoAtual?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
               (resposta) => resposta?.idUsuario == UserApp.instance.id,
               orElse: () => null,
             );
