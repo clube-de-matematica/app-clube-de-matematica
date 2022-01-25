@@ -2,7 +2,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../../../../shared/models/exibir_questao_controller.dart';
-import '../../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../perfil/models/userapp.dart';
 import '../../../../shared/repositories/clubes_repository.dart';
 import '../../models/atividade.dart';
@@ -30,20 +29,19 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
       _disposers.add(
         autorun((_) {
           questaoAtual.then((questao) {
-          if (questao != null) {
-            final respostaInstanciada =
-                questao.resposta(UserApp.instance.id!) != null;
-            if (!respostaInstanciada) {
-              questao.respostas.add(
-                RespostaQuestaoAtividade(
-                  idQuestaoAtividade: questao.idQuestaoAtividade,
-                  idUsuario: UserApp.instance.id!,
-                  sequencial: null,
-                ),
-              );
+            if (questao != null) {
+              final respostaInstanciada =
+                  questao.resposta(UserApp.instance.id!) != null;
+              if (!respostaInstanciada) {
+                questao.respostas.add(
+                  RespostaQuestaoAtividade(
+                    idQuestaoAtividade: questao.idQuestaoAtividade,
+                    idUsuario: UserApp.instance.id!,
+                    sequencial: null,
+                  ),
+                );
+              }
             }
-          }
-
           });
         }),
       );
@@ -68,7 +66,9 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
   /// Mesmo código de [QuestaoAtividade].resposta().
   @computed
   RespostaQuestaoAtividade? get resposta {
-    return _questaoAtual?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
+    return _questaoAtual?.respostas
+        .cast<RespostaQuestaoAtividade?>()
+        .firstWhere(
           (resposta) => resposta?.idUsuario == UserApp.instance.id,
           orElse: () => null,
         );

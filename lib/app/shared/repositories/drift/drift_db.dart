@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:drift/extensions/json1.dart';
 
 import 'package:clubedematematica/app/shared/models/debug.dart';
 import 'package:clubedematematica/app/shared/utils/db/codificacao.dart';
@@ -34,7 +35,9 @@ part 'drift_db.g.dart';
 )
 class DriftDb extends _$DriftDb {
   // TODO: Definir local de armazenamento.
-  DriftDb() : /* super(abrirConexao()); // */ super(NativeDatabase.memory());
+  DriftDb()
+      : /* super(abrirConexao()); // */ super(
+            NativeDatabase.memory(logStatements: true));
 
   @override
   int get schemaVersion => 1;
@@ -213,10 +216,10 @@ class DriftDb extends _$DriftDb {
 
   JoinedSelectStatement<$TbQuestoesCadernoTable, LinTbQuestoesCaderno>
       _joinQuestoes({
-    List<String> ids = const [],
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<String> ids = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
     bool somenteIds = false,
     int? limit,
     int? offset,
@@ -227,17 +230,15 @@ class DriftDb extends _$DriftDb {
     )
       ..addColumns([
         tbQuestoesCaderno.id,
-        if (!somenteIds)
-          for (var col in [
-            tbQuestoesCaderno.ano,
-            tbQuestoesCaderno.nivel,
-            tbQuestoesCaderno.indice,
-            tbQuestoes.id,
-            tbQuestoes.enunciado,
-            tbQuestoes.gabarito,
-            tbQuestoes.imagensEnunciado,
-          ])
-            col,
+        if (!somenteIds) ...[
+          tbQuestoesCaderno.ano,
+          tbQuestoesCaderno.nivel,
+          tbQuestoesCaderno.indice,
+          tbQuestoes.id,
+          tbQuestoes.enunciado,
+          tbQuestoes.gabarito,
+          tbQuestoes.imagensEnunciado,
+        ],
       ])
       ..join([
         innerJoin(
@@ -274,6 +275,125 @@ class DriftDb extends _$DriftDb {
     return join;
   }
 
+  Selectable<int> filtrarAnos({
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
+  }) {
+    final coluna = tbQuestoesCaderno.ano;
+    final join = selectOnly(tbQuestoesCaderno, distinct: true)
+      ..addColumns([coluna])
+      ..join([
+        if (assuntos.isNotEmpty)
+          innerJoin(
+            tbQuestaoAssunto,
+            tbQuestaoAssunto.idQuestao.equalsExp(tbQuestoesCaderno.idQuestao) &
+                tbQuestaoAssunto.idAssunto.isIn(assuntos),
+            useColumns: false,
+          )
+      ])
+      ..orderBy([OrderingTerm(expression: coluna)]);
+
+    if (niveis.isNotEmpty) {
+      join.where(tbQuestoesCaderno.nivel.isIn(niveis));
+    }
+
+    final retorno = join.map((linha) => linha.read(coluna)!);
+    return retorno;
+  }
+
+  Selectable<int> filtrarNiveis({
+    Iterable<int> anos = const [],
+    Iterable<int> assuntos = const [],
+  }) {
+    final coluna = tbQuestoesCaderno.nivel;
+    final join = selectOnly(
+      tbQuestoesCaderno,
+      distinct: true,
+    )
+      ..addColumns([coluna])
+      ..join([
+        if (assuntos.isNotEmpty)
+          innerJoin(
+            tbQuestaoAssunto,
+            tbQuestaoAssunto.idQuestao.equalsExp(tbQuestoesCaderno.idQuestao) &
+                tbQuestaoAssunto.idAssunto.isIn(assuntos),
+            useColumns: false,
+          )
+      ])
+      ..orderBy([OrderingTerm(expression: coluna)]);
+
+    if (anos.isNotEmpty) {
+      join.where(tbQuestoesCaderno.nivel.isIn(anos));
+    }
+
+    final retorno = join.map((linha) => linha.read(coluna)!);
+    return retorno;
+  }
+
+  /// Retorna os assuntos diretamente ligados às questões.
+  Selectable<LinTbAssuntos> filtrarAssuntos({
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+  }) {
+    final query = customSelect(
+      r'SELECT DISTINCT assuntos.* FROM assuntos '
+      r'INNER JOIN ('
+      r'  SELECT '
+      r'    w.id,'
+      r'    w.hierarquia,'
+      r'    z.id_questao,'
+      r'    z.ano,'
+      r'    z.nivel'
+      r'  FROM assuntos AS w'
+      r'  INNER JOIN ('
+      // Emular FULL OUTER JOIN. Fonte: https://www.sqlitetutorial.net/sqlite-full-outer-join/
+      r'    SELECT '
+      r'      x1.id_assunto,'
+      r'      x1.id_questao,'
+      r'      y1.ano,'
+      r'      y1.nivel'
+      r'    FROM questao_x_assunto AS x1'
+      r'    LEFT JOIN questoes_caderno AS y1 USING(id_questao)'
+      r'    UNION ALL'
+      r'    SELECT '
+      r'      x2.id_assunto,'
+      r'      x2.id_questao,'
+      r'      y2.ano,'
+      r'      y2.nivel'
+      r'    FROM questoes_caderno AS y2'
+      r'    LEFT JOIN questao_x_assunto AS x2 USING(id_questao)'
+      r'    WHERE x2.id_questao IS NULL'
+      r'  ) AS z ON w.id = z.id_assunto'
+      r') AS juncao ON assuntos.id = juncao.id OR assuntos.id IN ('
+      r'  SELECT "value" FROM json_each((juncao.hierarquia))'
+      r')'
+      r'WHERE '
+      r'  ('
+      r'    (?1 IS NULL) OR '
+      r"    (json_array_length(?1) = 0) OR "
+      r'    (juncao.ano IN (SELECT "value" FROM json_each((?1))))'
+      r'  ) AND ('
+      r'    (?2 IS NULL) OR '
+      r"    (json_array_length(?2) = 0) OR "
+      r'    (juncao.nivel IN (SELECT "value" FROM json_each((?2))))'
+      r'  );',
+      variables: [
+        Variable.withString(DbLocal.codificarLista(anos.toList())),
+        Variable.withString(DbLocal.codificarLista(niveis.toList())),
+      ],
+      readsFrom: {
+        tbAssuntos,
+        tbQuestaoAssunto,
+        tbQuestoesCaderno,
+      },
+    );
+    
+    final retorno = query.map((linha) {
+      return LinTbAssuntos.fromData(linha.data);
+    });
+    return retorno;
+  }
+
   /// {@template app.DriftDb.contarQuestoes}
   /// Retorna o número de questões que satisfazem os filtros passados.
   ///
@@ -281,9 +401,9 @@ class DriftDb extends _$DriftDb {
   /// elementos de listas diferentes.
   /// {@endtemplate}
   Future<int> contarQuestoes({
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
   }) async {
     final join = _joinQuestoes(
       anos: anos,
@@ -296,10 +416,10 @@ class DriftDb extends _$DriftDb {
   }
 
   Future<List<LinViewQuestoes>> selectQuestoes({
-    List<String> ids = const [],
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<String> ids = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
     int? limit,
     int? offset,
   }) async {

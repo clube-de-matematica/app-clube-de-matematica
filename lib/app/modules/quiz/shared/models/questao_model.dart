@@ -1,19 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../../shared/repositories/questoes/assuntos_repository.dart';
 import '../../../../shared/utils/strings_db.dart';
 import 'alternativa_questao_model.dart';
-import 'ano_questao_model.dart';
 import 'assunto_model.dart';
 import 'imagem_questao_model.dart';
-import 'nivel_questao_model.dart';
 
 /// Contém as propriedades de uma questão.
 class Questao {
   final String id;
-  final Ano ano;
-  final Nivel nivel;
+  final int ano;
+  final int nivel;
   final int indice;
   final List<Assunto> assuntos;
   final List<String> enunciado;
@@ -52,8 +52,8 @@ class Questao {
   /// Essa instância é adiciona em [_instancias].
   factory Questao({
     required String id,
-    required Ano ano,
-    required Nivel nivel,
+    required int ano,
+    required int nivel,
     required int indice,
     required List<Assunto> assuntos,
     required List<String> enunciado,
@@ -96,8 +96,8 @@ class Questao {
 
     return Questao(
       id: id,
-      ano: Ano(dados[DbConst.kDbDataQuestaoKeyAno]),
-      nivel: Nivel(dados[DbConst.kDbDataQuestaoKeyNivel]),
+      ano: dados[DbConst.kDbDataQuestaoKeyAno] as int,
+      nivel: dados[DbConst.kDbDataQuestaoKeyNivel] as int,
       indice: dados[DbConst.kDbDataQuestaoKeyIndice] as int,
       assuntos: _assuntos,
       enunciado:
@@ -112,6 +112,7 @@ class Questao {
   /// Retorna uma lista vazia se o enunciado não tiver imágem.
   /// [jsonQuestao] é o json retornado do banco de dados.
   static List<ImagemQuestao> _getImagensEnunciado(DataQuestao jsonQuestao) {
+    debugger();
     final _imagensEnunciado = <ImagemQuestao>[];
     final dataImagensEnunciado =
         ((jsonQuestao[DbConst.kDbDataQuestaoKeyImagensEnunciado] ?? []) as List)
@@ -128,9 +129,9 @@ class Questao {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data[DbConst.kDbDataQuestaoKeyId] = this.id;
-    data[DbConst.kDbDataQuestaoKeyNivel] = this.nivel.valor;
+    data[DbConst.kDbDataQuestaoKeyNivel] = this.nivel;
     data[DbConst.kDbDataQuestaoKeyIndice] = this.indice;
-    data[DbConst.kDbDataQuestaoKeyAno] = this.ano.valor;
+    data[DbConst.kDbDataQuestaoKeyAno] = this.ano;
     if (this.assuntos.isNotEmpty) {
       data[DbConst.kDbDataQuestaoKeyAssuntos] =
           this.assuntos.map((v) => v.id).toList();

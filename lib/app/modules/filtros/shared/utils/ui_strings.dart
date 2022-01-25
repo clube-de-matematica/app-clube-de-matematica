@@ -14,7 +14,7 @@ abstract class UIStrings {
 
   ///Título da página para filtrar por assunto.
   ///Título do indicador de filtro por assunto na página inicial de filtros.
-  static const FILTRO_TEXTO_TIPO_ASSUNTO = "Asuntos";
+  static const FILTRO_TEXTO_TIPO_ASSUNTO = "Assuntos";
 
   ///Título da página para filtrar por ano.
   ///Título do indicador de filtro por ano na página inicial de filtros.

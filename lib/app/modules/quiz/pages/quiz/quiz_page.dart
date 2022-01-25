@@ -11,6 +11,7 @@ import '../../../filtros/shared/widgets/feedback_filtragem_vazia.dart';
 import '../../shared/models/questao_model.dart';
 import '../../shared/utils/ui_strings.dart';
 import 'quiz_controller.dart';
+import 'widgets/feedback_questao_nao_encontrada.dart';
 import 'widgets/quiz_appbar.dart';
 import 'widgets/quiz_bar_opcoes_item.dart';
 
@@ -30,14 +31,11 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
 
   @override
   Widget build(BuildContext context) {
-    //FirebaseToSupabase.migrarAsuntos();
-    //FirebaseToSupabase.migrarQuestoes();
-
     return ScaffoldWithDrawer(
       page: AppDrawerPage.quiz,
       appBar: QuizAppBar(controller),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
         child: FutureBuilder(
           future: controller.questaoAtual,
           builder: (_, snapshot) {
@@ -61,26 +59,34 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
               );
             }
             // Quando o futuro for concluído sem erro.
-            return Column(
-              children: <Widget>[
-                // Contém um indicador do número de questões à esquerda e, à direita,
-                // um botão para exibir as opções disponíveis para a questão.
-                QuizBarOpcoesItem(controller),
+            return Observer(builder: (_) {
+              if (controller.numQuestoes == 0) {
+                return FeedbackFiltragemVazia(
+                    onPressed: () => controller.abrirPaginaFiltros(context));
+              }
+              return Column(
+                children: <Widget>[
+                  // Contém um indicador do número de questões à esquerda e, à direita,
+                  // um botão para exibir as opções disponíveis para a questão.
+                  QuizBarOpcoesQuestao(controller),
 
-                // Linha divisória.
-                const Divider(height: double.minPositive),
+                  // Linha divisória.
+                  const Divider(height: double.minPositive),
 
-                // Corpo
-                Observer(builder: (_) {
-                  return Expanded(
-                    child: controller.questaoAtual.value == null
-                        ? FeedbackFiltragemVazia(
-                            onPressed: () => controller.abrirPaginaFiltros(context))
-                        : _questaoWidget(controller.questaoAtual.value!),
-                  );
-                }),
-              ],
-            );
+                  // Corpo
+                  Observer(builder: (_) {
+                    return Expanded(
+                      child: () {
+                        if (controller.questaoAtual.value == null) {
+                          return FeedbackQuestaoNaoEncontrada();
+                        }
+                        return _questaoWidget(controller.questaoAtual.value!);
+                      }(),
+                    );
+                  }),
+                ],
+              );
+            });
           },
         ),
       ),
@@ -121,6 +127,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
   /// Retorna o [Widget] da questão a ser exibida.
   QuestaoWidget _questaoWidget(Questao questao) {
     return QuestaoWidget(
+      padding: const EdgeInsets.all(0),
       questao: questao,
       selecionavel: true,
       alternativaSelecionada: controller.alternativaSelecionada,

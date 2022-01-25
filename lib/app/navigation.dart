@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/modules/filtros/pages/home/filtro_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -13,8 +14,6 @@ import 'modules/clubes/pages/criar/criar_clube_page.dart';
 import 'modules/clubes/pages/editar/editar_clube_page.dart';
 import 'modules/clubes/pages/home/home_clubes_page.dart';
 import 'modules/filtros/filtros_module.dart';
-import 'modules/filtros/pages/opcoes/filtro_opcoes_page.dart';
-import 'modules/filtros/pages/tipos/filtro_tipos_page.dart';
 import 'modules/login/login_module.dart';
 import 'modules/login/pages/login_page.dart';
 import 'modules/perfil/page/perfil_page.dart';
@@ -74,11 +73,8 @@ enum RotaPagina {
   /// Representa a rota para a página [QuizPage].
   quiz,
 
-  /// Representa a rota para a página [FiltroTiposPage].
-  filtrosTipos,
-
-  /// Representa a rota para a página [FiltroOpcoesPage].
-  filtrosOpcoes,
+  /// Representa a rota para a página [FiltroHomePage].
+  filtros,
 
   /// Representa a rota para a página [LoginPage].
   login,
@@ -114,10 +110,8 @@ extension ExtensaoRotaPagina on RotaPagina {
     switch (this) {
       case RotaPagina.quiz:
         return QuizModule.kAbsoluteRouteQuizPage;
-      case RotaPagina.filtrosTipos:
-        return FiltrosModule.kAbsoluteRouteFiltroTiposPage;
-      case RotaPagina.filtrosOpcoes:
-        return FiltrosModule.kAbsoluteRouteFiltroOpcoesPage;
+      case RotaPagina.filtros:
+        return FiltrosModule.kAbsoluteRouteFiltroHomePage;
       case RotaPagina.login:
         return LoginModule.kAbsoluteRouteLoginPage;
       case RotaPagina.perfil:
@@ -144,8 +138,7 @@ extension ExtensaoRotaPagina on RotaPagina {
   bool get dinamica {
     switch (this) {
       case RotaPagina.quiz:
-      case RotaPagina.filtrosTipos:
-      case RotaPagina.filtrosOpcoes:
+      case RotaPagina.filtros:
       case RotaPagina.login:
       case RotaPagina.perfil:
       case RotaPagina.homeClubes:
@@ -165,13 +158,12 @@ extension ExtensaoRotaPagina on RotaPagina {
   bool get empilhavel {
     switch (this) {
       case RotaPagina.quiz:
-      case RotaPagina.filtrosTipos:
+      case RotaPagina.filtros:
       case RotaPagina.homeClubes:
       case RotaPagina.clube:
       case RotaPagina.atividade:
       case RotaPagina.criarAtividade:
         return true;
-      case RotaPagina.filtrosOpcoes:
       case RotaPagina.login:
       case RotaPagina.perfil:
       case RotaPagina.criarClube:
@@ -271,9 +263,7 @@ abstract class Navegacao {
               (_) => false,
               arguments: argumentos,
             );
-          case RotaPagina.filtrosTipos:
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
-          case RotaPagina.filtrosOpcoes:
+          case RotaPagina.filtros:
             return navegador.pushNamed(novaPagina, arguments: argumentos);
           case RotaPagina.perfil:
             if (paginaAtual == RotaPagina.login.nome) {

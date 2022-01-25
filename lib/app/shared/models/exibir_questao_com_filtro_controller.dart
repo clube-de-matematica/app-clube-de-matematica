@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
@@ -6,9 +6,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../modules/filtros/shared/models/filtros_model.dart';
-import '../../modules/quiz/shared/models/ano_questao_model.dart';
-import '../../modules/quiz/shared/models/assunto_model.dart';
-import '../../modules/quiz/shared/models/nivel_questao_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
 import '../../navigation.dart';
 import '../repositories/questoes/questoes_repository.dart';
@@ -34,30 +31,37 @@ abstract class _ExibirQuestaoComFiltroControllerBase
   }) : _questoesRepository = questoesRepository {
     _disposers.addAll([
       autorun((_) {
-        debugger(); //TODO
-        questaoAtual.then((value) {
-          debugger(); //TODO
-          if (value == null && indice != -1)
-            definirIndice(-1, forcar: true);
-          else if (value != null && indice == -1)
-            definirIndice(0, forcar: true);
-        });
-      }),
-      autorun((_) {
-        debugger(); //TODO
-        _questoesRepository
-            .nunQuestoes(
-          anos: filtros.anos.map((e) => (e.opcao as Ano).valor).toList(),
-          niveis: filtros.anos.map((e) => (e.opcao as Nivel).valor).toList(),
-          assuntos: filtros.anos.map((e) => (e.opcao as Assunto).id).toList(),
-        )
-            .then((valor) {
-          if (numQuestoes != valor) numQuestoes = valor;
-        }).catchError((erro) {
-          assert(Debug.printBetweenLine(erro.toString()));
-        });
+        if (_numQuestoesAssinc.status != FutureStatus.pending) {
+          numQuestoes = _numQuestoesAssinc.value ?? 0;
+        }
       }),
     ]);
+  }
+
+  @computed
+  ObservableFuture<int> get _numQuestoesAssinc {
+    return _questoesRepository.nunQuestoes(
+      // Se os filtros forem passados por referência a reação não é disparada, pois o
+      // observável não estará sendo lido.
+      anos: [...filtros.anos],
+      niveis: [...filtros.niveis],
+      assuntos: [...filtros.assuntos],
+    )
+        //.then((value) => numQuestoes = value)
+        .catchError((erro) {
+      assert(Debug.printBetweenLine(erro.toString()));
+      return numQuestoes = 0;
+    }).asObservable();
+  }
+
+  @override
+  @computed
+  int get numQuestoes {
+    final numAssinc = _numQuestoesAssinc;
+    if (numAssinc.status != FutureStatus.pending) {
+      return numAssinc.value ?? 0;
+    }
+    return super.numQuestoes;
   }
 
   /// Encerrar as [Reaction] em execução.
@@ -66,14 +70,16 @@ abstract class _ExibirQuestaoComFiltroControllerBase
     _disposers
       ..forEach((element) => element())
       ..clear();
+    super.dispose();
   }
 
   /// Ação executada para abrir a página de filtro.
   /// Retornará o objeto [Filtros] resultante.
+  @action
   Future<Filtros> abrirPaginaFiltros(BuildContext context) async {
     final Filtros? retorno = await Navegacao.abrirPagina<Filtros>(
       context,
-      RotaPagina.filtrosTipos,
+      RotaPagina.filtros,
       argumentos: filtros,
     );
     return retorno ?? filtros;
@@ -90,7 +96,14 @@ abstract class _ExibirQuestaoComFiltroControllerBase
 
   @override
   @computed
-  ObservableFuture<Questao?> get questaoAtual => _questaoAtual;
+  ObservableFuture<Questao?> get questaoAtual {
+    if (_numQuestoesAssinc.status != FutureStatus.pending) return _questaoAtual;
+    // Garantir que o retorno será concluído após [_numQuestoesAssinc].
+    return Future.wait([
+      _numQuestoesAssinc,
+      _questao(0),
+    ]).then((value) => value[1] as Questao?).asObservable();
+  }
 
   /// [Questao] seguinte a [questaoAtual].
   late ObservableFuture<Questao?> _questaoSeguinte = _questao(1);
@@ -99,9 +112,9 @@ abstract class _ExibirQuestaoComFiltroControllerBase
     if (indice < 0) return Future.value(null).asObservable();
     return _questoesRepository
         .questoes(
-          anos: filtros.anos.map((e) => (e.opcao as Ano).valor).toList(),
-          niveis: filtros.anos.map((e) => (e.opcao as Nivel).valor).toList(),
-          assuntos: filtros.anos.map((e) => (e.opcao as Assunto).id).toList(),
+          anos: filtros.anos,
+          niveis: filtros.niveis,
+          assuntos: filtros.assuntos,
           limit: 1,
           offset: indice,
         )
@@ -140,8 +153,7 @@ abstract class _ExibirQuestaoComFiltroControllerBase
   @action
   void definirIndice(int valor, {bool forcar = false}) {
     if (indice != valor || forcar) {
-      debugger(); //TODO
-      if (pow(valor - indice, 2) > 1) {
+      if (pow(valor - indice, 2) > 1 || forcar) {
         _questaoAnterior = _questao(valor - 1);
         _questaoAtual = _questao(valor);
         _questaoSeguinte = _questao(valor + 1);
@@ -149,4 +161,9 @@ abstract class _ExibirQuestaoComFiltroControllerBase
       super.definirIndice(valor, forcar: forcar);
     }
   }
+
+  /// {@macro app.ExibirQuestaoController.indice}
+  @override
+  @computed
+  int get indice => super.indice;
 }

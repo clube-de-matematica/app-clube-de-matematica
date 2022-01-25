@@ -1,14 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
-import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
-
+import '../modules/clubes/shared/models/clube.dart';
 import '../modules/quiz/shared/models/alternativa_questao_model.dart';
-import '../modules/quiz/shared/models/ano_questao_model.dart';
 import '../modules/quiz/shared/models/assunto_model.dart';
 import '../modules/quiz/shared/models/imagem_questao_model.dart';
-import '../modules/quiz/shared/models/nivel_questao_model.dart';
 import '../modules/quiz/shared/models/questao_model.dart';
 import '../shared/models/db/remoto/linha_tabela_alternativas.dart';
 import '../shared/models/db/remoto/linha_tabela_assuntos.dart';
@@ -321,7 +317,7 @@ class DbServicos implements IDbServicos {
           await dbLocal.ultimaModificacao(Tabelas.respostaQuestaoAtividade),
     );
     int contagem = 0;
-    debugger();//TODO
+    //debugger(); //TODO
     // excluir os registros marcados para exclusão.
     contagem += await dbLocal.deleteSamePrimaryKey(
       dbLocal.tbRespostaQuestaoAtividade,
@@ -332,7 +328,7 @@ class DbServicos implements IDbServicos {
       dbLocal.tbRespostaQuestaoAtividade,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
-    debugger();//TODO
+    //debugger(); //TODO
     assert(contagem == novosRegistros.length);
   }
 
@@ -364,6 +360,37 @@ class DbServicos implements IDbServicos {
   }
 
   @override
+  Future<List<int>> filtrarAnos({
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
+  }) {
+    return dbLocal.filtrarAnos(niveis: niveis, assuntos: assuntos).get();
+  }
+
+  @override
+  Future<List<int>> filtrarNiveis({
+    Iterable<int> anos = const [],
+    Iterable<int> assuntos = const [],
+  }) {
+    return dbLocal.filtrarNiveis(anos: anos, assuntos: assuntos).get();
+  }
+
+  @override
+  Future<List<Assunto>> filtrarAssuntos({
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+  }) {
+    return dbLocal
+        .filtrarAssuntos(anos: anos, niveis: niveis)
+        .map((e) => e.toAssunto())
+        .get()
+      ..catchError((e) {
+        debugger(); //TODO
+        print(e);
+      });
+  }
+
+  @override
   Future<Assunto?> assunto(int id) async {
     final query = dbLocal.selectAssuntos(ids: [id])..limit(1);
     final assunto = query.map((linha) => linha.toAssunto()).getSingleOrNull();
@@ -386,10 +413,11 @@ class DbServicos implements IDbServicos {
   /// {@macro app.DriftDb.contarQuestoes}
   @override
   Future<int> contarQuestoes({
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
   }) async {
+    await _inicializando;
     return dbLocal.contarQuestoes(
       anos: anos,
       niveis: niveis,
@@ -413,15 +441,15 @@ class DbServicos implements IDbServicos {
 
   @override
   Future<List<Questao>> getQuestoes({
-    List<String> ids = const [],
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<String> ids = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
     int? limit,
     int? offset,
   }) async {
     // Aguardar o fim da primeira sincronização.
-    if(_sincronizando) await _inicializando;
+    if (_sincronizando) await _inicializando;
     final List<LinViewQuestoes> dbQuestoes;
     try {
       dbQuestoes = await dbLocal.selectQuestoes(
@@ -755,21 +783,31 @@ extension _LinTbAlternativas on LinTbAlternativas {
 
 extension _LinViewQuestoes on LinViewQuestoes {
   Questao toQuestao() {
-    final _imagensEnunciado = imagensEnunciado == null
-        ? null
-        : DbLocal.decodificarImagensEnunciado(imagensEnunciado!)
-            ?.map((e) => ImagemQuestao.fromMap(e))
-            .toList();
+    _imagensEnunciado() {
+      final List<ImagemQuestao> imagens = [];
+      if (imagensEnunciado != null) {
+        final listaDados =
+            DbLocal.decodificarImagensEnunciado(imagensEnunciado!) ?? [];
+
+        for (var i = 0; i < listaDados.length; i++) {
+          final dados = listaDados[i]
+            ..[ImagemQuestao.kKeyName] = '${id}_enunciado_$i.png';
+          imagens.add(ImagemQuestao.fromMap(dados));
+        }
+      }
+      return imagens;
+    }
+
     return Questao(
       id: id,
-      ano: Ano(ano),
-      nivel: Nivel(nivel),
+      ano: ano,
+      nivel: nivel,
       indice: indice,
       assuntos: assuntos.map((e) => e.toAssunto()).toList(),
       enunciado: DbLocal.decodificarEnunciado(enunciado) ?? [],
       alternativas: alternativas.map((e) => e.toAlternativa()).toList(),
       gabarito: gabarito,
-      imagensEnunciado: _imagensEnunciado ?? [],
+      imagensEnunciado: _imagensEnunciado(),
     );
   }
 }

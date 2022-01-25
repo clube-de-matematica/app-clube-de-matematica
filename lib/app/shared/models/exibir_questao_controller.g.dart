@@ -57,6 +57,24 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
     });
   }
 
+  final _$_questaoAtualAtom =
+      Atom(name: '_ExibirQuestaoControllerBase._questaoAtual');
+
+  ObservableFuture<Questao?> get questaoAtual {
+    _$_questaoAtualAtom.reportRead();
+    return super._questaoAtual;
+  }
+
+  @override
+  ObservableFuture<Questao?> get _questaoAtual => questaoAtual;
+
+  @override
+  set _questaoAtual(ObservableFuture<Questao?> value) {
+    _$_questaoAtualAtom.reportWrite(value, super._questaoAtual, () {
+      super._questaoAtual = value;
+    });
+  }
+
   final _$_ExibirQuestaoControllerBaseActionController =
       ActionController(name: '_ExibirQuestaoControllerBase');
 

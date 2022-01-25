@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../modules/quiz/shared/models/questao_model.dart';
@@ -12,11 +13,47 @@ part 'exibir_questao_controller.g.dart';
 abstract class ExibirQuestaoController = _ExibirQuestaoControllerBase
     with _$ExibirQuestaoController;
 
-abstract class _ExibirQuestaoControllerBase with Store {
-  _ExibirQuestaoControllerBase();
+abstract class _ExibirQuestaoControllerBase with Store implements Disposable {
+  final _disposers = <ReactionDisposer>[];
+  _ExibirQuestaoControllerBase() {
+    _disposers.addAll([
+      reaction(
+        (_) => numQuestoes,
+        (int numQuestoes) {
+          definirIndice(numQuestoes > 0 ? 0 : -1, forcar: true);
+        },
+      ),
+      reaction((_) => _questaoAtual, _concluindoQuestaoAtual),
+    ]);
+  }
 
+  void _concluindoQuestaoAtual(ObservableFuture<Questao?> questaoAtual) {
+    questaoAtual.then((valor) {
+      if (valor != null && _indice == -1) {
+        definirIndice(0);
+      }
+    });
+  }
+
+  /// Encerrar as [Reaction] em execução.
+  @override
+  void dispose() {
+    _disposers
+      ..forEach((element) => element())
+      ..clear();
+  }
+
+  /// {@template app.ExibirQuestaoController.indice}
   /// Índice de [questaoAtual].
-  /// Será `-1` se [questaoAtual] for `null`.
+  ///
+  /// Será `-1` se [numQuestoes] for 0 (zero).
+  ///
+  /// Será redefinido automaticamente pela reação no construtor desta classe quando
+  /// [numQuestoes] for alterado.
+  ///
+  /// Será definido automaticamente para 0 (zero) pela reação no construtor desta classe
+  /// quando for -1 e [questaoAtual] for concluído com um valor diferente de `null`.
+  /// {@endtemplate}
   @readonly
   late int _indice = numQuestoes > 0 ? 0 : -1;
 
@@ -25,7 +62,8 @@ abstract class _ExibirQuestaoControllerBase with Store {
   int numQuestoes = 0;
 
   /// [Questao] a ser exibida.
-  ObservableFuture<Questao?> get questaoAtual;
+  @readonly
+  ObservableFuture<Questao?> _questaoAtual = ObservableFuture.value(null);
 
   /// Atribui um novo valor para [_indice].
   /// Se [forcar] for `true`, [valor] será aplicado independentemente do valor atual de [_indice].

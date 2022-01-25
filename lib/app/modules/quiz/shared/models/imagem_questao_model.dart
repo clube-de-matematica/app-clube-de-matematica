@@ -41,7 +41,8 @@ abstract class _ImagemQuestaoBase with Store {
 
   // ignore: unused_element
   _ImagemQuestaoBase.fromMap(Map<String, dynamic> map)
-      : name = (map[ImagemQuestao.kKeyName] as String?) ?? 'imagem.temp',
+      : assert(map[ImagemQuestao.kKeyName] != null),
+        name = (map[ImagemQuestao.kKeyName] as String?) ?? 'imagem.temp',
         base64 = map[DbConst.kDbDataImagemKeyBase64] as String,
         // A multiplicação faz a converção para double.
         width = map[DbConst.kDbDataImagemKeyLargura] * 1.0,

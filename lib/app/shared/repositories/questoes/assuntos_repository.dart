@@ -26,9 +26,35 @@ class AssuntosRepository {
   /// Conjunto observável com as instâncias de [Assunto] já carregadas.
   ObservableSet<Assunto> get assuntos => Assunto.instancias;
 
-  /// Retorna o assunto correspondente a [id].
-  /// Retorna null se o assunto não for encontrado.
+  /// Retorna, assincronamente, o assunto correspondente a [id].
+  /// Retorna `null` se o assunto não for encontrado.
   Future<Assunto?> get(int id) => _dbServicos.assunto(id);
+
+  /// Retorna um observável para o assunto correspondente a [id].
+  ///
+  /// O valor inicial será `null` se o assunto ainda não estiver em [Assunto.instancias].
+  Observable<Assunto?> getSinc(int id) {
+    final observavel = Observable<Assunto?>(null);
+    getAsinc() {
+      return get(id).then<void>((assunto) {
+        try {
+          observavel.value = assunto;
+        } catch (_) {
+          // Caso `observavel` tenha sido destruído.
+        }
+      });
+    }
+    observavel.value = Assunto.instancias.cast<Assunto?>().firstWhere(
+      (assunto) => assunto?.id == id,
+      orElse: () {
+        // O loop de eventos do Dart garante que o futuro a seguir não será concluído antes 
+        // deste método (getSinc) e consequentemente de firstWhere e orElse.
+        getAsinc();
+        return null;
+      },
+    );
+    return observavel;
+  }
 
   /// Buscar os assuntos no banco de dados.
   Future<ObservableSet<Assunto>> carregarAssuntos() async {

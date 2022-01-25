@@ -2,10 +2,8 @@ import 'package:mobx/mobx.dart';
 
 import '../../../../../shared/utils/strings_db.dart';
 import '../../../../quiz/shared/models/alternativa_questao_model.dart';
-import '../../../../quiz/shared/models/ano_questao_model.dart';
 import '../../../../quiz/shared/models/assunto_model.dart';
 import '../../../../quiz/shared/models/imagem_questao_model.dart';
-import '../../../../quiz/shared/models/nivel_questao_model.dart';
 import '../../../../quiz/shared/models/questao_model.dart';
 import 'atividade.dart';
 import 'resposta_questao_atividade.dart';
@@ -57,7 +55,7 @@ abstract class _QuestaoAtividadeBase extends RawQuestaoAtividade
   List<Alternativa> get alternativas => questao.alternativas;
 
   @override
-  Ano get ano => questao.ano;
+  int get ano => questao.ano;
 
   @override
   List<Assunto> get assuntos => questao.assuntos;
@@ -78,7 +76,7 @@ abstract class _QuestaoAtividadeBase extends RawQuestaoAtividade
   int get indice => questao.indice;
 
   @override
-  Nivel get nivel => questao.nivel;
+  int get nivel => questao.nivel;
 
   @override
   Map<String, dynamic> toJson() => questao.toJson();

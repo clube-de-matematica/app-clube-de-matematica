@@ -37,6 +37,14 @@ abstract class DbLocal {
     ).toUtc();
   }
 
+  static String codificarLista(List lista) =>
+      jsonEncode(lista);
+
+  static List<T>? decodificarLista<T>(String jsonArray) {
+    final resultado = jsonDecode(jsonArray);
+    return resultado is List ? resultado.cast<T>() : null;
+  }
+
   static String codificarHierarquia(DataHierarquia hierarquia) =>
       jsonEncode(hierarquia);
 

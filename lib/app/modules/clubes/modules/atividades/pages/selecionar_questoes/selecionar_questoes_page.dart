@@ -34,8 +34,8 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
 
   @override
   void dispose() {
-    super.dispose();
     controle.dispose();
+    super.dispose();
   }
 
   @override

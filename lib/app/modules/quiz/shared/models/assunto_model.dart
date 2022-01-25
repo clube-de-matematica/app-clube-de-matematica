@@ -25,9 +25,9 @@ class Assunto extends RawAssunto {
   int get indiceHierarquia => hierarquia.length;
 
   /// ID do assunto no índice zero da hierarquia [hierarquia].
-  /// Se [hierarquia] for vazio o assunto é uma unidade.
-  int get idUnidade {
-    if (isUnidade) return id;
+  /// Retorna `null` se o assunto é uma unidade.
+  int? get idUnidade {
+    if (isUnidade) return null;
     return hierarquia[0];
   }
 

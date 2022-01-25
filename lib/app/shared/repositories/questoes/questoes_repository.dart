@@ -13,9 +13,9 @@ class QuestoesRepository {
   Future<Questao?> get(String id) => dbServicos.questao(id);
 
   Future<int> nunQuestoes({
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
   }) {
     return dbServicos.contarQuestoes(
       anos: anos,
@@ -25,9 +25,9 @@ class QuestoesRepository {
   }
 
   Future<List<Questao>> questoes({
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
     int? limit,
     int? offset,
   }) {

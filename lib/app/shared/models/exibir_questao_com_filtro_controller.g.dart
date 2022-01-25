@@ -10,12 +10,33 @@ part of 'exibir_questao_com_filtro_controller.dart';
 
 mixin _$ExibirQuestaoComFiltroController
     on _ExibirQuestaoComFiltroControllerBase, Store {
+  Computed<ObservableFuture<int>>? _$_numQuestoesAssincComputed;
+
+  @override
+  ObservableFuture<int> get _numQuestoesAssinc =>
+      (_$_numQuestoesAssincComputed ??= Computed<ObservableFuture<int>>(
+              () => super._numQuestoesAssinc,
+              name: '_ExibirQuestaoComFiltroControllerBase._numQuestoesAssinc'))
+          .value;
+  Computed<int>? _$numQuestoesComputed;
+
+  @override
+  int get numQuestoes =>
+      (_$numQuestoesComputed ??= Computed<int>(() => super.numQuestoes,
+              name: '_ExibirQuestaoComFiltroControllerBase.numQuestoes'))
+          .value;
   Computed<ObservableFuture<Questao?>>? _$questaoAtualComputed;
 
   @override
   ObservableFuture<Questao?> get questaoAtual => (_$questaoAtualComputed ??=
           Computed<ObservableFuture<Questao?>>(() => super.questaoAtual,
               name: '_ExibirQuestaoComFiltroControllerBase.questaoAtual'))
+      .value;
+  Computed<int>? _$indiceComputed;
+
+  @override
+  int get indice => (_$indiceComputed ??= Computed<int>(() => super.indice,
+          name: '_ExibirQuestaoComFiltroControllerBase.indice'))
       .value;
 
   final _$_questaoAtualAtom =
@@ -32,6 +53,15 @@ mixin _$ExibirQuestaoComFiltroController
     _$_questaoAtualAtom.reportWrite(value, super._questaoAtual, () {
       super._questaoAtual = value;
     });
+  }
+
+  final _$abrirPaginaFiltrosAsyncAction =
+      AsyncAction('_ExibirQuestaoComFiltroControllerBase.abrirPaginaFiltros');
+
+  @override
+  Future<Filtros> abrirPaginaFiltros(BuildContext context) {
+    return _$abrirPaginaFiltrosAsyncAction
+        .run(() => super.abrirPaginaFiltros(context));
   }
 
   final _$_ExibirQuestaoComFiltroControllerBaseActionController =
@@ -77,7 +107,9 @@ mixin _$ExibirQuestaoComFiltroController
   @override
   String toString() {
     return '''
-questaoAtual: ${questaoAtual}
+numQuestoes: ${numQuestoes},
+questaoAtual: ${questaoAtual},
+indice: ${indice}
     ''';
   }
 }

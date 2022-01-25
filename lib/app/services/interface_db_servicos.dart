@@ -4,6 +4,21 @@ import '../modules/quiz/shared/models/questao_model.dart';
 import '../shared/utils/strings_db.dart';
 
 abstract class IDbServicos {
+  Future<List<int>> filtrarAnos({
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
+  });
+
+  Future<List<int>> filtrarNiveis({
+    Iterable<int> anos = const [],
+    Iterable<int> assuntos = const [],
+  });
+
+  Future<List<Assunto>> filtrarAssuntos({
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+  });
+
   Future<Assunto?> assunto(int id);
 
   Stream<List<Assunto>> getAssuntos();
@@ -13,16 +28,16 @@ abstract class IDbServicos {
   Future<Questao?> questao(String id);
 
   Future<int> contarQuestoes({
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
   });
 
   Future<List<Questao>> getQuestoes({
-    List<String> ids = const [],
-    List<int> anos = const [],
-    List<int> niveis = const [],
-    List<int> assuntos = const [],
+    Iterable<String> ids = const [],
+    Iterable<int> anos = const [],
+    Iterable<int> niveis = const [],
+    Iterable<int> assuntos = const [],
     int? limit,
     int? offset,
   });
