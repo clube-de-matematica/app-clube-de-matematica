@@ -16,13 +16,13 @@ class PessoasPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final clube = Modular.get<ClubeController>().clube;
     return Observer(builder: (context) {
-      final administradores = clube.administradores;
+      final administradores = clube.administradores.toList();
       return ListView(
         children: [
           _CategoriaUsuariosClube(
             categoria: 'Mentor',
             cor: clube.capa,
-            usuarios: [clube.proprietario],
+            usuarios: [if (clube.proprietario != null) clube.proprietario!],
           ),
           if (administradores.isNotEmpty)
             _CategoriaUsuariosClube(
@@ -33,7 +33,7 @@ class PessoasPage extends StatelessWidget {
           _CategoriaUsuariosClube(
             categoria: 'Alunos',
             cor: clube.capa,
-            usuarios: clube.membros,
+            usuarios: clube.membros.toList(),
           ),
         ],
       );
@@ -55,7 +55,6 @@ class _CategoriaUsuariosClube extends Categoria {
   }) : super(
           key: key,
           categoria: categoria,
-          cor: cor,
           itens: List.generate(
             usuarios.length,
             (index) {
@@ -69,7 +68,7 @@ class _CategoriaUsuariosClube extends Categoria {
                   leading: CircleAvatar(
                     child: Icon(
                       Icons.person,
-                      color: Modular.get<TemaClube>().texto,
+                      color: Modular.get<TemaClube>().textoEnfase,
                     ),
                     backgroundColor: cor.withOpacity(0.3),
                   ),

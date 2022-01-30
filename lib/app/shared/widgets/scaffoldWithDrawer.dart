@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:clubedematematica/app/services/teste.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -61,9 +63,6 @@ class _AppDrawer extends StatefulWidget {
   }) : super(key: key);
 
   final AppDrawerPage page;
-
-  /// Lista com os clubes do usuário.
-  List<Clube> get clubes => Modular.get<ClubesRepository>().clubes;
 
   /// Usuário do aplicativo.
   UserApp get user => Modular.get<UserApp>();
@@ -134,8 +133,11 @@ class _AppDrawerState extends State<_AppDrawer> {
     );
 
     final drawerItems = Observer(builder: (_) {
-      final clubes = _buildClubes(context);
-      return ListView(
+      final clubes = _buildClubes(
+        context,
+        Modular.get<ClubesRepository>().clubes.toList(),
+      );
+      return ListView( 
         padding: EdgeInsets.zero,
         children: [
           drawerHeader,
@@ -147,7 +149,7 @@ class _AppDrawerState extends State<_AppDrawer> {
               onTap: () => showPage(context, RotaPagina.homeClubes),
             ),
           //if (widget.page == MyDrawerPage.clubes)
-          for (var clube in clubes) clube,
+          ...clubes,
           if (clubes.isNotEmpty) const Divider(thickness: 1.5),
           if (widget.page == AppDrawerPage.clubes)
             ListTile(
@@ -185,7 +187,8 @@ class _AppDrawerState extends State<_AppDrawer> {
             leading: Icon(Icons.info_outlined),
             onTap: () {
               // TODO
-              Navigator.push(context, MaterialPageRoute(builder: (_)=>TesteDbPage()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => TesteDbPage()));
               //Navigator.pop(context);
             },
           ),
@@ -201,9 +204,9 @@ class _AppDrawerState extends State<_AppDrawer> {
     return Drawer(child: drawerItems);
   }
 
-  List<Widget> _buildClubes(BuildContext context) {
+  List<Widget> _buildClubes(BuildContext context, List<Clube> clubes) {
     final userId = widget.user.id;
-    return widget.clubes.map((clube) {
+    return clubes.map((clube) {
       final usuario = userId == null ? null : clube.getUsuario(userId);
       String subtitle = '';
 

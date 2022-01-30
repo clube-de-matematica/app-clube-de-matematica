@@ -1,6 +1,7 @@
 import 'strings_db.dart';
 
 abstract class Sql {
+  static get dataModificacao => DbConst.kDbDataDocumentKeyDataModificacao;
   static const tbQuestoes = _TbQuestoes();
   static const tbAssuntos = _TbAssuntos();
   static const tbQuestaoAssunto = _TbQuestaoAssunto();

@@ -9,7 +9,7 @@ class EditarAtividadeController extends CriarEditarAtividadeController {
   final Atividade atividade;
 
   @override
-  Future<Atividade?> salvar({
+  Future<bool> salvar({
     String? descricao,
     DateTime? encerramento,
     required DateTime liberacao,

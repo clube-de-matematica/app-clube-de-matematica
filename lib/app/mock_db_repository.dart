@@ -282,9 +282,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         DbConst.kDbDataClubeKeyPrivado: false,
         DbConst.kDbDataClubeKeyCodigo: 'lb4BlA',
         DbConst.kDbDataClubeKeyCapa: 4287349578,
-        DbConst.kDbDataClubeKeyProprietario: 1,
-        DbConst.kDbDataClubeKeyAdministradores: [],
-        DbConst.kDbDataClubeKeyMembros: [],
+        DbConst.kDbDataClubeKeyUsuarios: [],
       },
       {
         DbConst.kDbDataClubeKeyId: 12,
@@ -294,9 +292,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         DbConst.kDbDataClubeKeyPrivado: false,
         DbConst.kDbDataClubeKeyCodigo: 'Clube2',
         DbConst.kDbDataClubeKeyCapa: null,
-        DbConst.kDbDataClubeKeyProprietario: 2,
-        DbConst.kDbDataClubeKeyAdministradores: [],
-        DbConst.kDbDataClubeKeyMembros: [1],
+        DbConst.kDbDataClubeKeyUsuarios: [],
       },
       {
         DbConst.kDbDataClubeKeyId: 13,
@@ -307,9 +303,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         DbConst.kDbDataClubeKeyPrivado: false,
         DbConst.kDbDataClubeKeyCodigo: 'Clube3',
         DbConst.kDbDataClubeKeyCapa: 4286141768,
-        DbConst.kDbDataClubeKeyProprietario: 2,
-        DbConst.kDbDataClubeKeyAdministradores: [1],
-        DbConst.kDbDataClubeKeyMembros: [],
+        DbConst.kDbDataClubeKeyUsuarios: [],
       },
       {
         DbConst.kDbDataClubeKeyId: 14,
@@ -319,9 +313,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         DbConst.kDbDataClubeKeyPrivado: false,
         DbConst.kDbDataClubeKeyCodigo: 'J5lSts',
         DbConst.kDbDataClubeKeyCapa: 4284513675,
-        DbConst.kDbDataClubeKeyProprietario: 1,
-        DbConst.kDbDataClubeKeyAdministradores: [2],
-        DbConst.kDbDataClubeKeyMembros: [9],
+        DbConst.kDbDataClubeKeyUsuarios: [],
       }
     ].map((e) => Clube.fromDataClube(e)).toList();
   }

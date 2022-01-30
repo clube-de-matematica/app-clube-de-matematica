@@ -12,8 +12,13 @@ abstract class IClubeController {
 
 mixin IClubeControllerMixinShowPageEditar on IClubeController {
   /// Abre a página para editar as informações do [clube].
-  void abrirPaginaEditarClube(BuildContext context, Clube clube) {
-    Navegacao.abrirPagina(context, RotaPagina.editarClube, argumentos: clube);
+  Future<bool> abrirPaginaEditarClube(BuildContext context, Clube clube) async {
+    final retorno = await Navegacao.abrirPagina<bool>(
+      context,
+      RotaPagina.editarClube,
+      argumentos: clube,
+    );
+    return retorno ?? false;
   }
 }
 
@@ -41,9 +46,14 @@ mixin IClubeControllerMixinValidar on IClubeController {
   }
 }
 
-mixin IClubeControllerMixinSair on IClubeController {
+mixin IClubeControllerMixinSairExcluir on IClubeController {
   /// Sair do [clube].
   Future<bool> sair(Clube clube) async {
     return repository.sairClube(clube);
+  }
+
+  /// Excluir o [clube].
+  Future<bool> excluir(Clube clube) async {
+    return repository.excluirClube(clube);
   }
 }

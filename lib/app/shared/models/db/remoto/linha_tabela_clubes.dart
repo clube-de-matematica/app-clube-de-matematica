@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import '../../../utils/db/codificacao.dart';
 import '../../../utils/strings_db_sql.dart';
 import '../interfafes_db.dart';
@@ -46,6 +48,11 @@ class LinTbClubesDbRemoto extends ILinTbClubes with LinTbMixin {
 
   @override
   DateTime decodificarDataCriacao() {
-    return DbRemoto.decodificarData(dataCriacao);
+    return DbRemoto.decodificarData(dataCriacao)!;
+  }
+
+  @override
+  Color? decodificarCapa() {
+    if (capa != null) return DbRemoto.decodificarCapaClube(capa!);
   }
 }

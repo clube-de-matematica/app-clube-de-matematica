@@ -1,5 +1,9 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:developer'; //TODO
+
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
+import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
+import 'package:clubedematematica/app/shared/models/debug.dart';
 
 import '../modules/clubes/shared/models/clube.dart';
 import '../modules/quiz/shared/models/alternativa_questao_model.dart';
@@ -29,23 +33,13 @@ import '../shared/utils/strings_db_sql.dart';
 import 'interface_db_servicos.dart';
 
 class DbServicos implements IDbServicos {
-  DbServicos(this.dbLocal, this._dbRemoto) {
-    //debugger(); //TODO
-    _inicializando.then((_) async {
-      //debugger(); //TODO
-      /* await getAssuntos().then((assuntos) => assuntos.forEach((element) {
-            print(element);
-          }));
-      await getQuestoes().then((value) => value.forEach((element) {
-            print(element);
-          })); */
-      //debugger(); //TODO
-    });
-  }
+  DbServicos(this.dbLocal, this._dbRemoto);
 
   final DriftDb dbLocal;
   //TODO final IRemoteDbRepository _dbRemoto;
   final SupabaseDbRepository _dbRemoto;
+
+  int? get idUsuarioApp => UserApp.instance.id;
 
   late final _inicializando = _sincronizar();
 
@@ -107,7 +101,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbQuestoes,
       novosRegistros.map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger(); 
+      return true;
+    }());
   }
 
   Future<void> _sincronizarTbAssuntos() async {
@@ -118,7 +115,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbAssuntos,
       novosRegistros.map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger(); 
+      return true;
+    }());
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbQuestoes] e
@@ -135,7 +135,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbQuestaoAssunto,
       novosRegistros.map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger(); 
+      return true;
+    }());
   }
 
   Future<void> _sincronizarTbTiposAlternativa() async {
@@ -146,7 +149,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbTiposAlternativa,
       novosRegistros.map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbQuestoes] e
@@ -164,7 +170,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbAlternativas,
       novosRegistros.map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger(); 
+      return true;
+    }());
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbQuestoes] ser concluído.
@@ -180,7 +189,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbQuestoesCaderno,
       novosRegistros.map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   Future<void> _sincronizarTbUsuarios() async {
@@ -191,7 +203,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbUsuarios,
       novosRegistros.map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   Future<void> _sincronizarTbClubes() async {
@@ -209,7 +224,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbClubes,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   Future<void> _sincronizarTbTiposPermissao() async {
@@ -220,7 +238,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbTiposPermissao,
       novosRegistros.map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbUsuarios],
@@ -248,7 +269,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbClubeUsuario,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbUsuarios] e
@@ -272,7 +296,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbAtividades,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbQuestoesCaderno] e
@@ -299,7 +326,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbQuestaoAtividade,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbUsuarios] e
@@ -317,7 +347,6 @@ class DbServicos implements IDbServicos {
           await dbLocal.ultimaModificacao(Tabelas.respostaQuestaoAtividade),
     );
     int contagem = 0;
-    //debugger(); //TODO
     // excluir os registros marcados para exclusão.
     contagem += await dbLocal.deleteSamePrimaryKey(
       dbLocal.tbRespostaQuestaoAtividade,
@@ -328,8 +357,10 @@ class DbServicos implements IDbServicos {
       dbLocal.tbRespostaQuestaoAtividade,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
-    //debugger(); //TODO
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbQuestoes] e
@@ -356,7 +387,26 @@ class DbServicos implements IDbServicos {
       dbLocal.tbRespostaQuestao,
       novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
-    assert(contagem == novosRegistros.length);
+    assert(() {
+      if (contagem != novosRegistros.length) debugger();
+      return true;
+    }());
+  }
+
+  @override
+  Future<void> sincronizarClubes() async {
+    await Future.wait([
+      _sincronizarTbUsuarios(),
+      _sincronizarTbClubes(),
+      _sincronizarTbTiposPermissao(),
+    ]);
+    await Future.wait([
+      _sincronizarTbClubeUsuario(),
+      _sincronizarTbAtividades(),
+      _sincronizarTbQuestoesCaderno(true),
+    ]);
+    await _sincronizarTbQuestaoAtividade();
+    await _sincronizarTbRespostaQuestaoAtividade();
   }
 
   @override
@@ -398,7 +448,10 @@ class DbServicos implements IDbServicos {
   }
 
   late final _streamAssuntos =
-      dbLocal.selectAssuntos().map((linha) => linha.toAssunto()).watch();
+      dbLocal.selectAssuntos().map((linha) => linha.toAssunto()).watch()
+        ..handleError((erro, pilha) {
+          return;
+        });
 
   @override
   Stream<List<Assunto>> getAssuntos() => _streamAssuntos;
@@ -406,7 +459,7 @@ class DbServicos implements IDbServicos {
   @override
   Future<bool> insertAssunto(RawAssunto dados) async {
     final sucesso = await _dbRemoto.insertAssunto(dados);
-    if (sucesso) _sincronizarTbAssuntos();
+    if (sucesso) await _sincronizarTbAssuntos();
     return sucesso;
   }
 
@@ -469,87 +522,120 @@ class DbServicos implements IDbServicos {
   @override
   Future<bool> insertQuestao(DataDocument data) async {
     final sucesso = await _dbRemoto.insertQuestao(data);
-    if (sucesso) _sincronizarTbQuestoesCaderno(true);
+    if (sucesso) await _sincronizarTbQuestoesCaderno(true);
     return sucesso;
   }
 
   @override
-  Future<List<Clube>> getClubes(int idUsuario) async {
-    final List<LinViewClubes> dbClubes;
-    try {
-      dbClubes = await dbLocal.selectClubes;
-    } catch (_) {
-      return List<Clube>.empty();
-    }
-    final clubes = dbClubes.map((dbClube) => dbClube.toClube()).toList();
-    return clubes;
+  Stream<List<Clube>> getClubes() {
+    final id = idUsuarioApp;
+    if (id == null) return Stream.value([]);
+    final retorno =
+        dbLocal.selectClubes(id).map((linha) => linha.toClube()).watch()
+          ..handleError((erro, pilha) {
+            return;
+          });
+    return retorno;
   }
 
   @override
-  Future<DataClube> insertClube(DataClube data) async {
-    final dataClube = await _dbRemoto.insertClube(data);
-    if (dataClube.isNotEmpty) _sincronizarTbClubeUsuario(true);
-    return dataClube;
+  Future<Clube?> insertClube(RawClube data) async {
+    if (idUsuarioApp == null) return null;
+    final clube = await _dbRemoto.insertClube(data);
+    if (clube != null) await sincronizarClubes();
+    return clube;
   }
 
   @override
-  Future<DataClube> updateClube(DataClube data) async {
-    final dataClube = await _dbRemoto.updateClube(data);
-    if (dataClube.isNotEmpty) _sincronizarTbClubeUsuario(true);
-    return dataClube;
+  Future<Clube?> updateClube(RawClube data) async {
+    if (idUsuarioApp == null) return null;
+    final clube = await _dbRemoto.updateClube(data);
+    if (clube != null) await sincronizarClubes();
+    return clube;
   }
 
   @override
-  Future<DataClube> enterClube(String accessCode, int idUser) async {
-    final dataClube = await _dbRemoto.enterClube(accessCode, idUser);
+  Future<Clube?> enterClube(String accessCode) async {
+    final id = idUsuarioApp;
+    if (id == null) return null;
+    final dataClube = await _dbRemoto.enterClube(accessCode, id);
     if (dataClube.isNotEmpty) {
-      _sincronizarTbClubeUsuario(true);
-      _sincronizarTbQuestaoAtividade(true);
+      await sincronizarClubes();
+      return Clube.fromDataClube(dataClube);
     }
-    return dataClube;
+    return null;
   }
 
   @override
-  Future<bool> exitClube(int idClube, int idUser) async {
+  Future<bool> removerUsuarioClube(int idClube, int idUser) async {
+    if (idUsuarioApp == null) return false;
     final sucesso = await _dbRemoto.exitClube(idClube, idUser);
-    if (sucesso) _sincronizarTbClubeUsuario(true);
+    if (sucesso) await sincronizarClubes();
     return sucesso;
   }
 
   @override
   Future<bool> updatePermissionUserClube(
       int idClube, int idUser, int idPermission) async {
+    if (idUsuarioApp == null) return false;
     final sucesso = await _dbRemoto.updatePermissionUserClube(
         idClube, idUser, idPermission);
-    if (sucesso) _sincronizarTbClubeUsuario(true);
+    if (sucesso) await sincronizarClubes();
     return sucesso;
   }
 
   @override
-  Future<DataCollection> getAtividades(int idClube) async {
-    return _dbRemoto.getAtividades(idClube);
+  Future<bool> excluirClube(Clube clube) async {
+    if (idUsuarioApp == null) return false;
+    final sucesso = await _dbRemoto.deleteClube(clube.id);
+    if (sucesso) await sincronizarClubes();
+    return sucesso;
   }
 
   @override
-  Future<DataAtividade> insertAtividade(DataAtividade data) async {
-    return _dbRemoto.insertAtividade(data);
+  Stream<List<Atividade>> getAtividades(Clube clube) {
+    if (idUsuarioApp == null) return Stream.value([]);
+    final retorno = dbLocal
+        .selectAtividades(clube.id)
+        .map((linha) => linha.toAtividade())
+        .watch()
+      ..handleError((erro, pilha) {
+        return;
+      });
+    return retorno;
   }
 
   @override
-  Future<DataAtividade> updateAtividade(DataAtividade dados) async {
-    return _dbRemoto.updateAtividade(dados);
+  Future<Atividade?> insertAtividade(RawAtividade dados) async {
+    if (idUsuarioApp == null) return null;
+    debugger(); //TODO
+    final atividade = await _dbRemoto.insertAtividade(dados);
+    if (atividade != null) await sincronizarClubes();
+    return atividade;
+  }
+
+  @override
+  Future<Atividade?> updateAtividade(RawAtividade dados) async {
+    if (idUsuarioApp == null) return null;
+    final atividade = await _dbRemoto.updateAtividade(dados);
+    if (atividade != null) await sincronizarClubes();
+    return atividade;
   }
 
   @override
   Future<List<DataRespostaQuestaoAtividade>> getRespostasAtividade(
-      int idAtividade,
-      [int? idUsuario]) async {
-    return _dbRemoto.getRespostasAtividade(idAtividade);
+      Atividade atividade) async {
+    if (idUsuarioApp == null) return [];
+    return _dbRemoto.getRespostasAtividade(
+      atividade.id,
+      atividade.idAutor == idUsuarioApp ? null : idUsuarioApp,
+    );
   }
 
   @override
   Future<bool> upsertRespostasAtividade(
       List<DataRespostaQuestaoAtividade> data) async {
+    if (idUsuarioApp == null) return false;
     return _dbRemoto.upsertRespostasAtividade(data);
   }
 }
@@ -754,20 +840,6 @@ extension _LinTbAssuntos on LinTbAssuntos {
       titulo: assunto,
     );
   }
-  /* LinTbAssuntosDbRemoto toDbRemoto() {
-    final _hierarquia = (jsonDecode(this.hierarquia!) as List?)?.cast<int>();
-    final _dataModificacao = DateTime.fromMillisecondsSinceEpoch(
-      this.dataModificacao,
-      isUtc: true,
-    ).toIso8601String();
-    final retorno = LinTbAssuntosDbRemoto(
-      id: this.id,
-      assunto: this.assunto,
-      hierarquia: _hierarquia,
-      dataModificacao: _dataModificacao,
-    );
-    return retorno;
-  } */
 }
 
 extension _LinTbAlternativas on LinTbAlternativas {
@@ -778,6 +850,25 @@ extension _LinTbAlternativas on LinTbAlternativas {
       Sql.tbAlternativas.idTipo: idTipo,
       Sql.tbAlternativas.conteudo: conteudo,
     });
+  }
+}
+
+extension _LinTbAtividades on LinTbAtividades {
+  Atividade toAtividade() {
+    return Atividade(
+      id: id,
+      idAutor: idAutor,
+      idClube: idClube,
+      titulo: titulo,
+      descricao: descricao,
+      criacao: DbLocal.decodificarData(dataCriacao),
+      liberacao: dataLiberacao != null
+          ? DbLocal.decodificarData(dataLiberacao!)
+          : null,
+      encerramento: dataEncerramento != null
+          ? DbLocal.decodificarData(dataEncerramento!)
+          : null,
+    );
   }
 }
 
@@ -818,9 +909,8 @@ extension _LinViewClubes on LinViewClubes {
       DbConst.kDbDataClubeKeyId: id,
       DbConst.kDbDataClubeKeyNome: nome,
       DbConst.kDbDataClubeKeyDescricao: descricao,
-      DbConst.kDbDataClubeKeyProprietario: proprietario,
-      DbConst.kDbDataClubeKeyAdministradores: administradores,
-      DbConst.kDbDataClubeKeyMembros: membros,
+      DbConst.kDbDataClubeKeyUsuarios:
+          DbLocal.decodificarUsuariosClube(usuarios),
       DbConst.kDbDataClubeKeyCapa: capa,
       DbConst.kDbDataClubeKeyCodigo: codigo,
       DbConst.kDbDataClubeKeyPrivado: privado,

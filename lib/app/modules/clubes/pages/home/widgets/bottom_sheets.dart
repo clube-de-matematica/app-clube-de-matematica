@@ -14,6 +14,16 @@ class BottomSheetSairClube extends BottomSheetCancelarConfirmar {
         );
 }
 
+/// Uma página inferior para confirmar a exclusão de um clube.
+/// Ao ser fechada, retorna `true` se o usuário confirmar que deseja excluir do clube.
+class BottomSheetExcluirClube extends BottomSheetCancelarConfirmar {
+  BottomSheetExcluirClube(Clube clube, {Key? key})
+      : super(
+          key: key,
+          message: 'Deseja realmente excluir o clube "${clube.nome}"?',
+        );
+}
+
 /// Uma página inferior para exibir o código de um clube.
 class BottomSheetCodigoClube extends AppBottomSheet {
   const BottomSheetCodigoClube(this.clube, {Key? key}) : super(key: key);

@@ -1,3 +1,5 @@
+import 'package:flutter/painting.dart';
+
 import '../../utils/strings_db.dart';
 
 abstract class LinTb {
@@ -146,6 +148,8 @@ abstract class ILinTbClubes extends _LinTbComColunaExcluir {
         );
 
   DateTime decodificarDataCriacao();
+
+  Color? decodificarCapa();
 }
 
 abstract class ILinTbTiposPermissao extends LinTb {

@@ -3,7 +3,7 @@ import 'package:mobx/mobx.dart';
 
 import '../../../../navigation.dart';
 import '../../shared/models/clube.dart';
-import '../../shared/utils/mixin_controllers.dart';
+import '../../shared/utils/interface_clube_controller.dart';
 
 part 'home_clubes_controller.g.dart';
 
@@ -27,6 +27,7 @@ enum OpcoesClube {
   compartilharCodigo,
   editar,
   sair,
+  excluir,
 }
 
 extension OpcoesClubeExtension on OpcoesClube {
@@ -39,6 +40,8 @@ extension OpcoesClubeExtension on OpcoesClube {
         return 'Editar';
       case OpcoesClube.sair:
         return 'Sair do clube';
+      case OpcoesClube.excluir:
+        return 'Excluir';
     }
   }
 }
@@ -49,25 +52,25 @@ class HomeClubesController = _HomeClubesControllerBase
 abstract class _HomeClubesControllerBase extends IClubeController
     with
         Store,
-        IClubeControllerMixinSair,
+        IClubeControllerMixinSairExcluir,
         IClubeControllerMixinShowPageEditar,
         IClubeControllerMixinShowPageClube {
-  /// Lista com os clubes do usuário.
-  List<Clube> get clubes => repository.clubes;
+  /// Lista dos clubes do usuário.
+  @computed
+  List<Clube> get clubes {
+    return repository.clubes.toList();
+  }
 
   /// Abre a página para criar um clube.
   void criarClube(BuildContext context) {
     Navegacao.abrirPagina(context, RotaPagina.criarClube);
   }
 
-  /// Atualizar a lista de clubes do usuário do aplicativo.
-  Future<bool> atualizarListaDeClubes() async {
-    final clubes = await repository.carregarClubes();
-    return clubes.isNotEmpty;
-  }
-
   /// Inclui o usuário atual no clube correspondente a [codigo].
   Future<Clube?> participar(String codigo) async {
     return repository.entrarClube(codigo);
   }
+
+  /// {@macro app.IDbServicos.sincronizarClubes}
+  Future<void> sincronizarClubes() => repository.sincronizarClubes();
 }

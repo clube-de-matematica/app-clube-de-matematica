@@ -1,14 +1,15 @@
 import 'package:mobx/mobx.dart';
 
+import '../../../../shared/utils/strings_db.dart';
 import '../../../perfil/models/userapp.dart';
 import 'clube.dart';
 
 part 'usuario_clube.g.dart';
 
-/// Modelo para os dados de um usuário de clube.
+/// Modelo para um usuário de clube.
 class UsuarioClube = _UsuarioClubeBase with _$UsuarioClube;
 
-abstract class _UsuarioClubeBase extends RawUsuarioClube with Store {
+abstract class _UsuarioClubeBase with Store {
   final int id;
   @observable
   String? email;
@@ -45,21 +46,46 @@ abstract class _UsuarioClubeBase extends RawUsuarioClube with Store {
   @computed
   bool get membro => permissao == PermissoesClube.membro;
 
-  /// Sobrescreve os campos deste usuário com os respectivos valores em [outro], desde que
-  /// seus respectivos [id] e [idClube] sejam iguais.
+  /// Sobrescreve os campos modificáveis deste usuário com os respectivos valores em [outro].
   @action
-  void sobrescrever(UsuarioClube outro) {
-    if (this.id == outro.id) {
-      email = outro.email;
-      nome = outro.nome;
-      foto = outro.foto;
-      permissao = outro.permissao;
-    }
+  void mesclar(UsuarioClube outro) {
+    email = outro.email;
+    nome = outro.nome;
+    foto = outro.foto;
+    permissao = outro.permissao;
+  }
+
+  // ignore: unused_element
+  _UsuarioClubeBase.fromDataUsuarioClube(DataUsuarioClube dados)
+      : id = dados[DbConst.kDbDataUserClubeKeyIdUsuario],
+        email = dados[DbConst.kDbDataUserClubeKeyEmail],
+        nome = dados[DbConst.kDbDataUserClubeKeyNome],
+        foto = dados[DbConst.kDbDataUserClubeKeyFoto],
+        idClube = dados[DbConst.kDbDataUserClubeKeyIdClube],
+        permissao = PermissoesClube.obter(
+            dados[DbConst.kDbDataUserClubeKeyIdPermissao])!;
+
+  DataUsuarioClube toDataUsuarioClube() {
+    return {
+      DbConst.kDbDataUserClubeKeyIdUsuario: id,
+      DbConst.kDbDataUserClubeKeyEmail: email,
+      DbConst.kDbDataUserClubeKeyNome: nome,
+      DbConst.kDbDataUserClubeKeyFoto: foto,
+      DbConst.kDbDataUserClubeKeyIdClube: idClube,
+      DbConst.kDbDataUserClubeKeyIdPermissao: permissao.id,
+    };
   }
 
   @override
   String toString() {
-    return 'UsuarioClube(id: $id, email: $email, nome: $nome, foto: $foto, idClube: $idClube, permissao: $permissao)';
+    return (StringBuffer('UsuarioClube(')
+          ..write('id: $id, ')
+          ..write('email: $email, ')
+          ..write('nome: $nome, ')
+          ..write('foto: $foto, ')
+          ..write('idClube: $idClube, ')
+          ..write('permissao: $permissao)'))
+        .toString();
   }
 
   @override
@@ -120,5 +146,16 @@ class RawUsuarioClube {
       idClube: idClube ?? this.idClube,
       permissao: permissao ?? this.permissao,
     );
+  }
+
+  DataUsuarioClube toDataUsuarioClube() {
+    return {
+      if (id != null) DbConst.kDbDataUserClubeKeyIdUsuario: id,
+      if (email != null) DbConst.kDbDataUserClubeKeyEmail: email,
+      if (nome != null) DbConst.kDbDataUserClubeKeyNome: nome,
+      if (foto != null) DbConst.kDbDataUserClubeKeyFoto: foto,
+      if (idClube != null) DbConst.kDbDataUserClubeKeyIdClube: idClube,
+      if (permissao != null) DbConst.kDbDataUserClubeKeyIdPermissao: permissao,
+    };
   }
 }

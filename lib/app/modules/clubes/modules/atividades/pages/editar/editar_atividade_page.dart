@@ -50,7 +50,7 @@ class _EditarAtividadePageState extends State<EditarAtividadePage> {
         descricao: atividade.descricao,
         liberacao: atividade.liberacao,
         encerramento: atividade.encerramento,
-        questoes: atividade.questoes.map((e) => e.questao).toList(),
+        questoes: atividade.questoes,
         validarTitulo: controller.validarTitulo,
         salvar: ({
           String? descricao,
@@ -71,9 +71,9 @@ class _EditarAtividadePageState extends State<EditarAtividadePage> {
                 )
                 .whenComplete(() => _salvando = false);
             await BottomSheetCarregando(future: future).showModal(context);
-            final atividade = await future;
+            final sucesso = await future;
             if (mounted) {
-              if (atividade != null) {
+              if (sucesso) {
                 Navigator.of(context).pop();
               } else {
                 await BottomSheetErro('As alterações não foram salvas')

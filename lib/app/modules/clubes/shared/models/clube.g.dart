@@ -9,33 +9,18 @@ part of 'clube.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$Clube on _ClubeBase, Store {
-  Computed<ObservableList<Atividade>>? _$atividadesComputed;
+  Computed<Iterable<UsuarioClube>>? _$administradoresComputed;
 
   @override
-  ObservableList<Atividade> get atividades => (_$atividadesComputed ??=
-          Computed<ObservableList<Atividade>>(() => super.atividades,
-              name: '_ClubeBase.atividades'))
-      .value;
-  Computed<ObservableList<UsuarioClube>>? _$usuariosComputed;
-
-  @override
-  ObservableList<UsuarioClube> get usuarios => (_$usuariosComputed ??=
-          Computed<ObservableList<UsuarioClube>>(() => super.usuarios,
-              name: '_ClubeBase.usuarios'))
-      .value;
-  Computed<ObservableList<UsuarioClube>>? _$administradoresComputed;
-
-  @override
-  ObservableList<UsuarioClube> get administradores =>
-      (_$administradoresComputed ??= Computed<ObservableList<UsuarioClube>>(
-              () => super.administradores,
+  Iterable<UsuarioClube> get administradores => (_$administradoresComputed ??=
+          Computed<Iterable<UsuarioClube>>(() => super.administradores,
               name: '_ClubeBase.administradores'))
-          .value;
-  Computed<ObservableList<UsuarioClube>>? _$membrosComputed;
+      .value;
+  Computed<Iterable<UsuarioClube>>? _$membrosComputed;
 
   @override
-  ObservableList<UsuarioClube> get membros => (_$membrosComputed ??=
-          Computed<ObservableList<UsuarioClube>>(() => super.membros,
+  Iterable<UsuarioClube> get membros => (_$membrosComputed ??=
+          Computed<Iterable<UsuarioClube>>(() => super.membros,
               name: '_ClubeBase.membros'))
       .value;
 
@@ -69,21 +54,6 @@ mixin _$Clube on _ClubeBase, Store {
     });
   }
 
-  final _$_usuariosAtom = Atom(name: '_ClubeBase._usuarios');
-
-  @override
-  ObservableSet<UsuarioClube> get _usuarios {
-    _$_usuariosAtom.reportRead();
-    return super._usuarios;
-  }
-
-  @override
-  set _usuarios(ObservableSet<UsuarioClube> value) {
-    _$_usuariosAtom.reportWrite(value, super._usuarios, () {
-      super._usuarios = value;
-    });
-  }
-
   final _$capaAtom = Atom(name: '_ClubeBase.capa');
 
   @override
@@ -99,65 +69,19 @@ mixin _$Clube on _ClubeBase, Store {
     });
   }
 
-  final _$_atividadesAtom = Atom(name: '_ClubeBase._atividades');
+  final _$codigoAtom = Atom(name: '_ClubeBase.codigo');
 
   @override
-  ObservableSet<Atividade> get _atividades {
-    _$_atividadesAtom.reportRead();
-    return super._atividades;
+  String get codigo {
+    _$codigoAtom.reportRead();
+    return super.codigo;
   }
 
   @override
-  set _atividades(ObservableSet<Atividade> value) {
-    _$_atividadesAtom.reportWrite(value, super._atividades, () {
-      super._atividades = value;
+  set codigo(String value) {
+    _$codigoAtom.reportWrite(value, super.codigo, () {
+      super.codigo = value;
     });
-  }
-
-  final _$_ClubeBaseActionController = ActionController(name: '_ClubeBase');
-
-  @override
-  void sobrescrever(Clube outro) {
-    final _$actionInfo = _$_ClubeBaseActionController.startAction(
-        name: '_ClubeBase.sobrescrever');
-    try {
-      return super.sobrescrever(outro);
-    } finally {
-      _$_ClubeBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void addUsuarios(Iterable<UsuarioClube> usuarios, {bool verificar = false}) {
-    final _$actionInfo = _$_ClubeBaseActionController.startAction(
-        name: '_ClubeBase.addUsuarios');
-    try {
-      return super.addUsuarios(usuarios, verificar: verificar);
-    } finally {
-      _$_ClubeBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void removerUsuarios(Iterable<UsuarioClube> usuarios) {
-    final _$actionInfo = _$_ClubeBaseActionController.startAction(
-        name: '_ClubeBase.removerUsuarios');
-    try {
-      return super.removerUsuarios(usuarios);
-    } finally {
-      _$_ClubeBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void addAtividade(Atividade atividade) {
-    final _$actionInfo = _$_ClubeBaseActionController.startAction(
-        name: '_ClubeBase.addAtividade');
-    try {
-      return super.addAtividade(atividade);
-    } finally {
-      _$_ClubeBaseActionController.endAction(_$actionInfo);
-    }
   }
 
   @override
@@ -166,8 +90,7 @@ mixin _$Clube on _ClubeBase, Store {
 nome: ${nome},
 descricao: ${descricao},
 capa: ${capa},
-atividades: ${atividades},
-usuarios: ${usuarios},
+codigo: ${codigo},
 administradores: ${administradores},
 membros: ${membros}
     ''';

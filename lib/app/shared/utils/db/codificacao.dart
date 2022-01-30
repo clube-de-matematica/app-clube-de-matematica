@@ -1,16 +1,21 @@
 import 'dart:convert';
 
-import 'package:clubedematematica/app/shared/utils/strings_db.dart';
+import 'package:flutter/painting.dart';
 
-import '../../../modules/quiz/shared/models/imagem_questao_model.dart';
+import '../strings_db.dart';
 
 abstract class DbRemoto {
   static String codificarData(DateTime data) {
     return data.toUtc().toIso8601String();
   }
 
-  static DateTime decodificarData(String iso8601String) {
-    return DateTime.parse(iso8601String).toUtc();
+  static DateTime? decodificarData(String iso8601String) {
+    // As datas salvas no Supabase estão sem fuso horário, no entanto,
+    // estão em UTC. A rotina a seguir inclui o marcador do fuso horário UTC.
+    if (iso8601String.length == 23) iso8601String += 'Z';
+    try {
+      return DateTime.parse(iso8601String).toUtc();
+    } on FormatException catch (_) {}
   }
 
   static List<int> codificarHierarquia(DataHierarquia hierarquia) => hierarquia;
@@ -23,6 +28,16 @@ abstract class DbRemoto {
     String? nome,
   }) =>
       imagensEnunciado;
+
+  static String codificarCapaClube(Color capa) => capa.value.toString();
+
+  static Color? decodificarCapaClube(String capa) {
+    try {
+      return Color(int.parse(capa));
+    } /* on FormatException */ catch (_) {
+      return null;
+    }
+  }
 }
 
 abstract class DbLocal {
@@ -37,8 +52,7 @@ abstract class DbLocal {
     ).toUtc();
   }
 
-  static String codificarLista(List lista) =>
-      jsonEncode(lista);
+  static String codificarLista(List lista) => jsonEncode(lista);
 
   static List<T>? decodificarLista<T>(String jsonArray) {
     final resultado = jsonDecode(jsonArray);
@@ -68,5 +82,24 @@ abstract class DbLocal {
   static List<DataImagem>? decodificarImagensEnunciado(String imagens) {
     final resultado = jsonDecode(imagens);
     return (resultado is List?) ? resultado?.cast() : null;
+  }
+
+  static List<DataUsuarioClube>? decodificarUsuariosClube(String usuarios) {
+    final resultado = jsonDecode(usuarios);
+    return (resultado is List?) ? resultado?.cast() : null;
+  }
+
+  static int codificarBooleano(bool valor) => valor ? 1 : 0;
+
+  static bool decodificarBooleano(int valor) => valor == 1;
+
+  static String codificarCapaClube(Color capa) => capa.value.toString();
+
+  static Color? decodificarCapaClube(String capa) {
+    try {
+      return Color(int.parse(capa));
+    } /* on FormatException */ catch (_) {
+      return null;
+    }
   }
 }

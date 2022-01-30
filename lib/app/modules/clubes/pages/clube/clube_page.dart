@@ -19,7 +19,7 @@ class ClubePage extends WidgetModule {
 
   @override
   List<Bind<Object>> get binds => [
-        Bind.singleton((i) => TemaClube(clube.capa)),
+        Bind.singleton((i) => TemaClube(clube)),
         Bind.singleton((i) => ClubeController(clube)),
       ];
 
@@ -37,9 +37,9 @@ class _ClubePage extends StatefulWidget {
 
 class _ClubePageState extends State<_ClubePage> {
   ClubeController get controller => Modular.get<ClubeController>();
-  final temaClube = Modular.get<TemaClube>();
+  TemaClube get temaClube => Modular.get<TemaClube>();
   Color get corTextoCapa => temaClube.textoPrimaria;
-  Color get corTexto => temaClube.texto;
+  Color get corTexto => temaClube.textoEnfase;
   Color get capa => temaClube.primaria;
 
   @override
@@ -79,6 +79,12 @@ class _ClubePageState extends State<_ClubePage> {
               await BottomSheetCarregando(future: sair)
                   .showModal<bool>(context);
               if (await sair) Navigator.pop(context);
+            },
+            onExcluir: () async {
+              final excluir = controller.excluir();
+              await BottomSheetCarregando(future: excluir)
+                  .showModal<bool>(context);
+              if (await excluir) Navigator.pop(context);
             },
             onEditar: () => controller.abrirPaginaEditarClube(context),
             onCompartilharCodigo: () {},

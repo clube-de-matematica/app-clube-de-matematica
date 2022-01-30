@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../shared/models/clube.dart';
-import '../../shared/utils/mixin_controllers.dart';
+import '../../shared/utils/interface_clube_controller.dart';
 
 class EditarClubeController extends IClubeController
     with IClubeControllerMixinValidar, IClubeControllerMixinShowPageClube {
@@ -16,7 +16,7 @@ class EditarClubeController extends IClubeController
     required Color corTema,
     required bool privado,
   }) async {
-    final _clube = await repository.atualizarClube(
+    final sucesso = await repository.atualizarClube(
       clube: clube,
       nome: nome,
       codigo: codigo,
@@ -24,8 +24,6 @@ class EditarClubeController extends IClubeController
       capa: corTema,
       privado: privado,
     );
-    if (_clube == null) return false;
-    abrirPaginaClube(context, _clube);
-    return true;
+    return sucesso;
   }
 }

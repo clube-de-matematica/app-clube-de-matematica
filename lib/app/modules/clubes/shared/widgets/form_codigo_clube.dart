@@ -41,6 +41,7 @@ class _FormCodigoClubeState extends State<FormCodigoClube> {
           autofocus: true,
           textAlign: TextAlign.center,
           keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
           maxLength: maxLength,
           style: TextStyle(fontSize: 26.0),
           decoration: InputDecoration(

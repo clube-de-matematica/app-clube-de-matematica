@@ -5,6 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
+import '../../shared/models/clube.dart';
 import '../../shared/widgets/bottom_sheet_erro.dart';
 import '../../shared/widgets/form_codigo_clube.dart';
 import 'home_clubes_controller.dart';
@@ -41,40 +42,32 @@ class _HomeClubesPageState
           )
         ],
       ),
-      body: Observer(builder: (_) {
-        final cards = _buildCards(context);
-        return ListView(
-          padding: const EdgeInsets.all(4),
-          children: [
-            if (cards.isEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Você ainda não participa de nenhum clube.',
-                  style: textStyle,
+      body: RefreshIndicator(
+        onRefresh: controller.sincronizarClubes,
+        child: Observer(builder: (_) {
+          final cards = _buildCards(context, controller.clubes);
+          return ListView(
+            padding: const EdgeInsets.all(4),
+            children: [
+              if (cards.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Você ainda não participa de nenhum clube.',
+                    style: textStyle,
+                  ),
                 ),
-              ),
-            for (var clube in cards) clube,
-          ],
-        );
-      }),
+              for (var clube in cards) clube,
+            ],
+          );
+        }),
+      ),
       floatingActionButton: _buildBotaoAdicionar(context),
     );
   }
 
-  Future _onParticipar(BuildContext context, String codigo) async {
-    final future = controller.participar(codigo);
-    await BottomSheetCarregando(future: future).showModal(context);
-    final clube = await future;
-    if (clube != null) {
-      controller.abrirPaginaClube(context, clube);
-    } else {
-      await BottomSheetErroParticiparClube().showModal(context);
-    }
-  }
-
-  List<Widget> _buildCards(BuildContext context) {
-    return controller.clubes.map((clube) {
+  List<Widget> _buildCards(BuildContext context, List<Clube> clubes) {
+    return clubes.map((clube) {
       return ClubeCard(
         controller: controller,
         clube: clube,
@@ -111,7 +104,18 @@ class _HomeClubesPageState
             await AppBottomSheet(
               isScrollControlled: true,
               content: FormCodigoClube(
-                onParticipar: (codigo) => _onParticipar(context, codigo),
+                onParticipar: (codigo) async {
+                  final future = controller.participar(codigo);
+                  await BottomSheetCarregando(future: future)
+                      .showModal(context);
+                  final clube = await future;
+                  if (clube != null) {
+                    Navigator.of(context).pop();
+                    controller.abrirPaginaClube(context, clube);
+                  } else {
+                    await BottomSheetErroParticiparClube().showModal(context);
+                  }
+                },
               ),
               builder: (context, child) {
                 return Container(

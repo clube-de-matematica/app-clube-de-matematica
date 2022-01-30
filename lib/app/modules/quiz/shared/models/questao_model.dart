@@ -45,6 +45,19 @@ class Questao {
     _instancias.add(this);
   }
 
+  /// Cria uma instância sem incluí-la em [instancias].
+  Questao.noSingleton({
+    required this.id,
+    required this.ano,
+    required this.nivel,
+    required this.indice,
+    required this.assuntos,
+    required this.enunciado,
+    required this.alternativas,
+    required this.gabarito,
+    required this.imagensEnunciado,
+  });
+
   /// Retorna o primeiro elemento que satisfaz `element.id == id`.
   /// Se nenhum elemento satisfizer `element.id == id`, o resultado da chamada da
   /// função `orElse` será retornado.
@@ -86,8 +99,9 @@ class Questao {
         (dados[DbConst.kDbDataQuestaoKeyAssuntos] as List).cast<int>();
     final futuros = idsAssuntos
         .map((idAssunto) => Modular.get<AssuntosRepository>().get(idAssunto));
-    _assuntos = (await Future.wait(futuros)).where((e) => e!=null).toList().cast();
-    
+    _assuntos =
+        (await Future.wait(futuros)).where((e) => e != null).toList().cast();
+
     final dadosAlternativas =
         dados[DbConst.kDbDataQuestaoKeyAlternativas] as List;
     dadosAlternativas.forEach((dataAlternativa) {

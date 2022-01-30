@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -23,131 +26,64 @@ class ClubesRepository = _ClubesRepositoryBase with _$ClubesRepository;
 
 abstract class _ClubesRepositoryBase with Store implements Disposable {
   final IDbServicos dbServicos;
-  final UserApp usuarioApp;
   final _disposers = <ReactionDisposer>[];
 
-  _ClubesRepositoryBase(this.dbServicos, this.usuarioApp) {
+  _ClubesRepositoryBase(this.dbServicos) {
+    _assinaturaClubes = dbServicos.getClubes().listen((clubes) {
+      this.clubes
+        ..removeAll(this.clubes.difference(clubes.toSet()))
+        ..addAll(clubes);
+    });
+
     _disposers.add(
       autorun(
         (_) {
-          if (usuarioApp.id == null)
-            _cleanClubes();
-          else
-            carregarClubes();
+          if (usuarioApp.id == null) {
+            // TODO: excluir clubes.
+          } else {
+            // TODO: baixar clubes.
+          }
         },
       ),
     );
   }
 
-  /// Lista com os clubes já carregadas.
-  @observable
-  ObservableList<Clube> _clubes = <Clube>[].asObservable();
+  late final StreamSubscription _assinaturaClubes;
 
-  /// Lista com os clubes já carregadas.
-  @computed
-  List<Clube> get clubes => _clubes;
+  UserApp get usuarioApp => UserApp.instance;
 
-  /// Lista com os clubes já carregadas.
-  /// A [Reaction] `asyncWhen` é usada para esperar uma condição em um [Observable].
-  /// Ficará ativa até que a condição seja satisfeita pela primeira vez.
-  /// Após isso ela executa o seu método `dispose`.
-  Future<List<Clube>> get clubesAsync =>
-      asyncWhen((_) => _clubes.isNotEmpty).then((_) => _clubes);
+  /// {@macro app._ObservableSetClubes}
+  final _ObservableSetClubes clubes = _ObservableSetClubes();
 
-  /// Adiciona um novo [Clube] a [clubes].
-  @action
-  void _addInClubes(Clube clube) {
-    if (!_existeClube(clube.id)) _clubes.add(clube);
-  }
-
-  /// Limpar a lista de clubes.
-  @action
-  void _cleanClubes() => _clubes.clear();
-
-  /// Retorna `true` se um [Clube] com o mesmo [id] já tiver sido instanciado.
-  /// O método `any()` executa um `for` nos elementos de [clubes].
-  /// O loop é interrompido assim que a condição for verdadeira.
-  bool _existeClube(int id) {
-    if (_clubes.isEmpty)
-      return false;
-    else
-      return _clubes.any((element) => element.id == id);
-  }
-
-  // Assim o [Observable] notificará apenas ao final da execução do método.
-  /// Buscar os clubes no banco de dados e carregar na lista [clubes],
-  /// atualizando os clubes quando já estiverem na lista.
-  /// Retornará uma lista vazia se o usuário não estiver logado ou ocorrer algum erro ao buscar os dados.
-  @action
-  Future<List<Clube>> carregarClubes() async {
-    if (usuarioApp.id == null) return List<Clube>.empty();
-    List<Clube> resultado;
-    try {
-      // Aguardar o retorno dos clubes.
-      resultado = await dbServicos.getClubes(usuarioApp.id!);
-    } catch (e) {
-      assert(Debug.printBetweenLine(
-          "Erro a buscar os dados da coleção ${CollectionType.clubes.name}."));
-      assert(Debug.print(e));
-      return List<Clube>.empty();
-    }
-    if (resultado.isEmpty) return resultado;
-
-    _clubes.removeWhere(
-      (clube) => resultado.any(
-        (clubeTemp) => clubeTemp.id == clube.id,
-      ),
-    );
-
-    resultado.forEach((clubeTemp) {
-      try {
-        _clubes
-            .firstWhere((clube) => clube.id == clubeTemp.id)
-            .sobrescrever(clubeTemp);
-      } catch (_) {
-        // Não será emitido várias notificações, pois `carregarClubes` também é um `action`.
-        _addInClubes(clubeTemp);
-      }
-    });
-
-    return _clubes;
-  }
+  /// {@macro app.IDbServicos.sincronizarClubes}
+  Future<void> sincronizarClubes() => dbServicos.sincronizarClubes();
 
   /// Criar um novo clube com as informações dos parâmetros.
   /// Se o processo for bem sucedido, retorna o [Clube] criado.
   @action
   Future<Clube?> criarClube(RawClube dados) async {
     if (usuarioApp.id == null) return null;
-    final proprietario = RawUsuarioClube(id: usuarioApp.id);
-    final codigo = IdBase62.getIdClube();
-    final dataClube = await dbServicos.insertClube(
-      RawClube(
-        nome: dados.nome,
-        proprietario: proprietario,
-        codigo: codigo,
-        descricao: dados.descricao,
-        privado: dados.privado,
-        administradores: dados.administradores,
-        membros: dados.membros,
-        capa: dados.capa,
-      ).toDataClube(),
+    final proprietario = RawUsuarioClube(
+      id: usuarioApp.id,
+      permissao: PermissoesClube.proprietario,
     );
-    if (dataClube.isNotEmpty) {
-      final clube = Clube.fromDataClube(dataClube);
-      _addInClubes(clube);
-      return clube;
-    } else {
-      return null;
-    }
+    final codigo = IdBase62.getIdClube();
+    final clube = await dbServicos.insertClube(
+      dados.copyWith(
+        codigo: codigo,
+        usuarios: [proprietario, ...?dados.usuarios],
+      ),
+    );
+    return clube;
   }
 
   /// Remove [usuario] de [clube].
   Future<bool> removerDoClube(Clube clube, UsuarioClube usuario) async {
     if (usuarioApp.id == null) return false;
     if (clube.id != usuario.idClube) return false;
-    final sucesso = await dbServicos.exitClube(clube.id, usuario.id);
+    final sucesso = await dbServicos.removerUsuarioClube(clube.id, usuario.id);
     if (sucesso) {
-      clube.removerUsuarios([usuario]);
+      clube.usuarios.remove(usuario);
       return true;
     } else {
       return false;
@@ -163,7 +99,6 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuario.proprietario) return false;
     final sucesso = await removerDoClube(clube, usuario);
     if (sucesso) {
-      _clubes.remove(clube);
       return true;
     } else {
       return false;
@@ -174,27 +109,13 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// Se o processo for bem sucedido, retorna o [Clube] correspondente.
   @action
   Future<Clube?> entrarClube(String codigo) async {
-    if (usuarioApp.id == null) return null;
-    final dataClube = await dbServicos.enterClube(codigo, usuarioApp.id!);
-    if (dataClube.isNotEmpty) {
-      final temp = Clube.fromDataClube(dataClube);
-      final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
-      if (indice == -1) {
-        _addInClubes(temp);
-        return temp;
-      } else {
-        final clube = _clubes[indice];
-        clube.sobrescrever(temp);
-        return clube;
-      }
-    } else {
-      return null;
-    }
+    final clube = await dbServicos.enterClube(codigo);
+    return clube;
   }
 
   /// Atualiza os dados do clube que foram modificados.
   @action
-  Future<Clube?> atualizarClube({
+  Future<bool> atualizarClube({
     required Clube clube,
     required String nome,
     required String codigo,
@@ -202,46 +123,38 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     required Color capa,
     required bool privado,
   }) async {
-    if (usuarioApp.id == null) return null;
+    if (usuarioApp.id == null) return false;
 
     if (descricao?.isEmpty ?? false) descricao = null;
+
     final atualizarDescricao = clube.descricao != descricao;
-    // Como `null` é um valor válido para a descrição, para não ser atualizada,
-    // ela deve ser envida como uma string vazia,
-    if (!atualizarDescricao) descricao = '';
-
     final atualizarCapa = clube.capa.value != capa.value;
-    // Como `null` é um valor válido para a capa, para não ser atualizada,
-    // ela deve ser envida como uma string vazia,
-    final dataCapa = atualizarCapa ? '${capa.value}' : '';
+    final atualizarNome = clube.nome != nome;
+    final atualizarCodigo = clube.codigo != codigo;
+    final atualizarPrivado = clube.privado != privado;
 
-    final DataClube dados = {
-      if (clube.nome != nome) DbConst.kDbDataClubeKeyNome: nome,
-      if (clube.codigo != codigo) DbConst.kDbDataClubeKeyCodigo: codigo,
-      if (clube.privado != privado) DbConst.kDbDataClubeKeyPrivado: privado,
-    };
-    if (dados.isEmpty && !atualizarCapa && !atualizarDescricao) {
+    if (!atualizarNome &&
+        !atualizarCodigo &&
+        !atualizarPrivado &&
+        !atualizarCapa &&
+        !atualizarDescricao) {
       assert(Debug.print('[ATTENTION] Não há dados para serem atualizados.'));
-      return clube;
+      return true;
     }
-    dados[DbConst.kDbDataClubeKeyId] = clube.id;
-    dados[DbConst.kDbDataClubeKeyDescricao] = descricao;
-    dados[DbConst.kDbDataClubeKeyCapa] = dataCapa;
 
-    final dataResult = await dbServicos.updateClube(dados);
-    if (dataResult.isNotEmpty) {
-      final temp = Clube.fromDataClube(dataResult);
-      final indice = _clubes.indexWhere((clube) => clube.id == temp.id);
-      if (indice == -1) {
-        return null;
-      } else {
-        final clube = _clubes[indice];
-        clube.sobrescrever(temp);
-        return clube;
-      }
-    } else {
-      return null;
-    }
+    final dados = RawClube(
+      id: clube.id,
+      nome: atualizarNome ? nome : null,
+      codigo: atualizarCodigo ? codigo : null,
+      privado: atualizarPrivado ? privado : null,
+      // Como `null` é um valor válido para a descrição, para não ser atualizada,
+      // ela deve ser envida como uma string vazia,
+      descricao: atualizarDescricao ? descricao : '',
+      capa: atualizarCapa ? capa : null,
+    );
+
+    final _clube = await dbServicos.updateClube(dados);
+    return _clube == null ? false : true;
   }
 
   /// Atualiza a permissão do [usuario] para [permissao] em [clube].
@@ -263,31 +176,15 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     }
   }
 
-  Future<List<Atividade>> carregarAtividades(Clube clube) async {
-    if (usuarioApp.id == null) return List<Atividade>.empty();
-    DataCollection resultado;
-    try {
-      resultado = await dbServicos.getAtividades(clube.id);
-    } catch (e) {
-      assert(Debug.printBetweenLine(
-          "Erro ao buscar os dados da coleção ${CollectionType.atividades.name}."));
-      assert(Debug.print(e));
-      return List<Atividade>.empty();
-    }
-    if (resultado.isEmpty) return List<Atividade>.empty();
+  Future<bool> excluirClube(Clube clube) => dbServicos.excluirClube(clube);
 
-    final futuros = resultado
-        .map((dataAtividade) => Atividade.fromDataAtividade(dataAtividade));
-
-    final temp = await Future.wait(futuros);
-
-    clube.sobrescrever(clube.copyWith(atividades: temp));
-
-    return clube.atividades;
+  /// Retorna um [Stream] para a lista de atividades do [clube].
+  Stream<List<Atividade>> atividades(Clube clube) {
+    return dbServicos.getAtividades(clube);
   }
 
   /// {@macro app.IDbRepository.insertAtividade}
-  Future<Atividade?> criarAtividade({
+  Future<bool> criarAtividade({
     required Clube clube,
     required String titulo,
     String? descricao,
@@ -295,35 +192,32 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     required DateTime dataLiberacao,
     DateTime? dataEncerramento,
   }) async {
-    if (usuarioApp.id == null) return null;
+    if (usuarioApp.id == null) return false;
     assert(!dataLiberacao.isBefore(DateUtils.dateOnly(DateTime.now())));
     assert(
         dataEncerramento == null || !dataEncerramento.isBefore(dataLiberacao));
     final idAutor = usuarioApp.id!;
-    if (!clube.permissaoCriarAtividade(idAutor)) return null;
+    if (!clube.permissaoCriarAtividade(idAutor)) return false;
     if (questoes != null && questoes.isEmpty) questoes = null;
-    final dataAtividade = await dbServicos.insertAtividade(
+    final atividade = await dbServicos.insertAtividade(
       RawAtividade(
         idClube: clube.id,
         idAutor: idAutor,
         titulo: titulo,
         descricao: descricao,
-        questoes: questoes?.map((questao) => RawQuestaoAtividade(questao: questao)).toList(),
+        questoes: questoes
+            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.id))
+            .toList(),
         liberacao: dataLiberacao,
         encerramento: dataEncerramento,
-      ).toDataAtividade(),
+      ),
     );
-    if (dataAtividade.isNotEmpty) {
-      final atividade = await Atividade.fromDataAtividade(dataAtividade);
-      clube.addAtividade(atividade);
-      return atividade;
-    } else {
-      return null;
-    }
+
+    return atividade == null ? false : true;
   }
 
   /// {@macro app.IDbRepository.updateAtividade}
-  Future<Atividade?> atualizarAtividade({
+  Future<bool> atualizarAtividade({
     required Atividade atividade,
     required String titulo,
     String? descricao,
@@ -331,39 +225,34 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     required DateTime dataLiberacao,
     DateTime? dataEncerramento,
   }) async {
-    if (usuarioApp.id == null) return null;
+    if (usuarioApp.id == null) return false;
     assert(!dataLiberacao.isBefore(DateUtils.dateOnly(DateTime.now())));
     assert(
         dataEncerramento == null || !dataEncerramento.isBefore(dataLiberacao));
     final permitirUsuario = atividade.idAutor == usuarioApp.id!;
     assert(permitirUsuario);
     if (questoes != null && questoes.isEmpty) questoes = null;
-    final dataAtividade = await dbServicos.updateAtividade(
+    final _atividade = await dbServicos.updateAtividade(
       RawAtividade(
         id: atividade.id,
         titulo: titulo,
         descricao: descricao,
-        questoes: questoes?.map((questao) => RawQuestaoAtividade(questao: questao)).toList(),
+        questoes: questoes
+            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.id))
+            .toList(),
         liberacao: dataLiberacao,
         encerramento: dataEncerramento,
-      ).toDataAtividade(),
+      ),
     );
-    if (dataAtividade.isNotEmpty) {
-      atividade.sobrescrever(await Atividade.fromDataAtividade(dataAtividade));
-      return atividade;
-    } else {
-      return null;
-    }
+
+    return _atividade == null ? false : true;
   }
 
   Future<Atividade?> carregarRespostasAtividade(Atividade atividade) async {
     if (usuarioApp.id == null) return null;
     List<DataRespostaQuestaoAtividade> dataRespostas;
     try {
-      dataRespostas = await dbServicos.getRespostasAtividade(
-        atividade.id,
-        atividade.idAutor == usuarioApp.id ? null : usuarioApp.id!,
-      );
+      dataRespostas = await dbServicos.getRespostasAtividade(atividade);
     } catch (e) {
       assert(Debug.printBetweenLine(
           "Erro ao buscar os dados da coleção ${CollectionType.respostasQuestaoAtividade.name}."));
@@ -411,8 +300,68 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// Encerrar as reações em execução.
   @override
   void dispose() {
+    _assinaturaClubes.cancel();
     _disposers
       ..forEach((element) => element())
       ..clear();
+  }
+}
+
+/// {@template app._ObservableSetClubes}
+/// Conjunto com os [Clube] do usuário.
+/// {@endtemplate}
+class _ObservableSetClubes extends ObservableSet<Clube> {
+  @override
+  bool contains(Object? clube) {
+    if (clube is Clube) {
+      return where((e) => e.id == clube.id).isNotEmpty;
+    }
+    return false;
+  }
+
+  @override
+  bool add(Clube clube) => _add(clube);
+
+  @action
+  bool _add(Clube clube) {
+    try {
+      firstWhere((e) => e.id == clube.id).mesclar(clube);
+      return true;
+    } on StateError catch (_) {
+      return super.add(clube);
+    }
+  }
+
+  @override
+  bool remove(Object? clube) {
+    if (clube is Clube) return _remove(clube);
+    return false;
+  }
+
+  @action
+  bool _remove(Clube clube) {
+    try {
+      return super.remove(firstWhere((e) => e.id == clube.id));
+    } on StateError catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Set<Clube> intersection(Set<Object?> outro) {
+    Set<Clube> resultado = toSet();
+    resultado.removeWhere(
+      (clube) => !outro.any((e) => e is Clube && e.id == clube.id),
+    );
+    return resultado;
+  }
+
+  @override
+  Set<Clube> difference(Set<Object?> outro) {
+    Set<Clube> resultado = toSet();
+    resultado.removeWhere(
+      (clube) => outro.any((e) => e is Clube && e.id == clube.id),
+    );
+    return resultado;
   }
 }

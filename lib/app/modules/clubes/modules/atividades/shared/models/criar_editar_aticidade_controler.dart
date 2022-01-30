@@ -4,7 +4,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../../quiz/shared/models/questao_model.dart';
 import '../../../../shared/models/clube.dart';
 import '../../../../shared/repositories/clubes_repository.dart';
-import '../../models/atividade.dart';
 
 abstract class CriarEditarAtividadeController {
   CriarEditarAtividadeController(this.clube);
@@ -25,7 +24,7 @@ abstract class CriarEditarAtividadeController {
 
   /// Ação executada para salvar os dados da atividade.
   /// Retorna `null` se a ação não for bem sucedida.
-  Future<Atividade?> salvar({
+  Future<bool> salvar({
     String? descricao,
     DateTime? encerramento,
     required DateTime liberacao,

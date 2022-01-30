@@ -94,7 +94,7 @@ enum RotaPagina {
   /// Representa a rota para a página [EditarClubePage].
   editarClube,
 
-  /// Representa a rota para a página [ResponderAtividadePage] ou [ConsolidarAtividadePage], 
+  /// Representa a rota para a página [ResponderAtividadePage] ou [ConsolidarAtividadePage],
   /// dependendo da permissão do usuário.
   atividade,
 
@@ -209,13 +209,13 @@ abstract class Navegacao {
   }
 
   /// Abre a página correspondente aos parâmetros dados.
-  static abrirPagina<T extends Object?>(
+  static Future<T?> abrirPagina<T extends Object?>(
     BuildContext context,
     RotaPagina rota, {
     String? nomeRota,
     Object? argumentos,
     T? retorno,
-  }) {
+  }) async {
     assert(!(rota.dinamica && nomeRota == null));
 
     if (!rota.dinamica) nomeRota = rota.nome;
@@ -226,10 +226,10 @@ abstract class Navegacao {
     final novaPagina = nomeRota!;
     final paginaAtualEClube =
         paginaAtual?.startsWith('${RotaPagina.homeClubes.nome}/') ?? false;
-    
+
     if (novaPagina != paginaAtual) {
       if (novaPagina == RotaPagina.login.nome) {
-        return navegador.pushNamedAndRemoveUntil(
+        return navegador.pushNamedAndRemoveUntil<T>(
           novaPagina,
           (_) => false,
           arguments: argumentos,
@@ -237,20 +237,22 @@ abstract class Navegacao {
       }
       // Se a nova página está na pilha e é a anterior.
       if (novaPagina == paginaAnterior) {
-        return navegador.pop(retorno);
+        navegador.pop(retorno);
+        return null;
       }
       // Se a nova página está na pilha mas não é a anterior.
       else if (paginas.contains(novaPagina)) {
-        return navegador.popUntil(_haRotaComNome(novaPagina));
+        navegador.popUntil(_haRotaComNome(novaPagina));
+        return null;
       }
       //
       else if (paginaAtual == RotaPagina.quiz.nome) {
-        return navegador.pushNamed(novaPagina, arguments: argumentos);
+        return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
       }
       // Se a página atual é não empilhável (não deve ser posta sob outra).
       else if (paginaAtual != null &&
           !(_buscarRotaPagina(paginaAtual)?.empilhavel ?? true)) {
-        return navegador.pushReplacementNamed(novaPagina,
+        return navegador.pushReplacementNamed<T, dynamic>(novaPagina,
             arguments: argumentos, result: retorno);
       }
       //
@@ -258,47 +260,48 @@ abstract class Navegacao {
         switch (rota) {
           case RotaPagina.quiz:
             // Se a nova página é a de questões (página do quiz) e não está na pilha.
-            return navegador.pushNamedAndRemoveUntil(
+            return navegador.pushNamedAndRemoveUntil<T>(
               novaPagina,
               (_) => false,
               arguments: argumentos,
             );
           case RotaPagina.filtros:
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
+            return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.perfil:
             if (paginaAtual == RotaPagina.login.nome) {
-              return navegador.pushReplacementNamed(novaPagina,
+              return navegador.pushReplacementNamed<T, dynamic>(novaPagina,
                   arguments: argumentos, result: retorno);
             } else {
-              return navegador.pushNamed(novaPagina, arguments: argumentos);
+              return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
             }
           case RotaPagina.homeClubes:
             if (paginaAtualEClube) {
               // Se a página atual for de um clube.
-              return navegador.pushReplacementNamed(novaPagina,
+              return navegador.pushReplacementNamed<T, dynamic>(novaPagina,
                   arguments: argumentos, result: retorno);
             }
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
+            return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.clube:
             if (paginaAtualEClube) {
               // Se a página atual for de um clube.
-              return navegador.pushReplacementNamed(novaPagina,
+              return navegador.pushReplacementNamed<T, dynamic>(novaPagina,
                   arguments: argumentos, result: retorno);
             }
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
+            return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.criarClube:
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
+            return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.editarClube:
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
+            return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.atividade:
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
+            return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.criarAtividade:
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
+            return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.editarAtividade:
-            return navegador.pushNamed(novaPagina, arguments: argumentos);
+            return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           default:
             // TODO
-            throw UnimplementedError('A rota $novaPagina não foi implementada.');
+            throw UnimplementedError(
+                'A rota $novaPagina não foi implementada.');
         }
       }
     }

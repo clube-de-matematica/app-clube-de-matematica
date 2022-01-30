@@ -55,7 +55,7 @@ class LinTbAtividadesDbRemoto extends ILinTbAtividades with LinTbMixin {
 
   @override
   DateTime decodificarDataCriacao() {
-    return DbRemoto.decodificarData(dataCriacao);
+    return DbRemoto.decodificarData(dataCriacao)!;
   }
 
   @override

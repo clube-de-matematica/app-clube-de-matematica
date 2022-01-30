@@ -1,12 +1,17 @@
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/argumentos_atividade_page.dart';
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mobx/mobx.dart';
 
 import '../../../../navigation.dart';
 import '../../../perfil/models/userapp.dart';
+import '../../modules/atividades/models/argumentos_atividade_page.dart';
 import '../../modules/atividades/models/atividade.dart';
 import '../../shared/models/clube.dart';
 import '../../shared/models/usuario_clube.dart';
-import '../../shared/utils/mixin_controllers.dart';
+import '../../shared/utils/interface_clube_controller.dart';
 
 /// Uma enumeração para os itens do menu de opções dos clubes.
 enum OpcoesUsuarioClube {
@@ -18,25 +23,48 @@ enum OpcoesUsuarioClube {
 }
 
 class ClubeController extends IClubeController
-    with IClubeControllerMixinShowPageEditar, IClubeControllerMixinSair {
-  ClubeController(this.clube);
+    with IClubeControllerMixinShowPageEditar, IClubeControllerMixinSairExcluir
+    implements Disposable {
+  ClubeController(this.clube) {
+    _assinar();
+  }
+
+  late StreamSubscription _assinaturaAtividades;
+
+  StreamSubscription _assinar() {
+    try {
+      _assinaturaAtividades.cancel();
+    } catch (_) {
+      // Caso _assinaturaAtividades não tenha sido inicializado;
+    }
+    return _assinaturaAtividades =
+        repository.atividades(clube).listen((atividades) {
+      clube.atividades.addAll(atividades);
+    });
+  }
+
+  Future<void> sincronizarAtividades() => repository.sincronizarClubes();
 
   final Clube clube;
-  bool _carregarAtividades = true;
 
   /// O [UsuarioClube] correspondente ao usuário atual do aplicativo para [clube].
   UsuarioClube get usuarioApp => clube.getUsuario(UserApp.instance.id!)!;
 
-  /// Lista com as atividades do clube.
-  List<Atividade> get atividades {
-    if (_carregarAtividades) repository.carregarAtividades(clube);
-    _carregarAtividades = false;
-    return clube.atividades;
+  List<Atividade> _atividades = [];
+
+  ObservableList<Atividade> get atividades {
+    final lista = clube.atividades.toList();
+    if (lista.isEmpty && _atividades.isNotEmpty) {
+      // Ocorre quando o clube é mesclado.
+      _assinar();
+    }
+    _atividades = lista;
+    return lista.asObservable();
   }
 
   @override
-  void abrirPaginaEditarClube(BuildContext context, [Clube? clube]) {
-    super.abrirPaginaEditarClube(context, clube ?? this.clube);
+  Future<bool> abrirPaginaEditarClube(BuildContext context, [Clube? clube]) {
+    return super.abrirPaginaEditarClube(context, clube ?? this.clube);
   }
 
   /// Abre a página para criar uma nova atividade.
@@ -60,6 +88,11 @@ class ClubeController extends IClubeController
   @override
   Future<bool> sair([Clube? clube]) async {
     return super.sair(clube ?? this.clube);
+  }
+
+  @override
+  Future<bool> excluir([Clube? clube]) async {
+    return super.excluir(clube ?? this.clube);
   }
 
   /// Define [usuario] como administrador de [clube].
@@ -100,5 +133,11 @@ class ClubeController extends IClubeController
       return repository.removerDoClube(clube, usuario);
     }
     return false;
+  }
+
+  @override
+  void dispose() {
+    _assinaturaAtividades.cancel();
+    //super.dipose();
   }
 }

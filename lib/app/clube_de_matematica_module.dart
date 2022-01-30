@@ -1,4 +1,3 @@
-import 'package:clubedematematica/app/services/db_servicos.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -11,6 +10,7 @@ import 'modules/perfil/models/userapp.dart';
 import 'modules/perfil/perfil_module.dart';
 import 'modules/quiz/quiz_module.dart';
 import 'navigation.dart';
+import 'services/db_servicos.dart';
 import 'services/interface_db_servicos.dart';
 import 'shared/repositories/drift/drift_db.dart';
 import 'shared/repositories/interface_auth_repository.dart';
@@ -45,10 +45,7 @@ class ClubeDeMatematicaModule extends Module {
               i.get<Supabase>(),
               i.get<IAuthRepository>(),
             )),
-        Bind.lazySingleton((i) => ClubesRepository(
-              i.get<IDbServicos>(),
-              i.get<UserApp>(),
-            )),
+        Bind.lazySingleton((i) => ClubesRepository(i.get<IDbServicos>())),
         /* Bind<IDbRepository>((i) => MockDbRepository()),
         Bind.lazySingleton((i) => ClubesRepository(
               i.get<MockDbRepository>(),

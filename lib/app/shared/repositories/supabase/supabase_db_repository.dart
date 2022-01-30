@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
+import 'package:clubedematematica/app/shared/utils/db/codificacao.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -59,28 +62,26 @@ class SupabaseDbRepository
   }) async {
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository._obterDados()...'));
-    final nomes = Sql.tbQuestoes;
     try {
       assert(Debug.print('[INFO] Solicitando os dados da tabela "$tabela"...'));
       PostgrestFilterBuilder filtro = _client.from(tabela).select();
       if (modificadoApos != null) {
-        filtro = filtro.gt(nomes.dataModificacao, modificadoApos);
+        filtro = filtro.gt(Sql.dataModificacao, modificadoApos);
       }
       final resposta = await filtro.execute();
-      if (resposta.error != null) {
-        final error = resposta.error as PostgrestError;
-        ErrorHandler.reportError(FlutterErrorDetails(
-          exception: error,
-          library: 'SupabaseDbRepository._obterDados('
-              'tabela: $tabela '
-              'modificadoApos: ${modificadoApos?.toIso8601String()})',
-        ));
-        throw 'PostgrestError';
-      }
+      if (resposta.error != null) throw resposta.error!;
       return (resposta.data as List).cast();
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$tabela".'));
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message('SupabaseDbRepository._obterDados('
+            'tabela: $tabela '
+            'modificadoApos: ${modificadoApos?.toIso8601String()})'),
+      ));
       return [];
     }
   }
@@ -465,13 +466,13 @@ class SupabaseDbRepository
   }
 
   @override
-  Future<DataClube> insertClube(DataClube dados) async {
+  Future<Clube?> insertClube(RawClube dados) async {
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository.insertClube()...'));
     _checkAuthentication('insertClube()');
     // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
     final data = _prepareInsertClube(dados);
-    if (data.isEmpty) return DataClube();
+    if (data.isEmpty) return null;
     try {
       assert(Debug.print('[INFO] Inserindo o clube ${data.toString()}...'));
       final response =
@@ -481,10 +482,10 @@ class SupabaseDbRepository
         assert(
             Debug.print('[ERROR] Erro ao inserir o clube ${data.toString()}. '
                 '\n${error.toString()}'));
-        return DataClube();
+        return null;
       }
       final list = (response.data as List).cast<DataClube>();
-      return list.isNotEmpty ? list[0] : DataClube();
+      return list.isNotEmpty ? Clube.fromDataClube(list[0]) : null;
     } catch (_) {
       assert(
           Debug.print('[ERROR] Erro ao inserir o clube ${data.toString()}.'));
@@ -492,31 +493,52 @@ class SupabaseDbRepository
     }
   }
 
-  Map<String, dynamic> _prepareInsertClube(DataClube data) {
-    final nome = data[DbConst.kDbDataClubeKeyNome] as String?;
-    final proprietario = data[DbConst.kDbDataClubeKeyProprietario] as int?;
-    final codigo = data[DbConst.kDbDataClubeKeyCodigo] as String?;
+  Map<String, dynamic> _prepareInsertClube(RawClube data) {
+    final usuarios = data.usuarios;
 
-    final condicao = ![nome, proprietario, codigo].contains(null);
+    administradores() {
+      return usuarios
+          ?.where((usuario) {
+            return usuario.permissao == PermissoesClube.administrador &&
+                usuario.id != null;
+          })
+          .map((e) => e.id!)
+          .toList();
+    }
+
+    membros() {
+      return usuarios
+          ?.where((usuario) {
+            return usuario.permissao == PermissoesClube.membro &&
+                usuario.id != null;
+          })
+          .map((e) => e.id!)
+          .toList();
+    }
+
+    capa() {
+      final cor = data.capa;
+      if (cor != null) return DbRemoto.codificarCapaClube(cor);
+    }
+
+    final condicao = ![data.nome, data.codigo].contains(null);
     assert(condicao);
     if (!condicao) return {};
 
     final dados = {
-      DbConst.kDbDataClubeKeyNome: nome,
-      DbConst.kDbDataClubeKeyProprietario: proprietario,
-      DbConst.kDbDataClubeKeyCodigo: codigo,
-      DbConst.kDbDataClubeKeyDescricao: data[DbConst.kDbDataClubeKeyDescricao],
-      DbConst.kDbDataClubeKeyPrivado:
-          data[DbConst.kDbDataClubeKeyPrivado] ?? false,
-      DbConst.kDbDataClubeKeyAdministradores:
-          data[DbConst.kDbDataClubeKeyAdministradores],
-      DbConst.kDbDataClubeKeyMembros: data[DbConst.kDbDataClubeKeyMembros],
-      DbConst.kDbDataClubeKeyCapa: data[DbConst.kDbDataClubeKeyCapa],
+      '_nome': data.nome,
+      '_codigo': data.codigo,
+      '_descricao': data.descricao,
+      '_privado': data.privado ?? false,
+      '_capa': capa(),
+      '_administradores': administradores(),
+      '_membros': membros(),
     };
 
     return dados;
   }
 
+  /// * [List]<[DataUsuarioClube]> para [DbConst.kDbDataClubeKeyUsuarios].
   @override
   Future<bool> exitClube(int idClube, int idUser) async {
     assert(Debug.print('[INFO] Chamando SupabaseDbRepository.exitClube()...'));
@@ -558,9 +580,9 @@ class SupabaseDbRepository
           '[INFO] Incluindo o usuário cujo "idUser = $idUser" no clube cujo '
           'código de acesso é "$accessCode"...'));
       final data = {
-        'id_usuario': idUser,
-        'codigo_clube': accessCode,
-        'id_permissao': 2,
+        '_id_usuario': idUser,
+        '_codigo_clube': accessCode,
+        '_id_permissao': 2,
       };
       final response =
           await _client.rpc('entrar_clube', params: data).execute();
@@ -583,42 +605,75 @@ class SupabaseDbRepository
   }
 
   @override
-  Future<DataClube> updateClube(DataClube data) async {
+  Future<Clube?> updateClube(RawClube dados) async {
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository.updateClube()...'));
     _checkAuthentication('updateClube()');
-    final tbClubes = CollectionType.clubes.name;
-    final id = data[DbConst.kDbDataClubeKeyId] as int?;
-    if (data[DbConst.kDbDataClubeKeyAdministradores] != null) {
-      throw UnimplementedError(
-          'A atualização da lista de administradores não foi implementada.');
-    }
-    if (data[DbConst.kDbDataClubeKeyMembros] != null) {
-      throw UnimplementedError(
-          'A atualização da lista de membros não foi implementada.');
-    }
-    if (id == null) {
-      assert(Debug.print('[ERROR] O ID do clube não pode ser nulo.'));
-      return DataClube();
-    }
+    final data = _prepareUpdateClube(dados);
     try {
-      assert(Debug.print('[INFO] Atualizando os dados do clube cujo "id = $id" '
-          'na tabela "$tbClubes"...'));
+      assert(Debug.print(
+          '[INFO] Atualizando os dados do clube cujo "id = ${dados.id}"...'));
       final response =
           await _client.rpc('atualizar_clube', params: data).execute();
       if (response.error != null) {
         final error = response.error as PostgrestError;
         assert(Debug.print(
             '[ERROR] Erro ao atualizar o clube. \n${error.toString()}'));
-        return DataClube();
+        return null;
       }
       final list = (response.data as List).cast<DataClube>();
-      return list.isNotEmpty ? list[0] : DataClube();
+      return list.isNotEmpty ? Clube.fromDataClube(list[0]) : null;
     } catch (_) {
       assert(Debug.print('[ERROR] Erro ao atualizar o clube com os dados: '
           '\n${data.toString()}'));
       rethrow;
     }
+  }
+
+  Map<String, dynamic> _prepareUpdateClube(RawClube data) {
+    final usuarios = data.usuarios;
+
+    administradores() {
+      return usuarios
+          ?.where((usuario) {
+            return usuario.permissao == PermissoesClube.administrador &&
+                usuario.id != null;
+          })
+          .map((e) => e.id!)
+          .toList();
+    }
+
+    membros() {
+      return usuarios
+          ?.where((usuario) {
+            return usuario.permissao == PermissoesClube.membro &&
+                usuario.id != null;
+          })
+          .map((e) => e.id!)
+          .toList();
+    }
+
+    capa() {
+      final cor = data.capa;
+      if (cor != null) return DbRemoto.codificarCapaClube(cor);
+    }
+
+    final condicao = data.id != null;
+    assert(condicao);
+    if (!condicao) return {};
+
+    final dados = {
+      'id': data.id,
+      'nome': data.nome,
+      'codigo': data.codigo,
+      'descricao': data.descricao,
+      'privado': data.privado ?? false,
+      'capa': capa(),
+      'administradores': administradores(),
+      'membros': membros(),
+    };
+
+    return dados;
   }
 
   @override
@@ -657,6 +712,36 @@ class SupabaseDbRepository
   }
 
   @override
+  Future<bool> deleteClube(int idClube) async {
+    assert(
+        Debug.print('[INFO] Chamando SupabaseDbRepository.deleteClube()...'));
+    _checkAuthentication('deleteClube()');
+    final id = idClube;
+    final tabela = Sql.tbClubes.tbNome;
+    try {
+      assert(Debug.print(
+          '[INFO] Marcando como excluído o clube cuso ID é "$id"...'));
+      final response = await _client
+          .from(tabela)
+          .update({Sql.tbClubes.excluir: true})
+          .eq(Sql.tbClubes.id, id)
+          .execute();
+      if (response.error != null) {
+        final error = response.error as PostgrestError;
+        assert(Debug.print(
+            '[ERROR] Erro ao marcar como excluído o clube cuso ID é "$id". '
+            '\n${error.toString()}'));
+        return false;
+      }
+      return true;
+    } catch (_) {
+      assert(Debug.print(
+          '[ERROR] Erro ao marcar como excluído o clube cuso ID é "$id".'));
+      return false;
+    }
+  }
+
+  @override
   Future<DataCollection> getAtividades(int idClube) async {
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository.getAtividades()...'));
@@ -686,13 +771,12 @@ class SupabaseDbRepository
 
   /// {@macro app.IDbRepository.insertAtividade}
   @override
-  Future<DataAtividade> insertAtividade(DataAtividade dados) async {
+  Future<Atividade?> insertAtividade(RawAtividade dados) async {
     assert(Debug.print(
         '[INFO] Chamando SupabaseDbRepository.insertAtividade()...'));
     _checkAuthentication('insertAtividade()');
-    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
     final data = _prepareInsertAtividade(dados);
-    if (data.isEmpty) return DataAtividade();
+    if (data.isEmpty) return null;
     try {
       assert(Debug.print('[INFO] Inserindo a atividade ${data.toString()}...'));
       final response =
@@ -702,10 +786,10 @@ class SupabaseDbRepository
         assert(Debug.print(
             '[ERROR] Erro ao inserir a atividade ${data.toString()}. '
             '\n${error.toString()}'));
-        return DataAtividade();
+        return null;
       }
       final list = (response.data as List).cast<DataAtividade>();
-      return list.isNotEmpty ? list[0] : DataAtividade();
+      return list.isNotEmpty ? Atividade.fromDataAtividade(list[0]) : null;
     } catch (_) {
       assert(Debug.print(
           '[ERROR] Erro ao inserir a atividade ${data.toString()}.'));
@@ -713,36 +797,36 @@ class SupabaseDbRepository
     }
   }
 
-  Map<String, dynamic> _prepareInsertAtividade(DataAtividade data) {
-    final idClube = data[DbConst.kDbDataAtividadeKeyIdClube] as int?;
-    final idAutor = data[DbConst.kDbDataAtividadeKeyIdAutor] as int?;
-    final titulo = data[DbConst.kDbDataAtividadeKeyTitulo] as String?;
-    final dataLiberacao =
-        data[DbConst.kDbDataAtividadeKeyDataLiberacao] as int?;
-
-    final condicao = ![idClube, idAutor, titulo, dataLiberacao].contains(null);
+  Map<String, dynamic> _prepareInsertAtividade(RawAtividade data) {
+    final condicao = ![
+      data.idClube,
+      data.idAutor,
+      data.titulo,
+      data.liberacao,
+    ].contains(null);
     assert(condicao);
     if (!condicao) return {};
 
-    final questoes = (data[DbConst.kDbDataAtividadeKeyQuestoes] as List?)
-        ?.cast<Map>()
-        .map((e) =>
-            e[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno] as String)
-        .toList();
-    final dataEncerramento =
-        data[DbConst.kDbDataAtividadeKeyDataEncerramento] as int?;
+    questoes() {
+      return data.questoes
+          ?.where((questao) => questao.idQuestao != null)
+          .map((questao) => questao.idQuestao!)
+          .toList();
+    }
 
+    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
     final dados = {
-      DbConst.kDbDataAtividadeKeyIdClube: idClube,
-      DbConst.kDbDataAtividadeKeyIdAutor: idAutor,
-      DbConst.kDbDataAtividadeKeyTitulo: titulo,
-      DbConst.kDbDataAtividadeKeyDescricao:
-          data[DbConst.kDbDataAtividadeKeyDescricao],
-      DbConst.kDbDataAtividadeKeyQuestoes: questoes,
-      DbConst.kDbDataAtividadeKeyDataLiberacao:
-          dataLiberacao == null ? null : dataLiberacao / 1000,
-      DbConst.kDbDataAtividadeKeyDataEncerramento:
-          dataEncerramento == null ? null : dataEncerramento / 1000,
+      'id_clube': data.idClube,
+      'id_autor': data.idAutor,
+      'titulo': data.titulo,
+      'descricao': data.descricao,
+      'questoes': questoes(),
+      'data_liberacao': data.liberacao == null
+          ? null
+          : data.liberacao!.toUtc().millisecondsSinceEpoch / 1000,
+      'data_encerramento': data.encerramento == null
+          ? null
+          : data.encerramento!.toUtc().millisecondsSinceEpoch / 1000,
     };
 
     return dados;
@@ -750,27 +834,26 @@ class SupabaseDbRepository
 
   /// {@macro app.IDbRepository.updateAtividade}
   @override
-  Future<DataAtividade> updateAtividade(DataAtividade dados) async {
+  Future<Atividade?> updateAtividade(RawAtividade dados) async {
     assert(Debug.print(
         '[INFO] Chamando SupabaseDbRepository.updateAtividade()...'));
     _checkAuthentication('updateAtividade()');
-    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
     final data = _prepareUpdateAtividade(dados);
-    if (data.isEmpty) return DataAtividade();
+    if (data.isEmpty) return null;
 
     try {
-      assert(Debug.print('[INFO] Atualizando os dados da atividade cujo '
-          '"id = ${data[DbConst.kDbDataAtividadeKeyId]}".'));
+      assert(Debug.print(
+          '[INFO] Atualizando os dados da atividade cujo "id = ${dados.id}".'));
       final response =
           await _client.rpc('atualizar_atividade', params: data).execute();
       if (response.error != null) {
         final error = response.error as PostgrestError;
         assert(Debug.print(
             '[ERROR] Erro ao atualizar a atividade. \n${error.toString()}'));
-        return DataAtividade();
+        return null;
       }
       final list = (response.data as List).cast<DataAtividade>();
-      return list.isNotEmpty ? list[0] : DataAtividade();
+      return list.isNotEmpty ? Atividade.fromDataAtividade(list[0]) : null;
     } catch (_) {
       assert(Debug.print('[ERROR] Erro ao atualizar a atividade com os dados: '
           '\n${data.toString()}'));
@@ -778,34 +861,30 @@ class SupabaseDbRepository
     }
   }
 
-  Map<String, dynamic> _prepareUpdateAtividade(DataAtividade data) {
-    final id = data[DbConst.kDbDataAtividadeKeyId] as int?;
-    final titulo = data[DbConst.kDbDataAtividadeKeyTitulo] as String?;
-
-    final condicao = ![titulo, id].contains(null);
+  Map<String, dynamic> _prepareUpdateAtividade(RawAtividade data) {
+    final condicao = ![data.titulo, data.id].contains(null);
     assert(condicao);
     if (!condicao) return {};
 
-    final questoes = (data[DbConst.kDbDataAtividadeKeyQuestoes] as List?)
-        ?.cast<Map>()
-        .map((e) =>
-            e[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno] as String)
-        .toList();
-    final dataLiberacao =
-        data[DbConst.kDbDataAtividadeKeyDataLiberacao] as int?;
-    final dataEncerramento =
-        data[DbConst.kDbDataAtividadeKeyDataEncerramento] as int?;
+    questoes() {
+      return data.questoes
+          ?.where((questao) => questao.idQuestao != null)
+          .map((questao) => questao.idQuestao!)
+          .toList();
+    }
 
+    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
     final dados = {
-      DbConst.kDbDataAtividadeKeyId: id,
-      DbConst.kDbDataAtividadeKeyTitulo: titulo,
-      DbConst.kDbDataAtividadeKeyDescricao:
-          data[DbConst.kDbDataAtividadeKeyDescricao],
-      DbConst.kDbDataAtividadeKeyQuestoes: questoes,
-      DbConst.kDbDataAtividadeKeyDataLiberacao:
-          dataLiberacao == null ? null : dataLiberacao / 1000,
-      DbConst.kDbDataAtividadeKeyDataEncerramento:
-          dataEncerramento == null ? null : dataEncerramento / 1000,
+      'id': data.id,
+      'titulo': data.titulo,
+      'descricao': data.descricao,
+      'questoes': questoes(),
+      'data_liberacao': data.liberacao == null
+          ? null
+          : data.liberacao!.toUtc().millisecondsSinceEpoch / 1000,
+      'data_encerramento': data.encerramento == null
+          ? null
+          : data.encerramento!.toUtc().millisecondsSinceEpoch / 1000,
     };
 
     return dados;

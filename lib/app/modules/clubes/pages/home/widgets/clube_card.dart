@@ -96,6 +96,8 @@ class ClubeCard extends StatelessWidget {
           onEditar: () => controller.abrirPaginaEditarClube(context, clube),
           onSair: () => BottomSheetCarregando(future: controller.sair(clube))
               .showModal(context),
+          onExcluir: () => BottomSheetCarregando(future: controller.excluir(clube))
+              .showModal(context),
         ),
       ],
     );
@@ -121,7 +123,7 @@ class ClubeCard extends StatelessWidget {
       fontSize: AppTheme.escala * 12,
     );
 
-    String permissao;
+    String permissao = '';
 
     switch (clube.permissao(userId)) {
       case PermissoesClube.proprietario:

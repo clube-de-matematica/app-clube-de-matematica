@@ -362,9 +362,7 @@ class LinViewClubes {
   final bool privado;
   final String codigo;
   final String? capa;
-  final int proprietario;
-  final List<int> administradores;
-  final List<int> membros;
+  final String usuarios;
   LinViewClubes({
     required this.id,
     required this.nome,
@@ -373,9 +371,7 @@ class LinViewClubes {
     required this.privado,
     required this.codigo,
     this.capa,
-    required this.proprietario,
-    required this.administradores,
-    required this.membros,
+    required this.usuarios,
   });
 
   @override
@@ -388,9 +384,7 @@ class LinViewClubes {
           ..write('privado: $privado, ')
           ..write('codigo: $codigo, ')
           ..write('capa: $capa, ')
-          ..write('proprietario: $proprietario, ')
-          ..write('administradores: $administradores, ')
-          ..write('membros: $membros')
+          ..write('usuarios: $usuarios')
           ..write(')'))
         .toString();
   }
@@ -404,9 +398,7 @@ class LinViewClubes {
         privado,
         codigo,
         capa,
-        proprietario,
-        administradores,
-        membros,
+        usuarios,
       );
 
   @override
@@ -420,9 +412,7 @@ class LinViewClubes {
           other.privado == this.privado &&
           other.codigo == this.codigo &&
           other.capa == this.capa &&
-          other.proprietario == this.proprietario &&
-          listEquals(other.administradores, this.administradores) &&
-          listEquals(other.membros, this.membros));
+          other.usuarios == this.usuarios);
 }
 
 class LinViewAtividades {

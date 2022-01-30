@@ -94,11 +94,11 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
       ActionController(name: '_UsuarioClubeBase');
 
   @override
-  void sobrescrever(UsuarioClube outro) {
+  void mesclar(UsuarioClube outro) {
     final _$actionInfo = _$_UsuarioClubeBaseActionController.startAction(
-        name: '_UsuarioClubeBase.sobrescrever');
+        name: '_UsuarioClubeBase.mesclar');
     try {
-      return super.sobrescrever(outro);
+      return super.mesclar(outro);
     } finally {
       _$_UsuarioClubeBaseActionController.endAction(_$actionInfo);
     }

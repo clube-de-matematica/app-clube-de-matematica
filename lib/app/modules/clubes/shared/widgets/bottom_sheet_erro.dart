@@ -17,7 +17,7 @@ class BottomSheetErroParticiparClube extends BottomSheetErro {
 class BottomSheetErroCriarClube extends BottomSheetErro {
   const BottomSheetErroCriarClube({Key? key})
       : super(
-          'Tente novamente.',
+          'Verifique se há conexão com a internet e tente novamente.',
           key: key,
         );
 }

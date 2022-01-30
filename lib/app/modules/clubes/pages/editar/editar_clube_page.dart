@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/shared/widgets/appBottomSheet.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../modules/clubes/pages/editar/editar_clube_controller.dart';
@@ -83,9 +84,9 @@ class _EditarClubePageState extends State<EditarClubePage> {
               if (!isLoading) {
                 final form = Form.of(context);
                 if (form?.validate() ?? false) {
-                  setState(() => isLoading = true);
+                  isLoading = true;
                   form?.save();
-                  final sucesso = await controller.atualizar(
+                  final futuro = controller.atualizar(
                     context,
                     clube: widget.clube,
                     nome: nome,
@@ -94,15 +95,20 @@ class _EditarClubePageState extends State<EditarClubePage> {
                     corTema: corTema,
                     privado: privado,
                   );
-                  if (!sucesso) {
+                  await BottomSheetCarregando(future: futuro)
+                      .showModal(context);
+                  final sucesso = await futuro;
+                  if (sucesso) {
+                    Navigator.of(context).pop(true);
+                  } else {
                     await BottomSheetErroAtualizarClube().showModal(context);
                   }
-                  if (mounted) setState(() => isLoading = false);
+                  isLoading = false;
                 }
               }
             },
             onCancelar: () {
-              if (!isLoading) Navigator.of(context).pop();
+              if (!isLoading) Navigator.of(context).pop(false);
             },
           ),
         );

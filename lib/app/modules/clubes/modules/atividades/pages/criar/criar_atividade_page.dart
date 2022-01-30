@@ -46,9 +46,9 @@ class _CriarAtividadePageState extends State<CriarAtividadePage> {
                 )
                 .whenComplete(() => _salvando = false);
             await BottomSheetCarregando(future: future).showModal(context);
-            final atividade = await future;
+            final sucesso = await future;
             if (mounted) {
-              if (atividade != null) {
+              if (sucesso) {
                 Navigator.of(context).pop();
               } else {
                 await BottomSheetErro('A atividade não foi criada')

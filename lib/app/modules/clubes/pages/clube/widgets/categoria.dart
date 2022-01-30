@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+
+import '../clube_controller.dart';
 
 class Categoria extends StatelessWidget {
   final String categoria;
-  final Color cor;
   final List<Widget> itens;
   final List<Widget> Function(BuildContext context)? builder;
 
   Categoria({
     Key? key,
     required this.categoria,
-    required this.cor,
     this.itens = const [],
     this.builder,
   })  : assert(!(itens.isNotEmpty && builder != null)),
         super(key: key);
+
+  Color get cor => Modular.get<ClubeController>().clube.capa;
 
   Color get corTexto {
     final brightness = ThemeData.estimateBrightnessForColor(this.cor);

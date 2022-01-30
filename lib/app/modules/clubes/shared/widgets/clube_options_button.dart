@@ -16,12 +16,14 @@ class ClubeOptionsButton extends StatelessWidget {
     required this.onSair,
     required this.onEditar,
     required this.onCompartilharCodigo,
+    required this.onExcluir,
   }) : super(key: key);
   final Clube clube;
   final TextStyle? textStyle;
   final VoidCallback onSair;
   final VoidCallback onEditar;
   final VoidCallback onCompartilharCodigo;
+  final VoidCallback onExcluir;
 
   /// ID do usuário do aplicativo.
   int get idUsuarioApp => UserApp.instance.id!;
@@ -30,7 +32,7 @@ class ClubeOptionsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = this.textStyle ??
         TextStyle(
-          color: TemaClube(clube.capa).textoPrimaria,
+          color: TemaClube(clube).textoPrimaria,
           fontSize: AppTheme.escala * 26,
           fontWeight: FontWeight.w400,
         );
@@ -40,6 +42,7 @@ class ClubeOptionsButton extends StatelessWidget {
 
     return PopupMenuButton<OpcoesClube>(
       child: IconButton(
+        padding: const EdgeInsets.all(0),
         onPressed: null,
         icon: Icon(
           Icons.more_vert,
@@ -63,6 +66,11 @@ class ClubeOptionsButton extends StatelessWidget {
             value: OpcoesClube.sair,
             child: Text(OpcoesClube.sair.textButton),
           ),
+        if (proprietario)
+          PopupMenuItem<OpcoesClube>(
+            value: OpcoesClube.excluir,
+            child: Text(OpcoesClube.excluir.textButton),
+          ),
       ],
       onSelected: (opcao) async {
         switch (opcao) {
@@ -77,6 +85,11 @@ class ClubeOptionsButton extends StatelessWidget {
             final sair =
                 await BottomSheetSairClube(clube).showModal<bool>(context);
             if (sair ?? false) onSair();
+            break;
+          case OpcoesClube.excluir:
+            final excluir =
+                await BottomSheetExcluirClube(clube).showModal<bool>(context);
+            if (excluir ?? false) onExcluir();
             break;
         }
       },

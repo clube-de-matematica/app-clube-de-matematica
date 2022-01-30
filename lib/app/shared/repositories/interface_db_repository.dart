@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
+
 import '../../modules/clubes/shared/models/clube.dart';
 import '../../modules/quiz/shared/models/assunto_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
@@ -48,7 +50,7 @@ abstract class IDbRepository {
 
   Future<bool> insertQuestao(DataDocument data);
 
-  Future<DataClube> insertClube(DataClube data);
+  Future<Clube?> insertClube(RawClube dados);
 
   /// Adiciona o usuário correspondente a [idUser] ao clube correspondente a [accessCode].
   /// Retorna os dados do clube após a alteração.
@@ -60,7 +62,7 @@ abstract class IDbRepository {
   ///
   /// Se o processo for bem sucedido, retorna o clube criado.
   /// {@endtemplate}
-  Future<DataAtividade> insertAtividade(DataAtividade data);
+  Future<Atividade?> insertAtividade(RawAtividade dados);
 
   Future<List<Assunto>> getAssuntos();
 
@@ -71,7 +73,7 @@ abstract class IDbRepository {
   /// Atualiza os dados do clube com base em [data].
   /// A capa e descrição não serão atualizadas se forem string vazia em [data].
   /// Os demais não serão atualizados se forem null.
-  Future<DataClube> updateClube(DataClube data);
+  Future<Clube?> updateClube(RawClube dados);
 
   /// Remove o usuário correspondente a [idUser] do clube correspondente a [idClube].
   Future<bool> exitClube(int idClube, int idUser);
@@ -84,16 +86,22 @@ abstract class IDbRepository {
     int idPermission,
   );
 
+  /// Marca como excluído o clube correspondente a [idClube].
+  Future<bool> deleteClube(int idClube);
+
   Future<DataCollection> getAtividades(int idClube);
 
   /// {@template app.IDbRepository.updateAtividade}
-  /// Atualiza os dados da atividade com base nas informações dos parâmetros.
+  /// Atualiza os dados da atividade com base nas informações do parâmetro.
   ///
   /// A descrição não será atualizada se for uma string vazia.
+  /// 
+  /// A data de encerramento não será atualizada se for 
+  /// `DateTime.fromMillisecondsSinceEpoch(0, isUtc: true)`.
   ///
   /// As demais propriedades não serão atualizados se forem `null`.
   /// {@endtemplate}
-  Future<DataAtividade> updateAtividade(DataAtividade dados);
+  Future<Atividade?> updateAtividade(RawAtividade dados);
 
   /// {@template app.IDbRepository.getRespostasAtividade}
   /// Função para retornar as repostas dos usuários a uma atividade.

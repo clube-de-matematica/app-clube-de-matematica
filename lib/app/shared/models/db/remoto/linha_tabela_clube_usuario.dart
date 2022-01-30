@@ -37,6 +37,6 @@ class LinTbClubeUsuarioDbRemoto extends ILinTbClubeUsuario with LinTbMixin {
 
   @override
   DateTime decodificarDataAdmissao() {
-    return DbRemoto.decodificarData(dataAdmissao);
+    return DbRemoto.decodificarData(dataAdmissao)!;
   }
 }

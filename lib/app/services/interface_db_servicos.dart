@@ -1,3 +1,4 @@
+import '../modules/clubes/modules/atividades/models/atividade.dart';
 import '../modules/clubes/shared/models/clube.dart';
 import '../modules/quiz/shared/models/assunto_model.dart';
 import '../modules/quiz/shared/models/questao_model.dart';
@@ -44,29 +45,35 @@ abstract class IDbServicos {
 
   Future<bool> insertQuestao(DataDocument data);
 
-  Future<List<Clube>> getClubes(int idUsuario);
+  /// {@template app.IDbServicos.sincronizarClubes}
+  /// Sincroniza os registros dos dados relacionados aos clubes entre os bancos de dados
+  /// local e remoto.
+  /// {@endtemplate}
+  Future<void> sincronizarClubes();
 
-  Future<DataClube> insertClube(DataClube data);
+  Stream<List<Clube>> getClubes();
 
-  Future<DataClube> updateClube(DataClube data);
+  Future<Clube?> insertClube(RawClube data);
 
-  Future<DataClube> enterClube(String accessCode, int idUser);
+  Future<Clube?> updateClube(RawClube data);
 
-  Future<bool> exitClube(int idClube, int idUser);
+  Future<Clube?> enterClube(String accessCode);
+
+  Future<bool> removerUsuarioClube(int idClube, int idUser);
 
   Future<bool> updatePermissionUserClube(
       int idClube, int idUser, int idPermission);
 
-  Future<DataCollection> getAtividades(int idClube);
+  Future<bool> excluirClube(Clube clube);
 
-  Future<DataAtividade> insertAtividade(DataAtividade data);
+  Stream<List<Atividade>> getAtividades(Clube clube);
 
-  Future<DataAtividade> updateAtividade(DataAtividade dados);
+  Future<Atividade?> insertAtividade(RawAtividade dados);
+
+  Future<Atividade?> updateAtividade(RawAtividade dados);
 
   Future<List<DataRespostaQuestaoAtividade>> getRespostasAtividade(
-    int idAtividade, [
-    int? idUsuario,
-  ]);
+      Atividade atividade);
 
   Future<bool> upsertRespostasAtividade(
       List<DataRespostaQuestaoAtividade> data);

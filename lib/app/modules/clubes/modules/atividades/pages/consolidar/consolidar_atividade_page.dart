@@ -77,7 +77,7 @@ class _Membros extends StatefulWidget {
 
 class _MembrosState extends State<_Membros> {
   ConsolidarAtividadeController get controle => widget.controle;
-  List<UsuarioClube> get membros => controle.clube.membros;
+  List<UsuarioClube> get membros => controle.clube.membros.toList();
   Atividade get atividade => controle.atividade;
   final Duration duracaoAnimacao = kThemeAnimationDuration;
   late final estados = membros.map((_) => false).toList();
@@ -111,7 +111,7 @@ class _MembrosState extends State<_Membros> {
             leading: CircleAvatar(
               child: Icon(
                 Icons.person,
-                color: temaClube.texto,
+                color: temaClube.textoEnfase,
               ),
               backgroundColor: temaClube.primaria.withOpacity(0.3),
             ),
@@ -177,7 +177,7 @@ class _MembrosState extends State<_Membros> {
               leading: CircleAvatar(
                 child: Text(
                   identificador,
-                  style: TextStyle(color: temaClube.texto),
+                  style: TextStyle(color: temaClube.textoEnfase),
                 ),
                 backgroundColor: enfase,
               ),

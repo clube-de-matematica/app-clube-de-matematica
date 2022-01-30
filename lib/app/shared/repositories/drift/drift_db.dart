@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:clubedematematica/app/shared/models/exceptions/error_handler.dart';
 import 'package:drift/extensions/json1.dart';
 
 import 'package:clubedematematica/app/shared/models/debug.dart';
@@ -7,6 +8,7 @@ import 'package:clubedematematica/app/shared/utils/db/codificacao.dart';
 import 'package:clubedematematica/app/shared/utils/strings_db_sql.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -37,7 +39,7 @@ class DriftDb extends _$DriftDb {
   // TODO: Definir local de armazenamento.
   DriftDb()
       : /* super(abrirConexao()); // */ super(
-            NativeDatabase.memory(logStatements: true));
+            NativeDatabase.memory(/* logStatements: true */));
 
   @override
   int get schemaVersion => 1;
@@ -155,9 +157,16 @@ class DriftDb extends _$DriftDb {
     try {
       // Não há previsão da ordem de inserção das linhas.
       await Future.wait(futuros);
-    } catch (erro) {
-      debugger(); //TODO
-      assert(Debug.printBetweenLine(erro));
+    } catch (erro, stack) {
+      assert(Debug.printBetweenLine('erro: $erro\nlinhas: $linhas'));
+      ErrorHandler.reportError(
+        FlutterErrorDetails(
+          exception: erro,
+          stack: stack,
+          library: 'drift_db.dart --> DriftDb.upsert',
+          context: DiagnosticsNode.message('linhas: $linhas'),
+        ),
+      );
     }
     return contador;
   }
@@ -196,9 +205,18 @@ class DriftDb extends _$DriftDb {
     try {
       // Não há previsão da ordem de exclusão das linhas.
       await Future.wait(futuros);
-    } catch (erro) {
-      debugger(); //TODO
-      assert(Debug.printBetweenLine(erro));
+    } catch (erro, stack) {
+      assert(Debug.printBetweenLine('erro: $erro\nlinhas: $linhas'));
+      ErrorHandler.reportError(
+        FlutterErrorDetails(
+          exception: erro,
+          stack: stack,
+          library: 'drift_db.dart --> DriftDb.deleteSamePrimaryKey',
+          context: tabela != tbUsuarios
+              ? DiagnosticsNode.message('linhas: $linhas')
+              : null,
+        ),
+      );
     }
     return contador;
   }
@@ -387,7 +405,7 @@ class DriftDb extends _$DriftDb {
         tbQuestoesCaderno,
       },
     );
-    
+
     final retorno = query.map((linha) {
       return LinTbAssuntos.fromData(linha.data);
     });
@@ -462,59 +480,67 @@ class DriftDb extends _$DriftDb {
     return Future.wait(await questoes.get());
   }
 
-  Future<List<LinViewClubes>> get selectClubes async {
-    final join = selectOnly(tbClubes)
-      ..addColumns([
-        tbClubes.id,
-        tbClubes.nome,
-        tbClubes.descricao,
-        tbClubes.dataCriacao,
-        tbClubes.privado,
-        tbClubes.codigo,
-        tbClubes.capa,
-        tbClubeUsuario.idUsuario,
-      ])
-      ..join([
-        innerJoin(
-          tbClubeUsuario,
-          tbClubeUsuario.idClube.equalsExp(tbClubes.id) &
-              tbClubeUsuario.idPermissao
-                  .equals(Sql.tbTiposPermissao.idProprietario),
-          useColumns: false,
-        )
-      ]);
+  /// Retorna os assuntos diretamente ligados às questões.
+  Selectable<LinViewClubes> selectClubes(int idUsuario) {
+    final id = Sql.tbClubes.id;
+    final nome = Sql.tbClubes.nome;
+    final descricao = Sql.tbClubes.descricao;
+    final dataCriacao = Sql.tbClubes.dataCriacao;
+    final privado = Sql.tbClubes.privado;
+    final codigo = Sql.tbClubes.codigo;
+    final capa = Sql.tbClubes.capa;
+    final usuarios = 'usuarios';
+    final query = customSelect(
+      r'SELECT '
+      '  clubes.$id, '
+      '  clubes.$nome, '
+      '  clubes.$descricao, '
+      '  clubes.$dataCriacao, '
+      '  clubes.$privado, '
+      '  clubes.$codigo,'
+      '  clubes.$capa,'
+      r'  ('
+      r'    SELECT json_group_array(json_object('
+      r"      'id_usuario', id_usuario, "
+      r"      'nome', (SELECT usuarios.nome FROM usuarios WHERE usuarios.id = id_usuario),"
+      r"      'id_clube', id_clube, "
+      r"      'id_permissao', id_permissao"
+      r'    )) FROM clube_x_usuario WHERE id_clube = clubes.id'
+      '  ) AS $usuarios'
+      r'  FROM clubes'
+      r'  WHERE EXISTS('
+      r'    SELECT 1 FROM clube_x_usuario '
+      r'    WHERE clube_x_usuario.id_clube = clubes.id AND clube_x_usuario.id_usuario = ?'
+      r'  )'
+      '  ORDER BY clubes.$dataCriacao;',
+      variables: [
+        Variable.withInt(idUsuario),
+      ],
+      readsFrom: {
+        tbClubes,
+        tbClubeUsuario,
+      },
+    );
 
-    final clubes = join.map((linha) async {
-      final id = linha.read(tbClubes.id);
-
-      queryUsuarios(int permissao) {
-        final query = selectOnly(tbClubeUsuario)
-          ..addColumns([tbClubeUsuario.idUsuario])
-          ..where(tbClubeUsuario.idClube.equals(id))
-          ..where(tbClubeUsuario.idPermissao.equals(permissao));
-        return query.map((p0) => p0.read(tbClubeUsuario.idUsuario)!);
-      }
-
-      final proprietario =
-          await queryUsuarios(Sql.tbTiposPermissao.idProprietario).getSingle();
-      final administradores =
-          await queryUsuarios(Sql.tbTiposPermissao.idAdministrador).get();
-      final membros = await queryUsuarios(Sql.tbTiposPermissao.idMembro).get();
-
+    final retorno = query.map((linha) {
       return LinViewClubes(
-        id: linha.read(tbClubes.id)!,
-        nome: linha.read(tbClubes.nome)!,
-        descricao: linha.read(tbClubes.descricao)!,
-        dataCriacao: linha.read(tbClubes.dataCriacao)!,
-        privado: linha.read(tbClubes.privado)!,
-        codigo: linha.read(tbClubes.codigo)!,
-        capa: linha.read(tbClubes.capa),
-        proprietario: proprietario,
-        administradores: administradores,
-        membros: membros,
+        id: linha.data[id],
+        nome: linha.data[nome],
+        descricao: linha.data[descricao],
+        dataCriacao: linha.data[dataCriacao],
+        privado: DbLocal.decodificarBooleano(linha.data[privado]),
+        codigo: linha.data[codigo],
+        capa: linha.data[capa],
+        usuarios: linha.data[usuarios],
       );
     });
+    return retorno;
+  }
 
-    return Future.wait(await clubes.get());
+  Selectable<LinTbAtividades> selectAtividades(int idClube) {
+    final query = select(tbAtividades)
+      ..where((tb) => tb.idClube.equals(idClube))
+      ..orderBy([(tb) => OrderingTerm(expression: tb.dataLiberacao)]);
+    return query;
   }
 }

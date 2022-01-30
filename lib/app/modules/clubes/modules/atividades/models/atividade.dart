@@ -1,14 +1,13 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../../shared/repositories/questoes/questoes_repository.dart';
+import '../../../../../shared/utils/db/codificacao.dart';
 import '../../../../../shared/utils/strings_db.dart';
 import 'questao_atividade.dart';
 import 'resposta_questao_atividade.dart';
 
 /// Modelo para os dados das atividades dos clubes.
-class Atividade extends RawAtividade {
+class Atividade {
   final int id;
   String titulo;
   String? descricao;
@@ -49,98 +48,49 @@ class Atividade extends RawAtividade {
   })  : questoes = ObservableList.of(questoes ?? Iterable.empty()),
         respostas = ObservableSet.of(respostas ?? Iterable.empty());
 
-/* 
-  Atividade copyWith({
-    int? id,
-    String? nome,
-    String? descricao,
-    int? idClube,
-    int? idAutor,
-    DateTime? criacao,
-    DateTime? publicacao,
-    DateTime? encerramento,
-    List<QuestaoAtividade>? questoes,
-    List<RespostaQuestaoAtividade>? respostas,
-  }) {
-    return Atividade(
-      id: id ?? this.id,
-      titulo: nome ?? this.titulo,
-      descricao: descricao ?? this.descricao,
-      idClube: idClube ?? this.idClube,
-      idAutor: idAutor ?? this.idAutor,
-      criacao: criacao ?? this.criacao,
-      liberacao: publicacao ?? this.liberacao,
-      encerramento: encerramento ?? this.encerramento,
-      questoes: questoes ?? this.questoes,
-      respostas: respostas ?? this.respostas,
-    );
-  }
- */
-
-  static Future<Atividade> fromDataAtividade(DataAtividade map) async {
-    final int idAtividade = map[DbConst.kDbDataAtividadeKeyId];
-
-    final respostas = () {
+  factory Atividade.fromDataAtividade(DataAtividade map) {
+    respostas() {
       final dataRespostas =
           map[DbConst.kDbDataAtividadeKeyRespostas] as List? ?? [];
-      return dataRespostas.cast<Map>().map((dados) {
-        return RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(
-            dados.cast());
-      }).toList();
-    }();
+      return dataRespostas
+          .cast<Map>()
+          .map((dados) =>
+              RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(
+                  dados.cast()))
+          .toList();
+    }
 
     final retorno = Atividade(
-      id: idAtividade,
+      id: map[DbConst.kDbDataAtividadeKeyId],
       titulo: map[DbConst.kDbDataAtividadeKeyTitulo],
-      descricao: map[DbConst.kDbDataAtividadeKeyDescricao] != null
-          ? map[DbConst.kDbDataAtividadeKeyDescricao]
-          : null,
+      descricao: map[DbConst.kDbDataAtividadeKeyDescricao],
       idClube: map[DbConst.kDbDataAtividadeKeyIdClube],
       idAutor: map[DbConst.kDbDataAtividadeKeyIdAutor],
-      criacao: DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataCriacao]),
-      liberacao: map[DbConst.kDbDataAtividadeKeyDataLiberacao] != null
-          ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataLiberacao])
-          : null,
-      encerramento: map[DbConst.kDbDataAtividadeKeyDataEncerramento] != null
-          ? DateTime.parse(map[DbConst.kDbDataAtividadeKeyDataEncerramento])
-          : null,
+      criacao: DbRemoto.decodificarData(
+              '${map[DbConst.kDbDataAtividadeKeyDataCriacao]}') ??
+          DateTime.fromMillisecondsSinceEpoch(0),
+      liberacao: DbRemoto.decodificarData(
+          '${map[DbConst.kDbDataAtividadeKeyDataLiberacao]}'),
+      encerramento: DbRemoto.decodificarData(
+          '${map[DbConst.kDbDataAtividadeKeyDataEncerramento]}'),
       questoes: [],
-      respostas: respostas,
-    );
-
-    final questoes = await () async {
-      final dataQuestoes =
-          map[DbConst.kDbDataAtividadeKeyQuestoes] as List? ?? [];
-      final list = dataQuestoes.cast<Map>().map((dados) async {
-        final quest = await Modular.get<QuestoesRepository>().get(
-          dados[DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno],
-        );
-        if (quest != null)
-          return QuestaoAtividade(
-            idQuestaoAtividade: dados[DbConst.kDbDataQuestaoAtividadeKeyId],
-            questao: quest,
-            atividade: retorno,
-          );
-      });
-      return (await Future.wait(list));
-    }();
-
-    retorno.questoes.addAll(
-      questoes.where((e) => e != null).cast(),
+      respostas: respostas(),
     );
 
     return retorno;
   }
 
-  /// Sobrescreve os campos desta atividade com os respectivos valores em [outra], desde que
-  /// tenham o mesmo ID.
-  void sobrescrever(Atividade outra) {
+  /// Sobrescreve os campos modificáveis desta atividade com os respectivos valores em
+  /// [outra], desde que tenham o mesmo ID.
+  void mesclar(Atividade outra) {
     if (this.id == outra.id) {
       titulo = outra.titulo;
       descricao = outra.descricao;
       liberacao = outra.liberacao;
       encerramento = outra.encerramento;
-      questoes.replaceRange(0, questoes.length, outra.questoes);
+      questoes
+        ..clear()
+        ..addAll(outra.questoes.where((e) => e.idAtividade == id));
       respostas
         ..clear()
         ..addAll(outra.respostas);

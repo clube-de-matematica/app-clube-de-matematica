@@ -47,14 +47,21 @@ typedef DataImagem = Map<String, dynamic>;
 /// [DbConst.kDbDataUserKeyEmail].
 typedef DataUsuario = Map<String, dynamic>;
 
+/// O objeto com os dados de um usuário de clube.
+/// O valor [dynamic] pode ser:
+/// * [int] para [DbConst.kDbDataUserClubeKeyIdUsuario], [DbConst.kDbDataUserClubeKeyIdClube] e 
+/// [DbConst.kDbDataUserClubeKeyIdPermissao]; ou
+/// * [String] para [DbConst.kDbDataUserClubeKeyNome], [DbConst.kDbDataUserClubeKeyFoto] e
+/// [DbConst.kDbDataUserClubeKeyEmail].
+typedef DataUsuarioClube = Map<String, dynamic>;
+
 /// O objeto com os dados de um clube.
 /// O valor [dynamic] pode ser:
 /// * [String] para [DbConst.kDbDataClubeKeyNome], [DbConst.kDbDataClubeKeyDescricao],
 /// [DbConst.kDbDataClubeKeyCapa] e [DbConst.kDbDataClubeKeyCodigo];
-/// * [int] para [DbConst.kDbDataClubeKeyId], [DbConst.kDbDataClubeKeyProprietario]
-/// e [DbConst.kDbDataClubeKeyDataCriacao];
+/// * [int] para [DbConst.kDbDataClubeKeyId] e [DbConst.kDbDataClubeKeyDataCriacao];
 /// * [bool] para [DbConst.kDbDataClubeKeyPrivado] e [DbConst.kDbDataClubeKeyExcluir]; ou
-/// * [List]<[int]> para [DbConst.kDbDataClubeKeyAdministradores] e [DbConst.kDbDataClubeKeyMembros].
+/// * [List]<[DataUsuarioClube]> para [DbConst.kDbDataClubeKeyUsuarios].
 typedef DataClube = Map<String, dynamic>;
 
 /// O objeto com os dados que vinculam uma questão a uma atividade.
@@ -254,6 +261,47 @@ abstract class DbConst {
  * ****************************************************************************************
 **/
 
+/** 
+ * ****************************************************************************************
+**/
+
+  /// Nome do campo para o nome do usuário.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataUserClubeKeyNome = 'nome';
+
+  /// Nome do campo para o ID do usuário.
+  /// Os valores desse campo são do tipo [int].
+  static const kDbDataUserClubeKeyIdUsuario = 'id_usuario';
+
+  /// Nome do campo para o email do usuário.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataUserClubeKeyEmail = 'email';
+
+  /// Nome do campo para a string base64 da foto de perfil do usuário.
+  /// Os valores desse campo são do tipo [String].
+  static const kDbDataUserClubeKeyFoto = 'foto';
+
+  /// Nome do campo para o ID do clube ao qual o usuário está vinculado.
+  /// Os valores desse campo são do tipo [int].
+  static const kDbDataUserClubeKeyIdClube = 'id_clube';
+
+  /// Nome do campo para o ID da permissao do usuário do usuário.
+  /// Os valores desse campo são do tipo [int].
+  static const kDbDataUserClubeKeyIdPermissao = 'id_permissao';
+
+  /// Valor de [kDbDataUserClubeKeyIdPermissao] para proprietário.
+  static const kDbDataUserClubeKeyIdPermissaoProprietario = 0;
+
+  /// Valor de [kDbDataUserClubeKeyIdPermissao] para administrador.
+  static const kDbDataUserClubeKeyIdPermissaoAdministrador = 1;
+
+  /// Valor de [kDbDataUserClubeKeyIdPermissao] para membro.
+  static const kDbDataUserClubeKeyIdPermissaoMembro = 2;
+
+/** 
+ * ****************************************************************************************
+**/
+
   /// Nome da coleção (ou tabela) para os clubes.
   /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataClube]>.
   static const kDbDataCollectionClubes = 'clubes';
@@ -275,18 +323,9 @@ abstract class DbConst {
   /// Os valores desse campo são do tipo [String].
   static const kDbDataClubeKeyDescricao = 'descricao';
 
-  /// Nome do campo para o ID do proprietário do clube.
-  /// Os valores desse campo são do tipo [int].
-  static const kDbDataClubeKeyProprietario = 'proprietario';
-
-  /// Nome do campo para uma lista com o ID de cada administrador do clube.
-  /// Os valores desse campo são do tipo [List]<[int]>.
-  static const kDbDataClubeKeyAdministradores = 'administradores';
-
-  /// Nome do campo para uma lista com o ID de cada membro do clube, excluindo-se o
-  /// proprietário e os administradores.
-  /// Os valores desse campo são do tipo [List]<[int]>.
-  static const kDbDataClubeKeyMembros = 'membros';
+  /// Nome do campo para uma lista com os dados dos usuários do clube.
+  /// Os valores desse campo são do tipo [List]<[DataUsuarioClube]>.
+  static const kDbDataClubeKeyUsuarios = 'usuarios';
 
   /// Nome do campo para o nível de privacidade do clube.
   /// * Se `false`, o clube é público. Qualquer usuário com o código de acesso pode ingressar.

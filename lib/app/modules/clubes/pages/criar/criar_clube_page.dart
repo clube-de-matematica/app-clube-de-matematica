@@ -45,7 +45,7 @@ class _CriarClubePageState extends State<CriarClubePage> {
     if (clube != null) {
       controller.abrirPaginaClube(context, clube);
     } else {
-      await BottomSheetErroParticiparClube().showModal(context);
+      await BottomSheetErroCriarClube().showModal(context);
     }
   }
 }

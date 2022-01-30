@@ -7,6 +7,6 @@ mixin LinTbMixin on LinTb {
 
   @override
   DateTime decodificarDataModificacao() {
-    return DbRemoto.decodificarData(dataModificacao);
+    return DbRemoto.decodificarData(dataModificacao)!;
   }
 }

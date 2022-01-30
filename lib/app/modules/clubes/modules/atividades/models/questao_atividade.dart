@@ -1,11 +1,7 @@
 import 'package:mobx/mobx.dart';
 
 import '../../../../../shared/utils/strings_db.dart';
-import '../../../../quiz/shared/models/alternativa_questao_model.dart';
-import '../../../../quiz/shared/models/assunto_model.dart';
-import '../../../../quiz/shared/models/imagem_questao_model.dart';
 import '../../../../quiz/shared/models/questao_model.dart';
-import 'atividade.dart';
 import 'resposta_questao_atividade.dart';
 
 part 'questao_atividade.g.dart';
@@ -15,24 +11,30 @@ enum EstadoResposta { correta, incorreta, emBranco }
 /// Modelo para as questões usadas em uma atividade.
 class QuestaoAtividade = _QuestaoAtividadeBase with _$QuestaoAtividade;
 
-abstract class _QuestaoAtividadeBase extends RawQuestaoAtividade
-    with Store
-    implements Questao {
+abstract class _QuestaoAtividadeBase extends Questao with Store {
   final int idQuestaoAtividade;
-  final Questao questao;
-  final Atividade atividade;
+  final int idAtividade;
+
+  /// Conjunto com as respostas atibuídas a essa questão.
+  final ObservableSet<RespostaQuestaoAtividade> respostas;
 
   _QuestaoAtividadeBase({
+    required Questao questao,
     required this.idQuestaoAtividade,
-    required this.questao,
-    required this.atividade,
-  });
-
-  /// Conjunto com as respostas atibuídas a essa questõ.
-  @computed
-  Set<RespostaQuestaoAtividade> get respostas => atividade.respostas
-      .where((resp) => resp.idQuestaoAtividade == idQuestaoAtividade)
-      .toSet();
+    required this.idAtividade,
+    Iterable<RespostaQuestaoAtividade> respostas = const [],
+  })  : this.respostas = ObservableSet.of(respostas),
+        super.noSingleton(
+          id: questao.id,
+          ano: questao.ano,
+          nivel: questao.nivel,
+          indice: questao.indice,
+          assuntos: questao.assuntos,
+          enunciado: questao.enunciado,
+          alternativas: questao.alternativas,
+          gabarito: questao.gabarito,
+          imagensEnunciado: questao.imagensEnunciado,
+        );
 
   /// Resposta atribuída a essa questão pelo usuário correspondente a [idUsuario].
   RespostaQuestaoAtividade? resposta(int idUsuario) {
@@ -51,73 +53,44 @@ abstract class _QuestaoAtividadeBase extends RawQuestaoAtividade
     return EstadoResposta.incorreta;
   }
 
-  @override
-  List<Alternativa> get alternativas => questao.alternativas;
-
-  @override
-  int get ano => questao.ano;
-
-  @override
-  List<Assunto> get assuntos => questao.assuntos;
-
-  @override
-  List<String> get enunciado => questao.enunciado;
-
-  @override
-  int get gabarito => questao.gabarito;
-
-  @override
-  String get id => questao.id;
-
-  @override
-  List<ImagemQuestao> get imagensEnunciado => questao.imagensEnunciado;
-
-  @override
-  int get indice => questao.indice;
-
-  @override
-  int get nivel => questao.nivel;
-
-  @override
-  Map<String, dynamic> toJson() => questao.toJson();
-
-  @override
-  String toString() {
-    return 'QuestaoAtividade(id: $idQuestaoAtividade, idQuestao: ${questao.id}, atividade: ${atividade.toString()})';
+  DataQuestaoAtividade toDataQuestaoAtividade() {
+    return {
+      DbConst.kDbDataQuestaoAtividadeKeyId: idQuestaoAtividade,
+      DbConst.kDbDataQuestaoAtividadeKeyIdAtividade: idAtividade,
+      DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno: id,
+    };
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is QuestaoAtividade &&
+    return other is _QuestaoAtividadeBase &&
         other.idQuestaoAtividade == idQuestaoAtividade &&
-        other.questao == questao &&
-        other.atividade == atividade;
+        other.idAtividade == idAtividade;
   }
 
   @override
-  int get hashCode {
-    return idQuestaoAtividade.hashCode ^ questao.hashCode ^ atividade.hashCode;
-  }
+  int get hashCode => idQuestaoAtividade.hashCode ^ idAtividade.hashCode;
 }
 
 /// Usada para preencher parcialmente os dados de uma questão de atividade.
 class RawQuestaoAtividade {
   final int? idQuestaoAtividade;
-  final Questao? questao;
-  final Atividade? atividade;
+  final int? idAtividade;
+  final String? idQuestao;
 
   RawQuestaoAtividade({
     this.idQuestaoAtividade,
-    this.questao,
-    this.atividade,
+    this.idAtividade,
+    this.idQuestao,
   });
 
   DataQuestaoAtividade toDataQuestaoAtividade() {
     return {
       DbConst.kDbDataQuestaoAtividadeKeyId: idQuestaoAtividade,
-      DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno: questao?.id,
+      DbConst.kDbDataQuestaoAtividadeKeyIdAtividade: idAtividade,
+      DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno: idQuestao,
     };
   }
 }

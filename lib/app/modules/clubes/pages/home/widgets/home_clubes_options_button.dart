@@ -39,7 +39,7 @@ class HomeClubesOptionsButton extends StatelessWidget {
         switch (opcao) {
           case OpcoesHomeClubePage.atualizar:
             await BottomSheetCarregando(
-              future: controller.atualizarListaDeClubes(),
+              future: controller.sincronizarClubes(),
             ).showModal(context);
             break;
         }
