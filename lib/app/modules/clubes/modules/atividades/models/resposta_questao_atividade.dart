@@ -88,3 +88,40 @@ abstract class _RespostaQuestaoAtividadeBase with Store {
   int get hashCode =>
       idQuestaoAtividade.hashCode ^ idUsuario.hashCode ^ sequencial.hashCode;
 }
+
+class RawRespostaQuestaoAtividade {
+  RawRespostaQuestaoAtividade({
+    this.idQuestaoAtividade,
+    this.idUsuario,
+    this.sequencial,
+    this.sequencialTemporario,
+  });
+
+  final int? idQuestaoAtividade;
+  final int? idUsuario;
+  final int? sequencial;
+  final int? sequencialTemporario;
+
+  RawRespostaQuestaoAtividade copyWith({
+    int? idQuestaoAtividade,
+    int? idUsuario,
+    int? sequencial,
+    int? sequencialTemporario,
+  }) {
+    return RawRespostaQuestaoAtividade(
+      idQuestaoAtividade: idQuestaoAtividade ?? this.idQuestaoAtividade,
+      idUsuario: idUsuario ?? this.idUsuario,
+      sequencial: sequencial ?? this.sequencial,
+      sequencialTemporario: sequencialTemporario ?? this.sequencialTemporario,
+    );
+  }
+
+  DataRespostaQuestaoAtividade toDataRespostaQuestaoAtividade() {
+    return {
+      DbConst.kDbDataRespostaQuestaoAtividadeKeyIdQuestaoAtividade:
+          idQuestaoAtividade,
+      DbConst.kDbDataRespostaQuestaoAtividadeKeyIdUsuario: idUsuario,
+      DbConst.kDbDataRespostaQuestaoAtividadeKeyResposta: sequencial,
+    };
+  }
+}

@@ -9,6 +9,22 @@ class AppTheme {
   factory AppTheme() => _instance;
   static AppTheme get instance => _instance;
 
+  static MaterialColor obterAmostra(Color cor) => MaterialColor(
+        cor.value,
+        {
+          50: Color.fromRGBO(cor.red, cor.green, cor.blue, .1),
+          100: Color.fromRGBO(cor.red, cor.green, cor.blue, .2),
+          200: Color.fromRGBO(cor.red, cor.green, cor.blue, .3),
+          300: Color.fromRGBO(cor.red, cor.green, cor.blue, .4),
+          400: Color.fromRGBO(cor.red, cor.green, cor.blue, .5),
+          500: Color.fromRGBO(cor.red, cor.green, cor.blue, .6),
+          600: Color.fromRGBO(cor.red, cor.green, cor.blue, .7),
+          700: Color.fromRGBO(cor.red, cor.green, cor.blue, .8),
+          800: Color.fromRGBO(cor.red, cor.green, cor.blue, .9),
+          900: Color.fromRGBO(cor.red, cor.green, cor.blue, 1),
+        },
+      );
+
   static MaterialColor get primarySwatch => Colors.teal;
 
   static Color get corAcerto => Colors.green[200]!;

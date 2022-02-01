@@ -54,7 +54,7 @@ class AtividadesModule extends Module {
           final permissao = argumentos.clube.permissao(UserApp.instance.id!);
           switch (permissao) {
             case PermissoesClube.proprietario:
-            case PermissoesClube.administrador:
+            case PermissoesClube.administrador: //TODO
               return ConsolidarAtividadePage(argumentos);
             case PermissoesClube.membro:
               return ResponderAtividadePage(argumentos);

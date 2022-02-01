@@ -80,6 +80,10 @@ class Atividade {
     return retorno;
   }
 
+  bool get encerrada {
+    return encerramento?.toUtc().isBefore(DateTime.now().toUtc()) ?? false;
+  }
+
   /// Sobrescreve os campos modificáveis desta atividade com os respectivos valores em
   /// [outra], desde que tenham o mesmo ID.
   void mesclar(Atividade outra) {

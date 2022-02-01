@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
+import 'package:clubedematematica/app/shared/theme/appTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -31,7 +32,7 @@ class _AtividadesPageState extends State<AtividadesPage> {
           backgroundColor: temaClube.primaria,
           child: Icon(
             Icons.add,
-            color: temaClube.textoPrimaria,
+            color: temaClube.sobrePrimaria,
             size: 28.0,
           ),
           onPressed: () => controle.abrirPaginaCriarAtividade(context),
@@ -43,7 +44,7 @@ class _AtividadesPageState extends State<AtividadesPage> {
       floatingActionButton: construirFloatingActionButton(),
       body: RefreshIndicator(
         backgroundColor: temaClube.primaria,
-        color: temaClube.textoPrimaria,
+        color: temaClube.sobrePrimaria,
         onRefresh: controle.sincronizarAtividades,
         child: Observer(builder: (_) {
           return ListView(
@@ -81,16 +82,18 @@ class _CategoriaAtividade extends Categoria {
                   contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
                   title: Text(
                     atividade.titulo,
-                    style: Theme.of(context).textTheme.headline2,
+                    style: AppTheme.instance.temaClaro.textTheme.headline2,
                   ),
                   subtitle: Text(atividade.descricao ?? ''),
                   leading: CircleAvatar(
                     child: Icon(
                       Icons.task_outlined,
-                      color: temaClube.textoEnfase,
+                      color: temaClube.enfaseSobreSuperficie,
                     ),
                     backgroundColor: temaClube.primaria.withOpacity(0.3),
                   ),
+                  trailing:
+                      atividade.encerrada ? null : const Text('Encerrada'),
                   onTap: () => onAtividade(context, atividade),
                 );
               });

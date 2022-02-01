@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import 'package:clubedematematica/app/shared/utils/db/codificacao.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -25,7 +25,6 @@ import '../../models/db/remoto/linha_tabela_tipos_permissao.dart';
 import '../../models/db/remoto/linha_tabela_usuarios.dart';
 import '../../models/debug.dart';
 import '../../models/exceptions/error_handler.dart';
-import '../../models/exceptions/my_exception.dart';
 import '../../utils/strings_db.dart';
 import '../../utils/strings_db_sql.dart';
 import '../interface_auth_repository.dart';
@@ -274,28 +273,17 @@ class SupabaseDbRepository
   Future<DataDocument> getUser(String email) async {
     assert(Debug.print('[INFO] Chamando SupabaseDbRepository.getUser()...'));
     _checkAuthentication('getUser()');
-    final table = CollectionType.usuarios.name;
+    final tabela = CollectionType.usuarios.name;
     try {
       assert(Debug.print(
           '[INFO] Solicitando os dados do usuário com o email "$email" '
-          'na tabela "$table"...'));
+          'na tabela "$tabela"...'));
       final response = await _client
-          .from(table)
+          .from(tabela)
           .select(DbConst.kDbDataUserKeyId)
           .eq(DbConst.kDbDataUserKeyEmail, email)
           .execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao solicitar os dados do usuário com o email "$email" '
-            'na tabela "$table"...'));
-        throw MyException(
-          error.message,
-          originClass: 'SupabaseDbRepository',
-          originField: 'getUser()',
-          error: error,
-        );
-      }
+      if (response.error != null) throw response.error!;
       final list = (response.data as List).cast<DataUsuario>();
       assert(Debug.call(() {
         if (list.length > 1)
@@ -303,11 +291,19 @@ class SupabaseDbRepository
             '[ATTENTION] A solicitação retornou ${list.length} usuário(s) com o email "$email".',
           );
       }));
-      return list.isNotEmpty ? list[0] : DataUsuario();
-    } catch (_) {
+      return list.isNotEmpty ? list.first : DataUsuario();
+    } catch (erro, stack) {
       assert(Debug.print(
-          '[ERROR] Erro ao solicitar os dados da tabela "$table".'));
-      rethrow;
+          '[ERROR] Erro ao solicitar os dados do usuário com o email "$email" '
+          'na tabela "$tabela"...'));
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context:
+            DiagnosticsNode.message('SupabaseDbRepository.getUser($email)'),
+      ));
+      return DataDocument();
     }
   }
 
@@ -316,26 +312,28 @@ class SupabaseDbRepository
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository.getAssuntos()...'));
     //_checkAuthentication('getAssuntos()');
-    final table = CollectionType.assuntos.name;
+    final tabela = CollectionType.assuntos.name;
     try {
-      assert(Debug.print('[INFO] Solicitando os dados da tabela "$table"...'));
-      final response = await _client.from(table).select().execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        throw MyException(
-          error.message,
-          originClass: 'SupabaseDbRepository',
-          originField: 'getAssuntos()',
-          error: error,
-        );
-      }
-      return (response.data as List).cast<DataAssunto>().map((dados) {
+      assert(Debug.print('[INFO] Solicitando os dados da tabela "$tabela"...'));
+      final resposta = await _client.from(tabela).select().execute();
+
+      if (resposta.error != null) throw resposta.error!;
+
+      return (resposta.data as List).cast<DataAssunto>().map((dados) {
         return Assunto.fromDataAssunto(_decodeDataModificacao(dados));
       }).toList();
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
-          '[ERROR] Erro ao solicitar os dados da tabela "$table".'));
-      rethrow;
+          '[ERROR] Erro ao solicitar os dados da tabela "$tabela".'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message('SupabaseDbRepository.getAssuntos()'),
+      ));
+
+      return [];
     }
   }
 
@@ -357,23 +355,25 @@ class SupabaseDbRepository
         Debug.print('[INFO] Chamando SupabaseDbRepository.insertAssunto()...'));
     _checkAuthentication('insertAssunto()');
     try {
-      assert(Debug.print('[INFO] Inserindo o assunto ${data.toString()}...'));
+      assert(Debug.print('[INFO] Inserindo o assunto $data...'));
       final response =
           await _client.from('assunto_x_assunto_pai').insert(data).execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        throw MyException(
-          error.message,
-          originClass: 'SupabaseDbRepository',
-          originField: 'insertAssunto()',
-          error: error,
-        );
-      }
+
+      if (response.error != null) throw response.error!;
+
       return (response.count ?? 0) > 0;
-    } catch (_) {
-      assert(
-          Debug.print('[ERROR] Erro ao inserir o assunto ${data.toString()}.'));
-      rethrow;
+    } catch (erro, stack) {
+      assert(Debug.print('[ERROR] Erro ao inserir o assunto $data.'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context:
+            DiagnosticsNode.message('SupabaseDbRepository.insertAssunto()'),
+      ));
+
+      return false;
     }
   }
 
@@ -386,24 +386,26 @@ class SupabaseDbRepository
       assert(Debug.print(
           '[INFO] Solicitando os dados da tabela "$viewQuestoes"...'));
       final response = await _client.from(viewQuestoes).select().execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        throw MyException(
-          error.message,
-          originClass: 'SupabaseDbRepository',
-          originField: 'getQuestoes()',
-          error: error,
-        );
-      }
+
+      if (response.error != null) throw response.error!;
+
       return Future.wait(
         (response.data as List)
             .cast<DataQuestao>()
             .map((dados) => Questao.fromDataQuestao(dados)),
       );
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$viewQuestoes".'));
-      rethrow;
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message('SupabaseDbRepository.getQuestoes()'),
+      ));
+
+      return [];
     }
   }
 
@@ -415,20 +417,23 @@ class SupabaseDbRepository
     try {
       assert(Debug.print('[INFO] Inserindo a questão ${data.toString()}...'));
       final response = await _client.from(viewQuestoes).insert(data).execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        throw MyException(
-          error.message,
-          originClass: 'SupabaseDbRepository',
-          originField: 'insertQuestao()',
-          error: error,
-        );
-      }
+
+      if (response.error != null) throw response.error!;
+
       return (response.count ?? 0) > 0;
-    } catch (_) {
-      assert(
-          Debug.print('[ERROR] Erro ao inserir a questão ${data.toString()}.'));
-      rethrow;
+    } catch (erro, stack) {
+      assert(Debug.print(
+          '[ERROR] Erro ao solicitar os dados da tabela "$viewQuestoes".'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context:
+            DiagnosticsNode.message('SupabaseDbRepository.insertQuestao()'),
+      ));
+
+      return false;
     }
   }
 
@@ -443,25 +448,27 @@ class SupabaseDbRepository
         'get_clubes',
         params: {'id_usuario': idUsuario},
       ).execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        throw MyException(
-          error.message,
-          originClass: 'SupabaseDbRepository',
-          originField: 'getClubes()',
-          error: error,
-        );
-      }
+
+      if (response.error != null) throw response.error!;
 
       final clubes = (response.data as List)
           .cast<DataClube>()
           .map((dataClube) => Clube.fromDataClube(dataClube))
           .toList();
       return clubes;
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados dos clubes do usuário cujo ID é $idUsuario.'));
-      rethrow;
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.getClubes($idUsuario)'),
+      ));
+
+      return [];
     }
   }
 
@@ -477,19 +484,22 @@ class SupabaseDbRepository
       assert(Debug.print('[INFO] Inserindo o clube ${data.toString()}...'));
       final response =
           await _client.rpc('inserir_clube', params: data).execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(
-            Debug.print('[ERROR] Erro ao inserir o clube ${data.toString()}. '
-                '\n${error.toString()}'));
-        return null;
-      }
+
+      if (response.error != null) throw response.error!;
+
       final list = (response.data as List).cast<DataClube>();
-      return list.isNotEmpty ? Clube.fromDataClube(list[0]) : null;
-    } catch (_) {
-      assert(
-          Debug.print('[ERROR] Erro ao inserir o clube ${data.toString()}.'));
-      rethrow;
+      return list.isNotEmpty ? Clube.fromDataClube(list.first) : null;
+    } catch (erro, stack) {
+      assert(Debug.print('[ERROR] Erro ao inserir o clube $data. \n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message('SupabaseDbRepository.insertClube()'),
+      ));
+
+      return null;
     }
   }
 
@@ -554,20 +564,23 @@ class SupabaseDbRepository
           .eq(tbClubeXUsuarioColIdClube, idClube)
           .execute();
 
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao excluir o usuário cujo "idUser = $idUser" do clube cujo '
-            '"idClube = $idClube" na tabela "$tbClubeXUsuario".'));
-        assert(Debug.printBetweenLine(error));
-        return false;
-      }
+      if (response.error != null) throw response.error!;
+
       return true;
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao excluir o usuário cujo "idUser = $idUser" do clube cujo '
           '"idClube = $idClube" na tabela "$tbClubeXUsuario".'));
-      rethrow;
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.exitClube($idClube, $idUser)'),
+      ));
+
+      return false;
     }
   }
 
@@ -586,21 +599,26 @@ class SupabaseDbRepository
       };
       final response =
           await _client.rpc('entrar_clube', params: data).execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao incluir o usuário cujo "idUser = $idUser" no clube cujo '
-            'código de acesso é "$accessCode". '
-            '\n${error.toString()}'));
-        return DataClube();
-      }
+
+      if (response.error != null) throw response.error!;
+
       final list = (response.data as List).cast<DataClube>();
       return list.isNotEmpty ? list[0] : DataClube();
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao incluir o usuário cujo "idUser = $idUser" no clube cujo '
-          'código de acesso é "$accessCode".'));
-      rethrow;
+          'código de acesso é "$accessCode". '
+          '\n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.enterClube($accessCode, $idUser)'),
+      ));
+
+      return DataClube();
     }
   }
 
@@ -615,18 +633,24 @@ class SupabaseDbRepository
           '[INFO] Atualizando os dados do clube cujo "id = ${dados.id}"...'));
       final response =
           await _client.rpc('atualizar_clube', params: data).execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao atualizar o clube. \n${error.toString()}'));
-        return null;
-      }
+
+      if (response.error != null) throw response.error!;
+
       final list = (response.data as List).cast<DataClube>();
-      return list.isNotEmpty ? Clube.fromDataClube(list[0]) : null;
-    } catch (_) {
+      return list.isNotEmpty ? Clube.fromDataClube(list.first) : null;
+    } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao atualizar o clube com os dados: '
-          '\n${data.toString()}'));
-      rethrow;
+          '\n$data'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context:
+            DiagnosticsNode.message('SupabaseDbRepository.updateClube($dados)'),
+      ));
+
+      return null;
     }
   }
 
@@ -696,18 +720,23 @@ class SupabaseDbRepository
           .eq(tbClubeXUsuarioColIdUsuario, idUser)
           .eq(tbClubeXUsuarioColIdClube, idClube)
           .execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(
-            Debug.print('[ERROR] Erro ao atualizar a permissão do usuário.'));
-        assert(Debug.printBetweenLine(error));
-        return false;
-      }
+
+      if (response.error != null) throw response.error!;
+
       return true;
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao atualizar a permissão de acesso do usuário ao clube'));
-      rethrow;
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.updatePermissionUserClube($idClube, $idUser, $idPermission)'),
+      ));
+
+      return false;
     }
   }
 
@@ -726,17 +755,23 @@ class SupabaseDbRepository
           .update({Sql.tbClubes.excluir: true})
           .eq(Sql.tbClubes.id, id)
           .execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao marcar como excluído o clube cuso ID é "$id". '
-            '\n${error.toString()}'));
-        return false;
-      }
+
+      if (response.error != null) throw response.error!;
+
       return true;
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
-          '[ERROR] Erro ao marcar como excluído o clube cuso ID é "$id".'));
+          '[ERROR] Erro ao marcar como excluído o clube cuso ID é "$id". '
+          '\n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.deleteClube($idClube)'),
+      ));
+
       return false;
     }
   }
@@ -754,18 +789,24 @@ class SupabaseDbRepository
           .select()
           .eq(DbConst.kDbDataAtividadeKeyIdClube, idClube)
           .execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao solicitar as atividades para o clube com o ID $idClube. '
-            '\n${error.toString()}'));
-        return DataCollection.empty();
-      }
+
+      if (response.error != null) throw response.error!;
+
       return (response.data as List).cast<DataAtividade>();
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
-          '[ERROR] Erro ao solicitar os dados da tabela "$viewAtividades".'));
-      rethrow;
+          '[ERROR] Erro ao solicitar as atividades para o clube com o ID $idClube. '
+          '\n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.getAtividades($idClube)'),
+      ));
+
+      return [];
     }
   }
 
@@ -781,19 +822,24 @@ class SupabaseDbRepository
       assert(Debug.print('[INFO] Inserindo a atividade ${data.toString()}...'));
       final response =
           await _client.rpc('inserir_atividade', params: data).execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao inserir a atividade ${data.toString()}. '
-            '\n${error.toString()}'));
-        return null;
-      }
+
+      if (response.error != null) throw response.error!;
+
       final list = (response.data as List).cast<DataAtividade>();
       return list.isNotEmpty ? Atividade.fromDataAtividade(list[0]) : null;
-    } catch (_) {
-      assert(Debug.print(
-          '[ERROR] Erro ao inserir a atividade ${data.toString()}.'));
-      rethrow;
+    } catch (erro, stack) {
+      assert(Debug.print('[ERROR] Erro ao inserir a atividade $data. '
+          '\n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.insertAtividade($dados)'),
+      ));
+
+      return null;
     }
   }
 
@@ -846,18 +892,23 @@ class SupabaseDbRepository
           '[INFO] Atualizando os dados da atividade cujo "id = ${dados.id}".'));
       final response =
           await _client.rpc('atualizar_atividade', params: data).execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao atualizar a atividade. \n${error.toString()}'));
-        return null;
-      }
+
+      if (response.error != null) throw response.error!;
+
       final list = (response.data as List).cast<DataAtividade>();
       return list.isNotEmpty ? Atividade.fromDataAtividade(list[0]) : null;
-    } catch (_) {
-      assert(Debug.print('[ERROR] Erro ao atualizar a atividade com os dados: '
-          '\n${data.toString()}'));
-      rethrow;
+    } catch (erro, stack) {
+      assert(Debug.print('[ERROR] Erro ao atualizar a atividade. \n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.updateAtividade($dados)'),
+      ));
+
+      return null;
     }
   }
 
@@ -929,30 +980,42 @@ class SupabaseDbRepository
 
   @override
   Future<bool> upsertRespostasAtividade(
-      List<DataRespostaQuestaoAtividade> data) async {
+      Iterable<RawRespostaQuestaoAtividade> data) async {
     assert(Debug.print(
         '[INFO] Chamando SupabaseDbRepository.upsertRespostasAtividade()...'));
     _checkAuthentication('upsertRespostasAtividade()');
-    final table = CollectionType.respostasQuestaoAtividade.name;
+    final dados = _prepareUpsertRespostasAtividade(data);
+    if (dados.isEmpty) return false;
+    final table = Sql.tbRespostaQuestaoAtividade.tbNome;
     try {
       assert(Debug.print('[INFO] Inserindo os dados na tabela "$table"...'));
-      final response = await _client
-          .from(table)
-          .upsert(data
-              .map((e) => e[Sql.tbRespostaQuestaoAtividade.excluir] = false)
-              .toList())
-          .execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'
-            '\n${error.toString()}'));
-        return false;
-      }
+      final response = await _client.from(table).upsert(dados).execute();
+
+      if (response.error != null) throw response.error!;
+
       return true;
-    } catch (_) {
-      assert(Debug.print(
-          '[ERROR] Erro ao solicitar os dados da tabela "$table".'));
-      rethrow;
+    } catch (erro, stack) {
+      assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'
+          '\n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.upsertRespostasAtividade($data)'),
+      ));
+
+      return false;
     }
+  }
+
+  List<Map<String, dynamic>> _prepareUpsertRespostasAtividade(
+      Iterable<RawRespostaQuestaoAtividade> dados) {
+    final inconsistente =
+        dados.any((e) => [e.idQuestaoAtividade, e.idUsuario].contains(null));
+    assert(!inconsistente);
+    if (inconsistente) return [];
+    return dados.map((e) => e.toDataRespostaQuestaoAtividade()).toList();
   }
 }

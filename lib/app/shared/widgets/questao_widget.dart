@@ -276,15 +276,13 @@ class _AlternativasState extends State<_Alternativas> {
       borderRadius: const BorderRadius.all(const Radius.circular(4)),
       color: () {
         final selecionada = _selecionada(alternativa);
-        if (selecionavel) {
-          return selecionada ? corSelecionada : corNaoSelecionada;
-        }
+
         if (widget.verificar) {
           if (alternativa.verificar(widget.gabarito)) return AppTheme.corAcerto;
           return selecionada ? AppTheme.corErro : corNaoSelecionada;
         }
 
-        return corNaoSelecionada;
+        return selecionada ? corSelecionada : corNaoSelecionada;
       }(),
     );
 

@@ -1,4 +1,7 @@
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
+
 import '../modules/clubes/modules/atividades/models/atividade.dart';
+import '../modules/clubes/modules/atividades/models/questao_atividade.dart';
 import '../modules/clubes/shared/models/clube.dart';
 import '../modules/quiz/shared/models/assunto_model.dart';
 import '../modules/quiz/shared/models/questao_model.dart';
@@ -72,9 +75,8 @@ abstract class IDbServicos {
 
   Future<Atividade?> updateAtividade(RawAtividade dados);
 
-  Future<List<DataRespostaQuestaoAtividade>> getRespostasAtividade(
-      Atividade atividade);
+  Future<List<QuestaoAtividade>> getQuestoesAtividade(Atividade atividade);
 
   Future<bool> upsertRespostasAtividade(
-      List<DataRespostaQuestaoAtividade> data);
+      Iterable<RawRespostaQuestaoAtividade> dados);
 }

@@ -68,7 +68,7 @@ class _CategoriaUsuariosClube extends Categoria {
                   leading: CircleAvatar(
                     child: Icon(
                       Icons.person,
-                      color: Modular.get<TemaClube>().textoEnfase,
+                      color: Modular.get<TemaClube>().enfaseSobreSuperficie,
                     ),
                     backgroundColor: cor.withOpacity(0.3),
                   ),

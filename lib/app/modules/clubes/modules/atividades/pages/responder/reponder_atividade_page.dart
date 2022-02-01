@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../../../shared/theme/appTheme.dart';
 import '../../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../../../shared/widgets/questao_widget.dart';
+import '../../../../shared/utils/tema_clube.dart';
 import '../../models/argumentos_atividade_page.dart';
 import '../../models/atividade.dart';
 import 'responder_atividade_controller.dart';
@@ -31,39 +34,45 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.atividade.titulo),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: _concluir,
-          ),
-        ],
-      ),
-      body: WillPopScope(
-        onWillPop: _onWillPop,
-        child: Observer(builder: (_) {
-          return controle.questaoAtual.value == null
-              ? _corpoSemQuestao()
-              : _corpoComQuestao();
+    return Theme(
+      data: Modular.get<TemaClube>().tema,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.atividade.titulo),
+          actions: [
+            Observer(builder: (_) {
+              if (!controle.atividadeEncerrada &&
+                  controle.questaoAtual.value != null) {
+                return IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: _concluir,
+                );
+              }
+              return const SizedBox();
+            }),
+          ],
+        ),
+        body: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Observer(builder: (_) {
+            return controle.questaoAtual.value == null
+                ? _corpoSemQuestao()
+                : _corpoComQuestao();
+          }),
+        ),
+        bottomNavigationBar: _barraInferior(),
+        floatingActionButton: Observer(builder: (_) {
+          final ativo =
+              controle.questoesEmBranco.length == 0 && controle.podeConcluir;
+          return !ativo
+              ? const SizedBox()
+              : FloatingActionButton.extended(
+                  icon: const Icon(Icons.done),
+                  label: const Text('CONCLUIR'),
+                  onPressed: !ativo ? null : _concluir,
+                );
         }),
       ),
-      bottomNavigationBar: _barraInferior(),
-      /* floatingActionButton: Observer(builder: (_) {
-        final ativo = controle.podeConfirmar;
-        return !ativo
-            ? const SizedBox()
-            : FloatingActionButton.extended(
-                icon: const Icon(Icons.done),
-                label: const Text('CONFIRMAR'),
-                onPressed: !ativo
-                    ? null
-                    : () {
-                        controle.confirmar();
-                      },
-              );
-      }), */
     );
   }
 
@@ -71,12 +80,17 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
   Future<bool> _onWillPop() async {
     if (controle.questoesModificadas.isEmpty) return true;
 
-    final sair = await BottomSheetCancelarSair(
+    /// Retorná:
+    /// * 0 se o usuário escolher cancelar;
+    /// * 1 se o usuário escolher sair; e
+    /// * 2 se o usuário escolher salvar.
+    final indice = await BottomSheetSalvarSairCancelar(
       title: const Text('A atividade não foi finalizada'),
       message: 'As respostas não serão salvas.',
-    ).showModal<bool>(context);
-
-    return sair ?? false;
+    ).showModal<int>(context);
+    if (indice == 1) return true;
+    if (indice == 2) _concluir();
+    return false;
   }
 
   void _concluir() async {
@@ -111,8 +125,8 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
       return Center(
         child: Text(
           'Nenhuma questão encontrada',
-          style:
-              Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 24.0),
+          style: AppTheme.instance.temaClaro.textTheme.bodyText1
+              ?.copyWith(fontSize: 24.0),
           textAlign: TextAlign.center,
         ),
       );
@@ -126,11 +140,15 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
         questao: controle.questaoAtual.value!,
         alternativaSelecionada: controle.resposta?.sequencialTemporario ??
             controle.resposta?.sequencial,
-        alterandoAlternativa: (alternativa) {
-          controle.resposta?.sequencialTemporario = alternativa?.sequencial;
-        },
+        alterandoAlternativa: controle.atividadeEncerrada
+            ? null
+            : (alternativa) {
+                controle.resposta?.sequencialTemporario =
+                    alternativa?.sequencial;
+              },
         padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-        selecionavel: true,
+        selecionavel: !controle.atividadeEncerrada,
+        verificar: controle.atividadeEncerrada,
         rolavel: true,
       );
     });
@@ -144,8 +162,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child:
-                Text('${controle.indice + 1} de ${controle.numQuestoes}'),
+            child: Text('${controle.indice + 1} de ${controle.numQuestoes}'),
           ),
           Text(controle.questaoAtual.value?.id ?? ''),
         ],

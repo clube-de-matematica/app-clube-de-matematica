@@ -10,7 +10,7 @@ class ConsolidarAtividadeController {
     required this.clube,
     required this.atividade,
   }) {
-    Modular.get<ClubesRepository>().carregarRespostasAtividade(atividade);
+    Modular.get<ClubesRepository>().carregarQuestoesAtividade(atividade);
   }
 
   final Atividade atividade;

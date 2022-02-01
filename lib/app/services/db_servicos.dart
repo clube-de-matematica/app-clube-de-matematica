@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:developer'; //TODO
 
 import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/questao_atividade.dart';
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
 import 'package:clubedematematica/app/shared/models/debug.dart';
 
@@ -102,7 +104,7 @@ class DbServicos implements IDbServicos {
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(() {
-      if (contagem != novosRegistros.length) debugger(); 
+      if (contagem != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -116,7 +118,7 @@ class DbServicos implements IDbServicos {
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(() {
-      if (contagem != novosRegistros.length) debugger(); 
+      if (contagem != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -136,7 +138,7 @@ class DbServicos implements IDbServicos {
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(() {
-      if (contagem != novosRegistros.length) debugger(); 
+      if (contagem != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -171,7 +173,7 @@ class DbServicos implements IDbServicos {
       novosRegistros.map((e) => e.toDbLocal()),
     );
     assert(() {
-      if (contagem != novosRegistros.length) debugger(); 
+      if (contagem != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -514,7 +516,7 @@ class DbServicos implements IDbServicos {
         offset: offset,
       );
     } catch (_) {
-      return List<Questao>.empty();
+      return [];
     }
     return dbQuestoes.map((dbQuestao) => dbQuestao.toQuestao()).toList();
   }
@@ -623,20 +625,58 @@ class DbServicos implements IDbServicos {
   }
 
   @override
-  Future<List<DataRespostaQuestaoAtividade>> getRespostasAtividade(
+  Future<List<QuestaoAtividade>> getQuestoesAtividade(
       Atividade atividade) async {
-    if (idUsuarioApp == null) return [];
-    return _dbRemoto.getRespostasAtividade(
-      atividade.id,
-      atividade.idAutor == idUsuarioApp ? null : idUsuarioApp,
-    );
+    try {
+      final id = idUsuarioApp;
+      if (id == null) return [];
+
+      final linhasClube = (await dbLocal.selectClubes(id).get())
+          .where((linha) => linha.id == atividade.idClube);
+      if (linhasClube.isEmpty) return [];
+
+      final clube = linhasClube.first.toClube();
+      final usuario = clube.getUsuario(id);
+      if (usuario == null) return [];
+
+      final queryAtividades = dbLocal.select(dbLocal.tbQuestaoAtividade)
+        ..where((tb) => tb.idAtividade.equals(atividade.id));
+
+      retornoAssincrono() {
+        return queryAtividades.map((linha) async {
+          final queryRespostas = dbLocal
+              .select(dbLocal.tbRespostaQuestaoAtividade)
+            ..where((tb) => tb.idQuestaoAtividade.equals(linha.id));
+
+          if (usuario.membro) {
+            queryRespostas.where((tb) => tb.idUsuario.equals(usuario.id));
+          }
+          return QuestaoAtividade(
+            questao: (await questao(linha.idQuestaoCaderno))!,
+            idAtividade: linha.idAtividade,
+            idQuestaoAtividade: linha.id,
+            respostas: await queryRespostas
+                .map((linhaResposta) =>
+                    linhaResposta.toRespostaQuestaoAtividade())
+                .get(),
+          );
+        }).get();
+      }
+
+      final retorno = await Future.wait(await retornoAssincrono());
+      return retorno;
+    } catch (_) {
+      return [];
+    }
   }
 
   @override
   Future<bool> upsertRespostasAtividade(
-      List<DataRespostaQuestaoAtividade> data) async {
+      Iterable<RawRespostaQuestaoAtividade> dados) async {
     if (idUsuarioApp == null) return false;
-    return _dbRemoto.upsertRespostasAtividade(data);
+    final sucesso = await _dbRemoto.upsertRespostasAtividade(dados);
+    if (sucesso) await sincronizarClubes();
+    return sucesso;
   }
 }
 
@@ -868,6 +908,16 @@ extension _LinTbAtividades on LinTbAtividades {
       encerramento: dataEncerramento != null
           ? DbLocal.decodificarData(dataEncerramento!)
           : null,
+    );
+  }
+}
+
+extension _LinTbRespostaQuestaoAtividade on LinTbRespostaQuestaoAtividade {
+  RespostaQuestaoAtividade toRespostaQuestaoAtividade() {
+    return RespostaQuestaoAtividade(
+      idQuestaoAtividade: idQuestaoAtividade,
+      idUsuario: idUsuario,
+      sequencial: resposta,
     );
   }
 }

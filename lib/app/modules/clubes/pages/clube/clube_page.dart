@@ -38,25 +38,28 @@ class _ClubePage extends StatefulWidget {
 class _ClubePageState extends State<_ClubePage> {
   ClubeController get controller => Modular.get<ClubeController>();
   TemaClube get temaClube => Modular.get<TemaClube>();
-  Color get corTextoCapa => temaClube.textoPrimaria;
-  Color get corTexto => temaClube.textoEnfase;
-  Color get capa => temaClube.primaria;
+  Color get sobrePrimaria => temaClube.sobrePrimaria;
+  Color get enfaseSobreSuperficie => temaClube.enfaseSobreSuperficie;
+  Color get primaria => temaClube.primaria;
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Observer(builder: (_) {
-        return ScaffoldWithDrawer(
-          page: AppDrawerPage.clubes,
-          appBar: _buildAppBar(),
-          body: TabBarView(
-            children: [
-              AtividadesPage(),
-              PessoasPage(),
-            ],
+        return Theme(
+          data: temaClube.tema,
+          child: ScaffoldWithDrawer(
+            page: AppDrawerPage.clubes,
+            appBar: _buildAppBar(),
+            body: TabBarView(
+              children: [
+                AtividadesPage(),
+                PessoasPage(),
+              ],
+            ),
+            bottomNavigationBar: _buildBarraInferior(),
           ),
-          bottomNavigationBar: _buildBarraInferior(),
         );
       }),
     );
@@ -64,11 +67,11 @@ class _ClubePageState extends State<_ClubePage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      iconTheme: IconThemeData(color: corTextoCapa),
-      backgroundColor: capa,
+      //iconTheme: IconThemeData(color: sobrePrimaria),
+      //backgroundColor: primaria,
       title: Text(
         controller.clube.nome,
-        style: TextStyle(color: corTextoCapa),
+        //style: TextStyle(color: sobrePrimaria),
       ),
       actions: [
         Builder(builder: (context) {
@@ -100,14 +103,14 @@ class _ClubePageState extends State<_ClubePage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Divider(
-          color: corTexto.withOpacity(0.3),
+          color: enfaseSobreSuperficie.withOpacity(0.3),
           height: 0.0,
         ),
         TabBar(
           indicator: UnderlineTabIndicator(
             borderSide: BorderSide(
               width: 4.0,
-              color: corTexto,
+              color: enfaseSobreSuperficie,
             ),
           ),
           tabs: [
@@ -128,7 +131,7 @@ class _ClubePageState extends State<_ClubePage> {
         children: [
           Icon(
             icon,
-            color: corTexto,
+            color: enfaseSobreSuperficie,
             size: 24.0,
           ),
           Row(
@@ -136,7 +139,7 @@ class _ClubePageState extends State<_ClubePage> {
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(color: corTexto),
+                  style: TextStyle(color: enfaseSobreSuperficie),
                   textAlign: TextAlign.center,
                 ),
               ),

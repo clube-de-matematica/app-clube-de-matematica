@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -14,7 +15,6 @@ import '../../../perfil/models/userapp.dart';
 import '../../../quiz/shared/models/questao_model.dart';
 import '../../modules/atividades/models/atividade.dart';
 import '../../modules/atividades/models/questao_atividade.dart';
-import '../../modules/atividades/models/resposta_questao_atividade.dart';
 import '../models/clube.dart';
 import '../models/usuario_clube.dart';
 
@@ -248,52 +248,31 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     return _atividade == null ? false : true;
   }
 
-  Future<Atividade?> carregarRespostasAtividade(Atividade atividade) async {
-    if (usuarioApp.id == null) return null;
-    List<DataRespostaQuestaoAtividade> dataRespostas;
-    try {
-      dataRespostas = await dbServicos.getRespostasAtividade(atividade);
-    } catch (e) {
-      assert(Debug.printBetweenLine(
-          "Erro ao buscar os dados da coleção ${CollectionType.respostasQuestaoAtividade.name}."));
-      assert(Debug.print(e));
-      return null;
-    }
-    if (dataRespostas.isNotEmpty) {
-      // Carregar as respostas.
-      atividade.respostas
-        ..clear()
-        ..addAll(
-          dataRespostas.map((dados) =>
-              RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(dados)),
-        );
-    }
-    return atividade;
+  Future<void> carregarQuestoesAtividade(Atividade atividade) async {
+    if (usuarioApp.id == null) return;
+    List<QuestaoAtividade> questoes;
+    questoes = await dbServicos.getQuestoesAtividade(atividade);
+    atividade.questoes
+      ..clear()
+      ..addAll(questoes);
+    return;
   }
 
   /// {@macro app.IDbRepository.upsertRespostasAtividade}
   Future<bool> atualizarInserirRespostaAtividade(Atividade atividade) async {
     if (usuarioApp.id == null) return false;
-    final List<DataRespostaQuestaoAtividade> dados = [];
+    final List<RawRespostaQuestaoAtividade> dados = [];
     atividade.questoes.forEach((questao) {
       final resposta = questao.resposta(usuarioApp.id!);
       if (resposta != null) {
-        dados.add(
-          resposta
-              .copyWith(sequencial: resposta.sequencialTemporario)
-              .toDataRespostaQuestaoAtividade(),
-        );
+        dados.add(RawRespostaQuestaoAtividade(
+          idQuestaoAtividade: resposta.idQuestaoAtividade,
+          idUsuario: resposta.idUsuario,
+          sequencial: resposta.sequencialTemporario,
+        ));
       }
     });
-    bool retorno;
-    try {
-      retorno = await dbServicos.upsertRespostasAtividade(dados);
-    } catch (e) {
-      assert(Debug.printBetweenLine(
-          "Erro ao inserir os dados na coleção ${CollectionType.respostasQuestaoAtividade.name}."));
-      assert(Debug.print(e));
-      return false;
-    }
+    final retorno = await dbServicos.upsertRespostasAtividade(dados);
     return retorno;
   }
 

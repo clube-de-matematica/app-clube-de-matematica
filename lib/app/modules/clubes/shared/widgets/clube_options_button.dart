@@ -32,7 +32,7 @@ class ClubeOptionsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = this.textStyle ??
         TextStyle(
-          color: TemaClube(clube).textoPrimaria,
+          color: TemaClube(clube).sobrePrimaria,
           fontSize: AppTheme.escala * 26,
           fontWeight: FontWeight.w400,
         );

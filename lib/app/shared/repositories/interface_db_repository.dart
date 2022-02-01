@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
-
+import '../../modules/clubes/modules/atividades/models/atividade.dart';
+import '../../modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import '../../modules/clubes/shared/models/clube.dart';
 import '../../modules/quiz/shared/models/assunto_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
@@ -37,12 +37,10 @@ extension ExtensionCollectionType on CollectionType {
 }
 
 /// O super tipo para repositórios de banco de dados remoto.
-abstract class IRemoteDbRepository implements IDbRepository {
-}
+abstract class IRemoteDbRepository implements IDbRepository {}
 
 /// O super tipo para repositórios de banco de dados local.
 abstract class ILocalDbRepository implements IDbRepository {}
-
 
 /// Deve ser implementada pelas classes que gerenciam a conexão com o banco de dados.
 abstract class IDbRepository {
@@ -95,8 +93,8 @@ abstract class IDbRepository {
   /// Atualiza os dados da atividade com base nas informações do parâmetro.
   ///
   /// A descrição não será atualizada se for uma string vazia.
-  /// 
-  /// A data de encerramento não será atualizada se for 
+  ///
+  /// A data de encerramento não será atualizada se for
   /// `DateTime.fromMillisecondsSinceEpoch(0, isUtc: true)`.
   ///
   /// As demais propriedades não serão atualizados se forem `null`.
@@ -117,6 +115,5 @@ abstract class IDbRepository {
   /// Insere as respostas da atividade, caso ainda não existam, ou atualiza-as,
   /// caso já existam.
   /// {@endtemplate}
-  Future<bool> upsertRespostasAtividade(
-      List<DataRespostaQuestaoAtividade> data);
+  Future<bool> upsertRespostasAtividade(Iterable<RawRespostaQuestaoAtividade> data);
 }

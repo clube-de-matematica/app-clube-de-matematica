@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
@@ -22,30 +24,29 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
 
   final Atividade atividade;
   final _disposers = <ReactionDisposer>[];
-  final _clubesRepositorio = Modular.get<ClubesRepository>();
+  final _repositorio = Modular.get<ClubesRepository>();
 
-  void _inicializar() {
-    _clubesRepositorio.carregarRespostasAtividade(atividade).then((atividade) {
-      _disposers.add(
-        autorun((_) {
-          questaoAtual.then((questao) {
-            if (questao != null) {
-              final respostaInstanciada =
-                  questao.resposta(UserApp.instance.id!) != null;
-              if (!respostaInstanciada) {
-                questao.respostas.add(
-                  RespostaQuestaoAtividade(
-                    idQuestaoAtividade: questao.idQuestaoAtividade,
-                    idUsuario: UserApp.instance.id!,
-                    sequencial: null,
-                  ),
-                );
-              }
-            }
-          });
-        }),
-      );
-    }) /* TODO: .catchError(onError) */;
+  void _inicializar() async {
+    await _repositorio.carregarQuestoesAtividade(atividade);
+    _disposers.add(
+      autorun((_) {
+        questaoAtual.then((questao) {
+          if (questao == null) return;
+          // Instanciar um objeto de resposta, caso não haja.
+          final respostaInstanciada =
+              questao.resposta(UserApp.instance.id!) != null;
+          if (!respostaInstanciada) {
+            questao.respostas.add(
+              RespostaQuestaoAtividade(
+                idQuestaoAtividade: questao.idQuestaoAtividade,
+                idUsuario: UserApp.instance.id!,
+                sequencial: null,
+              ),
+            );
+          }
+        });
+      }),
+    );
   }
 
   @computed
@@ -100,18 +101,14 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
 
   /// Retorna um `bool` que define se há uma resposta a ser confirmada.
   @computed
-  bool get podeConfirmar {
-    final resposta =
-        _questaoAtual?.respostas.cast<RespostaQuestaoAtividade?>().firstWhere(
-              (resposta) => resposta?.idUsuario == UserApp.instance.id,
-              orElse: () => null,
-            );
-    return resposta?.sequencialTemporario != null;
-  }
+  bool get podeConcluir =>
+      questoesModificadas.isNotEmpty && !atividadeEncerrada;
+
+  bool get atividadeEncerrada => atividade.encerrada;
 
   /// Ações a serem executada ao concluir a atividade.
   Future<bool> concluir() async {
-    return _clubesRepositorio.atualizarInserirRespostaAtividade(atividade);
+    return _repositorio.atualizarInserirRespostaAtividade(atividade);
   }
 
   /// Encerrar as [Reaction] em execução.

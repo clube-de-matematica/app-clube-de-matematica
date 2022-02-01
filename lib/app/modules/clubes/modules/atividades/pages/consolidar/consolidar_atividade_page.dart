@@ -42,7 +42,7 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
   Widget build(BuildContext context) {
     final temaClube = Modular.get<TemaClube>();
     final corPrimaria = temaClube.primaria;
-    final corTextoPrimaria = temaClube.textoPrimaria;
+    final corTextoPrimaria = temaClube.sobrePrimaria;
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: corTextoPrimaria),
@@ -111,7 +111,7 @@ class _MembrosState extends State<_Membros> {
             leading: CircleAvatar(
               child: Icon(
                 Icons.person,
-                color: temaClube.textoEnfase,
+                color: temaClube.enfaseSobreSuperficie,
               ),
               backgroundColor: temaClube.primaria.withOpacity(0.3),
             ),
@@ -177,7 +177,7 @@ class _MembrosState extends State<_Membros> {
               leading: CircleAvatar(
                 child: Text(
                   identificador,
-                  style: TextStyle(color: temaClube.textoEnfase),
+                  style: TextStyle(color: temaClube.enfaseSobreSuperficie),
                 ),
                 backgroundColor: enfase,
               ),
