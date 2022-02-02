@@ -147,7 +147,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       // Como `null` é um valor válido para a descrição, para não ser atualizada,
       // ela deve ser envida como uma string vazia,
       descricao: atualizarDescricao ? descricao : '',
-      capa: atualizarCapa ? capa : null,
+      capa: capa,// atualizarCapa ? capa : null,
     );
 
     final _clube = await dbServicos.updateClube(dados);

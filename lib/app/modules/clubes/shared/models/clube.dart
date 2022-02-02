@@ -152,7 +152,7 @@ abstract class _ClubeBase with Store {
   @observable
   String? descricao;
 
-  /// Cor de fundo do [Card] e do avatar do clube.
+  /// Cor do tema do clube.
   @observable
   Color capa;
 
