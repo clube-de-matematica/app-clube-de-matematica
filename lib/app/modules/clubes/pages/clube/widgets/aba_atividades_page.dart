@@ -91,7 +91,7 @@ class _CategoriaAtividade extends Categoria {
                     backgroundColor: temaClube.primaria.withOpacity(0.3),
                   ),
                   trailing:
-                      atividade.encerrada ? null : const Text('Encerrada'),
+                      atividade.encerrada ? const Text('Encerrada') : null,
                   onTap: () => onAtividade(context, atividade),
                 );
               });

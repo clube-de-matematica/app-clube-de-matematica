@@ -61,7 +61,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                   children: [
                     Padding(
                       padding:
-                          const EdgeInsets.fromLTRB(32.0, 48.0, 32.0, 16.0),
+                          const EdgeInsets.fromLTRB(32.0, 48.0, 32.0, 64.0),
                       child: Form(
                         key: _formKey,
                         child: Column(
@@ -92,8 +92,10 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                               builder: (_, __) => _textName(),
                             ),
                             //Empurrar os próximos componentes para o final da tela com um espaçamento mínimo de 80 px.
-                            const Expanded(child: const SizedBox(height: 80.0)),
-                            GestureDetector(
+                            const Expanded(child: SizedBox(height: 48.0)),
+                            InkWell(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16.0)),
                               onTap: () async {
                                 final confirm = await _confirmationBottomSheet(
                                     context,
@@ -101,22 +103,36 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                                 if (confirm)
                                   controller.signInWithAnotherAccount(context);
                               },
-                              child: const Text(
-                                  UIStrings.kChangeAccountButtonTitle),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  final confirm =
-                                      await _confirmationBottomSheet(context,
-                                          UIStrings.kExitConfirmationMsg);
-                                  if (confirm) controller.exit(context);
-                                },
-                                child: const Text(UIStrings.kExitButtonTitle),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                  horizontal: 16.0,
+                                ),
+                                child: Center(
+                                  child:
+                                      Text(UIStrings.kChangeAccountButtonTitle),
+                                ),
                               ),
                             ),
+                            InkWell(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16.0)),
+                              onTap: () async {
+                                final confirm = await _confirmationBottomSheet(
+                                    context, UIStrings.kExitConfirmationMsg);
+                                if (confirm) controller.exit(context);
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                  horizontal: 16.0,
+                                ),
+                                child: Center(
+                                  child: Text(UIStrings.kExitButtonTitle),
+                                ),
+                              ),
+                            ),
+                            //const Expanded(child: SizedBox()),
                           ],
                         ),
                       ),
