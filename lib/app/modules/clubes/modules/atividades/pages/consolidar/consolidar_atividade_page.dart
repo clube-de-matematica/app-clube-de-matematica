@@ -50,7 +50,7 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
           'A atividade já foi liberada. Algum membro pode estar resolvendo-a');
       if (!editar) return;
     }
-    controle.abrirPaginaEditarAtividade(context, atividade);
+    controle.abrirPaginaEditarAtividade(context);
   }
 
   Future<bool> _abrirPaginaInferior(

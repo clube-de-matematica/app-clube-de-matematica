@@ -76,10 +76,11 @@ class ConsolidarAtividadeController extends IAtividadeController
 
   @override
   Future<bool> abrirPaginaEditarAtividade(
-    BuildContext context,
-    Atividade atividade,
-  ) async {
-    final editada = await super.abrirPaginaEditarAtividade(context, atividade);
+    BuildContext context, [
+    Atividade? atividade,
+  ]) async {
+    final editada = await super
+        .abrirPaginaEditarAtividade(context, atividade ?? this.atividade);
     if (editada) await _carregarQuestoes();
     return editada;
   }

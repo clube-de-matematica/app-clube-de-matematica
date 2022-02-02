@@ -79,12 +79,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuarioApp.id == null) return false;
     if (clube.id != usuario.idClube) return false;
     final sucesso = await dbServicos.removerUsuarioClube(clube.id, usuario.id);
-    if (sucesso) {
-      clube.usuarios.remove(usuario);
-      return true;
-    } else {
-      return false;
-    }
+    return sucesso;
   }
 
   /// Remove de [clube] o usuário atual.
@@ -95,11 +90,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuario == null) return false;
     if (usuario.proprietario) return false;
     final sucesso = await removerDoClube(clube, usuario);
-    if (sucesso) {
-      return true;
-    } else {
-      return false;
-    }
+    return sucesso;
   }
 
   /// Inclui o usuário atual no clube correspondente a [codigo].
@@ -147,7 +138,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       // Como `null` é um valor válido para a descrição, para não ser atualizada,
       // ela deve ser envida como uma string vazia,
       descricao: atualizarDescricao ? descricao : '',
-      capa: capa,// atualizarCapa ? capa : null,
+      capa: capa, // atualizarCapa ? capa : null,
     );
 
     final _clube = await dbServicos.updateClube(dados);
@@ -165,12 +156,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuario.permissao == permissao) return true;
     final sucesso = await dbServicos.updatePermissionUserClube(
         clube.id, usuario.id, permissao.id);
-    if (sucesso) {
-      usuario.permissao = permissao;
-      return true;
-    } else {
-      return false;
-    }
+    return sucesso;
   }
 
   Future<bool> excluirClube(Clube clube) => dbServicos.excluirClube(clube);

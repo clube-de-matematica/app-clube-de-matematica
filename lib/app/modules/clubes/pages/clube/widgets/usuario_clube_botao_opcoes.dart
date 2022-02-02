@@ -88,7 +88,9 @@ class UsuarioClubeBotaoOpcoes extends StatelessWidget {
             await onSelected(
               '$textoSair?',
               () async {
-                if (await controller.sair()) Navigator.pop(context);
+                final sair = await controller.sair();
+                if (sair) Navigator.pop(context);
+                return sair;
               },
             );
             break;
@@ -99,12 +101,16 @@ class UsuarioClubeBotaoOpcoes extends StatelessWidget {
 
   Future<void> onSelected(
     String mensagem,
-    Future Function() acao,
+    Future<bool> Function() acao,
   ) async {
     final confirmar = await BottomSheetCancelarConfirmar(
       message: mensagem,
     ).showModal<bool>(context);
-    if (confirmar ?? false) await acao();
+    if (confirmar ?? false) {
+      final futuro = acao();
+      await BottomSheetCarregando(future: futuro).showModal(context);
+      if (!(await futuro)) BottomSheetErro('').showModal(context);
+    }
   }
 
   PopupMenuItem<OpcoesUsuarioClube> _buildItem(

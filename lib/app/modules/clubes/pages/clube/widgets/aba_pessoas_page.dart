@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../perfil/models/userapp.dart';
+import '../../../shared/models/clube.dart';
 import '../../../shared/models/usuario_clube.dart';
 import '../../../shared/utils/tema_clube.dart';
 import '../clube_controller.dart';
@@ -12,45 +14,57 @@ import 'usuario_clube_botao_opcoes.dart';
 class PessoasPage extends StatelessWidget {
   PessoasPage({Key? key}) : super(key: key);
 
+  TemaClube get temaClube => Modular.get<TemaClube>();
+
+  ClubeController get controle => Modular.get<ClubeController>();
+
+  Clube get clube => controle.clube;
+
   @override
   Widget build(BuildContext context) {
-    final clube = Modular.get<ClubeController>().clube;
-    return Observer(builder: (context) {
-      final administradores = clube.administradores.toList();
-      return ListView(
-        children: [
-          _CategoriaUsuariosClube(
-            categoria: 'Mentor',
-            cor: clube.capa,
-            usuarios: [if (clube.proprietario != null) clube.proprietario!],
-          ),
-          if (administradores.isNotEmpty)
+    return RefreshIndicator(
+      backgroundColor: temaClube.primaria,
+      color: temaClube.sobrePrimaria,
+      onRefresh: controle.sincronizarAtividades,
+      child: Observer(builder: (context) {
+        final administradores = clube.administradores.toList();
+        return ListView(
+          children: [
             _CategoriaUsuariosClube(
-              categoria: 'Administradores',
-              cor: clube.capa,
-              usuarios: administradores,
+              categoria: 'Mentor',
+              clube: clube,
+              usuarios: [
+                if (clube.proprietario != null) clube.proprietario!,
+              ],
             ),
-          _CategoriaUsuariosClube(
-            categoria: 'Alunos',
-            cor: clube.capa,
-            usuarios: clube.membros.toList(),
-          ),
-        ],
-      );
-    });
+            if (administradores.isNotEmpty)
+              _CategoriaUsuariosClube(
+                categoria: 'Administradores',
+                clube: clube,
+                usuarios: administradores,
+              ),
+            _CategoriaUsuariosClube(
+              categoria: 'Alunos',
+              clube: clube,
+              usuarios: clube.membros.toList(),
+            ),
+          ],
+        );
+      }),
+    );
   }
 }
 
 /// O widget para exibir uma categoria de usuários do clube.
 class _CategoriaUsuariosClube extends Categoria {
   final String categoria;
-  final Color cor;
   final List<UsuarioClube> usuarios;
+  final Clube clube;
 
   _CategoriaUsuariosClube({
     Key? key,
     required this.categoria,
-    required this.cor,
+    required this.clube,
     this.usuarios = const [],
   }) : super(
           key: key,
@@ -62,15 +76,14 @@ class _CategoriaUsuariosClube extends Categoria {
                 final usuario = usuarios[index];
                 return ListTile(
                   contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
-                  title: Text(usuario.nome ??
-                      usuario.email ??
-                      usuario.id.toString()), //TODO
+                  title: _titulo(usuario, clube),
+                  subtitle: _subtitulo(usuario, clube),
                   leading: CircleAvatar(
                     child: Icon(
                       Icons.person,
-                      color: Modular.get<TemaClube>().enfaseSobreSuperficie,
+                      color: _tema.enfaseSobreSuperficie,
                     ),
-                    backgroundColor: cor.withOpacity(0.3),
+                    backgroundColor: _tema.primaria.withOpacity(0.3),
                   ),
                   trailing: usuario.proprietario
                       ? null
@@ -80,4 +93,28 @@ class _CategoriaUsuariosClube extends Categoria {
             },
           ),
         );
+
+  static TemaClube get _tema => Modular.get<TemaClube>();
+
+  static Widget _titulo(UsuarioClube usuario, Clube clube) {
+    String? titulo = usuario.nome;
+    if (titulo == null && UserApp.instance.id != null) {
+      final usuarioApp = clube.getUsuario(UserApp.instance.id!);
+      if (usuarioApp != null && usuarioApp.proprietario) {
+        titulo = usuario.email;
+      }
+    }
+    return Text(titulo ?? 'Sem identificação');
+  }
+
+  static Widget? _subtitulo(UsuarioClube usuario, Clube clube) {
+    String? subtitulo;
+    if (UserApp.instance.id != null) {
+      final usuarioApp = clube.getUsuario(UserApp.instance.id!);
+      if (usuarioApp != null && usuarioApp.proprietario) {
+        subtitulo = usuario.email;
+      }
+    }
+    return subtitulo == null ? null : Text(subtitulo);
+  }
 }
