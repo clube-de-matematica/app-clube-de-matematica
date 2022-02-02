@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:developer'; //TODO
 
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/questao_atividade.dart';
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
-import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
-import 'package:clubedematematica/app/shared/models/debug.dart';
-
+import '../modules/clubes/modules/atividades/models/atividade.dart';
+import '../modules/clubes/modules/atividades/models/questao_atividade.dart';
+import '../modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import '../modules/clubes/shared/models/clube.dart';
+import '../modules/perfil/models/userapp.dart';
 import '../modules/quiz/shared/models/alternativa_questao_model.dart';
 import '../modules/quiz/shared/models/assunto_model.dart';
 import '../modules/quiz/shared/models/imagem_questao_model.dart';
@@ -437,7 +435,7 @@ class DbServicos implements IDbServicos {
         .map((e) => e.toAssunto())
         .get()
       ..catchError((e) {
-        debugger(); //TODO
+        debugger(); //TODO: debugger()
         print(e);
       });
   }
@@ -610,7 +608,6 @@ class DbServicos implements IDbServicos {
   @override
   Future<Atividade?> insertAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
-    debugger(); //TODO
     final atividade = await _dbRemoto.insertAtividade(dados);
     if (atividade != null) await sincronizarClubes();
     return atividade;
@@ -622,6 +619,14 @@ class DbServicos implements IDbServicos {
     final atividade = await _dbRemoto.updateAtividade(dados);
     if (atividade != null) await sincronizarClubes();
     return atividade;
+  }
+
+  @override
+  Future<bool> excluirAtividade(Atividade atividade)async {
+    if (idUsuarioApp == null) return false;
+    final sucesso = await _dbRemoto.deleteAtividade(atividade.id);
+    if (sucesso) await sincronizarClubes();
+    return sucesso;
   }
 
   @override

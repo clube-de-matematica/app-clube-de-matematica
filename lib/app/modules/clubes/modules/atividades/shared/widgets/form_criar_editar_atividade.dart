@@ -254,6 +254,34 @@ class DescricaoAtividadeTextFormField extends AppTextFormField {
         );
 }
 
+DateTime _efetivoLimiteInferior({
+  required DateTime? limiteInferior,
+  required DateTime? dataInicial,
+}) {
+  limiteInferior ??= DateTime.now();
+  if (dataInicial != null) {
+    if (dataInicial.isBefore(limiteInferior)) return dataInicial;
+  }
+  return limiteInferior;
+}
+
+DateTime _efetivoLimiteSuperior({
+  required DateTime? limiteInferior,
+  required DateTime? dataInicial,
+  required DateTime? limiteSuperior,
+}) {
+  final efetivoLimiteInferior = _efetivoLimiteInferior(
+    limiteInferior: limiteInferior,
+    dataInicial: dataInicial,
+  );
+  limiteSuperior ??= efetivoLimiteInferior.add(Duration(days: 364));
+  if (dataInicial != null) {
+    if (dataInicial.isAfter(limiteSuperior))
+      return dataInicial.add(Duration(days: 364));
+  }
+  return limiteSuperior;
+}
+
 /// Um [TextFormField] para inserir a data de liberação da atividade.
 class DataLiberacaoAtividadeTextFormField extends AppInputDatePickerFormField {
   DataLiberacaoAtividadeTextFormField({
@@ -269,9 +297,15 @@ class DataLiberacaoAtividadeTextFormField extends AppInputDatePickerFormField {
   }) : super(
           key: key,
           initialDate: initialDate,
-          firstDate: firstDate ?? DateTime.now(),
-          lastDate:
-              lastDate ?? DateTime((firstDate ?? DateTime.now()).year + 1),
+          firstDate: _efetivoLimiteInferior(
+            limiteInferior: firstDate,
+            dataInicial: initialDate,
+          ),
+          lastDate: _efetivoLimiteSuperior(
+            limiteInferior: firstDate,
+            dataInicial: initialDate,
+            limiteSuperior: lastDate,
+          ),
           textInputAction: textInputAction,
           fieldLabelText: 'Data de liberação',
           errorInvalidText: 'Fora do intervalo',
@@ -298,9 +332,15 @@ class DataEncerramentoAtividadeTextFormField
   }) : super(
           key: key,
           initialDate: initialDate,
-          firstDate: firstDate ?? DateTime.now(),
-          lastDate:
-              lastDate ?? DateTime((firstDate ?? DateTime.now()).year + 1),
+          firstDate: _efetivoLimiteInferior(
+            limiteInferior: firstDate,
+            dataInicial: initialDate,
+          ),
+          lastDate: _efetivoLimiteSuperior(
+            limiteInferior: firstDate,
+            dataInicial: initialDate,
+            limiteSuperior: lastDate,
+          ),
           textInputAction: textInputAction,
           fieldLabelText: 'Data de encerramento',
           errorInvalidText: 'Fora do intervalo',

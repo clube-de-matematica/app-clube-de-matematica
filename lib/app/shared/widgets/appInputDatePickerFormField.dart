@@ -55,7 +55,7 @@ class AppInputDatePickerFormField extends StatefulWidget {
     this.focusNode,
     this.textInputAction,
     this.nullable = false,
-  })  : initialDate =
+  })  : dataInicial =
             initialDate != null ? DateUtils.dateOnly(initialDate) : null,
         firstDate = DateUtils.dateOnly(firstDate),
         lastDate = DateUtils.dateOnly(lastDate),
@@ -65,23 +65,23 @@ class AppInputDatePickerFormField extends StatefulWidget {
       'lastDate ${this.lastDate} must be on or after firstDate ${this.firstDate}.',
     );
     assert(
-      initialDate == null || !this.initialDate!.isBefore(this.firstDate),
-      'initialDate ${this.initialDate} must be on or after firstDate ${this.firstDate}.',
+      initialDate == null || !this.dataInicial!.isBefore(this.firstDate),
+      'initialDate ${this.dataInicial} must be on or after firstDate ${this.firstDate}.',
     );
     assert(
-      initialDate == null || !this.initialDate!.isAfter(this.lastDate),
-      'initialDate ${this.initialDate} must be on or before lastDate ${this.lastDate}.',
+      initialDate == null || !this.dataInicial!.isAfter(this.lastDate),
+      'initialDate ${this.dataInicial} must be on or before lastDate ${this.lastDate}.',
     );
     assert(
       selectableDayPredicate == null ||
           initialDate == null ||
-          selectableDayPredicate!(this.initialDate!),
-      'Provided initialDate ${this.initialDate} must satisfy provided selectableDayPredicate.',
+          selectableDayPredicate!(this.dataInicial!),
+      'Provided initialDate ${this.dataInicial} must satisfy provided selectableDayPredicate.',
     );
   }
 
   /// If provided, it will be used as the default value of the field.
-  final DateTime? initialDate;
+  final DateTime? dataInicial;
 
   /// The earliest allowable [DateTime] that the user can input.
   final DateTime firstDate;
@@ -146,7 +146,7 @@ class _AppInputDatePickerFormFieldState
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.initialDate;
+    _selectedDate = widget.dataInicial;
   }
 
   @override
@@ -164,11 +164,11 @@ class _AppInputDatePickerFormFieldState
   @override
   void didUpdateWidget(AppInputDatePickerFormField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialDate != oldWidget.initialDate) {
+    if (widget.dataInicial != oldWidget.dataInicial) {
       // Can't update the form field in the middle of a build, so do it next frame
       WidgetsBinding.instance!.addPostFrameCallback((Duration timeStamp) {
         setState(() {
-          _selectedDate = widget.initialDate;
+          _selectedDate = widget.dataInicial;
           _updateValueForSelectedDate();
         });
       });

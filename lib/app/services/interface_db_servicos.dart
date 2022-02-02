@@ -75,6 +75,8 @@ abstract class IDbServicos {
 
   Future<Atividade?> updateAtividade(RawAtividade dados);
 
+  Future<bool> excluirAtividade(Atividade atividade);
+
   Future<List<QuestaoAtividade>> getQuestoesAtividade(Atividade atividade);
 
   Future<bool> upsertRespostasAtividade(

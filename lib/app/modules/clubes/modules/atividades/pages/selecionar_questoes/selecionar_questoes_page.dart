@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../../modules/quiz/shared/models/questao_model.dart';
-import '../../../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../../../shared/widgets/checkbox_popup_menu_item.dart';

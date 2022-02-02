@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
 
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -9,12 +7,11 @@ import 'package:mobx/mobx.dart';
 import '../../../../services/interface_db_servicos.dart';
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/repositories/id_base62.dart';
-import '../../../../shared/repositories/interface_db_repository.dart';
-import '../../../../shared/utils/strings_db.dart';
 import '../../../perfil/models/userapp.dart';
 import '../../../quiz/shared/models/questao_model.dart';
 import '../../modules/atividades/models/atividade.dart';
 import '../../modules/atividades/models/questao_atividade.dart';
+import '../../modules/atividades/models/resposta_questao_atividade.dart';
 import '../models/clube.dart';
 import '../models/usuario_clube.dart';
 
@@ -226,9 +223,8 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     DateTime? dataEncerramento,
   }) async {
     if (usuarioApp.id == null) return false;
-    assert(!dataLiberacao.isBefore(DateUtils.dateOnly(DateTime.now())));
-    assert(
-        dataEncerramento == null || !dataEncerramento.isBefore(dataLiberacao));
+    //assert(!dataLiberacao.isBefore(DateUtils.dateOnly(DateTime.now())));
+    //assert(dataEncerramento == null || !dataEncerramento.isBefore(dataLiberacao));
     final permitirUsuario = atividade.idAutor == usuarioApp.id!;
     assert(permitirUsuario);
     if (questoes != null && questoes.isEmpty) questoes = null;
@@ -248,10 +244,12 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     return _atividade == null ? false : true;
   }
 
+  Future<bool> excluirAtividade(Atividade atividade) =>
+      dbServicos.excluirAtividade(atividade);
+
   Future<void> carregarQuestoesAtividade(Atividade atividade) async {
     if (usuarioApp.id == null) return;
-    List<QuestaoAtividade> questoes;
-    questoes = await dbServicos.getQuestoesAtividade(atividade);
+    final questoes = await dbServicos.getQuestoesAtividade(atividade);
     atividade.questoes
       ..clear()
       ..addAll(questoes);

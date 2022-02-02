@@ -1,8 +1,9 @@
 import '../../../../../quiz/shared/models/questao_model.dart';
 import '../../../../shared/models/clube.dart';
-import '../../shared/models/criar_editar_aticidade_controler.dart';
+import '../../shared/models/interface_atividade_controller.dart';
 
-class CriarAtividadeController extends CriarEditarAtividadeController {
+class CriarAtividadeController extends IAtividadeController
+    with IAtividadeControllerMixinCriarEditar {
   CriarAtividadeController(Clube clube) : super(clube);
 
   @override
@@ -14,7 +15,7 @@ class CriarAtividadeController extends CriarEditarAtividadeController {
     List<Questao> questoes = const [],
   }) {
     if (descricao?.isEmpty ?? false) descricao = null;
-   return repositorio.criarAtividade(
+    return repositorio.criarAtividade(
       clube: clube,
       titulo: titulo,
       descricao: descricao,

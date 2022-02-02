@@ -38,7 +38,9 @@ class ClubeController extends IClubeController
     }
     return _assinaturaAtividades =
         repository.atividades(clube).listen((atividades) {
-      clube.atividades.addAll(atividades);
+      clube.atividades
+        ..removeAll(clube.atividades.difference(atividades.toSet()))
+        ..addAll(atividades);
     });
   }
 

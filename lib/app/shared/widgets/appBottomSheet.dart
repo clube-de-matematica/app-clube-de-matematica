@@ -343,7 +343,7 @@ class BottomSheetErro extends AppBottomSheet {
 /// * [resultActionFirst] se o primeiro botão for acionado;
 /// * [resultActionLast] se o último botão for acionado; ou
 /// * `null` nos demais casos.
-class BottomSheetAcoes extends AppBottomSheet {
+class BottomSheetAcoes<T extends Object?> extends AppBottomSheet {
   const BottomSheetAcoes({
     Key? key,
     this.title,
@@ -352,8 +352,8 @@ class BottomSheetAcoes extends AppBottomSheet {
     this.labelActionLast = 'CANCELAR',
     this.actionFirstIsPrimary = true,
     this.actionLastIsPrimary = false,
-    this.resultActionFirst = true,
-    this.resultActionLast = false,
+    required this.resultActionFirst,
+    required this.resultActionLast,
   }) : super(key: key);
 
   /// O título desta página inferior.
@@ -375,10 +375,10 @@ class BottomSheetAcoes extends AppBottomSheet {
   final bool actionLastIsPrimary;
 
   /// Retorno da página quando o primeiro botão é acionado.
-  final resultActionFirst;
+  final T resultActionFirst;
 
   /// Retorno da página quando o último botão é acionado.
-  final resultActionLast;
+  final T resultActionLast;
 
   @override
   Widget build(BuildContext context) {
@@ -389,12 +389,12 @@ class BottomSheetAcoes extends AppBottomSheet {
         AppTextButton(
           primary: actionFirstIsPrimary,
           child: Text(labelActionFirst),
-          onPressed: () => Navigator.pop<bool>(context, resultActionFirst),
+          onPressed: () => Navigator.pop<T>(context, resultActionFirst),
         ),
         AppTextButton(
           primary: actionLastIsPrimary,
           child: Text(labelActionLast),
-          onPressed: () => Navigator.pop<bool>(context, resultActionLast),
+          onPressed: () => Navigator.pop<T>(context, resultActionLast),
         ),
       ],
     );
@@ -403,7 +403,7 @@ class BottomSheetAcoes extends AppBottomSheet {
 
 /// Uma página inferior para confirmar ou cancelar uma ação.
 /// Ao ser fechada, retorna `true` se o usuário confirmar a ação.
-class BottomSheetCancelarConfirmar extends BottomSheetAcoes {
+class BottomSheetCancelarConfirmar extends BottomSheetAcoes<bool> {
   BottomSheetCancelarConfirmar({
     Key? key,
     Widget? title,
@@ -431,7 +431,7 @@ class BottomSheetCancelarConfirmar extends BottomSheetAcoes {
 
 /// Uma página inferior para confirmar ou cancelar uma ação de sair.
 /// Ao ser fechada, retorna `true` se o usuário confirmar a ação.
-class BottomSheetCancelarSair extends BottomSheetAcoes {
+class BottomSheetCancelarSair extends BottomSheetAcoes<bool> {
   BottomSheetCancelarSair({
     Key? key,
     Widget? title,

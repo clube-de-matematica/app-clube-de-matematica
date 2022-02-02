@@ -1,17 +1,15 @@
-import 'dart:developer';
 import 'dart:io';
-import 'package:clubedematematica/app/shared/models/exceptions/error_handler.dart';
-import 'package:drift/extensions/json1.dart';
 
-import 'package:clubedematematica/app/shared/models/debug.dart';
-import 'package:clubedematematica/app/shared/utils/db/codificacao.dart';
-import 'package:clubedematematica/app/shared/utils/strings_db_sql.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import '../../models/debug.dart';
+import '../../models/exceptions/error_handler.dart';
+import '../../utils/db/codificacao.dart';
+import '../../utils/strings_db_sql.dart';
 import 'esquema.dart';
 
 part 'drift_db.g.dart';

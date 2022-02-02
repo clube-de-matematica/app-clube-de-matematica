@@ -1,9 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:clubedematematica/app/shared/models/db/remoto/linha_tabela_questao_atividade.dart';
-import 'package:clubedematematica/app/shared/models/db/remoto/linha_tabela_resposta_questao_atividade.dart';
-
 import 'drift_db.dart';
 
 enum Tabelas {

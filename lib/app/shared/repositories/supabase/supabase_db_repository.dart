@@ -749,7 +749,7 @@ class SupabaseDbRepository
     final tabela = Sql.tbClubes.tbNome;
     try {
       assert(Debug.print(
-          '[INFO] Marcando como excluído o clube cuso ID é "$id"...'));
+          '[INFO] Marcando como excluído o clube cujo ID é "$id"...'));
       final response = await _client
           .from(tabela)
           .update({Sql.tbClubes.excluir: true})
@@ -761,7 +761,7 @@ class SupabaseDbRepository
       return true;
     } catch (erro, stack) {
       assert(Debug.print(
-          '[ERROR] Erro ao marcar como excluído o clube cuso ID é "$id". '
+          '[ERROR] Erro ao marcar como excluído o clube cujo ID é "$id". '
           '\n$erro'));
 
       ErrorHandler.reportError(FlutterErrorDetails(
@@ -897,6 +897,7 @@ class SupabaseDbRepository
 
       final list = (response.data as List).cast<DataAtividade>();
       return list.isNotEmpty ? Atividade.fromDataAtividade(list[0]) : null;
+      
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao atualizar a atividade. \n$erro'));
 
@@ -926,19 +927,56 @@ class SupabaseDbRepository
 
     // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
     final dados = {
-      'id': data.id,
-      'titulo': data.titulo,
-      'descricao': data.descricao,
-      'questoes': questoes(),
-      'data_liberacao': data.liberacao == null
+      '_id': data.id,
+      '_titulo': data.titulo,
+      '_descricao': data.descricao,
+      '_questoes': questoes(),
+      '_data_liberacao': data.liberacao == null
           ? null
           : data.liberacao!.toUtc().millisecondsSinceEpoch / 1000,
-      'data_encerramento': data.encerramento == null
+      '_data_encerramento': data.encerramento == null
           ? null
           : data.encerramento!.toUtc().millisecondsSinceEpoch / 1000,
     };
 
     return dados;
+  }
+
+@override
+  Future<bool> deleteAtividade(int idAtividade) async{
+    assert(
+        Debug.print('[INFO] Chamando SupabaseDbRepository.deleteAtividade()...'));
+    _checkAuthentication('deleteAtividade()');
+    final id = idAtividade;
+    final tabela = Sql.tbAtividades.tbNome;
+    try {
+      assert(Debug.print(
+          '[INFO] Marcando como excluída a atividade cujo ID é "$id"...'));
+      final resposta = await _client
+          .from(tabela)
+          .update({Sql.tbClubes.excluir: true})
+          .eq(Sql.tbAtividades.id, id)
+          .execute();
+
+      if (resposta.error != null) throw resposta.error!;
+
+      return true;
+    } catch (erro, stack) {
+      assert(Debug.print(
+          '[ERROR] Erro ao marcar como excluída a atividade cujo ID é "$id". '
+          '\n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.deleteAtividade($idAtividade)'),
+      ));
+
+      return false;
+    }
+
   }
 
   @override

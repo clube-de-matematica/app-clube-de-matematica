@@ -6,47 +6,33 @@ import '../../../../../shared/utils/strings_db.dart';
 import 'questao_atividade.dart';
 import 'resposta_questao_atividade.dart';
 
+part 'atividade.g.dart';
+
 /// Modelo para os dados das atividades dos clubes.
-class Atividade {
-  final int id;
-  String titulo;
-  String? descricao;
-
-  /// ID do clube ao qual esta atividade pertence.
-  final int idClube;
-
-  /// ID do usuário que criou esta atividade.
-  final int idAutor;
-
-  /// Data/hora (no fuso horário UTC) da criação desta atividade.
-  final DateTime criacao;
-
-  /// Data/hora (no fuso horário UTC) da liberação desta atividade para os usuários do clube.
-  /// Será `NULL` se ainda não tiver sido liberada.
-  DateTime? liberacao;
-
-  /// Data/hora (no fuso horário UTC) final para que esta atividade seja concluída.
-  DateTime? encerramento;
-
-  /// Lista com as questões incluídas nesta atividade.
-  final ObservableList<QuestaoAtividade> questoes;
-
-  /// Lista com as respostas dos usuários às questões incluídas nesta atividade.
-  final ObservableSet<RespostaQuestaoAtividade> respostas;
-
+class Atividade extends _AtividadeBase with _$Atividade {
   Atividade({
-    required this.id,
-    required this.titulo,
-    this.descricao,
-    required this.idClube,
-    required this.idAutor,
-    required this.criacao,
-    this.liberacao,
-    this.encerramento,
+    required int id,
+    required String titulo,
+    String? descricao,
+    required int idClube,
+    required int idAutor,
+    required DateTime criacao,
+    DateTime? liberacao,
+    DateTime? encerramento,
     Iterable<QuestaoAtividade>? questoes,
     Iterable<RespostaQuestaoAtividade>? respostas,
-  })  : questoes = ObservableList.of(questoes ?? Iterable.empty()),
-        respostas = ObservableSet.of(respostas ?? Iterable.empty());
+  }) : super(
+          id: id,
+          titulo: titulo,
+          descricao: descricao,
+          idClube: idClube,
+          idAutor: idAutor,
+          criacao: criacao,
+          liberacao: liberacao,
+          encerramento: encerramento,
+          questoes: questoes,
+          respostas: respostas,
+        );
 
   factory Atividade.fromDataAtividade(DataAtividade map) {
     respostas() {
@@ -79,9 +65,59 @@ class Atividade {
 
     return retorno;
   }
+}
 
+abstract class _AtividadeBase with Store {
+  final int id;
+  String titulo;
+  String? descricao;
+
+  /// ID do clube ao qual esta atividade pertence.
+  final int idClube;
+
+  /// ID do usuário que criou esta atividade.
+  final int idAutor;
+
+  /// Data/hora (no fuso horário UTC) da criação desta atividade.
+  final DateTime criacao;
+
+  /// Data/hora (no fuso horário UTC) da liberação desta atividade para os usuários do clube.
+  /// Será `NULL` se ainda não tiver sido liberada.
+  @observable
+  DateTime? liberacao;
+
+  /// Data/hora (no fuso horário UTC) final para que esta atividade seja concluída.
+  @observable
+  DateTime? encerramento;
+
+  /// Lista com as questões incluídas nesta atividade.
+  final ObservableList<QuestaoAtividade> questoes;
+
+  /// Lista com as respostas dos usuários às questões incluídas nesta atividade.
+  final ObservableSet<RespostaQuestaoAtividade> respostas;
+
+  _AtividadeBase({
+    required this.id,
+    required this.titulo,
+    this.descricao,
+    required this.idClube,
+    required this.idAutor,
+    required this.criacao,
+    this.liberacao,
+    this.encerramento,
+    Iterable<QuestaoAtividade>? questoes,
+    Iterable<RespostaQuestaoAtividade>? respostas,
+  })  : questoes = ObservableList.of(questoes ?? Iterable.empty()),
+        respostas = ObservableSet.of(respostas ?? Iterable.empty());
+
+  @computed
   bool get encerrada {
     return encerramento?.toUtc().isBefore(DateTime.now().toUtc()) ?? false;
+  }
+
+  @computed
+  bool get liberada {
+    return liberacao?.toUtc().isBefore(DateTime.now().toUtc()) ?? false;
   }
 
   /// Sobrescreve os campos modificáveis desta atividade com os respectivos valores em

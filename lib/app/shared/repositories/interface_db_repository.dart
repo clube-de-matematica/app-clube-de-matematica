@@ -101,6 +101,9 @@ abstract class IDbRepository {
   /// {@endtemplate}
   Future<Atividade?> updateAtividade(RawAtividade dados);
 
+  /// Marca como excluída a atividade correspondente a [idAtividade].
+  Future<bool> deleteAtividade(int idAtividade);
+
   /// {@template app.IDbRepository.getRespostasAtividade}
   /// Função para retornar as repostas dos usuários a uma atividade.
   ///
