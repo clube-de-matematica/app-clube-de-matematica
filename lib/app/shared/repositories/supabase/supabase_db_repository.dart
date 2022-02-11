@@ -33,6 +33,8 @@ import '../interface_db_repository.dart';
 import '../mixin_db_repository.dart';
 import '../mixin_db_sql.dart';
 
+const _kSocketExceptionCode = 'SocketException';
+
 /// O objeto [Map] usado pelo [Supabase] nas operações com o banco de dados.
 ///
 /// Os valores desse objeto devem estar codificados.
@@ -48,6 +50,22 @@ class SupabaseDbRepository
   SupabaseDbRepository(Supabase supabase, IAuthRepository authRepository)
       : _client = supabase.client,
         _authRepository = authRepository;
+
+  /// Trata erros ocorridos nas operações com o Supabase.
+  void _tratarErro(Object erro, StackTrace stack, String mensagem) {
+    if (erro is PostgrestError) {
+      if (erro.code == _kSocketExceptionCode) {
+        assert(Debug.print('[ERROR] Sem conexão com a internet.'));
+        return;
+      }
+    }
+    ErrorHandler.reportError(FlutterErrorDetails(
+      exception: erro,
+      stack: stack,
+      library: 'supabase_db_repository.dart',
+      context: DiagnosticsNode.message(mensagem),
+    ));
+  }
 
   /// Lançará uma exceção se não houver um usuário conectado.
   void _checkAuthentication(String memberName) {
@@ -74,14 +92,15 @@ class SupabaseDbRepository
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$tabela".'));
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message('SupabaseDbRepository._obterDados('
-            'tabela: $tabela '
-            'modificadoApos: ${modificadoApos?.toIso8601String()})'),
-      ));
+
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository._obterDados('
+        'tabela: $tabela '
+        'modificadoApos: ${modificadoApos?.toIso8601String()})',
+      );
+
       return [];
     }
   }
@@ -270,44 +289,6 @@ class SupabaseDbRepository
         .toList();
   }
 
-  /// Retorna, assincronamente um [DataUsuario] apenas com o ID do usuário.
-  Future<DataDocument> getUser(String email) async {
-    assert(Debug.print('[INFO] Chamando SupabaseDbRepository.getUser()...'));
-    _checkAuthentication('getUser()');
-    final tabela = CollectionType.usuarios.name;
-    try {
-      assert(Debug.print(
-          '[INFO] Solicitando os dados do usuário com o email "$email" '
-          'na tabela "$tabela"...'));
-      final response = await _client
-          .from(tabela)
-          .select(DbConst.kDbDataUserKeyId)
-          .eq(DbConst.kDbDataUserKeyEmail, email)
-          .execute();
-      if (response.error != null) throw response.error!;
-      final list = (response.data as List).cast<DataUsuario>();
-      assert(Debug.call(() {
-        if (list.length > 1)
-          Debug.print(
-            '[ATTENTION] A solicitação retornou ${list.length} usuário(s) com o email "$email".',
-          );
-      }));
-      return list.isNotEmpty ? list.first : DataUsuario();
-    } catch (erro, stack) {
-      assert(Debug.print(
-          '[ERROR] Erro ao solicitar os dados do usuário com o email "$email" '
-          'na tabela "$tabela"...'));
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context:
-            DiagnosticsNode.message('SupabaseDbRepository.getUser($email)'),
-      ));
-      return DataDocument();
-    }
-  }
-
   @override
   Future<List<Assunto>> getAssuntos() async {
     assert(
@@ -327,12 +308,11 @@ class SupabaseDbRepository
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$tabela".'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message('SupabaseDbRepository.getAssuntos()'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.getAssuntos()',
+      );
 
       return [];
     }
@@ -366,13 +346,11 @@ class SupabaseDbRepository
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir o assunto $data.'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context:
-            DiagnosticsNode.message('SupabaseDbRepository.insertAssunto()'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.insertAssunto()',
+      );
 
       return false;
     }
@@ -399,12 +377,11 @@ class SupabaseDbRepository
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$viewQuestoes".'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message('SupabaseDbRepository.getQuestoes()'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.getQuestoes()',
+      );
 
       return [];
     }
@@ -427,13 +404,11 @@ class SupabaseDbRepository
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$viewQuestoes".'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context:
-            DiagnosticsNode.message('SupabaseDbRepository.insertQuestao()'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.insertQuestao()',
+      );
 
       return false;
     }
@@ -462,13 +437,11 @@ class SupabaseDbRepository
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados dos clubes do usuário cujo ID é $idUsuario.'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.getClubes($idUsuario)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.getClubes($idUsuario)',
+      );
 
       return [];
     }
@@ -494,12 +467,11 @@ class SupabaseDbRepository
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir o clube $data. \n$erro'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message('SupabaseDbRepository.insertClube()'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.insertClube()',
+      );
 
       return null;
     }
@@ -578,13 +550,11 @@ class SupabaseDbRepository
           '[ERROR] Erro ao excluir o usuário cujo "idUser = $idUser" do clube cujo '
           '"idClube = $idClube" na tabela "$tbClubeXUsuario".'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.exitClube($idClube, $idUser)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.exitClube($idClube, $idUser)',
+      );
 
       return false;
     }
@@ -615,13 +585,11 @@ class SupabaseDbRepository
           'código de acesso é "$accessCode". '
           '\n$erro'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.enterClube($accessCode, $idUser)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.enterClube($accessCode, $idUser)',
+      );
 
       return DataClube();
     }
@@ -647,13 +615,11 @@ class SupabaseDbRepository
       assert(Debug.print('[ERROR] Erro ao atualizar o clube com os dados: '
           '\n$data'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context:
-            DiagnosticsNode.message('SupabaseDbRepository.updateClube($dados)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.updateClube($dados)',
+      );
 
       return null;
     }
@@ -733,13 +699,11 @@ class SupabaseDbRepository
       assert(Debug.print(
           '[ERROR] Erro ao atualizar a permissão de acesso do usuário ao clube'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.updatePermissionUserClube($idClube, $idUser, $idPermission)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.updatePermissionUserClube($idClube, $idUser, $idPermission)',
+      );
 
       return false;
     }
@@ -769,13 +733,11 @@ class SupabaseDbRepository
           '[ERROR] Erro ao marcar como excluído o clube cujo ID é "$id". '
           '\n$erro'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.deleteClube($idClube)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.deleteClube($idClube)',
+      );
 
       return false;
     }
@@ -803,13 +765,11 @@ class SupabaseDbRepository
           '[ERROR] Erro ao solicitar as atividades para o clube com o ID $idClube. '
           '\n$erro'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.getAtividades($idClube)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.getAtividades($idClube)',
+      );
 
       return [];
     }
@@ -836,13 +796,11 @@ class SupabaseDbRepository
       assert(Debug.print('[ERROR] Erro ao inserir a atividade $data. '
           '\n$erro'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.insertAtividade($dados)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.insertAtividade($dados)',
+      );
 
       return null;
     }
@@ -905,13 +863,11 @@ class SupabaseDbRepository
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao atualizar a atividade. \n$erro'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.updateAtividade($dados)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.updateAtividade($dados)',
+      );
 
       return null;
     }
@@ -970,13 +926,11 @@ class SupabaseDbRepository
           '[ERROR] Erro ao marcar como excluída a atividade cujo ID é "$id". '
           '\n$erro'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.deleteAtividade($idAtividade)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.deleteAtividade($idAtividade)',
+      );
 
       return false;
     }
@@ -1000,22 +954,25 @@ class SupabaseDbRepository
       final response = await _client
           .rpc('get_respostas_x_questoes_x_atividade', params: data)
           .execute();
-      if (response.error != null) {
-        final error = response.error as PostgrestError;
-        assert(Debug.print(
-            '[ERROR] Erro ao solicitar as respostas para a atividade com o '
-            'ID $idAtividade para o usuário com o ID $idUsuario.'
-            '\n${error.toString()}'));
-        return List<DataRespostaQuestaoAtividade>.empty();
-      }
+
+      if (response.error != null) throw response.error!;
+
       return (response.data as List)
           .cast<Map>()
           .map((e) => e.cast<String, int>())
           .toList();
-    } catch (_) {
+    } catch (erro, stack) {
       assert(Debug.print(
-          '[ERROR] Erro ao solicitar os dados da tabela "$table".'));
-      rethrow;
+          '[ERROR] Erro ao solicitar as respostas para a atividade com o '
+          'ID $idAtividade para o usuário com o ID $idUsuario.'));
+
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.getRespostasAtividade($idAtividade, $idUsuario)',
+      );
+
+      return [];
     }
   }
 
@@ -1036,16 +993,13 @@ class SupabaseDbRepository
 
       return true;
     } catch (erro, stack) {
-      assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'
-          '\n$erro'));
+      assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.upsertRespostasAtividade($data)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.upsertRespostasAtividade($data)',
+      );
 
       return false;
     }
@@ -1079,13 +1033,11 @@ class SupabaseDbRepository
       assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'
           '\n$erro'));
 
-      ErrorHandler.reportError(FlutterErrorDetails(
-        exception: erro,
-        stack: stack,
-        library: 'supabase_db_repository.dart',
-        context: DiagnosticsNode.message(
-            'SupabaseDbRepository.upsertRespostas($dados)'),
-      ));
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.upsertRespostas($dados)',
+      );
 
       return false;
     }
