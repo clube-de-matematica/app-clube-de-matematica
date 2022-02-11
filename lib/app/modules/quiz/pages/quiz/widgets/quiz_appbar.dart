@@ -12,11 +12,15 @@ class QuizAppBar extends AppBar {
   }) : super(
           key: key,
           actions: <Widget>[
-            IconButton(
+            Builder(builder: (context) {
+              return IconButton(
                 icon: IconTheme(
-                    data: _tema.primaryIconTheme,
-                    child: const Icon(Icons.more_vert)),
-                onPressed: null)
+                  data: _tema.primaryIconTheme,
+                  child: const Icon(Icons.filter_alt),
+                ),
+                onPressed: () => controller.abrirPaginaFiltros(context),
+              );
+            })
           ],
           title: const Text(UIStrings.QUIZ_TEXTO_APPBAR),
         );

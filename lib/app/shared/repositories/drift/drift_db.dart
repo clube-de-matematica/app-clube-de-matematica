@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
@@ -145,24 +146,31 @@ class DriftDb extends _$DriftDb {
   ///
   /// **Observação:** Não há previsão da ordem de inserção (ou atualização) dos registro.
   Future<int> upsert(TableInfo tabela, Iterable<Insertable> linhas) async {
-    final futuros = <Future>[];
+    final futuros = <Future<Insertable>>[];
+    final naoInseridos = linhas.toList();
     int contador = 0;
     for (var lin in linhas) {
       futuros.add(
-        into(tabela).insertOnConflictUpdate(lin).then((_) => contador++),
+        into(tabela).insertOnConflictUpdate(lin).then((_) {
+          contador++;
+          return lin;
+        }),
       );
     }
     try {
       // Não há previsão da ordem de inserção das linhas.
-      await Future.wait(futuros);
+      await Future.wait<Insertable>(
+        futuros,
+        cleanUp: (linha) => naoInseridos.remove(linha),
+      );
     } catch (erro, stack) {
-      assert(Debug.printBetweenLine('erro: $erro\nlinhas: $linhas'));
+      assert(Debug.printBetweenLine('erro: $erro\nlinhas: $naoInseridos'));
       ErrorHandler.reportError(
         FlutterErrorDetails(
           exception: erro,
           stack: stack,
           library: 'drift_db.dart --> DriftDb.upsert',
-          context: DiagnosticsNode.message('linhas: $linhas'),
+          context: DiagnosticsNode.message('linhas: $naoInseridos'),
         ),
       );
     }
@@ -183,7 +191,8 @@ class DriftDb extends _$DriftDb {
     Iterable<Insertable> linhas, {
     bool contarInexistentes = true,
   }) async {
-    final futuros = <Future>[];
+    final futuros = <Future<Insertable>>[];
+    final naoInseridos = linhas.toList();
     int contador = 0;
     for (var lin in linhas) {
       futuros.add(
@@ -194,24 +203,29 @@ class DriftDb extends _$DriftDb {
               ..limit(1);
             return query.getSingleOrNull().then((value) {
               if (value == null) contador++;
+              return lin;
             });
           }
           contador += cont;
+          return lin;
         }),
       );
     }
     try {
       // Não há previsão da ordem de exclusão das linhas.
-      await Future.wait(futuros);
+      await Future.wait<Insertable>(
+        futuros,
+        cleanUp: (linha) => naoInseridos.remove(linha),
+      );
     } catch (erro, stack) {
-      assert(Debug.printBetweenLine('erro: $erro\nlinhas: $linhas'));
+      assert(Debug.printBetweenLine('erro: $erro\nlinhas: $naoInseridos'));
       ErrorHandler.reportError(
         FlutterErrorDetails(
           exception: erro,
           stack: stack,
           library: 'drift_db.dart --> DriftDb.deleteSamePrimaryKey',
           context: tabela != tbUsuarios
-              ? DiagnosticsNode.message('linhas: $linhas')
+              ? DiagnosticsNode.message('linhas: $naoInseridos')
               : null,
         ),
       );
@@ -236,7 +250,7 @@ class DriftDb extends _$DriftDb {
     Iterable<int> anos = const [],
     Iterable<int> niveis = const [],
     Iterable<int> assuntos = const [],
-    bool somenteIds = false,
+    bool somenteIdAlfanumerico = false,
     int? limit,
     int? offset,
   }) {
@@ -246,7 +260,7 @@ class DriftDb extends _$DriftDb {
     )
       ..addColumns([
         tbQuestoesCaderno.id,
-        if (!somenteIds) ...[
+        if (!somenteIdAlfanumerico) ...[
           tbQuestoesCaderno.ano,
           tbQuestoesCaderno.nivel,
           tbQuestoesCaderno.indice,
@@ -339,7 +353,7 @@ class DriftDb extends _$DriftDb {
       ..orderBy([OrderingTerm(expression: coluna)]);
 
     if (anos.isNotEmpty) {
-      join.where(tbQuestoesCaderno.nivel.isIn(anos));
+      join.where(tbQuestoesCaderno.ano.isIn(anos));
     }
 
     final retorno = join.map((linha) => linha.read(coluna)!);
@@ -352,47 +366,49 @@ class DriftDb extends _$DriftDb {
     Iterable<int> niveis = const [],
   }) {
     final query = customSelect(
-      r'SELECT DISTINCT assuntos.* FROM assuntos '
-      r'INNER JOIN ('
-      r'  SELECT '
-      r'    w.id,'
-      r'    w.hierarquia,'
-      r'    z.id_questao,'
-      r'    z.ano,'
-      r'    z.nivel'
-      r'  FROM assuntos AS w'
-      r'  INNER JOIN ('
-      // Emular FULL OUTER JOIN. Fonte: https://www.sqlitetutorial.net/sqlite-full-outer-join/
-      r'    SELECT '
-      r'      x1.id_assunto,'
-      r'      x1.id_questao,'
-      r'      y1.ano,'
-      r'      y1.nivel'
-      r'    FROM questao_x_assunto AS x1'
-      r'    LEFT JOIN questoes_caderno AS y1 USING(id_questao)'
-      r'    UNION ALL'
-      r'    SELECT '
-      r'      x2.id_assunto,'
-      r'      x2.id_questao,'
-      r'      y2.ano,'
-      r'      y2.nivel'
-      r'    FROM questoes_caderno AS y2'
-      r'    LEFT JOIN questao_x_assunto AS x2 USING(id_questao)'
-      r'    WHERE x2.id_questao IS NULL'
-      r'  ) AS z ON w.id = z.id_assunto'
-      r') AS juncao ON assuntos.id = juncao.id OR assuntos.id IN ('
-      r'  SELECT "value" FROM json_each((juncao.hierarquia))'
-      r')'
-      r'WHERE '
-      r'  ('
-      r'    (?1 IS NULL) OR '
-      r"    (json_array_length(?1) = 0) OR "
-      r'    (juncao.ano IN (SELECT "value" FROM json_each((?1))))'
-      r'  ) AND ('
-      r'    (?2 IS NULL) OR '
-      r"    (json_array_length(?2) = 0) OR "
-      r'    (juncao.nivel IN (SELECT "value" FROM json_each((?2))))'
-      r'  );',
+      r"""
+SELECT DISTINCT assuntos.* FROM assuntos 
+INNER JOIN (
+  SELECT 
+    w.id,
+    w.hierarquia,
+    z.id_questao,
+    z.ano,
+    z.nivel
+  FROM assuntos AS w
+  INNER JOIN ("""
+// Emular FULL OUTER JOIN. Fonte: https://www.sqlitetutorial.net/sqlite-full-outer-join/
+      r"""
+    SELECT 
+      x1.id_assunto,
+      x1.id_questao,
+      y1.ano,
+      y1.nivel
+    FROM questao_x_assunto AS x1
+    LEFT JOIN questoes_caderno AS y1 USING(id_questao)
+    UNION ALL
+    SELECT 
+      x2.id_assunto,
+      x2.id_questao,
+      y2.ano,
+      y2.nivel
+    FROM questoes_caderno AS y2
+    LEFT JOIN questao_x_assunto AS x2 USING(id_questao)
+    WHERE x2.id_questao IS NULL
+  ) AS z ON w.id = z.id_assunto
+) AS juncao ON assuntos.id = juncao.id OR assuntos.id IN (
+  SELECT "value" FROM json_each((juncao.hierarquia))
+)
+WHERE 
+  (
+    (?1 IS NULL) OR 
+    (json_array_length(?1) = 0) OR 
+    (juncao.ano IN (SELECT "value" FROM json_each((?1))))
+  ) AND (
+    (?2 IS NULL) OR 
+    (json_array_length(?2) = 0) OR 
+    (juncao.nivel IN (SELECT "value" FROM json_each((?2))))
+  );""",
       variables: [
         Variable.withString(DbLocal.codificarLista(anos.toList())),
         Variable.withString(DbLocal.codificarLista(niveis.toList())),
@@ -425,7 +441,7 @@ class DriftDb extends _$DriftDb {
       anos: anos,
       niveis: niveis,
       assuntos: assuntos,
-      somenteIds: true,
+      somenteIdAlfanumerico: true,
     );
     final resultado = await join.get();
     return resultado.length;
@@ -463,7 +479,8 @@ class DriftDb extends _$DriftDb {
       final alternativas = await queryAlternativas.get();
 
       return LinViewQuestoes(
-        id: linha.read(tbQuestoesCaderno.id)!,
+        idAlfanumerico: linha.read(tbQuestoesCaderno.id)!,
+        id: linha.read(tbQuestoes.id)!,
         ano: linha.read(tbQuestoesCaderno.ano)!,
         nivel: linha.read(tbQuestoesCaderno.nivel)!,
         indice: linha.read(tbQuestoesCaderno.indice)!,
@@ -540,5 +557,25 @@ class DriftDb extends _$DriftDb {
       ..where((tb) => tb.idClube.equals(idClube))
       ..orderBy([(tb) => OrderingTerm(expression: tb.dataLiberacao)]);
     return query;
+  }
+
+  Selectable<LinTbRespostaQuestao> selectRespostaQuestao(int idQuestao) {
+    final query = select(tbRespostaQuestao)
+      ..where((tb) => tb.idQuestao.equals(idQuestao))
+      ..limit(1);
+    return query;
+  }
+
+  Future<bool> insertRespostaQuestao(
+      Iterable<LinTbRespostaQuestao> respostas) async {
+    final contador = await upsert(tbRespostaQuestao, respostas);
+    return contador == respostas.length;
+  }
+
+  Future<int> deleteRespostaQuestaoInconsistentes(int idUsuario) {
+    final query = delete(tbRespostaQuestao)
+      ..where((tbl) =>
+          tbl.idUsuario.isNotNull() & tbl.idUsuario.isNotIn([idUsuario]));
+    return query.go();
   }
 }

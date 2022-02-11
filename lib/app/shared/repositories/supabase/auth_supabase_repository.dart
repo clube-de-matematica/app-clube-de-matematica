@@ -1,11 +1,16 @@
 import 'dart:async';
 
+import 'package:fk_user_agent/fk_user_agent.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../configure_supabase.dart';
 import '../../../modules/perfil/models/userapp.dart';
 import '../../models/debug.dart';
+import '../../utils/constantes.dart';
 import '../interface_auth_repository.dart';
 
 /// Gerencia processos de autenticação com o Supabase Auth.
@@ -93,7 +98,8 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       assert(Debug.print(e.toString()));
       rethrow;
     }
-//TODO: notificar o usuário.
+
+    //TODO: notificar o usuário.
     if (session.error != null) {
       if (session.error!.message.startsWith(r'<!DOCTYPE html>')) {
         _controller.add(StatusSignIn.error);
@@ -113,7 +119,6 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
 
   @override
   Future<StatusSignIn> signInWithGoogle([bool replaceUser = false]) async {
-    // await Future.delayed(Duration(seconds: 20));
     final _return = _listen();
     GotrueSessionResponse session;
     try {
@@ -125,71 +130,66 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       );
     } catch (e) {
       assert(Debug.print(e.toString()));
-      rethrow;
-    }
-
-    assert(session.error == null && session.url != null);
-    if (session.error != null || session.url == null) {
       _controller.add(StatusSignIn.error);
+      return _return;
     }
 
-    launch(session.url!, webOnlyWindowName: '_self').catchError((error, stack) {
-      assert(Debug.print(
-        'Erro ao abrir o URL em AuthSupabaseRepository.signInWithGoogle(). \n'
-        'Erro: ${error.toString()}.\n'
-        'Pilha: ${stack.toString()}.',
-      ));
-    });
+    final _url = Uri.tryParse(session.url.toString());
 
-    return _return;
-  }
-
-/* 
-  Future<StatusSignIn> signInWithWebView([bool replaceUser = false]) async {
-    // await Future.delayed(Duration(seconds: 20));
-    final _return = _listen();
-    GotrueSessionResponse session;
-    try {
-      if (replaceUser && logged) await signOut();
-      _controller.add(StatusSignIn.inProgress);
-      session = await _auth.signIn(
-        provider: Provider.google,
-        options: AuthOptions(redirectTo: authRedirectUri),
-      );
-    } catch (e) {
-      assert(Debug.print(e.toString()));
-      rethrow;
-    }
-
-    assert(session.error == null && session.url != null);
-    if (session.error != null || session.url == null) {
+    assert(session.error == null && _url != null);
+    if (session.error != null || _url == null) {
       _controller.add(StatusSignIn.error);
+      return _return;
     }
 
-    await Modular.to.push(
-      MaterialPageRoute(
-        builder: (_) => Scaffold(
-          body: WebView(
-            initialUrl: session.url,
-            userAgent: 'random',
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebResourceError: (erro) {
-              debugger();
-              var url = erro.failingUrl;
-              if (url != null) {
-                if (url.startsWith(authRedirectUri ?? 'tornar false')) {
-                  //launch(url);
-                }
+    agente() async {
+      await FkUserAgent.init();
+      try {
+        // Se "wv" não for substituído o servidor emitirá o erro "disallowed_useragent"
+        final _agente =
+            FkUserAgent.webViewUserAgent?.replaceFirst('; wv)', ')');
+        return '$_agente WebViewApp $APP_NOME/$APP_VERSION';
+      } catch (_) {
+        return null;
+      }
+    }
+
+    final _agente = await agente();
+
+    Modular.to.push(MaterialPageRoute(builder: (context) {
+      return Container(
+        color: Theme.of(context).colorScheme.primary,
+        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+        child: InAppWebView(
+          initialUrlRequest: URLRequest(url: _url),
+          onLoadStart: (controle, url) async {
+            if (url?.host == kAuthCallbackUrlHostname) {
+              try {
+                await launch(url.toString(), webOnlyWindowName: '_self');
+              } catch (error, stack) {
+                assert(Debug.print(
+                  'Erro ao abrir o URL em AuthSupabaseRepository.signInWithGoogle(). \n'
+                  'Erro: ${error.toString()}.\n'
+                  'Pilha: ${stack.toString()}.',
+                ));
+                _controller.add(StatusSignIn.error);
               }
-            },
+              Navigator.pop(context);
+            }
+          },
+          initialOptions: InAppWebViewGroupOptions(
+            crossPlatform: InAppWebViewOptions(
+              clearCache: replaceUser,
+              // Necessário para que o OAuth2 aceite a requisição.
+              userAgent: _agente ?? '',
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }));
 
     return _return;
   }
- */
 
   /// Retorna um futuro que será concluido com a próxima emissão de [StatusSignIn.success],
   /// [StatusSignIn.canceled] ou [StatusSignIn.error] por [status], ou após o tempo limite

@@ -14,9 +14,9 @@ typedef DataAssunto = Map<String, dynamic>;
 typedef DataHierarquia = List<int>;
 
 /// O objeto com os dados de uma questão. O valor [dynamic] pode ser:
-/// * [String] para [DbConst.kDbDataQuestaoKeyId] e [DbConst.kDbDataQuestaoKeyGabarito];
-/// * [int] para [DbConst.kDbDataQuestaoKeyAno], [DbConst.kDbDataQuestaoKeyNivel] e
-/// [DbConst.kDbDataQuestaoKeyIndice];
+/// * [String] para [DbConst.kDbDataQuestaoKeyIdAlfanumerico] e [DbConst.kDbDataQuestaoKeyGabarito];
+/// * [int] para [DbConst.kDbDataQuestaoKeyId], [DbConst.kDbDataQuestaoKeyAno], 
+/// [DbConst.kDbDataQuestaoKeyNivel] e [DbConst.kDbDataQuestaoKeyIndice];
 /// * [List]<[int]> para [DbConst.kDbDataQuestaoKeyAssuntos];
 /// * [List]<[String]> para [DbConst.kDbDataQuestaoKeyEnunciado];
 /// * [List]<[DataAlternativa]> para [DbConst.kDbDataQuestaoKeyAlternativas]; ou
@@ -49,7 +49,7 @@ typedef DataUsuario = Map<String, dynamic>;
 
 /// O objeto com os dados de um usuário de clube.
 /// O valor [dynamic] pode ser:
-/// * [int] para [DbConst.kDbDataUserClubeKeyIdUsuario], [DbConst.kDbDataUserClubeKeyIdClube] e 
+/// * [int] para [DbConst.kDbDataUserClubeKeyIdUsuario], [DbConst.kDbDataUserClubeKeyIdClube] e
 /// [DbConst.kDbDataUserClubeKeyIdPermissao]; ou
 /// * [String] para [DbConst.kDbDataUserClubeKeyNome], [DbConst.kDbDataUserClubeKeyFoto] e
 /// [DbConst.kDbDataUserClubeKeyEmail].
@@ -67,7 +67,7 @@ typedef DataClube = Map<String, dynamic>;
 /// O objeto com os dados que vinculam uma questão a uma atividade.
 /// O valor [dynamic] pode ser:
 /// * [int] para [DbConst.kDbDataQuestaoAtividadeKeyId] e
-/// [DbConst.kDbDataQuestaoAtividadeKeyIdAtividade]; 
+/// [DbConst.kDbDataQuestaoAtividadeKeyIdAtividade];
 /// * [bool] para [DbConst.kDbDataQuestaoAtividadeKeyExcluir]; ou
 /// * [String] para [DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno].
 typedef DataQuestaoAtividade = Map<String, dynamic>;
@@ -76,8 +76,8 @@ typedef DataQuestaoAtividade = Map<String, dynamic>;
 /// O valor [dynamic] pode ser:
 /// * [int] para [DbConst.kDbDataRespostaQuestaoAtividadeKeyIdQuestaoAtividade],
 ///  [DbConst.kDbDataRespostaQuestaoAtividadeKeyIdUsuario] e
-///  [DbConst.kDbDataRespostaQuestaoAtividadeKeyResposta]; ou 
-/// * [bool] para [DbConst.kDbDataRespostaQuestaoAtividadeKeyExcluir]. 
+///  [DbConst.kDbDataRespostaQuestaoAtividadeKeyResposta]; ou
+/// * [bool] para [DbConst.kDbDataRespostaQuestaoAtividadeKeyExcluir].
 typedef DataRespostaQuestaoAtividade = Map<String, dynamic>;
 
 /// O objeto com os dados de uma atividade.
@@ -96,7 +96,7 @@ typedef DataAtividade = Map<String, dynamic>;
 /// O objeto com os dados de uma resposta de um usuário a uma atividade.
 /// O valor [dynamic] pode ser:
 /// * [int] para [DbConst.kDbDataRespostaQuestaoKeyIdQuestao],
-/// [DbConst.kDbDataRespostaQuestaoKeyIdUsuario] e 
+/// [DbConst.kDbDataRespostaQuestaoKeyIdUsuario] e
 /// [DbConst.kDbDataRespostaQuestaoKeyResposta]; ou
 /// * [bool] para [DbConst.kDbDataRespostaQuestaoKeyExcluir]; .
 typedef DataRespostaQuestao = Map<String, dynamic>;
@@ -109,7 +109,7 @@ abstract class DbConst {
   /// {@template app.DbConst.kDbDataDocumentKeyExcluir}
   /// Chave para indicar se o documento (ou registro) está marcado como excluído.
   /// {@endtemplate}
-  /// Usada em [DataClube], [DataAtividade], [DataQuestaoAtividade], 
+  /// Usada em [DataClube], [DataAtividade], [DataQuestaoAtividade],
   /// [DataRespostaQuestaoAtividade] e [DataRespostaQuestao].
   static const kDbDataDocumentKeyExcluir = 'excluir';
 
@@ -190,12 +190,18 @@ abstract class DbConst {
   /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataQuestao]>.
   static const kDbDataCollectionQuestoes = 'questoes';
 
-  /// Nome do campo para o ID da questão.
+  /// Nome do campo para o ID alfanumérico da questão.
   /// Os valores deste campo são do tipo [String] e estão no formato `2019PF1N1Q01`, onde:
   /// * `2019` é o ano de aplicação da prova;
   /// * `PF1` indica que a prova é da primeira fase;
   /// * `N1` indica que a prova é do nível 1;
   /// * `Q01` indica que trata-se da primeira questão do caderno.
+  static const kDbDataQuestaoKeyIdAlfanumerico = 'id_questao_caderno';
+
+  /// Nome do campo para o ID numérico da questão.
+  /// Questões aplicadas em mais de um caderno têm [kDbDataQuestaoKeyIdAlfanumerico] diferentes, 
+  /// mas o mesmo [kDbDataQuestaoKeyId].
+  /// Os valores para esse campo são do tipo [int].
   static const kDbDataQuestaoKeyId = 'id';
 
   /// Nome do campo para o ano de aplicação da questão.
@@ -386,7 +392,8 @@ abstract class DbConst {
   static const kDbDataRespostaQuestaoAtividadeKeyResposta = 'resposta';
 
   /// {@macro app.DbConst.kDbDataDocumentKeyExcluir}
-  static const kDbDataRespostaQuestaoAtividadeKeyExcluir = kDbDataDocumentKeyExcluir;
+  static const kDbDataRespostaQuestaoAtividadeKeyExcluir =
+      kDbDataDocumentKeyExcluir;
 
 /** 
  * ****************************************************************************************
@@ -448,7 +455,7 @@ abstract class DbConst {
  * ****************************************************************************************
 **/
 
-  /// Nome da coleção (ou tabela) para as respostas (não vinculadas a atividades) dos usuários 
+  /// Nome da coleção (ou tabela) para as respostas (não vinculadas a atividades) dos usuários
   /// às questões.
   /// Ao ser retornado do banco de dados, tem a estrutura de um [List]<[DataRespostaQuestao]>.
   static const kDbDataCollectionRespostaQuestao = 'resposta_x_questao';

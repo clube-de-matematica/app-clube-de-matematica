@@ -1,4 +1,5 @@
 import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
+import 'package:clubedematematica/app/modules/quiz/shared/models/resposta_questao.dart';
 
 import '../modules/clubes/modules/atividades/models/atividade.dart';
 import '../modules/clubes/modules/atividades/models/questao_atividade.dart';
@@ -81,4 +82,11 @@ abstract class IDbServicos {
 
   Future<bool> upsertRespostasAtividade(
       Iterable<RawRespostaQuestaoAtividade> dados);
+
+  Future<bool> inserirRespostaQuestao(RawRespostaQuestao resposta);
+
+  /// {@template app.IDbServicos.obterRespostaQuestao}
+  /// Se houver uma resposta salva para [questao], retorna o [RespostaQuestao] correspondente.
+  /// {@endtemplate}
+  Future<RespostaQuestao?> obterRespostaQuestao(Questao questao);
 }

@@ -19,7 +19,7 @@ abstract class _SelecionarQuestoesControllerBase
             Modular.get<QuestoesRepository>(),
             questoesSelecionadas: questoesSelecionadas,
           ),
-          questoesRepository: Modular.get<QuestoesRepository>(),
+          repositorio: Modular.get<QuestoesRepository>(),
         );
 
   @override
@@ -63,12 +63,12 @@ abstract class __FiltrosBase extends Filtros with Store {
   bool mostrarSomenteQuestoesSelecionadas = false;
 
   bool selecionada(Questao questao) =>
-      questoesSelecionadas.any((quest) => questao.id == quest.id);
+      questoesSelecionadas.any((quest) => questao.idAlfanumerico == quest.idAlfanumerico);
 
   bool alterarSelecao(Questao questao) {
     final selecionada = this.selecionada(questao);
     if (selecionada)
-      questoesSelecionadas.removeWhere((quest) => questao.id == quest.id);
+      questoesSelecionadas.removeWhere((quest) => questao.idAlfanumerico == quest.idAlfanumerico);
     else
       questoesSelecionadas.add(questao);
 

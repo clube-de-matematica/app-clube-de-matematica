@@ -5,6 +5,7 @@ import '../../modules/clubes/modules/atividades/models/resposta_questao_atividad
 import '../../modules/clubes/shared/models/clube.dart';
 import '../../modules/quiz/shared/models/assunto_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
+import '../../modules/quiz/shared/models/resposta_questao.dart';
 import '../utils/strings_db.dart';
 
 enum CollectionType {
@@ -105,7 +106,7 @@ abstract class IDbRepository {
   Future<bool> deleteAtividade(int idAtividade);
 
   /// {@template app.IDbRepository.getRespostasAtividade}
-  /// Função para retornar as repostas dos usuários a uma atividade.
+  /// Retorna as repostas dos usuários a uma atividade.
   ///
   /// Se [idUsuario] for `null`, será retornado as respostas de todos os usuários.
   /// {@endtemplate}
@@ -118,5 +119,17 @@ abstract class IDbRepository {
   /// Insere as respostas da atividade, caso ainda não existam, ou atualiza-as,
   /// caso já existam.
   /// {@endtemplate}
-  Future<bool> upsertRespostasAtividade(Iterable<RawRespostaQuestaoAtividade> data);
+  Future<bool> upsertRespostasAtividade(
+      Iterable<RawRespostaQuestaoAtividade> data);
+
+  /// {@template app.IDbRepository.getRespostas}
+  /// Retorna as repostas não vinculadas a atividades do usuário correspondente a [idUsuario].
+  /// {@endtemplate}
+  Future<List<DataRespostaQuestaoAtividade>> getRespostas(int idUsuario);
+
+  /// {@template app.IDbRepository.upsertRespostas}
+  /// Insere as respostas não vinculadas a atividades, caso ainda não existam, ou atualiza-as,
+  /// caso já existam.
+  /// {@endtemplate}
+  Future<bool> upsertRespostas(Iterable<RawRespostaQuestao> dados);
 }

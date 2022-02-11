@@ -64,28 +64,10 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                 return FeedbackFiltragemVazia(
                     onPressed: () => controller.abrirPaginaFiltros(context));
               }
-              return Column(
-                children: <Widget>[
-                  // Contém um indicador do número de questões à esquerda e, à direita,
-                  // um botão para exibir as opções disponíveis para a questão.
-                  QuizBarOpcoesQuestao(controller),
-
-                  // Linha divisória.
-                  const Divider(height: double.minPositive),
-
-                  // Corpo
-                  Observer(builder: (_) {
-                    return Expanded(
-                      child: () {
-                        if (controller.questaoAtual.value == null) {
-                          return FeedbackQuestaoNaoEncontrada();
-                        }
-                        return _questaoWidget(controller.questaoAtual.value!);
-                      }(),
-                    );
-                  }),
-                ],
-              );
+              if (controller.questaoAtual.value == null) {
+                return FeedbackQuestaoNaoEncontrada();
+              }
+              return _questaoWidget(controller.questaoAtual.value!);
             });
           },
         ),
@@ -99,7 +81,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
         );
       }),
       floatingActionButton: Observer(builder: (_) {
-        final ativo = controller.podeConfirmar;
+        final ativo = !controller.podeAvancar;
         return !ativo
             ? const SizedBox()
             : FloatingActionButton.extended(
@@ -108,7 +90,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                 onPressed: !ativo
                     ? null
                     : () {
-                        controller.confirmar();
+                        controller.concluir();
                         /* Modular.get<AuthRepository>().signInWithGoogle().then((value) => 
                         print(value)); */
                         //Modular.get<AuthRepository>().signOutGoogle();
@@ -125,15 +107,17 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
   }
 
   /// Retorna o [Widget] da questão a ser exibida.
-  QuestaoWidget _questaoWidget(Questao questao) {
-    return QuestaoWidget(
-      padding: const EdgeInsets.all(0),
-      questao: questao,
-      selecionavel: true,
-      alternativaSelecionada: controller.alternativaSelecionada,
-      alterandoAlternativa: (alternativa) =>
-          controller.alternativaSelecionada = alternativa?.sequencial,
-      rolavel: true,
-    );
+  Widget _questaoWidget(Questao questao) {
+    return Observer(builder: (_) {
+      return QuestaoWidget(
+        padding: const EdgeInsets.all(.0),
+        questao: questao,
+        selecionavel: true,
+        alternativaSelecionada: controller.alternativaSelecionada,
+        alterandoAlternativa: controller.definirAlternativaSelecionada,
+        rolavel: true,
+        barraOpcoes: QuizBarOpcoesQuestao(controller),
+      );
+    });
   }
 }

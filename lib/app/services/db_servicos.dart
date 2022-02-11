@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:developer'; //TODO
 
+import 'package:flutter_modular/flutter_modular.dart';
+
 import '../modules/clubes/modules/atividades/models/atividade.dart';
 import '../modules/clubes/modules/atividades/models/questao_atividade.dart';
 import '../modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import '../modules/clubes/shared/models/clube.dart';
-import '../modules/perfil/models/userapp.dart';
 import '../modules/quiz/shared/models/alternativa_questao_model.dart';
 import '../modules/quiz/shared/models/assunto_model.dart';
 import '../modules/quiz/shared/models/imagem_questao_model.dart';
 import '../modules/quiz/shared/models/questao_model.dart';
+import '../modules/quiz/shared/models/resposta_questao.dart';
 import '../shared/models/db/remoto/linha_tabela_alternativas.dart';
 import '../shared/models/db/remoto/linha_tabela_assuntos.dart';
 import '../shared/models/db/remoto/linha_tabela_atividades.dart';
@@ -26,6 +28,7 @@ import '../shared/models/db/remoto/linha_tabela_tipos_permissao.dart';
 import '../shared/models/db/remoto/linha_tabela_usuarios.dart';
 import '../shared/repositories/drift/drift_db.dart';
 import '../shared/repositories/drift/esquema.dart';
+import '../shared/repositories/interface_auth_repository.dart';
 import '../shared/repositories/supabase/supabase_db_repository.dart';
 import '../shared/utils/db/codificacao.dart';
 import '../shared/utils/strings_db.dart';
@@ -39,7 +42,9 @@ class DbServicos implements IDbServicos {
   //TODO final IRemoteDbRepository _dbRemoto;
   final SupabaseDbRepository _dbRemoto;
 
-  int? get idUsuarioApp => UserApp.instance.id;
+  bool get logado => Modular.get<IAuthRepository>().logged;
+
+  int? get idUsuarioApp => Modular.get<IAuthRepository>().user.id;
 
   late final _inicializando = _sincronizar();
 
@@ -195,9 +200,12 @@ class DbServicos implements IDbServicos {
     }());
   }
 
-  Future<void> _sincronizarTbUsuarios() async {
+  /// [forcar] é usado para obter todos os registros, independentemente da data de modificação.
+  Future<void> _sincronizarTbUsuarios({bool forcar = false}) async {
+    if (!logado) return;
     final novosRegistros = await _dbRemoto.obterTbUsuarios(
-      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.usuarios),
+      modificadoApos:
+          forcar ? null : await dbLocal.ultimaModificacao(Tabelas.usuarios),
     );
     final contagem = await dbLocal.upsert(
       dbLocal.tbUsuarios,
@@ -209,21 +217,24 @@ class DbServicos implements IDbServicos {
     }());
   }
 
-  Future<void> _sincronizarTbClubes() async {
+  /// [forcar] é usado para obter todos os registros, independentemente da data de modificação.
+  Future<void> _sincronizarTbClubes({bool forcar = false}) async {
+    if (!logado) return;
     final novosRegistros = await _dbRemoto.obterTbClubes(
-      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.clubes),
+      modificadoApos:
+          forcar ? null : await dbLocal.ultimaModificacao(Tabelas.clubes),
     );
     int contagem = 0;
+
     // excluir os registros marcados para exclusão.
-    contagem += await dbLocal.deleteSamePrimaryKey(
-      dbLocal.tbClubes,
-      novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
-    );
+    final excluir =
+        novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal());
+    contagem += await dbLocal.deleteSamePrimaryKey(dbLocal.tbClubes, excluir);
+
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await dbLocal.upsert(
-      dbLocal.tbClubes,
-      novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
-    );
+    final upsert =
+        novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal());
+    contagem += await dbLocal.upsert(dbLocal.tbClubes, upsert);
     assert(() {
       if (contagem != novosRegistros.length) debugger();
       return true;
@@ -246,17 +257,27 @@ class DbServicos implements IDbServicos {
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbUsuarios],
   /// [_sincronizarTbClubes] e [_sincronizarTbTiposPermissao] ser concluído.
-  Future<void> _sincronizarTbClubeUsuario(
-      [bool sincronizarDependencias = false]) async {
-    if (sincronizarDependencias) {
-      await Future.wait([
-        _sincronizarTbUsuarios(),
-        _sincronizarTbClubes(),
+  /// [forcar] é usado para obter todos os registros, independentemente da data de modificação.
+  Future<void> _sincronizarTbClubeUsuario({
+    bool sincronizarDependencias = false,
+    bool forcar = false,
+  }) async {
+    if (!logado) return;
+
+    dependencias([bool forcar = false]) {
+      return Future.wait([
+        _sincronizarTbUsuarios(forcar: forcar),
+        _sincronizarTbClubes(forcar: forcar),
         _sincronizarTbTiposPermissao(),
       ]);
     }
+
+    if (sincronizarDependencias || forcar) await dependencias(forcar);
+
+    final dataModificacao =
+        await dbLocal.ultimaModificacao(Tabelas.clubeUsuario);
     final novosRegistros = await _dbRemoto.obterTbClubeUsuario(
-      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.clubeUsuario),
+      modificadoApos: forcar ? null : dataModificacao,
     );
     int contagem = 0;
     // excluir os registros marcados para exclusão.
@@ -265,10 +286,16 @@ class DbServicos implements IDbServicos {
       novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await dbLocal.upsert(
-      dbLocal.tbClubeUsuario,
-      novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
-    );
+    final upsert =
+        novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal());
+    final contSucesso = await dbLocal.upsert(dbLocal.tbClubeUsuario, upsert);
+    if (contSucesso != upsert.length) {
+      if (!forcar) {
+        await _sincronizarTbClubeUsuario(forcar: true);
+        return;
+      }
+    }
+    contagem += contSucesso;
     assert(() {
       if (contagem != novosRegistros.length) debugger();
       return true;
@@ -279,6 +306,7 @@ class DbServicos implements IDbServicos {
   /// [_sincronizarTbClubes] ser concluído.
   Future<void> _sincronizarTbAtividades(
       [bool sincronizarDependencias = false]) async {
+    if (!logado) return;
     if (sincronizarDependencias) {
       await Future.wait([_sincronizarTbUsuarios(), _sincronizarTbClubes()]);
     }
@@ -306,6 +334,7 @@ class DbServicos implements IDbServicos {
   /// [_sincronizarTbAtividades] ser concluído.
   Future<void> _sincronizarTbQuestaoAtividade(
       [bool sincronizarDependencias = false]) async {
+    if (!logado) return;
     if (sincronizarDependencias) {
       await Future.wait([
         _sincronizarTbQuestoesCaderno(true),
@@ -336,6 +365,7 @@ class DbServicos implements IDbServicos {
   /// [_sincronizarTbQuestaoAtividade] ser concluído.
   Future<void> _sincronizarTbRespostaQuestaoAtividade(
       [bool sincronizarDependencias = false]) async {
+    if (!logado) return;
     if (sincronizarDependencias) {
       await Future.wait([
         _sincronizarTbUsuarios(),
@@ -367,6 +397,17 @@ class DbServicos implements IDbServicos {
   /// [_sincronizarTbUsuarios] ser concluído.
   Future<void> _sincronizarTbRespostaQuestao(
       [bool sincronizarDependencias = false]) async {
+    if (idUsuarioApp == null) return;
+
+    await dbLocal.deleteRespostaQuestaoInconsistentes(idUsuarioApp!);
+
+    final querySincronizar =
+        dbLocal.select(dbLocal.tbRespostaQuestao, distinct: true)
+          ..where((tb) => tb.sincronizar.equals(true))
+          ..map((linha) => linha.toRespostaQuestao());
+
+    //_dbRemoto.in TODO
+
     if (sincronizarDependencias) {
       await Future.wait([
         _sincronizarTbQuestoes(),
@@ -395,6 +436,7 @@ class DbServicos implements IDbServicos {
 
   @override
   Future<void> sincronizarClubes() async {
+    if (!logado) return;
     await Future.wait([
       _sincronizarTbUsuarios(),
       _sincronizarTbClubes(),
@@ -570,7 +612,14 @@ class DbServicos implements IDbServicos {
   Future<bool> removerUsuarioClube(int idClube, int idUser) async {
     if (idUsuarioApp == null) return false;
     final sucesso = await _dbRemoto.exitClube(idClube, idUser);
-    if (sucesso) await sincronizarClubes();
+    if (sucesso) {
+      if (idUser == idUsuarioApp) {
+        final queryExcluir = dbLocal.delete(dbLocal.tbClubes)
+          ..where((tb) => tb.id.equals(idClube));
+        await queryExcluir.go();
+      }
+      await sincronizarClubes();
+    }
     return sucesso;
   }
 
@@ -622,7 +671,7 @@ class DbServicos implements IDbServicos {
   }
 
   @override
-  Future<bool> excluirAtividade(Atividade atividade)async {
+  Future<bool> excluirAtividade(Atividade atividade) async {
     if (idUsuarioApp == null) return false;
     final sucesso = await _dbRemoto.deleteAtividade(atividade.id);
     if (sucesso) await sincronizarClubes();
@@ -682,6 +731,28 @@ class DbServicos implements IDbServicos {
     final sucesso = await _dbRemoto.upsertRespostasAtividade(dados);
     if (sucesso) await sincronizarClubes();
     return sucesso;
+  }
+
+  @override
+  Future<RespostaQuestao?> obterRespostaQuestao(Questao questao) {
+    final retorno = dbLocal
+        .selectRespostaQuestao(questao.id)
+        .map((linha) => linha.toRespostaQuestao())
+        .getSingleOrNull();
+    return retorno;
+  }
+
+  @override
+  Future<bool> inserirRespostaQuestao(RawRespostaQuestao resposta) async {
+    return dbLocal.insertRespostaQuestao([
+      LinTbRespostaQuestao(
+        dataModificacao: DbLocal.codificarData(DateTime.now().toUtc()),
+        idQuestao: resposta.idQuestao!,
+        idUsuario: resposta.idUsuario,
+        resposta: resposta.sequencial,
+        sincronizar: true,
+      )
+    ]);
   }
 }
 
@@ -869,6 +940,7 @@ extension _LinTbRespostaQuestaoDbRemoto on LinTbRespostaQuestaoDbRemoto {
       idQuestao: this.idQuestao,
       idUsuario: this.idUsuario,
       resposta: this.resposta,
+      sincronizar: false,
       dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
     );
     return retorno;
@@ -927,6 +999,16 @@ extension _LinTbRespostaQuestaoAtividade on LinTbRespostaQuestaoAtividade {
   }
 }
 
+extension _LinTbRespostaQuestao on LinTbRespostaQuestao {
+  RespostaQuestao toRespostaQuestao() {
+    return RespostaQuestao(
+      idQuestao: idQuestao,
+      idUsuario: idUsuario,
+      sequencial: resposta,
+    );
+  }
+}
+
 extension _LinViewQuestoes on LinViewQuestoes {
   Questao toQuestao() {
     _imagensEnunciado() {
@@ -937,7 +1019,7 @@ extension _LinViewQuestoes on LinViewQuestoes {
 
         for (var i = 0; i < listaDados.length; i++) {
           final dados = listaDados[i]
-            ..[ImagemQuestao.kKeyName] = '${id}_enunciado_$i.png';
+            ..[ImagemQuestao.kKeyName] = '${idAlfanumerico}_enunciado_$i.png';
           imagens.add(ImagemQuestao.fromMap(dados));
         }
       }
@@ -945,6 +1027,7 @@ extension _LinViewQuestoes on LinViewQuestoes {
     }
 
     return Questao(
+      idAlfanumerico: idAlfanumerico,
       id: id,
       ano: ano,
       nivel: nivel,

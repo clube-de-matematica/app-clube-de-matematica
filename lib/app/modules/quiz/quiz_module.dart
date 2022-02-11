@@ -29,7 +29,7 @@ class QuizModule extends Module {
         // Controles
         Bind((i) => QuizController(
               filtros: i.get<Filtros>(),
-              questoesRepository: i.get<QuestoesRepository>(),
+              repositorio: i.get<QuestoesRepository>(),
             )),
       ];
 

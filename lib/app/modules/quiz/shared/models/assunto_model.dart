@@ -80,8 +80,8 @@ class Assunto extends RawAssunto {
   /// Retorna o assunto correspondente a [id] em [instancias].
   /// Retorna null se o assunto não for encontrado.
   static Assunto? _get(int id) {
-    return _instancias.cast().firstWhere(
-          (element) => element.id == id,
+    return _instancias.cast<Assunto?>().firstWhere(
+          (element) => element?.id == id,
           orElse: () => null,
         );
   }

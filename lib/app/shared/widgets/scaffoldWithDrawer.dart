@@ -1,5 +1,4 @@
-
-import 'package:clubedematematica/app/services/teste.dart';//TODO: teste.dart
+import 'package:clubedematematica/app/services/teste.dart'; //TODO: teste.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -49,7 +48,12 @@ class ScaffoldWithDrawer extends Scaffold {
           appBar: appBar,
           body: AppWillPopScope(child: body ?? SizedBox()),
           floatingActionButton: floatingActionButton,
-          drawer: _AppDrawer(page: page),
+          drawer: Builder(builder: (context) {
+            return Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              child: _AppDrawer(page: page),
+            );
+          }),
           bottomNavigationBar: bottomNavigationBar,
         );
 }
@@ -136,54 +140,65 @@ class _AppDrawerState extends State<_AppDrawer> {
         context,
         Modular.get<ClubesRepository>().clubes.toList(),
       );
-      return ListView( 
+      icone(IconData icon) {
+        return AnimatedContainer(
+          constraints: BoxConstraints(
+            maxWidth: 2 * kRadialReactionRadius,
+            maxHeight: 2 * kRadialReactionRadius,
+          ),
+          duration: kThemeChangeDuration,
+          child: Center(child: Icon(icon)),
+        );
+      }
+
+      return ListView(
         padding: EdgeInsets.zero,
         children: [
           drawerHeader,
-          //if (widget.page == MyDrawerPage.quiz)
           if (!widget.user.isAnonymous)
             ListTile(
               title: Text('Clubes'),
-              leading: const Icon(Icons.groups),
+              leading: icone(Icons.groups),
               onTap: () => showPage(context, RotaPagina.homeClubes),
             ),
-          //if (widget.page == MyDrawerPage.clubes)
           ...clubes,
           if (clubes.isNotEmpty) const Divider(thickness: 1.5),
-          if (widget.page == AppDrawerPage.clubes)
-            ListTile(
-              title: Text('Questões'),
-              leading: const Icon(Icons.quiz_outlined),
-              onTap: () => showPage(context, RotaPagina.quiz),
-            ),
+          //if (widget.page == AppDrawerPage.clubes)
+          ListTile(
+            title: Text('Questões'),
+            leading: icone(Icons.quiz_outlined),
+            onTap: () => showPage(context, RotaPagina.quiz),
+          ),
+          /* 
           ListTile(
             title: Text('Favoritos'),
-            leading: const Icon(Icons.favorite_outline),
+            leading: icone(Icons.favorite_outline),
             onTap: () {
-              // TODO
               Navigator.pop(context);
             },
           ),
           ListTile(
             title: Text('Downloads'),
-            leading: const Icon(Icons.download_outlined),
+            leading: icone(Icons.download_outlined),
             onTap: () {
-              // TODO
               Navigator.pop(context);
             },
           ),
+          */
           const Divider(thickness: 1.5),
+          /* 
           ListTile(
             title: Text('Configurações'),
-            leading: const Icon(Icons.settings_outlined),
+            leading: icone(Icons.settings_outlined),
             onTap: () {
               // TODO
               Navigator.pop(context);
             },
           ),
+          */
           ListTile(
             title: Text('Sobre'),
-            leading: Icon(Icons.info_outlined),
+            leading: icone(Icons.info_outlined),
             onTap: () {
               // TODO
               Navigator.push(
@@ -196,6 +211,7 @@ class _AppDrawerState extends State<_AppDrawer> {
             title: Text('Versão: $APP_VERSION'),
             dense: true,
           ),
+          const SizedBox(height: 8.0),
         ],
       );
     });
@@ -235,20 +251,3 @@ class _AppDrawerState extends State<_AppDrawer> {
     }).toList();
   }
 }
-
-/* /// O botão para abrir o [Drawer] principal do aplicativo.
-class ButtonMenuRootDrawer extends StatelessWidget {
-  const ButtonMenuRootDrawer({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.menu),
-      iconSize: 24,
-      onPressed: () => openRootDrawer(context),
-      tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-    );
-  }
-} */

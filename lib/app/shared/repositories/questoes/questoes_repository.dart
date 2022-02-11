@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:clubedematematica/app/modules/quiz/shared/models/resposta_questao.dart';
+
 import '../../../modules/quiz/shared/models/questao_model.dart';
 import '../../../services/interface_db_servicos.dart';
 
@@ -38,5 +40,14 @@ class QuestoesRepository {
       limit: limit,
       offset: offset,
     );
+  }
+
+  Future<bool> inserirRespostaQuestao(RawRespostaQuestao resposta)async {
+    return dbServicos.inserirRespostaQuestao(resposta);
+  }
+
+  /// {@macro app.IDbServicos.obterRespostaQuestao}
+  Future<RespostaQuestao?> obterResposta(Questao questao) async {
+    return dbServicos.obterRespostaQuestao(questao);
   }
 }

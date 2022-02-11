@@ -22,7 +22,7 @@ class QuizBarOpcoesQuestao extends StatelessWidget {
 
   /// As opções do popup de opções do item.
   static const _popupMenuItens = <PopupMenuItem<OpcoesQuestao>>[
-    PopupMenuItem<OpcoesQuestao>(
+    /* PopupMenuItem<OpcoesQuestao>(
       value: OpcoesQuestao.filter,
       child: ListTile(
         leading: const Icon(
@@ -31,7 +31,7 @@ class QuizBarOpcoesQuestao extends StatelessWidget {
         ),
         title: const Text(UIStrings.QUIZ_OPCAO_ITEM_FILTRAR),
       ),
-    )
+    ) */
   ];
 
   @override
@@ -53,7 +53,7 @@ class QuizBarOpcoesQuestao extends StatelessWidget {
                   : const Text(""),
             );
           }),
-          PopupMenuButton<OpcoesQuestao>(
+          /* PopupMenuButton<OpcoesQuestao>(
             child: Row(
               children: <Widget>[
                 Text(UIStrings.QUIZ_OPCOES_ITEM),
@@ -66,7 +66,7 @@ class QuizBarOpcoesQuestao extends StatelessWidget {
             ),
             onSelected: (opcao) => controller.setOpcaoItem(context, opcao),
             itemBuilder: (_) => _popupMenuItens,
-          ),
+          ), */
         ],
       ),
     );

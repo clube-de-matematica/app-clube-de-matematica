@@ -50,8 +50,8 @@ class PermissoesClube {
   /// Retorna `null` se [id] não tiver um valor correspondente.
   static PermissoesClube? obter(int id) {
     return values
-        .cast()
-        .firstWhere((valor) => valor.id == id, orElse: () => null);
+        .cast<PermissoesClube?>()
+        .firstWhere((valor) => valor?.id == id, orElse: () => null);
   }
 
   @override

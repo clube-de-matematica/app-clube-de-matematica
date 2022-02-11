@@ -164,7 +164,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
             padding: const EdgeInsets.only(right: 16.0),
             child: Text('${controle.indice + 1} de ${controle.numQuestoes}'),
           ),
-          Text(controle.questaoAtual.value?.id ?? ''),
+          Text(controle.questaoAtual.value?.idAlfanumerico ?? ''),
         ],
       );
     });

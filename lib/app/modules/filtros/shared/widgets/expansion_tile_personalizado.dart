@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-const Duration _kExpand = Duration(milliseconds: 200);
+const Duration kExpand = Duration(milliseconds: 200);
 
 /// A single-line [ListTile] with a trailing button that expands or collapses
 /// the tile to reveal or hide the [children].
@@ -199,7 +199,7 @@ class _ExpansionTilePersonalizadoState extends State<ExpansionTilePersonalizado>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: _kExpand, vsync: this);
+    _controller = AnimationController(duration: kExpand, vsync: this);
     _heightFactor = _controller.drive(_easeInTween);
     _iconTurns = _controller.drive(_halfTween.chain(_easeInTween));
     _borderColor = _controller.drive(_borderColorTween.chain(_easeOutTween));

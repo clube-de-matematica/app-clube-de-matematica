@@ -36,17 +36,15 @@ class FiltroAssuntosPage extends StatelessWidget {
   /// Exibe um [InputChip] para cada filtro selecionado.
   FiltrosSelecionados _construirCaixaFiltrosSelecionados() {
     return FiltrosSelecionados(
-      children: [
-        Observer(builder: (_) {
-          final chips = controle.selecionados.map((id) {
-            return InputChip(
-              label: Text(controle.obterAssunto(id).value?.titulo ?? ''),
-              onDeleted: () => controle.remover(id),
-            );
-          }).toList();
-          return Wrap(children: chips, spacing: 8);
-        })
-      ],
+      child: Observer(builder: (_) {
+        final chips = controle.selecionados.map((id) {
+          return InputChip(
+            label: Text(controle.obterAssunto(id).value?.titulo ?? ''),
+            onDeleted: () => controle.remover(id),
+          );
+        }).toList();
+        return Wrap(children: chips, spacing: 8);
+      }),
       trailing: Observer(builder: (_) {
         return FiltroChipContador(controle.totalSelecinado.toString());
       }),

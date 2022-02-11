@@ -189,7 +189,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
         titulo: titulo,
         descricao: descricao,
         questoes: questoes
-            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.id))
+            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.idAlfanumerico))
             .toList(),
         liberacao: dataLiberacao,
         encerramento: dataEncerramento,
@@ -220,7 +220,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
         titulo: titulo,
         descricao: descricao,
         questoes: questoes
-            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.id))
+            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.idAlfanumerico))
             .toList(),
         liberacao: dataLiberacao,
         encerramento: dataEncerramento,

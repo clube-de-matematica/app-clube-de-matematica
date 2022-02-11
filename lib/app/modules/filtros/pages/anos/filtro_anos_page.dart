@@ -27,17 +27,15 @@ class FiltroAnosPage extends StatelessWidget {
   /// Exibe um [InputChip] para cada filtro selecionado.
   FiltrosSelecionados _construirCaixaFiltrosSelecionados() {
     return FiltrosSelecionados(
-      children: [
-        Observer(builder: (_) {
-          final chips = controle.selecionados.map((opcao) {
-            return InputChip(
-              label: Text(opcao.toString()),
-              onDeleted: () => controle.remover(opcao),
-            );
-          }).toList();
-          return Wrap(children: chips, spacing: 8);
-        })
-      ],
+      child: Observer(builder: (_) {
+        final chips = controle.selecionados.map((opcao) {
+          return InputChip(
+            label: Text(opcao.toString()),
+            onDeleted: () => controle.remover(opcao),
+          );
+        }).toList();
+        return Wrap(children: chips, spacing: 8);
+      }),
       trailing: Observer(builder: (_) {
         return FiltroChipContador(controle.totalSelecinado.toString());
       }),

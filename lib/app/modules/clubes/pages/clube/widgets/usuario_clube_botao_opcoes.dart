@@ -33,70 +33,76 @@ class UsuarioClubeBotaoOpcoes extends StatelessWidget {
     final textoRemover = 'Remover $nome'.trim();
     final textoSairAdmin = 'Sair da lista de admins';
 
-    return PopupMenuButton<OpcoesUsuarioClube>(
-      child: Icon(Icons.more_vert),
-      itemBuilder: (context) {
-        final itens = <PopupMenuEntry<OpcoesUsuarioClube>>[];
-        final itemSairClube = _buildItem(OpcoesUsuarioClube.sair, textoSair);
+    final itens = () {
+      final itens = <PopupMenuEntry<OpcoesUsuarioClube>>[];
+      final itemSairClube = _buildItem(OpcoesUsuarioClube.sair, textoSair);
 
-        if (usuarioApp.proprietario) {
-          itens.addAll([
-            if (usuario.administrador)
-              _buildItem(OpcoesUsuarioClube.removerAdmin, textoRemoverAdmin),
-            if (usuario.membro)
-              _buildItem(OpcoesUsuarioClube.promoverAdmin, textoPromoverAdmin),
-            if (!usuario.proprietario)
-              _buildItem(OpcoesUsuarioClube.remover, textoRemover),
-          ]);
-        } else if (usuarioApp.administrador) {
-          itens.addAll([
-            if (usuario.id == usuarioApp.id)
-              _buildItem(OpcoesUsuarioClube.sairAdmin, textoSairAdmin),
-            if (usuario.id == usuarioApp.id) itemSairClube,
-            if (usuario.membro)
-              _buildItem(OpcoesUsuarioClube.remover, textoRemover),
-          ]);
-        } else if (usuarioApp.membro) {
-          if (usuario.id == usuarioApp.id) itens.add(itemSairClube);
-        }
-        return itens;
-      },
-      onSelected: (opcao) async {
-        switch (opcao) {
-          case OpcoesUsuarioClube.promoverAdmin:
-            await onSelected(
-              '$textoPromoverAdmin?',
-              () => controller.promoverAdmin(usuario),
-            );
-            break;
-          case OpcoesUsuarioClube.removerAdmin:
-            await onSelected(
-              '$textoRemoverAdmin?',
-              () => controller.removerAdmin(usuario),
-            );
-            break;
-          case OpcoesUsuarioClube.sairAdmin:
-            await onSelected('$textoSairAdmin?', controller.sairAdmin);
-            break;
-          case OpcoesUsuarioClube.remover:
-            await onSelected(
-              '$textoRemover?',
-              () => controller.remover(usuario),
-            );
-            break;
-          case OpcoesUsuarioClube.sair:
-            await onSelected(
-              '$textoSair?',
-              () async {
-                final sair = await controller.sair();
-                if (sair) Navigator.pop(context);
-                return sair;
-              },
-            );
-            break;
-        }
-      },
-    );
+      if (usuarioApp.proprietario) {
+        itens.addAll([
+          if (usuario.administrador)
+            _buildItem(OpcoesUsuarioClube.removerAdmin, textoRemoverAdmin),
+          if (usuario.membro)
+            _buildItem(OpcoesUsuarioClube.promoverAdmin, textoPromoverAdmin),
+          if (!usuario.proprietario)
+            _buildItem(OpcoesUsuarioClube.remover, textoRemover),
+        ]);
+      } else if (usuarioApp.administrador) {
+        itens.addAll([
+          if (usuario.id == usuarioApp.id)
+            _buildItem(OpcoesUsuarioClube.sairAdmin, textoSairAdmin),
+          if (usuario.id == usuarioApp.id) itemSairClube,
+          if (usuario.membro)
+            _buildItem(OpcoesUsuarioClube.remover, textoRemover),
+        ]);
+      } else if (usuarioApp.membro) {
+        if (usuario.id == usuarioApp.id) itens.add(itemSairClube);
+      }
+      return itens;
+    }();
+
+    construirBotao() {
+      return PopupMenuButton<OpcoesUsuarioClube>(
+        child: Icon(Icons.more_vert),
+        itemBuilder: (_) => itens,
+        onSelected: (opcao) async {
+          switch (opcao) {
+            case OpcoesUsuarioClube.promoverAdmin:
+              await onSelected(
+                '$textoPromoverAdmin?',
+                () => controller.promoverAdmin(usuario),
+              );
+              break;
+            case OpcoesUsuarioClube.removerAdmin:
+              await onSelected(
+                '$textoRemoverAdmin?',
+                () => controller.removerAdmin(usuario),
+              );
+              break;
+            case OpcoesUsuarioClube.sairAdmin:
+              await onSelected('$textoSairAdmin?', controller.sairAdmin);
+              break;
+            case OpcoesUsuarioClube.remover:
+              await onSelected(
+                '$textoRemover?',
+                () => controller.remover(usuario),
+              );
+              break;
+            case OpcoesUsuarioClube.sair:
+              await onSelected(
+                '$textoSair?',
+                () async {
+                  final sair = await controller.sair();
+                  if (sair) Navigator.pop(context);
+                  return sair;
+                },
+              );
+              break;
+          }
+        },
+      );
+    }
+
+    return itens.isEmpty ? const SizedBox() : construirBotao();
   }
 
   Future<void> onSelected(

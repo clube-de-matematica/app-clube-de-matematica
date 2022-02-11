@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
 import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
+import 'package:clubedematematica/app/modules/quiz/shared/models/resposta_questao.dart';
 import 'package:clubedematematica/app/shared/utils/db/codificacao.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -416,7 +417,8 @@ class SupabaseDbRepository
     _checkAuthentication('insertQuestao()');
     try {
       assert(Debug.print('[INFO] Inserindo a questão ${data.toString()}...'));
-      final response = await _client.from(viewQuestoes).insert(data).execute();
+      final response =
+          await _client.from(viewQuestoes /* TODO */).insert(data).execute();
 
       if (response.error != null) throw response.error!;
 
@@ -559,7 +561,11 @@ class SupabaseDbRepository
           '"idClube = $idClube" na tabela "$tbClubeXUsuario"...'));
       final response = await _client
           .from(tbClubeXUsuario)
-          .update({Sql.tbClubeUsuario.excluir: true})
+          .update({
+            Sql.tbClubeUsuario.idPermissao:
+                DbConst.kDbDataUserClubeKeyIdPermissaoMembro,
+            Sql.tbClubeUsuario.excluir: true,
+          })
           .eq(tbClubeXUsuarioColIdUsuario, idUser)
           .eq(tbClubeXUsuarioColIdClube, idClube)
           .execute();
@@ -593,7 +599,6 @@ class SupabaseDbRepository
           '[INFO] Incluindo o usuário cujo "idUser = $idUser" no clube cujo '
           'código de acesso é "$accessCode"...'));
       final data = {
-        '_id_usuario': idUser,
         '_codigo_clube': accessCode,
         '_id_permissao': 2,
       };
@@ -897,7 +902,6 @@ class SupabaseDbRepository
 
       final list = (response.data as List).cast<DataAtividade>();
       return list.isNotEmpty ? Atividade.fromDataAtividade(list[0]) : null;
-      
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao atualizar a atividade. \n$erro'));
 
@@ -942,10 +946,10 @@ class SupabaseDbRepository
     return dados;
   }
 
-@override
-  Future<bool> deleteAtividade(int idAtividade) async{
-    assert(
-        Debug.print('[INFO] Chamando SupabaseDbRepository.deleteAtividade()...'));
+  @override
+  Future<bool> deleteAtividade(int idAtividade) async {
+    assert(Debug.print(
+        '[INFO] Chamando SupabaseDbRepository.deleteAtividade()...'));
     _checkAuthentication('deleteAtividade()');
     final id = idAtividade;
     final tabela = Sql.tbAtividades.tbNome;
@@ -976,7 +980,6 @@ class SupabaseDbRepository
 
       return false;
     }
-
   }
 
   @override
@@ -1055,5 +1058,50 @@ class SupabaseDbRepository
     assert(!inconsistente);
     if (inconsistente) return [];
     return dados.map((e) => e.toDataRespostaQuestaoAtividade()).toList();
+  }
+
+  @override
+  Future<bool> upsertRespostas(Iterable<RawRespostaQuestao> dados) async {
+    assert(Debug.print(
+        '[INFO] Chamando SupabaseDbRepository.upsertRespostas()...'));
+    _checkAuthentication('upsertRespostas()');
+    final _dados = _prepareUpsertRespostas(dados);
+    if (_dados.isEmpty) return false;
+    final table = Sql.tbRespostaQuestao.tbNome;
+    try {
+      assert(Debug.print('[INFO] Inserindo os dados na tabela "$table"...'));
+      final response = await _client.from(table).upsert(_dados).execute();
+
+      if (response.error != null) throw response.error!;
+
+      return true;
+    } catch (erro, stack) {
+      assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'
+          '\n$erro'));
+
+      ErrorHandler.reportError(FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'supabase_db_repository.dart',
+        context: DiagnosticsNode.message(
+            'SupabaseDbRepository.upsertRespostas($dados)'),
+      ));
+
+      return false;
+    }
+  }
+
+  List<Map<String, dynamic>> _prepareUpsertRespostas(
+      Iterable<RawRespostaQuestao> dados) {
+    final inconsistente =
+        dados.any((e) => [e.idQuestao, e.idUsuario].contains(null));
+    assert(!inconsistente);
+    if (inconsistente) return [];
+    return dados.map((e) => e.toDataRespostaQuestao()).toList();
+  }
+
+  @override
+  Future<List<DataRespostaQuestaoAtividade>> getRespostas(int idUsuario) {
+    throw UnimplementedError();
   }
 }
