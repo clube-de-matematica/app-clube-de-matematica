@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../services/interface_db_servicos.dart';
+import '../../../../services/db_servicos.dart';
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/repositories/id_base62.dart';
 import '../../../perfil/models/userapp.dart';
@@ -22,7 +22,7 @@ part 'clubes_repository.g.dart';
 class ClubesRepository = _ClubesRepositoryBase with _$ClubesRepository;
 
 abstract class _ClubesRepositoryBase with Store implements Disposable {
-  final IDbServicos dbServicos;
+  final DbServicos dbServicos;
   final _disposers = <ReactionDisposer>[];
 
   _ClubesRepositoryBase(this.dbServicos) {

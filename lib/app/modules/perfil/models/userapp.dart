@@ -78,7 +78,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   //IAuthRepository get _auth => Modular.get<IAuthRepository>();
 
   /// Retorna `true` se houver um usuário amônimo conectado.
-  bool isAnonymous = true;
+  bool get isAnonymous => _id == null;
 
   _UserAppBase({
     int? id,

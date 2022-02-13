@@ -92,6 +92,10 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                         margin: EdgeInsets.all(16.0),
                         onPressed: () async {
                           if (!controller.isLoading) {
+                            if (!await controller.conectadoInternete) {
+                              BottomSheetErroConexao().showModal(context);
+                              return;
+                            }
                             final result =
                                 await controller.onTapLoginWithGoogle();
                             if (result == StatusSignIn.success) {

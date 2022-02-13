@@ -11,7 +11,8 @@ import 'shared/utils/constantes.dart';
 /// O [Widget] principal do aplicativo.
 class ClubeDeMatematicaWidget extends StatefulWidget {
   @override
-  State<ClubeDeMatematicaWidget> createState() => _ClubeDeMatematicaWidgetState();
+  State<ClubeDeMatematicaWidget> createState() =>
+      _ClubeDeMatematicaWidgetState();
 }
 
 class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
@@ -20,6 +21,7 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
     Modular.get<DbServicos>().close();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,11 +31,11 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
       initialRoute: Modular.get<IAuthRepository>().logged
           ? RotaPagina.quiz.nome
           : RotaPagina.login.nome,
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      supportedLocales: [
+        const Locale('pt', 'BR'),
+        const Locale('pt', ''),
       ],
-      supportedLocales: [const Locale('pt', 'BR')],
       /* builder: (context, child) {
         /// Isso criará um [Scaffold] abaixo do [Navigator], mas acima de todas as rotas.
         return Scaffold(

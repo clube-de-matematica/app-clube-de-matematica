@@ -33,9 +33,9 @@ import '../shared/repositories/supabase/supabase_db_repository.dart';
 import '../shared/utils/db/codificacao.dart';
 import '../shared/utils/strings_db.dart';
 import '../shared/utils/strings_db_sql.dart';
-import 'interface_db_servicos.dart';
+import 'conectividade.dart';
 
-class DbServicos implements IDbServicos {
+class DbServicos {
   DbServicos(this.dbLocal, this._dbRemoto);
 
   final DriftDb dbLocal;
@@ -55,9 +55,33 @@ class DbServicos implements IDbServicos {
     dbLocal.close();
   }
 
+  /// Última verificação de conectividade.
+  DateTime _ultimaVerificacao = DateTime.fromMillisecondsSinceEpoch(0);
+
+  /// Retorna o resultado de uma verificação de conectividade, fazendo uma nova
+  /// verificação, caso a última tenha ocorrido a mais de 10 segundos, com o dispoositivo
+  /// estando conectado, ou a mais de 2 segundos, estando desconectado.
+  Future<bool> _verificarConectividade([bool forcar = false]) async {
+    final estado = Conectividade.instancia.conectado;
+    final verificar = forcar ||
+        DateTime.now().isAfter(
+          _ultimaVerificacao.add(
+            Duration(seconds: estado ? 10 : 2),
+          ),
+        );
+    if (verificar) {
+      return await Conectividade.instancia
+          .verificar()
+          .whenComplete(() => _ultimaVerificacao = DateTime.now());
+    } else {
+      return estado;
+    }
+  }
+
   // TODO: Envolver em um isolado.
   Future<void> _sincronizar() async {
-    if (!_sincronizando) {
+    final conectado = await _verificarConectividade();
+    if (!_sincronizando && conectado) {
       _sincronizando = true;
       final sincQuestoes = _sincronizarTbQuestoes();
       final sincUsuarios = _sincronizarTbUsuarios();
@@ -99,6 +123,7 @@ class DbServicos implements IDbServicos {
   }
 
   Future<void> _sincronizarTbQuestoes() async {
+    if (!await _verificarConectividade()) return;
     final novosRegistros = await _dbRemoto.obterTbQuestoes(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questoes),
     );
@@ -113,6 +138,7 @@ class DbServicos implements IDbServicos {
   }
 
   Future<void> _sincronizarTbAssuntos() async {
+    if (!await _verificarConectividade()) return;
     final novosRegistros = await _dbRemoto.obterTbAssuntos(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.assuntos),
     );
@@ -130,6 +156,7 @@ class DbServicos implements IDbServicos {
   /// [_sincronizarTbAssuntos] ser concluído.
   Future<void> _sincronizarTbQuestaoAssunto(
       [bool sincronizarDependencias = false]) async {
+    if (!await _verificarConectividade()) return;
     if (sincronizarDependencias) {
       await Future.wait([_sincronizarTbQuestoes(), _sincronizarTbAssuntos()]);
     }
@@ -147,6 +174,7 @@ class DbServicos implements IDbServicos {
   }
 
   Future<void> _sincronizarTbTiposAlternativa() async {
+    if (!await _verificarConectividade()) return;
     final novosRegistros = await _dbRemoto.obterTbTiposAlternativa(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.tiposAlternativa),
     );
@@ -164,6 +192,7 @@ class DbServicos implements IDbServicos {
   /// [_sincronizarTbTiposAlternativa] ser concluído.
   Future<void> _sincronizarTbAlternativas(
       [bool sincronizarDependencias = false]) async {
+    if (!await _verificarConectividade()) return;
     if (sincronizarDependencias) {
       await Future.wait(
           [_sincronizarTbQuestoes(), _sincronizarTbTiposAlternativa()]);
@@ -184,6 +213,7 @@ class DbServicos implements IDbServicos {
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbQuestoes] ser concluído.
   Future<void> _sincronizarTbQuestoesCaderno(
       [bool sincronizarDependencias = false]) async {
+    if (!await _verificarConectividade()) return;
     if (sincronizarDependencias) {
       await _sincronizarTbQuestoes();
     }
@@ -203,6 +233,7 @@ class DbServicos implements IDbServicos {
   /// [forcar] é usado para obter todos os registros, independentemente da data de modificação.
   Future<void> _sincronizarTbUsuarios({bool forcar = false}) async {
     if (!logado) return;
+    if (!await _verificarConectividade()) return;
     final novosRegistros = await _dbRemoto.obterTbUsuarios(
       modificadoApos:
           forcar ? null : await dbLocal.ultimaModificacao(Tabelas.usuarios),
@@ -220,6 +251,7 @@ class DbServicos implements IDbServicos {
   /// [forcar] é usado para obter todos os registros, independentemente da data de modificação.
   Future<void> _sincronizarTbClubes({bool forcar = false}) async {
     if (!logado) return;
+    if (!await _verificarConectividade()) return;
     final novosRegistros = await _dbRemoto.obterTbClubes(
       modificadoApos:
           forcar ? null : await dbLocal.ultimaModificacao(Tabelas.clubes),
@@ -242,6 +274,8 @@ class DbServicos implements IDbServicos {
   }
 
   Future<void> _sincronizarTbTiposPermissao() async {
+    if (!logado) return;
+    if (!await _verificarConectividade()) return;
     final novosRegistros = await _dbRemoto.obterTbTiposPermissao(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.tiposPermissao),
     );
@@ -263,6 +297,7 @@ class DbServicos implements IDbServicos {
     bool forcar = false,
   }) async {
     if (!logado) return;
+    if (!await _verificarConectividade()) return;
 
     dependencias([bool forcar = false]) {
       return Future.wait([
@@ -307,6 +342,7 @@ class DbServicos implements IDbServicos {
   Future<void> _sincronizarTbAtividades(
       [bool sincronizarDependencias = false]) async {
     if (!logado) return;
+    if (!await _verificarConectividade()) return;
     if (sincronizarDependencias) {
       await Future.wait([_sincronizarTbUsuarios(), _sincronizarTbClubes()]);
     }
@@ -335,6 +371,7 @@ class DbServicos implements IDbServicos {
   Future<void> _sincronizarTbQuestaoAtividade(
       [bool sincronizarDependencias = false]) async {
     if (!logado) return;
+    if (!await _verificarConectividade()) return;
     if (sincronizarDependencias) {
       await Future.wait([
         _sincronizarTbQuestoesCaderno(true),
@@ -366,6 +403,7 @@ class DbServicos implements IDbServicos {
   Future<void> _sincronizarTbRespostaQuestaoAtividade(
       [bool sincronizarDependencias = false]) async {
     if (!logado) return;
+    if (!await _verificarConectividade()) return;
     if (sincronizarDependencias) {
       await Future.wait([
         _sincronizarTbUsuarios(),
@@ -398,8 +436,8 @@ class DbServicos implements IDbServicos {
   Future<void> _sincronizarTbRespostaQuestao(
       [bool sincronizarDependencias = false]) async {
     if (idUsuarioApp == null) return;
-
     await dbLocal.deleteRespostaQuestaoInconsistentes(idUsuarioApp!);
+    if (!await _verificarConectividade()) return;
 
     final querySincronizar =
         dbLocal.select(dbLocal.tbRespostaQuestao, distinct: true)
@@ -434,9 +472,15 @@ class DbServicos implements IDbServicos {
     }());
   }
 
-  @override
+  /// {@template app.IDbServicos.sincronizarClubes}
+  /// Sincroniza os registros dos dados relacionados aos clubes entre os bancos de dados
+  /// local e remoto.
+  /// {@endtemplate}
   Future<void> sincronizarClubes() async {
     if (!logado) return;
+
+    if (!await _verificarConectividade()) return;
+
     await Future.wait([
       _sincronizarTbUsuarios(),
       _sincronizarTbClubes(),
@@ -451,7 +495,6 @@ class DbServicos implements IDbServicos {
     await _sincronizarTbRespostaQuestaoAtividade();
   }
 
-  @override
   Future<List<int>> filtrarAnos({
     Iterable<int> niveis = const [],
     Iterable<int> assuntos = const [],
@@ -459,7 +502,6 @@ class DbServicos implements IDbServicos {
     return dbLocal.filtrarAnos(niveis: niveis, assuntos: assuntos).get();
   }
 
-  @override
   Future<List<int>> filtrarNiveis({
     Iterable<int> anos = const [],
     Iterable<int> assuntos = const [],
@@ -467,7 +509,6 @@ class DbServicos implements IDbServicos {
     return dbLocal.filtrarNiveis(anos: anos, assuntos: assuntos).get();
   }
 
-  @override
   Future<List<Assunto>> filtrarAssuntos({
     Iterable<int> anos = const [],
     Iterable<int> niveis = const [],
@@ -482,7 +523,6 @@ class DbServicos implements IDbServicos {
       });
   }
 
-  @override
   Future<Assunto?> assunto(int id) async {
     final query = dbLocal.selectAssuntos(ids: [id])..limit(1);
     final assunto = query.map((linha) => linha.toAssunto()).getSingleOrNull();
@@ -495,18 +535,16 @@ class DbServicos implements IDbServicos {
           return;
         });
 
-  @override
   Stream<List<Assunto>> getAssuntos() => _streamAssuntos;
 
-  @override
   Future<bool> insertAssunto(RawAssunto dados) async {
+    if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.insertAssunto(dados);
     if (sucesso) await _sincronizarTbAssuntos();
     return sucesso;
   }
 
   /// {@macro app.DriftDb.contarQuestoes}
-  @override
   Future<int> contarQuestoes({
     Iterable<int> anos = const [],
     Iterable<int> niveis = const [],
@@ -520,7 +558,6 @@ class DbServicos implements IDbServicos {
     );
   }
 
-  @override
   Future<Questao?> questao(String id) async {
     List<LinViewQuestoes> lista;
     try {
@@ -534,7 +571,6 @@ class DbServicos implements IDbServicos {
     return lista.isEmpty ? null : lista[0].toQuestao();
   }
 
-  @override
   Future<List<Questao>> getQuestoes({
     Iterable<String> ids = const [],
     Iterable<int> anos = const [],
@@ -561,14 +597,13 @@ class DbServicos implements IDbServicos {
     return dbQuestoes.map((dbQuestao) => dbQuestao.toQuestao()).toList();
   }
 
-  @override
   Future<bool> insertQuestao(DataDocument data) async {
+    if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.insertQuestao(data);
     if (sucesso) await _sincronizarTbQuestoesCaderno(true);
     return sucesso;
   }
 
-  @override
   Stream<List<Clube>> getClubes() {
     final id = idUsuarioApp;
     if (id == null) return Stream.value([]);
@@ -580,26 +615,26 @@ class DbServicos implements IDbServicos {
     return retorno;
   }
 
-  @override
   Future<Clube?> insertClube(RawClube data) async {
     if (idUsuarioApp == null) return null;
+    if (!await _verificarConectividade()) return null;
     final clube = await _dbRemoto.insertClube(data);
     if (clube != null) await sincronizarClubes();
     return clube;
   }
 
-  @override
   Future<Clube?> updateClube(RawClube data) async {
     if (idUsuarioApp == null) return null;
+    if (!await _verificarConectividade()) return null;
     final clube = await _dbRemoto.updateClube(data);
     if (clube != null) await sincronizarClubes();
     return clube;
   }
 
-  @override
   Future<Clube?> enterClube(String accessCode) async {
     final id = idUsuarioApp;
     if (id == null) return null;
+    if (!await _verificarConectividade()) return null;
     final dataClube = await _dbRemoto.enterClube(accessCode, id);
     if (dataClube.isNotEmpty) {
       await sincronizarClubes();
@@ -608,9 +643,9 @@ class DbServicos implements IDbServicos {
     return null;
   }
 
-  @override
   Future<bool> removerUsuarioClube(int idClube, int idUser) async {
     if (idUsuarioApp == null) return false;
+    if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.exitClube(idClube, idUser);
     if (sucesso) {
       if (idUser == idUsuarioApp) {
@@ -623,25 +658,24 @@ class DbServicos implements IDbServicos {
     return sucesso;
   }
 
-  @override
   Future<bool> updatePermissionUserClube(
       int idClube, int idUser, int idPermission) async {
     if (idUsuarioApp == null) return false;
+    if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.updatePermissionUserClube(
         idClube, idUser, idPermission);
     if (sucesso) await sincronizarClubes();
     return sucesso;
   }
 
-  @override
   Future<bool> excluirClube(Clube clube) async {
     if (idUsuarioApp == null) return false;
+    if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.deleteClube(clube.id);
     if (sucesso) await sincronizarClubes();
     return sucesso;
   }
 
-  @override
   Stream<List<Atividade>> getAtividades(Clube clube) {
     if (idUsuarioApp == null) return Stream.value([]);
     final retorno = dbLocal
@@ -654,31 +688,30 @@ class DbServicos implements IDbServicos {
     return retorno;
   }
 
-  @override
   Future<Atividade?> insertAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
+    if (!await _verificarConectividade()) return null;
     final atividade = await _dbRemoto.insertAtividade(dados);
     if (atividade != null) await sincronizarClubes();
     return atividade;
   }
 
-  @override
   Future<Atividade?> updateAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
+    if (!await _verificarConectividade()) return null;
     final atividade = await _dbRemoto.updateAtividade(dados);
     if (atividade != null) await sincronizarClubes();
     return atividade;
   }
 
-  @override
   Future<bool> excluirAtividade(Atividade atividade) async {
     if (idUsuarioApp == null) return false;
+    if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.deleteAtividade(atividade.id);
     if (sucesso) await sincronizarClubes();
     return sucesso;
   }
 
-  @override
   Future<List<QuestaoAtividade>> getQuestoesAtividade(
       Atividade atividade) async {
     try {
@@ -724,16 +757,18 @@ class DbServicos implements IDbServicos {
     }
   }
 
-  @override
   Future<bool> upsertRespostasAtividade(
       Iterable<RawRespostaQuestaoAtividade> dados) async {
     if (idUsuarioApp == null) return false;
+    if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.upsertRespostasAtividade(dados);
     if (sucesso) await sincronizarClubes();
     return sucesso;
   }
 
-  @override
+  /// {@template app.IDbServicos.obterRespostaQuestao}
+  /// Se houver uma resposta salva para [questao], retorna o [RespostaQuestao] correspondente.
+  /// {@endtemplate}
   Future<RespostaQuestao?> obterRespostaQuestao(Questao questao) {
     final retorno = dbLocal
         .selectRespostaQuestao(questao.id)
@@ -742,7 +777,6 @@ class DbServicos implements IDbServicos {
     return retorno;
   }
 
-  @override
   Future<bool> inserirRespostaQuestao(RawRespostaQuestao resposta) async {
     return dbLocal.insertRespostaQuestao([
       LinTbRespostaQuestao(

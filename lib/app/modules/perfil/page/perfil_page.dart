@@ -100,8 +100,13 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                                 final confirm = await _confirmationBottomSheet(
                                     context,
                                     UIStrings.kAccountChangeConfirmationMsg);
-                                if (confirm)
+                                if (confirm) {
+                                  if (!await controller.conectadoInternete) {
+                                    BottomSheetErroConexao().showModal(context);
+                                    return;
+                                  }
                                   controller.signInWithAnotherAccount(context);
+                                }
                               },
                               child: const Padding(
                                 padding: EdgeInsets.symmetric(

@@ -1,7 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../services/interface_db_servicos.dart';
+import '../../../../services/db_servicos.dart';
 import '../../shared/models/filtro_controller_model.dart';
 import '../../shared/models/filtros_model.dart';
 import '../../shared/utils/ui_strings.dart';
@@ -36,7 +36,7 @@ abstract class _FiltroAnosControllerBase extends FiltroController with Store {
 
   /// Lista com todos os anos disponíveis.
   Future<List<int>> get anos {
-    return Modular.get<IDbServicos>().filtrarAnos(
+    return Modular.get<DbServicos>().filtrarAnos(
       assuntos: filtrosTemp.assuntos,
       niveis: filtrosTemp.niveis,
     );

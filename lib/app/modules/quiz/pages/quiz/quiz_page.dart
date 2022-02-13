@@ -60,7 +60,9 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
             }
             // Quando o futuro for concluído sem erro.
             return Observer(builder: (_) {
-              if (controller.numQuestoes == 0) {
+              final numQuestoes = controller.numQuestoes;
+              final totalSelecinado = controller.filtros.totalSelecinado;
+              if (numQuestoes == 0 && totalSelecinado > 0) {
                 return FeedbackFiltragemVazia(
                     onPressed: () => controller.abrirPaginaFiltros(context));
               }
@@ -81,7 +83,8 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
         );
       }),
       floatingActionButton: Observer(builder: (_) {
-        final ativo = !controller.podeAvancar;
+        final ativo =
+            controller.questaoAtual.value != null && !controller.podeAvancar;
         return !ativo
             ? const SizedBox()
             : FloatingActionButton.extended(

@@ -1,4 +1,5 @@
-import 'package:clubedematematica/app/services/teste.dart'; //TODO: teste.dart
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -8,8 +9,11 @@ import '../../modules/clubes/shared/repositories/clubes_repository.dart';
 import '../../modules/perfil/models/userapp.dart';
 import '../../modules/perfil/widgets/avatar.dart';
 import '../../navigation.dart';
+import '../../services/conectividade.dart';
+import '../../services/db_inspecao_page.dart'; //TODO: teste.dart
 import '../repositories/interface_auth_repository.dart';
 import '../utils/constantes.dart';
+import 'appBottomSheet.dart';
 import 'appWillPopScope.dart';
 
 /// Indica a página em que [ScaffoldWithDrawer] está sendo exibido.
@@ -98,6 +102,10 @@ class _AppDrawerState extends State<_AppDrawer> {
   void _loadProfile(BuildContext context) async {
     bool result = true;
     if (widget.user.isAnonymous) {
+      if (!await Conectividade.instancia.verificar()) {
+        BottomSheetErroConexao().showModal(context);
+        return;
+      }
       result = (await Modular.get<IAuthRepository>().signInWithGoogle()) ==
           StatusSignIn.success;
     }
@@ -136,10 +144,12 @@ class _AppDrawerState extends State<_AppDrawer> {
     );
 
     final drawerItems = Observer(builder: (_) {
-      final clubes = _buildClubes(
-        context,
-        Modular.get<ClubesRepository>().clubes.toList(),
-      );
+      final clubes = widget.user.isAnonymous
+          ? []
+          : _buildClubes(
+              context,
+              Modular.get<ClubesRepository>().clubes.toList(),
+            );
       icone(IconData icon) {
         return AnimatedContainer(
           constraints: BoxConstraints(
@@ -202,16 +212,23 @@ class _AppDrawerState extends State<_AppDrawer> {
             onTap: () {
               // TODO
               Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => TesteDbPage()));
+                  context, MaterialPageRoute(builder: (_) => DbInspecaoPage()));
               //Navigator.pop(context);
             },
           ),
           const Divider(thickness: 1.5),
-          const ListTile(
-            title: Text('Versão: $APP_VERSION'),
-            dense: true,
+          Column(
+            children: [
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: const ListTile(
+                  title: Text('Versão: $APP_VERSION'),
+                  dense: true,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8.0),
+          //const SizedBox(height: 8.0),
         ],
       );
     });

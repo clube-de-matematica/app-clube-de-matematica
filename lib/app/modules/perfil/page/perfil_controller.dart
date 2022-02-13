@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../navigation.dart';
+import '../../../services/conectividade.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
 import '../models/userapp.dart';
 import '../utils/ui_strings.dart';
@@ -12,6 +13,9 @@ import '../utils/ui_strings.dart';
 class PerfilController {
   final IAuthRepository auth;
   PerfilController(this.auth);
+
+  /// {@macro Conectividade.verificar}
+  Future<bool> get conectadoInternete => Conectividade.instancia.verificar();
 
   /// Imágem do avatar.
   final image = ValueNotifier<ImageProvider<Object>?>(null);

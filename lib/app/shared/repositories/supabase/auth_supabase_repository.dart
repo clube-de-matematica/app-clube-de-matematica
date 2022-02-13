@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../configure_supabase.dart';
 import '../../../modules/perfil/models/userapp.dart';
@@ -33,20 +32,34 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
         ..email = null
         ..id = null
         ..name = null
-        ..urlAvatar = null
-        ..isAnonymous = true;
+        ..urlAvatar = null;
     }
     userApp
       ..email = user?.email
       ..id = user?.appMetadata['id_usuario']
       ..name = user?.userMetadata['full_name']
-      ..urlAvatar = user?.userMetadata['avatar_url']
-      ..isAnonymous = false;
+      ..urlAvatar = user?.userMetadata['avatar_url'];
   }
 
+  StatusSignIn _currenteStatus = StatusSignIn.none;
+
   /// Controle para o stream de alterações no estado de autenticação.
-  StreamController<StatusSignIn> _controller =
-      StreamController<StatusSignIn>.broadcast();
+  late StreamController<StatusSignIn> _controller =
+      StreamController<StatusSignIn>.broadcast()
+        ..stream.listen((status) => _currenteStatus = status);
+
+  /// Se [estado] é diferente do último evento de [status], adiciona-o ao fluxo.
+  /// Retorna [estado].
+  Future<StatusSignIn> _reportarEstado(StatusSignIn estado) async {
+    bool reportar;
+    try {
+      reportar = estado != _currenteStatus;
+    } catch (_) {
+      reportar = true;
+    }
+    if (reportar) _controller.add(estado);
+    return estado;
+  }
 
   @override
   Stream<StatusSignIn> get status => _controller.stream;
@@ -88,58 +101,53 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
 
   @override
   Future<StatusSignIn> signIn([String? dataSession]) async {
-    _controller.add(StatusSignIn.inProgress);
+    _reportarEstado(StatusSignIn.inProgress);
     var redirectUrl = dataSession ?? '';
-    var uri = Uri.parse(redirectUrl);
     GotrueSessionResponse session;
     try {
+      final uri = Uri.parse(redirectUrl);
       session = await _auth.getSessionFromUrl(uri);
     } catch (e) {
       assert(Debug.print(e.toString()));
-      rethrow;
+      return _reportarEstado(StatusSignIn.error);
     }
 
     //TODO: notificar o usuário.
     if (session.error != null) {
       if (session.error!.message.startsWith(r'<!DOCTYPE html>')) {
-        _controller.add(StatusSignIn.error);
-        return StatusSignIn.error;
+        return _reportarEstado(StatusSignIn.error);
       }
     }
 
     assert(session.user != null && session.error == null);
     if (session.user == null || session.error != null) {
-      _controller.add(StatusSignIn.error);
-      return StatusSignIn.error;
+      return _reportarEstado(StatusSignIn.error);
     } else {
-      _controller.add(StatusSignIn.success);
-      return StatusSignIn.success;
+      return _reportarEstado(StatusSignIn.success);
     }
   }
 
   @override
   Future<StatusSignIn> signInWithGoogle([bool replaceUser = false]) async {
-    final _return = _listen();
     GotrueSessionResponse session;
+
     try {
       if (replaceUser && logged) await signOut();
-      _controller.add(StatusSignIn.inProgress);
+      _reportarEstado(StatusSignIn.inProgress);
       session = await _auth.signIn(
         provider: Provider.google,
         options: AuthOptions(redirectTo: authRedirectUri),
       );
     } catch (e) {
       assert(Debug.print(e.toString()));
-      _controller.add(StatusSignIn.error);
-      return _return;
+      return _reportarEstado(StatusSignIn.error);
     }
 
     final _url = Uri.tryParse(session.url.toString());
 
     assert(session.error == null && _url != null);
     if (session.error != null || _url == null) {
-      _controller.add(StatusSignIn.error);
-      return _return;
+      return _reportarEstado(StatusSignIn.error);
     }
 
     agente() async {
@@ -156,39 +164,46 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
 
     final _agente = await agente();
 
-    Modular.to.push(MaterialPageRoute(builder: (context) {
-      return Container(
-        color: Theme.of(context).colorScheme.primary,
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-        child: InAppWebView(
-          initialUrlRequest: URLRequest(url: _url),
-          onLoadStart: (controle, url) async {
-            if (url?.host == kAuthCallbackUrlHostname) {
-              try {
-                await launch(url.toString(), webOnlyWindowName: '_self');
-              } catch (error, stack) {
-                assert(Debug.print(
-                  'Erro ao abrir o URL em AuthSupabaseRepository.signInWithGoogle(). \n'
-                  'Erro: ${error.toString()}.\n'
-                  'Pilha: ${stack.toString()}.',
-                ));
-                _controller.add(StatusSignIn.error);
-              }
-              Navigator.pop(context);
-            }
-          },
-          initialOptions: InAppWebViewGroupOptions(
-            crossPlatform: InAppWebViewOptions(
-              clearCache: replaceUser,
-              // Necessário para que o OAuth2 aceite a requisição.
-              userAgent: _agente ?? '',
-            ),
-          ),
-        ),
-      );
-    }));
+    Future<FutureOr<StatusSignIn>?> requisitar() {
+      return Modular.to
+          .push<FutureOr<StatusSignIn>>(MaterialPageRoute(builder: (context) {
+        onLoadStart(InAppWebViewController controle, Uri? url) async {
+          if (url?.host == kAuthCallbackUrlHostname) {
+            await controle.stopLoading();
+            Navigator.pop(context, signIn(url.toString()));
+          }
+        }
 
-    return _return;
+        onLoadError(InAppWebViewController controle, Uri? __, int ___,
+            String msg) async {
+          if (msg.contains('ERR_INTERNET_DISCONNECTED')) {
+            await controle.stopLoading();
+            Navigator.pop(context, StatusSignIn.error);
+          }
+        }
+
+        return Container(
+          color: Theme.of(context).colorScheme.primary,
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: InAppWebView(
+            initialUrlRequest: URLRequest(url: _url),
+            initialOptions: InAppWebViewGroupOptions(
+              crossPlatform: InAppWebViewOptions(
+                clearCache: replaceUser,
+                // Necessário para que o OAuth2 aceite a requisição.
+                userAgent: _agente ?? '',
+              ),
+            ),
+            onLoadStart: onLoadStart,
+            onLoadError: onLoadError,
+          ),
+        );
+      }));
+    }
+
+    final estado = (await requisitar()) ?? StatusSignIn.canceled;
+
+    return _reportarEstado(await estado);
   }
 
   /// Retorna um futuro que será concluido com a próxima emissão de [StatusSignIn.success],

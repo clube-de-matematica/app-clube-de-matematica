@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../modules/quiz/shared/models/assunto_model.dart';
-import '../../../services/interface_db_servicos.dart';
+import '../../../services/db_servicos.dart';
 import '../../models/debug.dart';
 import '../interface_db_repository.dart';
 
@@ -13,7 +13,7 @@ import '../interface_db_repository.dart';
 class AssuntosRepository {
   AssuntosRepository(this._dbServicos);
 
-  final IDbServicos _dbServicos;
+  final DbServicos _dbServicos;
 
   /// {@template app.AssuntosRepository.carregando}
   /// Será verdadeiro se os assuntos estiverem em pocesso de carregamento.
