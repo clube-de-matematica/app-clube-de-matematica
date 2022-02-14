@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/atividade.dart';
-import 'package:clubedematematica/app/modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
-import 'package:clubedematematica/app/modules/quiz/shared/models/resposta_questao.dart';
-import 'package:clubedematematica/app/shared/utils/db/codificacao.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../modules/clubes/modules/atividades/models/atividade.dart';
+import '../../../modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import '../../../modules/clubes/shared/models/clube.dart';
+import '../../../modules/perfil/models/userapp.dart';
 import '../../../modules/quiz/shared/models/assunto_model.dart';
 import '../../../modules/quiz/shared/models/questao_model.dart';
+import '../../../modules/quiz/shared/models/resposta_questao.dart';
 import '../../models/db/remoto/linha_tabela_alternativas.dart';
 import '../../models/db/remoto/linha_tabela_assuntos.dart';
 import '../../models/db/remoto/linha_tabela_atividades.dart';
@@ -26,6 +26,7 @@ import '../../models/db/remoto/linha_tabela_tipos_permissao.dart';
 import '../../models/db/remoto/linha_tabela_usuarios.dart';
 import '../../models/debug.dart';
 import '../../models/exceptions/error_handler.dart';
+import '../../utils/db/codificacao.dart';
 import '../../utils/strings_db.dart';
 import '../../utils/strings_db_sql.dart';
 import '../interface_auth_repository.dart';
@@ -1054,5 +1055,43 @@ class SupabaseDbRepository
   @override
   Future<List<DataRespostaQuestaoAtividade>> getRespostas(int idUsuario) {
     throw UnimplementedError();
+  }
+  
+  // Usar o repositório de autenticação para atualizar dados de perfil.
+  @override
+  Future<bool> updateUser(RawUserApp dados) async {
+    assert(Debug.print('[INFO] Chamando SupabaseDbRepository.updateUser()...'));
+    _checkAuthentication('updateUser()');
+
+    if (dados.id == null || dados.name == null || dados.name!.isEmpty) {
+      return false;
+    }
+
+    final tb = Sql.tbUsuarios;
+    final tbNome = tb.tbNome;
+    try {
+      assert(Debug.print('[INFO] Atualizando os dados na tabela "$tbNome"...'));
+      final response = await _client
+          .from(tbNome)
+          .update({tb.nome: dados.name})
+          .eq(tb.id, dados.id)
+          .execute();
+
+      if (response.error != null) throw response.error!;
+
+      if (response.data== null) return false;
+      return true;
+    } catch (erro, stack) {
+      assert(
+          Debug.print('[ERROR] Erro ao atualizar os dados na tabela $tbNome.'));
+
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.updateUser(${dados.copyWith(email: '', urlAvatar: '')})',
+      );
+
+      return false;
+    }
   }
 }

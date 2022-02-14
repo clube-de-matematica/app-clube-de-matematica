@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
+import 'package:clubedematematica/app/shared/utils/strings_db.dart';
+
 import '../../../shared/extensions.dart';
 import '../../../shared/models/exceptions/my_exception.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
@@ -32,7 +34,7 @@ class UserApp extends _UserAppBase with _$UserApp {
   static UserApp get instance => _instance;
 
   UserApp._() : super();
-  
+
   factory UserApp({
     int? id,
     String? name,
@@ -241,6 +243,15 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     }
   }
 
+  DataUsuario toDataUsuario() {
+    return {
+      DbConst.kDbDataUserKeyId: id,
+      DbConst.kDbDataUserKeyNome: name,
+      DbConst.kDbDataUserKeyFoto: urlAvatar,
+      DbConst.kDbDataUserKeyEmail: email,
+    };
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data[ID] = this._id ?? "";
@@ -275,5 +286,48 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
         _email.hashCode ^
         _pathAvatar.hashCode ^
         _urlAvatar.hashCode;
+  }
+}
+
+class RawUserApp {
+  final int? id;
+  final String? name;
+  final String? email;
+  final String? urlAvatar;
+
+  RawUserApp({
+    this.id,
+    this.name,
+    this.email,
+    this.urlAvatar,
+  });
+
+  RawUserApp.fromDataUsuario(DataUsuario dados)
+      : id = dados[DbConst.kDbDataUserKeyId],
+        name = dados[DbConst.kDbDataUserKeyNome],
+        urlAvatar = dados[DbConst.kDbDataUserKeyFoto],
+        email = dados[DbConst.kDbDataUserKeyEmail];
+
+  DataUsuario toDataUsuario() {
+    return {
+      DbConst.kDbDataUserKeyId: id,
+      DbConst.kDbDataUserKeyNome: name,
+      DbConst.kDbDataUserKeyFoto: urlAvatar,
+      DbConst.kDbDataUserKeyEmail: email,
+    };
+  }
+
+  RawUserApp copyWith({
+    int? id,
+    String? name,
+    String? email,
+    String? urlAvatar,
+  }) {
+    return RawUserApp(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      urlAvatar: urlAvatar ?? this.urlAvatar,
+    );
   }
 }

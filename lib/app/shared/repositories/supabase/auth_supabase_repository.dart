@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     userApp
       ..email = user?.email
       ..id = user?.appMetadata['id_usuario']
-      ..name = user?.userMetadata['full_name']
+      ..name = user?.userMetadata['nome'] ?? user?.userMetadata['full_name']
       ..urlAvatar = user?.userMetadata['avatar_url'];
   }
 
@@ -204,6 +205,21 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     final estado = (await requisitar()) ?? StatusSignIn.canceled;
 
     return _reportarEstado(await estado);
+  }
+
+  @override
+  Future<bool> updateUserName(String name) async {
+    if (name == UserApp.instance.name) return true;
+    GotrueUserResponse response;
+    try {
+      // Se bem sucedido, onAuthStateChange será chamado.
+      response = await _auth.update(UserAttributes(data: {'nome': name}));
+      if (response.error != null) throw response.error!;
+    } catch (e) {
+      assert(Debug.print(e.toString()));
+      return false;
+    }
+    return true;
   }
 
   /// Retorna um futuro que será concluido com a próxima emissão de [StatusSignIn.success],

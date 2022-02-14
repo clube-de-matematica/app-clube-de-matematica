@@ -1626,17 +1626,19 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
   /// Número de milisegundos desde a época Unix (no fuso horário UTC).
   final int dataModificacao;
   final int id;
-  final String? email;
+  final String email;
   final String? nome;
   final String? foto;
   final bool softDelete;
+  final bool sincronizar;
   LinTbUsuarios(
       {required this.dataModificacao,
       required this.id,
-      this.email,
+      required this.email,
       this.nome,
       this.foto,
-      required this.softDelete});
+      required this.softDelete,
+      required this.sincronizar});
   factory LinTbUsuarios.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return LinTbUsuarios(
@@ -1645,13 +1647,15 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
       id: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       email: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}email']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}email'])!,
       nome: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}nome']),
       foto: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}foto']),
       softDelete: const BoolType()
           .mapFromDatabaseResponse(data['${effectivePrefix}soft_delete'])!,
+      sincronizar: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sincronizar'])!,
     );
   }
   @override
@@ -1659,9 +1663,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     final map = <String, Expression>{};
     map['data_modificacao'] = Variable<int>(dataModificacao);
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || email != null) {
-      map['email'] = Variable<String?>(email);
-    }
+    map['email'] = Variable<String>(email);
     if (!nullToAbsent || nome != null) {
       map['nome'] = Variable<String?>(nome);
     }
@@ -1669,6 +1671,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
       map['foto'] = Variable<String?>(foto);
     }
     map['soft_delete'] = Variable<bool>(softDelete);
+    map['sincronizar'] = Variable<bool>(sincronizar);
     return map;
   }
 
@@ -1676,11 +1679,11 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return TbUsuariosCompanion(
       dataModificacao: Value(dataModificacao),
       id: Value(id),
-      email:
-          email == null && nullToAbsent ? const Value.absent() : Value(email),
+      email: Value(email),
       nome: nome == null && nullToAbsent ? const Value.absent() : Value(nome),
       foto: foto == null && nullToAbsent ? const Value.absent() : Value(foto),
       softDelete: Value(softDelete),
+      sincronizar: Value(sincronizar),
     );
   }
 
@@ -1690,10 +1693,11 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return LinTbUsuarios(
       dataModificacao: serializer.fromJson<int>(json['dataModificacao']),
       id: serializer.fromJson<int>(json['id']),
-      email: serializer.fromJson<String?>(json['email']),
+      email: serializer.fromJson<String>(json['email']),
       nome: serializer.fromJson<String?>(json['nome']),
       foto: serializer.fromJson<String?>(json['foto']),
       softDelete: serializer.fromJson<bool>(json['softDelete']),
+      sincronizar: serializer.fromJson<bool>(json['sincronizar']),
     );
   }
   @override
@@ -1702,10 +1706,11 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return <String, dynamic>{
       'dataModificacao': serializer.toJson<int>(dataModificacao),
       'id': serializer.toJson<int>(id),
-      'email': serializer.toJson<String?>(email),
+      'email': serializer.toJson<String>(email),
       'nome': serializer.toJson<String?>(nome),
       'foto': serializer.toJson<String?>(foto),
       'softDelete': serializer.toJson<bool>(softDelete),
+      'sincronizar': serializer.toJson<bool>(sincronizar),
     };
   }
 
@@ -1715,7 +1720,8 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
           String? email,
           String? nome,
           String? foto,
-          bool? softDelete}) =>
+          bool? softDelete,
+          bool? sincronizar}) =>
       LinTbUsuarios(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         id: id ?? this.id,
@@ -1723,6 +1729,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
         nome: nome ?? this.nome,
         foto: foto ?? this.foto,
         softDelete: softDelete ?? this.softDelete,
+        sincronizar: sincronizar ?? this.sincronizar,
       );
   @override
   String toString() {
@@ -1732,14 +1739,15 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
           ..write('email: $email, ')
           ..write('nome: $nome, ')
           ..write('foto: $foto, ')
-          ..write('softDelete: $softDelete')
+          ..write('softDelete: $softDelete, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(dataModificacao, id, email, nome, foto, softDelete);
+  int get hashCode => Object.hash(
+      dataModificacao, id, email, nome, foto, softDelete, sincronizar);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1749,16 +1757,18 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
           other.email == this.email &&
           other.nome == this.nome &&
           other.foto == this.foto &&
-          other.softDelete == this.softDelete);
+          other.softDelete == this.softDelete &&
+          other.sincronizar == this.sincronizar);
 }
 
 class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
   final Value<int> dataModificacao;
   final Value<int> id;
-  final Value<String?> email;
+  final Value<String> email;
   final Value<String?> nome;
   final Value<String?> foto;
   final Value<bool> softDelete;
+  final Value<bool> sincronizar;
   const TbUsuariosCompanion({
     this.dataModificacao = const Value.absent(),
     this.id = const Value.absent(),
@@ -1766,22 +1776,26 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
     this.nome = const Value.absent(),
     this.foto = const Value.absent(),
     this.softDelete = const Value.absent(),
+    this.sincronizar = const Value.absent(),
   });
   TbUsuariosCompanion.insert({
     required int dataModificacao,
     this.id = const Value.absent(),
-    this.email = const Value.absent(),
+    required String email,
     this.nome = const Value.absent(),
     this.foto = const Value.absent(),
     this.softDelete = const Value.absent(),
-  }) : dataModificacao = Value(dataModificacao);
+    this.sincronizar = const Value.absent(),
+  })  : dataModificacao = Value(dataModificacao),
+        email = Value(email);
   static Insertable<LinTbUsuarios> custom({
     Expression<int>? dataModificacao,
     Expression<int>? id,
-    Expression<String?>? email,
+    Expression<String>? email,
     Expression<String?>? nome,
     Expression<String?>? foto,
     Expression<bool>? softDelete,
+    Expression<bool>? sincronizar,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
@@ -1790,16 +1804,18 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
       if (nome != null) 'nome': nome,
       if (foto != null) 'foto': foto,
       if (softDelete != null) 'soft_delete': softDelete,
+      if (sincronizar != null) 'sincronizar': sincronizar,
     });
   }
 
   TbUsuariosCompanion copyWith(
       {Value<int>? dataModificacao,
       Value<int>? id,
-      Value<String?>? email,
+      Value<String>? email,
       Value<String?>? nome,
       Value<String?>? foto,
-      Value<bool>? softDelete}) {
+      Value<bool>? softDelete,
+      Value<bool>? sincronizar}) {
     return TbUsuariosCompanion(
       dataModificacao: dataModificacao ?? this.dataModificacao,
       id: id ?? this.id,
@@ -1807,6 +1823,7 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
       nome: nome ?? this.nome,
       foto: foto ?? this.foto,
       softDelete: softDelete ?? this.softDelete,
+      sincronizar: sincronizar ?? this.sincronizar,
     );
   }
 
@@ -1820,7 +1837,7 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
       map['id'] = Variable<int>(id.value);
     }
     if (email.present) {
-      map['email'] = Variable<String?>(email.value);
+      map['email'] = Variable<String>(email.value);
     }
     if (nome.present) {
       map['nome'] = Variable<String?>(nome.value);
@@ -1830,6 +1847,9 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
     }
     if (softDelete.present) {
       map['soft_delete'] = Variable<bool>(softDelete.value);
+    }
+    if (sincronizar.present) {
+      map['sincronizar'] = Variable<bool>(sincronizar.value);
     }
     return map;
   }
@@ -1842,7 +1862,8 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
           ..write('email: $email, ')
           ..write('nome: $nome, ')
           ..write('foto: $foto, ')
-          ..write('softDelete: $softDelete')
+          ..write('softDelete: $softDelete, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
@@ -1868,8 +1889,8 @@ class $TbUsuariosTable extends TbUsuarios
   final VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String?> email = GeneratedColumn<String?>(
-      'email', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      'email', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
   late final GeneratedColumn<String?> nome = GeneratedColumn<String?>(
@@ -1888,9 +1909,18 @@ class $TbUsuariosTable extends TbUsuarios
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (soft_delete IN (0, 1))',
       defaultValue: Constant(false));
+  final VerificationMeta _sincronizarMeta =
+      const VerificationMeta('sincronizar');
+  @override
+  late final GeneratedColumn<bool?> sincronizar = GeneratedColumn<bool?>(
+      'sincronizar', aliasedName, false,
+      type: const BoolType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (sincronizar IN (0, 1))',
+      defaultValue: Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
-      [dataModificacao, id, email, nome, foto, softDelete];
+      [dataModificacao, id, email, nome, foto, softDelete, sincronizar];
   @override
   String get aliasedName => _alias ?? 'usuarios';
   @override
@@ -1914,6 +1944,8 @@ class $TbUsuariosTable extends TbUsuarios
     if (data.containsKey('email')) {
       context.handle(
           _emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));
+    } else if (isInserting) {
+      context.missing(_emailMeta);
     }
     if (data.containsKey('nome')) {
       context.handle(
@@ -1928,6 +1960,12 @@ class $TbUsuariosTable extends TbUsuarios
           _softDeleteMeta,
           softDelete.isAcceptableOrUnknown(
               data['soft_delete']!, _softDeleteMeta));
+    }
+    if (data.containsKey('sincronizar')) {
+      context.handle(
+          _sincronizarMeta,
+          sincronizar.isAcceptableOrUnknown(
+              data['sincronizar']!, _sincronizarMeta));
     }
     return context;
   }

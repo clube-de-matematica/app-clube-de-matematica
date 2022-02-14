@@ -1,7 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:clubedematematica/app/services/db_servicos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../navigation.dart';
@@ -39,7 +42,16 @@ class PerfilController {
   String? get name => user.name;
 
   /// Nome do usuário.
-  set name(String? valor) => user.name = valor?.trim();
+  set name(String? valor) {
+    if (valor != null) {
+      final dados = RawUserApp.fromDataUsuario(user.toDataUsuario())
+          .copyWith(name: valor);
+      Modular.get<DbServicos>().atualizarUsuario(dados).then((resultado) {
+        if (resultado) Preferencias.instancia.nome = valor;
+      });
+    }
+    //user.name = valor?.trim();
+  }
 
   Future<ImageProvider?> getImage() async {
     final picker = ImagePicker();
@@ -87,7 +99,6 @@ class PerfilController {
   }) {
     if (formState.validate()) {
       formState.save();
-      Preferencias.instancia.nome = name;
       //Chamar uma nova rota e fechar todas as demais.
 
       // TODO: Verificar o método pushNamedAndRemoveUntil() de ModularRouterDelegate,

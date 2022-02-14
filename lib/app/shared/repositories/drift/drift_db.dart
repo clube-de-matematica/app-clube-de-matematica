@@ -175,7 +175,6 @@ class DriftDb extends _$DriftDb {
         cleanUp: (linha) => naoInseridos.remove(linha),
       );
     } catch (erro, stack) {
-      assert(Debug.printBetweenLine('erro: $erro\nlinhas: $naoInseridos'));
       _reportarErro(erro, stack, 'linhas: $naoInseridos');
     }
     return contador;
@@ -222,7 +221,6 @@ class DriftDb extends _$DriftDb {
         cleanUp: (linha) => naoInseridos.remove(linha),
       );
     } catch (erro, stack) {
-      assert(Debug.printBetweenLine('erro: $erro\nlinhas: $naoInseridos'));
       _reportarErro(
         erro,
         stack,
@@ -581,5 +579,20 @@ WHERE
       _reportarErro(erro, stack, null);
       return 0;
     }
+  }
+
+  Future<bool> updateUsuario(TbUsuariosCompanion dados) async {
+    if (dados.id.value == null) return false;
+    final consulta = update(tbUsuarios)
+      ..where((tb) => tb.id.equals(dados.id.value));
+    int contagem = 0;
+    try {
+      contagem = await consulta.write(dados);
+    } catch (erro, stack) {
+      _reportarErro(erro, stack, 'linhas: $dados');
+    }
+
+    if (contagem != 1) return false;
+    return true;
   }
 }

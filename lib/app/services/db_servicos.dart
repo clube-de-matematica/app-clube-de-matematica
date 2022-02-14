@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer'; //TODO
 
+import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../modules/clubes/modules/atividades/models/atividade.dart';
@@ -232,8 +234,26 @@ class DbServicos {
 
   /// [forcar] é usado para obter todos os registros, independentemente da data de modificação.
   Future<void> _sincronizarTbUsuarios({bool forcar = false}) async {
-    if (!logado) return;
+    if (idUsuarioApp == null) return;
     if (!await _verificarConectividade()) return;
+
+    final consultaLocal = dbLocal.select(dbLocal.tbUsuarios)
+      ..where((tb) => tb.sincronizar.equals(true) & tb.id.equals(idUsuarioApp))
+      ..limit(1);
+
+    final dadosLocal = await consultaLocal.map((linha) {
+      return RawUserApp(
+        id: linha.id,
+        name: linha.nome,
+        email: linha.email,
+      );
+    }).getSingleOrNull();
+
+    if (dadosLocal?.name != null) {
+      await Modular.get<IAuthRepository>().updateUserName(dadosLocal!.name!);
+      //await _dbRemoto.updateUser(dadosLocal);
+    }
+
     final novosRegistros = await _dbRemoto.obterTbUsuarios(
       modificadoApos:
           forcar ? null : await dbLocal.ultimaModificacao(Tabelas.usuarios),
@@ -405,11 +425,11 @@ class DbServicos {
     if (!logado) return;
     if (!await _verificarConectividade()) return;
 
-    final querySincronizar = dbLocal.select(dbLocal.tbRespostaQuestaoAtividade,
-        distinct: true)
+    final consultaNovosLocal = dbLocal
+        .select(dbLocal.tbRespostaQuestaoAtividade, distinct: true)
       ..where((tb) => tb.sincronizar.equals(true));
 
-    final novosLocal = await querySincronizar.map((linha) {
+    final novosLocal = await consultaNovosLocal.map((linha) {
       return RawRespostaQuestaoAtividade(
         idQuestaoAtividade: linha.idQuestaoAtividade,
         idUsuario: linha.idUsuario,
@@ -456,11 +476,11 @@ class DbServicos {
     await dbLocal.deleteRespostaQuestaoInconsistentes(idUsuarioApp!);
     if (!await _verificarConectividade()) return;
 
-    final querySincronizar = dbLocal.select(dbLocal.tbRespostaQuestao,
+    final consultaNovosLocal = dbLocal.select(dbLocal.tbRespostaQuestao,
         distinct: true)
       ..where((tb) => tb.sincronizar.equals(true));
 
-    final novosLocal = await querySincronizar.map((linha) {
+    final novosLocal = await consultaNovosLocal.map((linha) {
       return RawRespostaQuestao(
         idQuestao: linha.idQuestao,
         idUsuario: linha.idUsuario,
@@ -550,8 +570,9 @@ class DbServicos {
   }
 
   Future<Assunto?> assunto(int id) async {
-    final query = dbLocal.selectAssuntos(ids: [id])..limit(1);
-    final assunto = query.map((linha) => linha.toAssunto()).getSingleOrNull();
+    final consulta = dbLocal.selectAssuntos(ids: [id])..limit(1);
+    final assunto =
+        consulta.map((linha) => linha.toAssunto()).getSingleOrNull();
     return assunto;
   }
 
@@ -675,9 +696,9 @@ class DbServicos {
     final sucesso = await _dbRemoto.exitClube(idClube, idUser);
     if (sucesso) {
       if (idUser == idUsuarioApp) {
-        final queryExcluir = dbLocal.delete(dbLocal.tbClubes)
+        final consultaExcluir = dbLocal.delete(dbLocal.tbClubes)
           ..where((tb) => tb.id.equals(idClube));
-        await queryExcluir.go();
+        await consultaExcluir.go();
       }
       await sincronizarClubes();
     }
@@ -752,23 +773,23 @@ class DbServicos {
       final usuario = clube.getUsuario(id);
       if (usuario == null) return [];
 
-      final queryAtividades = dbLocal.select(dbLocal.tbQuestaoAtividade)
+      final consultaAtividades = dbLocal.select(dbLocal.tbQuestaoAtividade)
         ..where((tb) => tb.idAtividade.equals(atividade.id));
 
       retornoAssincrono() {
-        return queryAtividades.map((linha) async {
-          final queryRespostas = dbLocal
+        return consultaAtividades.map((linha) async {
+          final consultaRespostas = dbLocal
               .select(dbLocal.tbRespostaQuestaoAtividade)
             ..where((tb) => tb.idQuestaoAtividade.equals(linha.id));
 
           if (usuario.membro) {
-            queryRespostas.where((tb) => tb.idUsuario.equals(usuario.id));
+            consultaRespostas.where((tb) => tb.idUsuario.equals(usuario.id));
           }
           return QuestaoAtividade(
             questao: (await obterQuestao(linha.idQuestaoCaderno))!,
             idAtividade: linha.idAtividade,
             idQuestaoAtividade: linha.id,
-            respostas: await queryRespostas
+            respostas: await consultaRespostas
                 .map((linhaResposta) =>
                     linhaResposta.toRespostaQuestaoAtividade())
                 .get(),
@@ -846,6 +867,25 @@ class DbServicos {
       )
     ]);
     if (sucesso) await _sincronizarTbRespostaQuestao();
+    return sucesso;
+  }
+
+  Future<bool> atualizarUsuario(RawUserApp dados) async {
+    if (idUsuarioApp == null || dados.id == null || dados.id != idUsuarioApp) {
+      return false;
+    }
+
+    final _dados = TbUsuariosCompanion(
+      id: Value(dados.id!),
+      nome: Value(dados.name),
+      sincronizar: Value(true),
+    );
+
+    /* final consultaAtualizar = dbLocal.update(dbLocal.tbUsuarios)
+      ..where((tb) => tb.id.equals(dados.id));
+    final contagem = await consultaAtualizar.write(_dados); */
+    final sucesso = await dbLocal.updateUsuario(_dados);
+    if (sucesso) await _sincronizarTbUsuarios();
     return sucesso;
   }
 }
@@ -937,6 +977,7 @@ extension _LinTbUsuariosDbRemoto on LinTbUsuariosDbRemoto {
       foto: this.foto,
       softDelete: this.softDelete,
       dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      sincronizar: false,
     );
     return retorno;
   }

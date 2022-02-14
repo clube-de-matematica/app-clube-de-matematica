@@ -70,6 +70,9 @@ abstract class IAuthRepository implements Disposable {
   /// Também desconecta o usuário em [_auth].
   Future<void> signOut();
 
+  /// Atualiza o nome do usuário.
+  Future<bool> updateUserName(String name);
+
   /// Lançará uma exceção se não houver um usuário conectado.
   void checkAuthentication(String originClass, String originField);
 

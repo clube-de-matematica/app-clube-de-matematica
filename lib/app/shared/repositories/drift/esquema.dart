@@ -131,11 +131,13 @@ class TbQuestoesCaderno extends _TbDbLocal {
 @DataClassName('LinTbUsuarios')
 class TbUsuarios extends _TbDbLocal {
   IntColumn get id => integer().named('id')();
-  TextColumn get email => text().named('email').nullable()();
+  TextColumn get email => text().named('email')();
   TextColumn get nome => text().named('nome').nullable()();
   TextColumn get foto => text().named('foto').nullable()();
   BoolColumn get softDelete =>
       boolean().named('soft_delete').withDefault(Constant(false))();
+  BoolColumn get sincronizar =>
+      boolean().named('sincronizar').withDefault(Constant(false))();
 
   @override
   Set<Column>? get primaryKey => {id};

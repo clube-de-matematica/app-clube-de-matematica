@@ -3,6 +3,7 @@ import 'dart:async';
 import '../../modules/clubes/modules/atividades/models/atividade.dart';
 import '../../modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import '../../modules/clubes/shared/models/clube.dart';
+import '../../modules/perfil/models/userapp.dart';
 import '../../modules/quiz/shared/models/assunto_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
 import '../../modules/quiz/shared/models/resposta_questao.dart';
@@ -132,4 +133,7 @@ abstract class IDbRepository {
   /// caso já existam.
   /// {@endtemplate}
   Future<bool> upsertRespostas(Iterable<RawRespostaQuestao> dados);
+
+  /// Atualiza o nome do usuário no banco de dados remoto.
+  Future<bool> updateUser(RawUserApp dados);
 }
