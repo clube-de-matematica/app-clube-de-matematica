@@ -11,7 +11,7 @@ class QuestoesRepository {
 
   QuestoesRepository(this.dbServicos);
 
-  Future<Questao?> get(String id) => dbServicos.questao(id);
+  Future<Questao?> get(String id) => dbServicos.obterQuestao(id);
 
   Future<int> nunQuestoes({
     Iterable<int> anos = const [],
@@ -32,7 +32,7 @@ class QuestoesRepository {
     int? limit,
     int? offset,
   }) {
-    return dbServicos.getQuestoes(
+    return dbServicos.obterQuestoes(
       anos: anos,
       niveis: niveis,
       assuntos: assuntos,
@@ -42,7 +42,7 @@ class QuestoesRepository {
   }
 
   Future<bool> inserirRespostaQuestao(RawRespostaQuestao resposta)async {
-    return dbServicos.inserirRespostaQuestao(resposta);
+    return dbServicos.salvarRespostaQuestao(resposta);
   }
 
   /// {@macro app.IDbServicos.obterRespostaQuestao}

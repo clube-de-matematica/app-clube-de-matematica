@@ -45,7 +45,7 @@ class ClubeDeMatematicaModule extends Module {
               i.get<DriftDb>(),
               i.get<SupabaseDbRepository>(),
             )),
-        Bind((_) => Preferencias()),
+        Bind((_) => Preferencias.instancia),
 
         //Repositórios
         //Bind<IAuthRepository>((i) => AuthFirebaseRepository(i.get<FirebaseAuth>())),

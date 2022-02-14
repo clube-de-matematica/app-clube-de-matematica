@@ -3,6 +3,7 @@ import 'package:mobx/mobx.dart';
 
 import '../../../navigation.dart';
 import '../../../services/conectividade.dart';
+import '../../../services/preferencias_servicos.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
 import '../utils/assets_login.dart';
 
@@ -48,6 +49,7 @@ abstract class _LoginControllerBase with Store {
     StatusSignIn result = await auth.signInWithGoogle();
     _setIsLoading(false);
     _setSelectedMethod(Login.none);
+    Preferencias.instancia.primeiroAcesso = DateTime.now();
     return result;
   }
 
@@ -84,6 +86,7 @@ abstract class _LoginControllerBase with Store {
     }
     _setIsLoading(false);
     _setSelectedMethod(Login.none);
+    Preferencias.instancia.primeiroAcesso = DateTime.now();
     return result;
   }
 

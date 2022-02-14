@@ -64,6 +64,17 @@ class DriftDb extends _$DriftDb {
     });
   }
 
+  void _reportarErro(Object erro, StackTrace? stack, String? mensagem) {
+    ErrorHandler.reportError(
+      FlutterErrorDetails(
+        exception: erro,
+        stack: stack,
+        library: 'drift_db.dart',
+        context: mensagem == null ? null : DiagnosticsNode.message(mensagem),
+      ),
+    );
+  }
+
   /// Retorna a data da última modificação de [tabela].
   Future<DateTime?> ultimaModificacao(Tabelas tabela) async {
     final TableInfo _tabela;
@@ -165,14 +176,7 @@ class DriftDb extends _$DriftDb {
       );
     } catch (erro, stack) {
       assert(Debug.printBetweenLine('erro: $erro\nlinhas: $naoInseridos'));
-      ErrorHandler.reportError(
-        FlutterErrorDetails(
-          exception: erro,
-          stack: stack,
-          library: 'drift_db.dart --> DriftDb.upsert',
-          context: DiagnosticsNode.message('linhas: $naoInseridos'),
-        ),
-      );
+      _reportarErro(erro, stack, 'linhas: $naoInseridos');
     }
     return contador;
   }
@@ -219,15 +223,10 @@ class DriftDb extends _$DriftDb {
       );
     } catch (erro, stack) {
       assert(Debug.printBetweenLine('erro: $erro\nlinhas: $naoInseridos'));
-      ErrorHandler.reportError(
-        FlutterErrorDetails(
-          exception: erro,
-          stack: stack,
-          library: 'drift_db.dart --> DriftDb.deleteSamePrimaryKey',
-          context: tabela != tbUsuarios
-              ? DiagnosticsNode.message('linhas: $naoInseridos')
-              : null,
-        ),
+      _reportarErro(
+        erro,
+        stack,
+        tabela != tbUsuarios ? 'linhas: $naoInseridos' : null,
       );
     }
     return contador;
@@ -566,16 +565,21 @@ WHERE
     return query;
   }
 
-  Future<bool> insertRespostaQuestao(
+  Future<bool> upsertRespostaQuestao(
       Iterable<LinTbRespostaQuestao> respostas) async {
     final contador = await upsert(tbRespostaQuestao, respostas);
     return contador == respostas.length;
   }
 
-  Future<int> deleteRespostaQuestaoInconsistentes(int idUsuario) {
+  Future<int> deleteRespostaQuestaoInconsistentes(int idUsuario) async {
     final query = delete(tbRespostaQuestao)
       ..where((tbl) =>
           tbl.idUsuario.isNotNull() & tbl.idUsuario.isNotIn([idUsuario]));
-    return query.go();
+    try {
+      return await query.go();
+    } catch (erro, stack) {
+      _reportarErro(erro, stack, null);
+      return 0;
+    }
   }
 }

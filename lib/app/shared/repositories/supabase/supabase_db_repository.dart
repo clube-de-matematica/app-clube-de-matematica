@@ -1030,8 +1030,7 @@ class SupabaseDbRepository
 
       return true;
     } catch (erro, stack) {
-      assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'
-          '\n$erro'));
+      assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'));
 
       _tratarErro(
         erro,

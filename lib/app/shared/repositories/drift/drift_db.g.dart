@@ -3596,11 +3596,13 @@ class LinTbRespostaQuestaoAtividade extends DataClass
   final int idQuestaoAtividade;
   final int idUsuario;
   final int? resposta;
+  final bool sincronizar;
   LinTbRespostaQuestaoAtividade(
       {required this.dataModificacao,
       required this.idQuestaoAtividade,
       required this.idUsuario,
-      this.resposta});
+      this.resposta,
+      required this.sincronizar});
   factory LinTbRespostaQuestaoAtividade.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -3613,6 +3615,8 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}id_usuario'])!,
       resposta: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}resposta']),
+      sincronizar: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sincronizar'])!,
     );
   }
   @override
@@ -3624,6 +3628,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
     if (!nullToAbsent || resposta != null) {
       map['resposta'] = Variable<int?>(resposta);
     }
+    map['sincronizar'] = Variable<bool>(sincronizar);
     return map;
   }
 
@@ -3635,6 +3640,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
       resposta: resposta == null && nullToAbsent
           ? const Value.absent()
           : Value(resposta),
+      sincronizar: Value(sincronizar),
     );
   }
 
@@ -3646,6 +3652,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
       idQuestaoAtividade: serializer.fromJson<int>(json['idQuestaoAtividade']),
       idUsuario: serializer.fromJson<int>(json['idUsuario']),
       resposta: serializer.fromJson<int?>(json['resposta']),
+      sincronizar: serializer.fromJson<bool>(json['sincronizar']),
     );
   }
   @override
@@ -3656,6 +3663,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
       'idQuestaoAtividade': serializer.toJson<int>(idQuestaoAtividade),
       'idUsuario': serializer.toJson<int>(idUsuario),
       'resposta': serializer.toJson<int?>(resposta),
+      'sincronizar': serializer.toJson<bool>(sincronizar),
     };
   }
 
@@ -3663,12 +3671,14 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           {int? dataModificacao,
           int? idQuestaoAtividade,
           int? idUsuario,
-          int? resposta}) =>
+          int? resposta,
+          bool? sincronizar}) =>
       LinTbRespostaQuestaoAtividade(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         idQuestaoAtividade: idQuestaoAtividade ?? this.idQuestaoAtividade,
         idUsuario: idUsuario ?? this.idUsuario,
         resposta: resposta ?? this.resposta,
+        sincronizar: sincronizar ?? this.sincronizar,
       );
   @override
   String toString() {
@@ -3676,14 +3686,15 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           ..write('dataModificacao: $dataModificacao, ')
           ..write('idQuestaoAtividade: $idQuestaoAtividade, ')
           ..write('idUsuario: $idUsuario, ')
-          ..write('resposta: $resposta')
+          ..write('resposta: $resposta, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(dataModificacao, idQuestaoAtividade, idUsuario, resposta);
+  int get hashCode => Object.hash(
+      dataModificacao, idQuestaoAtividade, idUsuario, resposta, sincronizar);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3691,7 +3702,8 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           other.dataModificacao == this.dataModificacao &&
           other.idQuestaoAtividade == this.idQuestaoAtividade &&
           other.idUsuario == this.idUsuario &&
-          other.resposta == this.resposta);
+          other.resposta == this.resposta &&
+          other.sincronizar == this.sincronizar);
 }
 
 class TbRespostaQuestaoAtividadeCompanion
@@ -3700,17 +3712,20 @@ class TbRespostaQuestaoAtividadeCompanion
   final Value<int> idQuestaoAtividade;
   final Value<int> idUsuario;
   final Value<int?> resposta;
+  final Value<bool> sincronizar;
   const TbRespostaQuestaoAtividadeCompanion({
     this.dataModificacao = const Value.absent(),
     this.idQuestaoAtividade = const Value.absent(),
     this.idUsuario = const Value.absent(),
     this.resposta = const Value.absent(),
+    this.sincronizar = const Value.absent(),
   });
   TbRespostaQuestaoAtividadeCompanion.insert({
     required int dataModificacao,
     required int idQuestaoAtividade,
     required int idUsuario,
     this.resposta = const Value.absent(),
+    this.sincronizar = const Value.absent(),
   })  : dataModificacao = Value(dataModificacao),
         idQuestaoAtividade = Value(idQuestaoAtividade),
         idUsuario = Value(idUsuario);
@@ -3719,6 +3734,7 @@ class TbRespostaQuestaoAtividadeCompanion
     Expression<int>? idQuestaoAtividade,
     Expression<int>? idUsuario,
     Expression<int?>? resposta,
+    Expression<bool>? sincronizar,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
@@ -3726,6 +3742,7 @@ class TbRespostaQuestaoAtividadeCompanion
         'id_questao_x_atividade': idQuestaoAtividade,
       if (idUsuario != null) 'id_usuario': idUsuario,
       if (resposta != null) 'resposta': resposta,
+      if (sincronizar != null) 'sincronizar': sincronizar,
     });
   }
 
@@ -3733,12 +3750,14 @@ class TbRespostaQuestaoAtividadeCompanion
       {Value<int>? dataModificacao,
       Value<int>? idQuestaoAtividade,
       Value<int>? idUsuario,
-      Value<int?>? resposta}) {
+      Value<int?>? resposta,
+      Value<bool>? sincronizar}) {
     return TbRespostaQuestaoAtividadeCompanion(
       dataModificacao: dataModificacao ?? this.dataModificacao,
       idQuestaoAtividade: idQuestaoAtividade ?? this.idQuestaoAtividade,
       idUsuario: idUsuario ?? this.idUsuario,
       resposta: resposta ?? this.resposta,
+      sincronizar: sincronizar ?? this.sincronizar,
     );
   }
 
@@ -3757,6 +3776,9 @@ class TbRespostaQuestaoAtividadeCompanion
     if (resposta.present) {
       map['resposta'] = Variable<int?>(resposta.value);
     }
+    if (sincronizar.present) {
+      map['sincronizar'] = Variable<bool>(sincronizar.value);
+    }
     return map;
   }
 
@@ -3766,7 +3788,8 @@ class TbRespostaQuestaoAtividadeCompanion
           ..write('dataModificacao: $dataModificacao, ')
           ..write('idQuestaoAtividade: $idQuestaoAtividade, ')
           ..write('idUsuario: $idUsuario, ')
-          ..write('resposta: $resposta')
+          ..write('resposta: $resposta, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
@@ -3802,9 +3825,18 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
   late final GeneratedColumn<int?> resposta = GeneratedColumn<int?>(
       'resposta', aliasedName, true,
       type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _sincronizarMeta =
+      const VerificationMeta('sincronizar');
+  @override
+  late final GeneratedColumn<bool?> sincronizar = GeneratedColumn<bool?>(
+      'sincronizar', aliasedName, false,
+      type: const BoolType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (sincronizar IN (0, 1))',
+      defaultValue: Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
-      [dataModificacao, idQuestaoAtividade, idUsuario, resposta];
+      [dataModificacao, idQuestaoAtividade, idUsuario, resposta, sincronizar];
   @override
   String get aliasedName => _alias ?? 'resposta_x_questao_x_atividade';
   @override
@@ -3840,6 +3872,12 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
     if (data.containsKey('resposta')) {
       context.handle(_respostaMeta,
           resposta.isAcceptableOrUnknown(data['resposta']!, _respostaMeta));
+    }
+    if (data.containsKey('sincronizar')) {
+      context.handle(
+          _sincronizarMeta,
+          sincronizar.isAcceptableOrUnknown(
+              data['sincronizar']!, _sincronizarMeta));
     }
     return context;
   }

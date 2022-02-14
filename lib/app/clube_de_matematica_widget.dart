@@ -1,9 +1,10 @@
-import 'package:clubedematematica/app/services/db_servicos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'navigation.dart';
+import 'services/db_servicos.dart';
+import 'services/preferencias_servicos.dart';
 import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/theme/appTheme.dart';
 import 'shared/utils/constantes.dart';
@@ -28,7 +29,8 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
       theme: AppTheme.instance.temaClaro,
-      initialRoute: Modular.get<IAuthRepository>().logged
+      initialRoute: Modular.get<IAuthRepository>().logged ||
+              Preferencias.instancia.primeiroAcesso != null
           ? RotaPagina.quiz.nome
           : RotaPagina.login.nome,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,

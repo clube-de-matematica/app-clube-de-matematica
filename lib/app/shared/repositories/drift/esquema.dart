@@ -252,6 +252,8 @@ class TbRespostaQuestaoAtividade extends _TbDbLocal {
       integer().named('id_questao_x_atividade')();
   IntColumn get idUsuario => integer().named('id_usuario')();
   IntColumn get resposta => integer().named('resposta').nullable()();
+  BoolColumn get sincronizar =>
+      boolean().named('sincronizar').withDefault(Constant(false))();
 
   @override
   Set<Column>? get primaryKey => {idQuestaoAtividade, idUsuario};

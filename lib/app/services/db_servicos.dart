@@ -404,13 +404,30 @@ class DbServicos {
       [bool sincronizarDependencias = false]) async {
     if (!logado) return;
     if (!await _verificarConectividade()) return;
+
+    final querySincronizar = dbLocal.select(dbLocal.tbRespostaQuestaoAtividade,
+        distinct: true)
+      ..where((tb) => tb.sincronizar.equals(true));
+
+    final novosLocal = await querySincronizar.map((linha) {
+      return RawRespostaQuestaoAtividade(
+        idQuestaoAtividade: linha.idQuestaoAtividade,
+        idUsuario: linha.idUsuario,
+        sequencial: linha.resposta,
+      );
+    }).get();
+
+    if (novosLocal.isNotEmpty) {
+      await _dbRemoto.upsertRespostasAtividade(novosLocal);
+    }
+
     if (sincronizarDependencias) {
       await Future.wait([
         _sincronizarTbUsuarios(),
         _sincronizarTbQuestaoAtividade(true),
       ]);
     }
-    final novosRegistros = await _dbRemoto.obterTbRespostaQuestaoAtividade(
+    final novosRemoto = await _dbRemoto.obterTbRespostaQuestaoAtividade(
       modificadoApos:
           await dbLocal.ultimaModificacao(Tabelas.respostaQuestaoAtividade),
     );
@@ -418,15 +435,15 @@ class DbServicos {
     // excluir os registros marcados para exclusão.
     contagem += await dbLocal.deleteSamePrimaryKey(
       dbLocal.tbRespostaQuestaoAtividade,
-      novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
+      novosRemoto.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
     contagem += await dbLocal.upsert(
       dbLocal.tbRespostaQuestaoAtividade,
-      novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
+      novosRemoto.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (contagem != novosRemoto.length) debugger();
       return true;
     }());
   }
@@ -439,12 +456,21 @@ class DbServicos {
     await dbLocal.deleteRespostaQuestaoInconsistentes(idUsuarioApp!);
     if (!await _verificarConectividade()) return;
 
-    final querySincronizar =
-        dbLocal.select(dbLocal.tbRespostaQuestao, distinct: true)
-          ..where((tb) => tb.sincronizar.equals(true))
-          ..map((linha) => linha.toRespostaQuestao());
+    final querySincronizar = dbLocal.select(dbLocal.tbRespostaQuestao,
+        distinct: true)
+      ..where((tb) => tb.sincronizar.equals(true));
 
-    //_dbRemoto.in TODO
+    final novosLocal = await querySincronizar.map((linha) {
+      return RawRespostaQuestao(
+        idQuestao: linha.idQuestao,
+        idUsuario: linha.idUsuario,
+        sequencial: linha.resposta,
+      );
+    }).get();
+
+    if (novosLocal.isNotEmpty) {
+      await _dbRemoto.upsertRespostas(novosLocal);
+    }
 
     if (sincronizarDependencias) {
       await Future.wait([
@@ -452,22 +478,22 @@ class DbServicos {
         _sincronizarTbUsuarios(),
       ]);
     }
-    final novosRegistros = await _dbRemoto.obterTbRespostaQuestao(
+    final novosRemoto = await _dbRemoto.obterTbRespostaQuestao(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.respostaQuestao),
     );
     int contagem = 0;
     // excluir os registros marcados para exclusão.
     contagem += await dbLocal.deleteSamePrimaryKey(
       dbLocal.tbRespostaQuestao,
-      novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
+      novosRemoto.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
     contagem += await dbLocal.upsert(
       dbLocal.tbRespostaQuestao,
-      novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
+      novosRemoto.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (contagem != novosRemoto.length) debugger();
       return true;
     }());
   }
@@ -535,9 +561,9 @@ class DbServicos {
           return;
         });
 
-  Stream<List<Assunto>> getAssuntos() => _streamAssuntos;
+  Stream<List<Assunto>> obterAssuntos() => _streamAssuntos;
 
-  Future<bool> insertAssunto(RawAssunto dados) async {
+  Future<bool> inserirAssunto(RawAssunto dados) async {
     if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.insertAssunto(dados);
     if (sucesso) await _sincronizarTbAssuntos();
@@ -558,7 +584,7 @@ class DbServicos {
     );
   }
 
-  Future<Questao?> questao(String id) async {
+  Future<Questao?> obterQuestao(String id) async {
     List<LinViewQuestoes> lista;
     try {
       lista = await dbLocal.selectQuestoes(
@@ -571,7 +597,7 @@ class DbServicos {
     return lista.isEmpty ? null : lista[0].toQuestao();
   }
 
-  Future<List<Questao>> getQuestoes({
+  Future<List<Questao>> obterQuestoes({
     Iterable<String> ids = const [],
     Iterable<int> anos = const [],
     Iterable<int> niveis = const [],
@@ -597,14 +623,14 @@ class DbServicos {
     return dbQuestoes.map((dbQuestao) => dbQuestao.toQuestao()).toList();
   }
 
-  Future<bool> insertQuestao(DataDocument data) async {
+  Future<bool> inserirQuestao(DataDocument data) async {
     if (!await _verificarConectividade()) return false;
     final sucesso = await _dbRemoto.insertQuestao(data);
     if (sucesso) await _sincronizarTbQuestoesCaderno(true);
     return sucesso;
   }
 
-  Stream<List<Clube>> getClubes() {
+  Stream<List<Clube>> obterClubes() {
     final id = idUsuarioApp;
     if (id == null) return Stream.value([]);
     final retorno =
@@ -615,7 +641,7 @@ class DbServicos {
     return retorno;
   }
 
-  Future<Clube?> insertClube(RawClube data) async {
+  Future<Clube?> inserirClube(RawClube data) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
     final clube = await _dbRemoto.insertClube(data);
@@ -623,7 +649,7 @@ class DbServicos {
     return clube;
   }
 
-  Future<Clube?> updateClube(RawClube data) async {
+  Future<Clube?> atualizarClube(RawClube data) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
     final clube = await _dbRemoto.updateClube(data);
@@ -631,7 +657,7 @@ class DbServicos {
     return clube;
   }
 
-  Future<Clube?> enterClube(String accessCode) async {
+  Future<Clube?> entrarClube(String accessCode) async {
     final id = idUsuarioApp;
     if (id == null) return null;
     if (!await _verificarConectividade()) return null;
@@ -658,7 +684,7 @@ class DbServicos {
     return sucesso;
   }
 
-  Future<bool> updatePermissionUserClube(
+  Future<bool> atualizarPermissaoUsuarioClube(
       int idClube, int idUser, int idPermission) async {
     if (idUsuarioApp == null) return false;
     if (!await _verificarConectividade()) return false;
@@ -676,7 +702,7 @@ class DbServicos {
     return sucesso;
   }
 
-  Stream<List<Atividade>> getAtividades(Clube clube) {
+  Stream<List<Atividade>> obterAtividades(Clube clube) {
     if (idUsuarioApp == null) return Stream.value([]);
     final retorno = dbLocal
         .selectAtividades(clube.id)
@@ -688,7 +714,7 @@ class DbServicos {
     return retorno;
   }
 
-  Future<Atividade?> insertAtividade(RawAtividade dados) async {
+  Future<Atividade?> inserirAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
     final atividade = await _dbRemoto.insertAtividade(dados);
@@ -696,7 +722,7 @@ class DbServicos {
     return atividade;
   }
 
-  Future<Atividade?> updateAtividade(RawAtividade dados) async {
+  Future<Atividade?> atualizarAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
     final atividade = await _dbRemoto.updateAtividade(dados);
@@ -712,7 +738,7 @@ class DbServicos {
     return sucesso;
   }
 
-  Future<List<QuestaoAtividade>> getQuestoesAtividade(
+  Future<List<QuestaoAtividade>> obterQuestoesAtividade(
       Atividade atividade) async {
     try {
       final id = idUsuarioApp;
@@ -739,7 +765,7 @@ class DbServicos {
             queryRespostas.where((tb) => tb.idUsuario.equals(usuario.id));
           }
           return QuestaoAtividade(
-            questao: (await questao(linha.idQuestaoCaderno))!,
+            questao: (await obterQuestao(linha.idQuestaoCaderno))!,
             idAtividade: linha.idAtividade,
             idQuestaoAtividade: linha.id,
             respostas: await queryRespostas
@@ -757,13 +783,45 @@ class DbServicos {
     }
   }
 
-  Future<bool> upsertRespostasAtividade(
+  Future<bool> salvarRespostasAtividade(
       Iterable<RawRespostaQuestaoAtividade> dados) async {
     if (idUsuarioApp == null) return false;
-    if (!await _verificarConectividade()) return false;
-    final sucesso = await _dbRemoto.upsertRespostasAtividade(dados);
-    if (sucesso) await sincronizarClubes();
-    return sucesso;
+    if (dados.isEmpty) return false;
+
+    // Preparar os dados e inserir no banco de dados local.
+    final linhas = _prepararUpsertRespostasAtividade(dados);
+    final contagem =
+        await dbLocal.upsert(dbLocal.tbRespostaQuestaoAtividade, linhas);
+    assert(() {
+      if (contagem != linhas.length) debugger();
+      return true;
+    }());
+    if (contagem != linhas.length) return false;
+
+    // Sincronizar com o banco de dados remoto.
+    await sincronizarClubes();
+
+    return true;
+  }
+
+  Iterable<LinTbRespostaQuestaoAtividade> _prepararUpsertRespostasAtividade(
+      Iterable<RawRespostaQuestaoAtividade> dados) {
+    inconsistente() {
+      return dados
+          .any((e) => [e.idQuestaoAtividade, e.idUsuario].contains(null));
+    }
+
+    if (inconsistente()) return [];
+
+    return dados.map((e) {
+      return LinTbRespostaQuestaoAtividade(
+        idQuestaoAtividade: e.idQuestaoAtividade!,
+        idUsuario: e.idUsuario!,
+        resposta: e.sequencial,
+        dataModificacao: DbLocal.codificarData(DateTime.now().toUtc()),
+        sincronizar: true,
+      );
+    });
   }
 
   /// {@template app.IDbServicos.obterRespostaQuestao}
@@ -777,8 +835,8 @@ class DbServicos {
     return retorno;
   }
 
-  Future<bool> inserirRespostaQuestao(RawRespostaQuestao resposta) async {
-    return dbLocal.insertRespostaQuestao([
+  Future<bool> salvarRespostaQuestao(RawRespostaQuestao resposta) async {
+    final sucesso = await dbLocal.upsertRespostaQuestao([
       LinTbRespostaQuestao(
         dataModificacao: DbLocal.codificarData(DateTime.now().toUtc()),
         idQuestao: resposta.idQuestao!,
@@ -787,6 +845,8 @@ class DbServicos {
         sincronizar: true,
       )
     ]);
+    if (sucesso) await _sincronizarTbRespostaQuestao();
+    return sucesso;
   }
 }
 
@@ -963,6 +1023,7 @@ extension _LinTbRespostaQuestaoAtividadeDbRemoto
       idUsuario: this.idUsuario,
       resposta: this.resposta,
       dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      sincronizar: false,
     );
     return retorno;
   }

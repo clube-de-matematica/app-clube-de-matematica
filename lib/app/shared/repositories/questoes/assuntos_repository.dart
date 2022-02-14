@@ -62,7 +62,7 @@ class AssuntosRepository {
     List<Assunto> resultado;
     try {
       resultado =
-          await _dbServicos.getAssuntos().lastWhere((list) => list.isNotEmpty);
+          await _dbServicos.obterAssuntos().lastWhere((list) => list.isNotEmpty);
     } catch (e) {
       assert(Debug.printBetweenLine(
           "Erro a buscar os dados da coleção ${CollectionType.assuntos.name}."));

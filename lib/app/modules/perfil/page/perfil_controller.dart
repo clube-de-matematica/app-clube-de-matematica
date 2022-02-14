@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../navigation.dart';
 import '../../../services/conectividade.dart';
+import '../../../services/preferencias_servicos.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
 import '../models/userapp.dart';
 import '../utils/ui_strings.dart';
@@ -86,6 +87,7 @@ class PerfilController {
   }) {
     if (formState.validate()) {
       formState.save();
+      Preferencias.instancia.nome = name;
       //Chamar uma nova rota e fechar todas as demais.
 
       // TODO: Verificar o método pushNamedAndRemoveUntil() de ModularRouterDelegate,
