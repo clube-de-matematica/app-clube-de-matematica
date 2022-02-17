@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';

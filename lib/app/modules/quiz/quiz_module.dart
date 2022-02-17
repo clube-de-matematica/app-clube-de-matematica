@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../services/preferencias_servicos.dart';
 import '../../shared/repositories/questoes/questoes_repository.dart';
 import '../filtros/filtros_module.dart';
 import '../filtros/shared/models/filtros_model.dart';
@@ -24,7 +25,7 @@ class QuizModule extends Module {
   @override
   // Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
-        Bind((i) => Filtros()),
+        Bind<Filtros>((i) => Preferencias.instancia.filtrosQuiz),
 
         // Controles
         Bind((i) => QuizController(

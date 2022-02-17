@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:mobx/mobx.dart';
 
 part 'filtros_model.g.dart';
@@ -54,5 +56,21 @@ abstract class _FiltrosBase with Store {
     assuntos.addAll(outro.assuntos);
     anos.addAll(outro.anos);
     niveis.addAll(outro.niveis);
+  }
+
+  String toJson() {
+    return jsonEncode({
+      'assuntos': this.assuntos.toList(),
+      'anos': this.anos.toList(),
+      'niveis': this.niveis.toList(),
+    });
+  }
+
+  // ignore: unused_element
+  _FiltrosBase.fromJson(String json) {
+    final dados = (jsonDecode(json) as Map).cast<String, List>();
+    assuntos.addAll((dados['assuntos'])?.cast() ?? []);
+    anos.addAll((dados['anos'])?.cast() ?? []);
+    niveis.addAll((dados['niveis'])?.cast() ?? []);
   }
 }

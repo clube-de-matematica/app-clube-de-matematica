@@ -1,8 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../../../services/preferencias_servicos.dart';
 import '../../../../shared/models/exibir_questao_com_filtro_controller.dart';
 import '../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
@@ -11,6 +13,7 @@ import '../../shared/models/alternativa_questao_model.dart';
 import '../../shared/models/opcoesQuestao.dart';
 import '../../shared/models/questao_model.dart';
 import '../../shared/models/resposta_questao.dart';
+import '../resultado/resultado_quiz_page.dart';
 
 part 'quiz_controller.g.dart';
 
@@ -25,6 +28,8 @@ abstract class _QuizControllerBase extends ExibirQuestaoComFiltroController
           filtros: filtros,
           repositorio: repositorio,
         );
+
+  Preferencias get _preferencias => Preferencias.instancia;
 
   @override
   @computed
@@ -63,15 +68,26 @@ abstract class _QuizControllerBase extends ExibirQuestaoComFiltroController
   int? get alternativaSelecionada => _resposta?.sequencialTemporario;
 
   /// Salvar no banco de dados a resposta dada à questão em exibição.
-  void _salvarResposta() async {
+  Future<void> _salvarResposta() async {
     final salvo = _resposta?.sequencial;
     final temp = _resposta?.sequencialTemporario;
     if (salvo != temp) {
-      repositorio.inserirRespostaQuestao(RawRespostaQuestao(
-        idQuestao: _resposta?.idQuestao,
-        idUsuario: _resposta?.idUsuario,
-        sequencial: temp,
-      ));
+      final sucesso = await repositorio.inserirRespostaQuestao(
+        RawRespostaQuestao(
+          idQuestao: _resposta?.idQuestao,
+          idUsuario: _resposta?.idUsuario,
+          sequencial: temp,
+        ),
+      );
+      final idAlfanumerico = questaoAtual.value?.idAlfanumerico;
+      if (sucesso && idAlfanumerico != null) {
+        _resposta?.sequencial = temp;
+        if (temp == null) {
+          _preferencias.cacheQuiz.remove(idAlfanumerico);
+        } else {
+          _preferencias.cacheQuiz.add(idAlfanumerico);
+        }
+      }
     }
   }
 
@@ -83,7 +99,10 @@ abstract class _QuizControllerBase extends ExibirQuestaoComFiltroController
   }
 
   /// Verificar os erros e acertos na lista de questões filtradas.
-  void concluir() {}
+  void concluir() async {
+    await abrirPaginaResultado();
+    _preferencias.cacheQuiz.clear();
+  }
 
   /// Retorna a opção escolhida pelo usuário dentre as opções disponíveis para a questão.
   Future<void> setOpcaoItem(BuildContext context, OpcoesQuestao opcao) async {
@@ -92,5 +111,22 @@ abstract class _QuizControllerBase extends ExibirQuestaoComFiltroController
       /* case OpcoesQuestao.filter:
         await abrirPaginaFiltros(context); */
     }
+  }
+
+  @override
+  Future<Filtros> abrirPaginaFiltros(BuildContext context) async {
+    final filtros = await super.abrirPaginaFiltros(context);
+    _preferencias.filtrosQuiz = filtros;
+    return filtros;
+  }
+
+  Future<void> abrirPaginaResultado() async {
+    await Modular.to.push(
+      MaterialPageRoute(builder: (context) {
+        return ResultadoQuizPage(
+          repositorio: repositorio,
+        );
+      }),
+    );
   }
 }

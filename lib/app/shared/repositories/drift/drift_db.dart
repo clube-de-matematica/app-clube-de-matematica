@@ -37,8 +37,7 @@ part 'drift_db.g.dart';
 class DriftDb extends _$DriftDb {
   // TODO: Definir local de armazenamento.
   DriftDb()
-      : /* super(abrirConexao()); // */ super(
-            NativeDatabase.memory(/* logStatements: true */));
+      : super(abrirConexao()); // super(NativeDatabase.memory(/* logStatements: true */));
 
   @override
   int get schemaVersion => 1;

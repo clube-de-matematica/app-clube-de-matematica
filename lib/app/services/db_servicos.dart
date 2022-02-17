@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer'; //TODO
 
-import 'package:clubedematematica/app/modules/perfil/models/userapp.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -9,6 +8,7 @@ import '../modules/clubes/modules/atividades/models/atividade.dart';
 import '../modules/clubes/modules/atividades/models/questao_atividade.dart';
 import '../modules/clubes/modules/atividades/models/resposta_questao_atividade.dart';
 import '../modules/clubes/shared/models/clube.dart';
+import '../modules/perfil/models/userapp.dart';
 import '../modules/quiz/shared/models/alternativa_questao_model.dart';
 import '../modules/quiz/shared/models/assunto_model.dart';
 import '../modules/quiz/shared/models/imagem_questao_model.dart';

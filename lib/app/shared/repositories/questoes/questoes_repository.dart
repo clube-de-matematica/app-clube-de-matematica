@@ -26,6 +26,7 @@ class QuestoesRepository {
   }
 
   Future<List<Questao>> questoes({
+    Iterable<String> ids = const [],
     Iterable<int> anos = const [],
     Iterable<int> niveis = const [],
     Iterable<int> assuntos = const [],
@@ -33,6 +34,7 @@ class QuestoesRepository {
     int? offset,
   }) {
     return dbServicos.obterQuestoes(
+      ids: ids,
       anos: anos,
       niveis: niveis,
       assuntos: assuntos,
