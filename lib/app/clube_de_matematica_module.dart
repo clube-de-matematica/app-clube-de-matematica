@@ -44,6 +44,7 @@ class ClubeDeMatematicaModule extends Module {
         Bind<DbServicos>((i) => DbServicos(
               i.get<DriftDb>(),
               i.get<SupabaseDbRepository>(),
+              i.get<IAuthRepository>(),
             )),
         Bind((_) => Preferencias.instancia),
 

@@ -221,43 +221,6 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     return true;
   }
 
-  /// Retorna um futuro que será concluido com a próxima emissão de [StatusSignIn.success],
-  /// [StatusSignIn.canceled] ou [StatusSignIn.error] por [status], ou após o tempo limite
-  /// [duration]. Neste caso, o futuro será concluído com [StatusSignIn.timeout].
-  Future<StatusSignIn> _listen(
-      [Duration duration = const Duration(seconds: 30)]) {
-    //TODO: verificar duração
-    final completer = Completer<StatusSignIn>();
-    final listen = status.listen((_) {});
-    listen.onData((status) {
-      final cases = [
-        StatusSignIn.success,
-        StatusSignIn.canceled,
-        StatusSignIn.error
-      ];
-      if (cases.contains(status)) {
-        if (!completer.isCompleted) completer.complete(status);
-        listen.cancel();
-      }
-    });
-    listen.onError((error, stack) {
-      assert(Debug.print(
-        'Erro: ${error.toString()}.\n'
-        'Pilha: ${stack.toString()}.',
-      ));
-      if (!completer.isCompleted) completer.complete(StatusSignIn.error);
-      listen.cancel();
-    });
-    return completer.future.timeout(
-      duration,
-      onTimeout: () {
-        listen.cancel();
-        _controller.add(StatusSignIn.timeout);
-        return StatusSignIn.timeout;
-      },
-    );
-  }
-
   @override
   Future<void> signOut() async {
     await Future.wait([

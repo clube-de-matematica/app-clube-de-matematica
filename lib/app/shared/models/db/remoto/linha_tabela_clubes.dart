@@ -54,5 +54,6 @@ class LinTbClubesDbRemoto extends ILinTbClubes with LinTbMixin {
   @override
   Color? decodificarCapa() {
     if (capa != null) return DbRemoto.decodificarCapaClube(capa!);
+    return null;
   }
 }

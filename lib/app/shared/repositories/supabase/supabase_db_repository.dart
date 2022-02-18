@@ -396,7 +396,7 @@ class SupabaseDbRepository
     try {
       assert(Debug.print('[INFO] Inserindo a questão ${data.toString()}...'));
       final response =
-          await _client.from(viewQuestoes /* TODO */).insert(data).execute();
+          await _client.from(viewQuestoes).insert(data).execute();
 
       if (response.error != null) throw response.error!;
 

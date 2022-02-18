@@ -168,6 +168,10 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
           ),
           onPressed: () async {
             if (!controller.isLoading) {
+              if (!await controller.conectadoInternete) {
+                BottomSheetErroConexao().showModal(context);
+                return;
+              }
               final result = await _buildBottomSheetConfirmarLoginAnonymously()
                   .showModal<bool>(context);
               if (result ?? false) {

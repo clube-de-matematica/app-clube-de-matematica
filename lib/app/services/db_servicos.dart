@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:developer'; //TODO
+import 'dart:developer'; 
 
 import 'package:drift/drift.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../modules/clubes/modules/atividades/models/atividade.dart';
 import '../modules/clubes/modules/atividades/models/questao_atividade.dart';
@@ -38,15 +38,21 @@ import '../shared/utils/strings_db_sql.dart';
 import 'conectividade.dart';
 
 class DbServicos {
-  DbServicos(this.dbLocal, this._dbRemoto);
+  DbServicos(this.dbLocal, this._dbRemoto, this.auth) {
+    // TODO: Posteriormente transferir para IAuthRepository.
+    Supabase.instance.client.auth.onAuthStateChange((evento, _) {
+      if (evento == AuthChangeEvent.signedIn) _sincronizar();
+    });
+  }
 
   final DriftDb dbLocal;
   //TODO final IRemoteDbRepository _dbRemoto;
   final SupabaseDbRepository _dbRemoto;
+  final IAuthRepository auth;
 
-  bool get logado => Modular.get<IAuthRepository>().logged;
+  bool get logado => auth.logged;
 
-  int? get idUsuarioApp => Modular.get<IAuthRepository>().user.id;
+  int? get idUsuarioApp => auth.user.id;
 
   late final _inicializando = _sincronizar();
 
@@ -250,7 +256,7 @@ class DbServicos {
     }).getSingleOrNull();
 
     if (dadosLocal?.name != null) {
-      await Modular.get<IAuthRepository>().updateUserName(dadosLocal!.name!);
+      await auth.updateUserName(dadosLocal!.name!);
       //await _dbRemoto.updateUser(dadosLocal);
     }
 
@@ -483,7 +489,7 @@ class DbServicos {
     final novosLocal = await consultaNovosLocal.map((linha) {
       return RawRespostaQuestao(
         idQuestao: linha.idQuestao,
-        idUsuario: linha.idUsuario,
+        idUsuario: linha.idUsuario ?? idUsuarioApp,
         sequencial: linha.resposta,
       );
     }).get();
@@ -564,7 +570,7 @@ class DbServicos {
         .map((e) => e.toAssunto())
         .get()
       ..catchError((e) {
-        debugger(); //TODO: debugger()
+        debugger(); 
         print(e);
       });
   }
@@ -881,11 +887,16 @@ class DbServicos {
       sincronizar: Value(true),
     );
 
-    /* final consultaAtualizar = dbLocal.update(dbLocal.tbUsuarios)
-      ..where((tb) => tb.id.equals(dados.id));
-    final contagem = await consultaAtualizar.write(_dados); */
+    // Falhará se a tabela de usuários não tiver o registro a ser atualizado
     final sucesso = await dbLocal.updateUsuario(_dados);
-    if (sucesso) await _sincronizarTbUsuarios();
+    await _sincronizarTbUsuarios();
+    // Caso a primeira tentativa de atualização tenha falhado.
+    if (!sucesso) {
+      if (await dbLocal.updateUsuario(_dados)) {
+        await _sincronizarTbUsuarios();
+        return true;
+      }
+    }
     return sucesso;
   }
 }

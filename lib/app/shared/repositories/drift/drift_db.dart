@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
@@ -35,9 +34,8 @@ part 'drift_db.g.dart';
   ],
 )
 class DriftDb extends _$DriftDb {
-  // TODO: Definir local de armazenamento.
-  DriftDb()
-      : super(abrirConexao()); // super(NativeDatabase.memory(/* logStatements: true */));
+  DriftDb() : super(abrirConexao());
+  // super(NativeDatabase.memory(/* logStatements: true */));
 
   @override
   int get schemaVersion => 1;
@@ -581,7 +579,7 @@ WHERE
   }
 
   Future<bool> updateUsuario(TbUsuariosCompanion dados) async {
-    if (dados.id.value == null) return false;
+    //if (dados.id.value == null) return false;
     final consulta = update(tbUsuarios)
       ..where((tb) => tb.id.equals(dados.id.value));
     int contagem = 0;
