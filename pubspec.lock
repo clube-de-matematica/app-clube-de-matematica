@@ -190,13 +190,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1"
-  db_viewer:
-    dependency: transitive
-    description:
-      name: db_viewer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   diacritic:
     dependency: "direct main"
     description:
@@ -211,13 +204,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.0"
-  drift_db_viewer:
-    dependency: "direct main"
-    description:
-      name: drift_db_viewer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   drift_dev:
     dependency: "direct dev"
     description:

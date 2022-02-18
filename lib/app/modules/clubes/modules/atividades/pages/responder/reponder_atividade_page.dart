@@ -44,7 +44,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
               if (!controle.atividadeEncerrada &&
                   controle.questaoAtual.value != null) {
                 return IconButton(
-                  icon: Icon(Icons.save),
+                  icon: Icon(Icons.task),
                   onPressed: _concluir,
                 );
               }

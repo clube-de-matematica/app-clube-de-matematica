@@ -15,7 +15,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.2.2+6
+version: 0.3.0+7
 
 environment:
   sdk: '>=2.13.0 <3.0.0'
@@ -64,7 +64,7 @@ dependencies:
   fk_user_agent: ^2.1.0
   drift: ^1.3.0 # Banco de dados.
   sqlite3_flutter_libs: ^0.5.0 # Inclui o sqlite mais recente no Android. Necessário para algumas funcionalidades do drift.
-  drift_db_viewer: ^1.0.0 #Permite visualizar o banco de dados no aplicativo de desenvolvimento sem a necessidade de exportar seu arquivo de banco de dados.
+  #drift_db_viewer: ^1.0.0 #Permite visualizar o banco de dados no aplicativo de desenvolvimento sem a necessidade de exportar seu arquivo de banco de dados.
   #flutter_native_splash: ^2.0.3+1
   
 

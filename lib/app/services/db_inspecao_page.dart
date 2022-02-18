@@ -1,4 +1,4 @@
-import 'package:drift_db_viewer/drift_db_viewer.dart';
+/* import 'package:drift_db_viewer/drift_db_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -26,3 +26,4 @@ class _DbInspecaoPageState extends State<DbInspecaoPage> {
     );
   }
 }
+ */

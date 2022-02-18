@@ -340,7 +340,14 @@ class BottomSheetErro extends AppBottomSheet {
 
 /// Uma página inferior para exibir quando o dispositivo estiver sem acesso a internete.
 class BottomSheetErroConexao extends AppBottomSheet {
-  const BottomSheetErroConexao({Key? key}) : super(key: key);
+  const BottomSheetErroConexao({
+    Key? key,
+    this.rotuloAcao = 'FECHAR',
+    this.acao,
+  }) : super(key: key);
+
+  final String rotuloAcao;
+  final VoidCallback? acao;
 
   @override
   Widget build(BuildContext context) {
@@ -349,9 +356,12 @@ class BottomSheetErroConexao extends AppBottomSheet {
       content: const Text('Dispositivo sem acesso à internete.'),
       actions: [
         AppTextButton(
-          primary: true,
-          child: const Text('FECHAR'),
-          onPressed: () => Navigator.pop(context),
+          primary: false,
+          child: Text(rotuloAcao),
+          onPressed: () {
+            acao?.call();
+            Navigator.pop(context);
+          },
         ),
       ],
     );

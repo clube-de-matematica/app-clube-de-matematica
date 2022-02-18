@@ -31,18 +31,6 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
         ..removeAll(this.clubes.difference(clubes.toSet()))
         ..addAll(clubes);
     });
-
-    _disposers.add(
-      autorun(
-        (_) {
-          if (usuarioApp.id == null) {
-            // TODO: excluir clubes.
-          } else {
-            // TODO: baixar clubes.
-          }
-        },
-      ),
-    );
   }
 
   late final StreamSubscription _assinaturaClubes;

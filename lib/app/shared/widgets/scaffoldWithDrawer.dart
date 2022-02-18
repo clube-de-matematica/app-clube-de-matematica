@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -10,7 +8,6 @@ import '../../modules/perfil/models/userapp.dart';
 import '../../modules/perfil/widgets/avatar.dart';
 import '../../navigation.dart';
 import '../../services/conectividade.dart';
-import '../../services/db_inspecao_page.dart'; //TODO: teste.dart
 import '../repositories/interface_auth_repository.dart';
 import '../utils/constantes.dart';
 import 'appBottomSheet.dart';
@@ -201,7 +198,6 @@ class _AppDrawerState extends State<_AppDrawer> {
             title: Text('Configurações'),
             leading: icone(Icons.settings_outlined),
             onTap: () {
-              // TODO
               Navigator.pop(context);
             },
           ),
@@ -210,10 +206,8 @@ class _AppDrawerState extends State<_AppDrawer> {
             title: Text('Sobre'),
             leading: icone(Icons.info_outlined),
             onTap: () {
-              // TODO
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => DbInspecaoPage()));
-              //Navigator.pop(context);
+              // TODO: Navigator.push(context, MaterialPageRoute(builder: (_) => DbInspecaoPage()));
+              Navigator.pop(context);
             },
           ),
           const Divider(thickness: 1.5),

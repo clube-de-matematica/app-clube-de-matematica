@@ -36,42 +36,50 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
       appBar: QuizAppBar(controller),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-        child: FutureBuilder(
-          future: controller.questaoAtual,
-          builder: (_, snapshot) {
-            // Antes do futuro ser concluído.
-            if (snapshot.connectionState != ConnectionState.done) {
-              return Center(child: const CircularProgressIndicator());
-            }
-            // Quando o futuro for concluído com erro.
-            if (snapshot.hasError) {
-              return Expanded(
-                child: Center(
-                  child: Text(
-                    uiStringsApp.UIStrings.APP_MSG_ERRO_INESPERADO,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(fontSize: 24.0),
-                    textAlign: TextAlign.center,
+        // Falta envolver os widgets de notificação em um widget rolável.
+        child: RefreshIndicator(
+          onRefresh: () async => () {},
+          child: FutureBuilder(
+            future: controller.questaoAtual,
+            builder: (_, snapshot) {
+              // Antes do futuro ser concluído.
+              if (snapshot.connectionState != ConnectionState.done) {
+                return Center(child: const CircularProgressIndicator());
+              }
+              // Quando o futuro for concluído com erro.
+              if (snapshot.hasError) {
+                return Expanded(
+                  child: Center(
+                    child: Text(
+                      uiStringsApp.UIStrings.APP_MSG_ERRO_INESPERADO,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.copyWith(fontSize: 24.0),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-              );
-            }
-            // Quando o futuro for concluído sem erro.
-            return Observer(builder: (_) {
-              final numQuestoes = controller.numQuestoes;
-              final totalSelecinado = controller.filtros.totalSelecinado;
-              if (numQuestoes == 0 && totalSelecinado > 0) {
-                return FeedbackFiltragemVazia(
-                    onPressed: () => controller.abrirPaginaFiltros(context));
+                );
               }
-              if (controller.questaoAtual.value == null) {
-                return FeedbackQuestaoNaoEncontrada();
-              }
-              return _questaoWidget(controller.questaoAtual.value!);
-            });
-          },
+              // Quando o futuro for concluído sem erro.
+              return Observer(builder: (_) {
+                final numQuestoes = controller.numQuestoes;
+                final totalSelecinado = controller.filtros.totalSelecinado;
+                if (numQuestoes == 0 && totalSelecinado > 0) {
+                  return FeedbackFiltragemVazia(
+                      onPressed: () => controller.abrirPaginaFiltros(context));
+                }
+                if (controller.questaoAtual.value == null) {
+                  return ListView(
+                    children: [
+                      FeedbackQuestaoNaoEncontrada(),
+                    ],
+                  );
+                }
+                return _questaoWidget(controller.questaoAtual.value!);
+              });
+            },
+          ),
         ),
       ),
       bottomNavigationBar: Observer(builder: (_) {

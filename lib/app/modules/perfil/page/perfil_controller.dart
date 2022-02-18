@@ -1,7 +1,5 @@
-import 'dart:developer';
 import 'dart:io';
 
-import 'package:clubedematematica/app/services/db_servicos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -9,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../navigation.dart';
 import '../../../services/conectividade.dart';
+import '../../../services/db_servicos.dart';
 import '../../../services/preferencias_servicos.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
 import '../models/userapp.dart';
@@ -76,8 +75,6 @@ class PerfilController {
 
   Future<void> exit(BuildContext context) async {
     await auth.signOut();
-    /* Modular.to.pushNamedAndRemoveUntil(
-        LoginModule.kAbsoluteRouteLoginPage, (_) => false); */
     Navegacao.abrirPagina(context, RotaPagina.login);
   }
 
@@ -85,8 +82,6 @@ class PerfilController {
   Future<StatusSignIn> signInWithAnotherAccount(BuildContext context) async {
     final result = await auth.signInWithGoogle(true);
     if (result != StatusSignIn.success) {
-      /* Modular.to.pushNamedAndRemoveUntil(
-          LoginModule.kAbsoluteRouteLoginPage, (_) => false); */
       Navegacao.abrirPagina(context, RotaPagina.login);
     }
     return result;
@@ -95,46 +90,14 @@ class PerfilController {
   void save(
     BuildContext context, {
     required FormState formState,
-    //required NavigatorState navigatorState,
   }) {
     if (formState.validate()) {
       formState.save();
-      //Chamar uma nova rota e fechar todas as demais.
-
-      // TODO: Verificar o método pushNamedAndRemoveUntil() de ModularRouterDelegate,
-      // Para que pushNamedAndRemoveUntil funcione foi necessário modificar,
-      // em [ModularRouterDelegate],
-      /* 
-        Future<T?> pushNamedAndRemoveUntil<T extends Object?>(String newRouteName, bool Function(Route) predicate, {Object? arguments, bool forRoot = false}) {
-          popUntil(predicate);
-          return pushNamed<T>(newRouteName, arguments: arguments, forRoot: forRoot);
-        }
-
-        para
-
-        Future<T?> pushNamedAndRemoveUntil<T extends Object?>(String newRouteName, bool Function(Route) predicate, {Object? arguments, bool forRoot = false}) {
-          final isFoundedPages = _pages.where((page) => predicate(_CustomRoute(page)));
-          popUntil(predicate);
-          if (isFoundedPages.isEmpty) {
-            return pushReplacementNamed<T, Object?>(newRouteName, arguments: arguments, forRoot: forRoot);
-          } else {
-            return pushNamed<T>(newRouteName, arguments: arguments, forRoot: forRoot);
-          }
-        }
-      */
-      /* final pages = navigatorState.widget.pages;
-      final previousPage = pages[pages.length > 1 ? pages.length - 2 : 0].name;
-      if (previousPage == quizRoute) {
-        navigatorState.popUntil(ModalRoute.withName(quizRoute));
-      } else {
-        navigatorState.pushNamedAndRemoveUntil(quizRoute, (route) => false);
-      } */
       if (Navegacao.paginaAnterior(context) != null) {
         Navigator.of(context).pop();
       } else {
         Navegacao.abrirPagina(context, RotaPagina.quiz);
       }
-      //navigatorState.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Teste()), (route) => false);
     }
   }
 }

@@ -43,6 +43,7 @@ mixin IClubeControllerMixinValidar on IClubeController {
     } else if (valor.trim().length < 5) {
       return 'O nome deve ter no mínimo 5 caracteres';
     }
+    return null;
   }
 }
 

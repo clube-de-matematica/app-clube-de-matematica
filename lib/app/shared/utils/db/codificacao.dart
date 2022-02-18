@@ -15,7 +15,9 @@ abstract class DbRemoto {
     if (iso8601String.length == 23) iso8601String += 'Z';
     try {
       return DateTime.parse(iso8601String).toUtc();
-    } on FormatException catch (_) {}
+    } on FormatException catch (_) {
+      return null;
+    }
   }
 
   static List<int> codificarHierarquia(DataHierarquia hierarquia) => hierarquia;
