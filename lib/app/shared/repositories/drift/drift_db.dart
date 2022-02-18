@@ -153,7 +153,8 @@ class DriftDb extends _$DriftDb {
   /// Retorna o número de registros Inseridos (ou atualizados).
   ///
   /// **Observação:** Não há previsão da ordem de inserção (ou atualização) dos registro.
-  Future<int> upsert(TableInfo tabela, Iterable<Insertable> linhas) async {
+  Future<DriftDbResposta> upsert(
+      TableInfo tabela, Iterable<Insertable> linhas) async {
     final futuros = <Future<Insertable>>[];
     final naoInseridos = linhas.toList();
     int contador = 0;
@@ -172,9 +173,24 @@ class DriftDb extends _$DriftDb {
         cleanUp: (linha) => naoInseridos.remove(linha),
       );
     } catch (erro, stack) {
-      _reportarErro(erro, stack, 'linhas: $naoInseridos');
+      _reportar() => _reportarErro(erro, stack, 'linhas: $naoInseridos');
+      if (erro is SqliteException) {
+        // SQLITE_CONSTRAINT_FOREIGNKEY
+        if (erro.extendedResultCode == 787) {
+          final reportar = ![
+            // Tabelas onde o erro já está tratado.
+            tbClubeUsuario,
+            tbAtividades,
+            tbQuestaoAtividade,
+            tbRespostaQuestaoAtividade,
+          ].contains(tabela);
+          if (reportar) _reportar();
+          return DriftDbResposta(erro: DriftDbErro.sqliteConstraintForeignKey);
+        }
+      }
+      _reportar();
     }
-    return contador;
+    return DriftDbResposta(dados: contador);
   }
 
   /// Exclui os registros correspondentes a [linhas] em [tabela] usando a chave primária como
@@ -560,12 +576,6 @@ WHERE
     return query;
   }
 
-  Future<bool> upsertRespostaQuestao(
-      Iterable<LinTbRespostaQuestao> respostas) async {
-    final contador = await upsert(tbRespostaQuestao, respostas);
-    return contador == respostas.length;
-  }
-
   Future<int> deleteRespostaQuestaoInconsistentes(int idUsuario) async {
     final query = delete(tbRespostaQuestao)
       ..where((tbl) =>
@@ -592,4 +602,16 @@ WHERE
     if (contagem != 1) return false;
     return true;
   }
+}
+
+enum DriftDbErro { sqliteConstraintForeignKey }
+
+class DriftDbResposta {
+  DriftDbResposta({
+    this.dados,
+    this.erro,
+  });
+
+  final dynamic dados;
+  final DriftDbErro? erro;
 }

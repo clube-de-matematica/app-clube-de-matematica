@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:developer'; 
+import 'dart:developer';
 
 import 'package:drift/drift.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -40,8 +40,15 @@ import 'conectividade.dart';
 class DbServicos {
   DbServicos(this.dbLocal, this._dbRemoto, this.auth) {
     // TODO: Posteriormente transferir para IAuthRepository.
+    bool sincronizar = true;
     Supabase.instance.client.auth.onAuthStateChange((evento, _) {
-      if (evento == AuthChangeEvent.signedIn) _sincronizar();
+      if (evento == AuthChangeEvent.signedIn) {
+        if (sincronizar) _sincronizar();
+        sincronizar = false;
+      }
+      if (evento == AuthChangeEvent.signedOut) {
+        sincronizar = true;
+      }
     });
   }
 
@@ -135,12 +142,12 @@ class DbServicos {
     final novosRegistros = await _dbRemoto.obterTbQuestoes(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questoes),
     );
-    final contagem = await dbLocal.upsert(
+    final resposta = (await dbLocal.upsert(
       dbLocal.tbQuestoes,
       novosRegistros.map((e) => e.toDbLocal()),
-    );
+    ));
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (resposta.dados != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -150,12 +157,12 @@ class DbServicos {
     final novosRegistros = await _dbRemoto.obterTbAssuntos(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.assuntos),
     );
-    final contagem = await dbLocal.upsert(
+    final resposta = (await dbLocal.upsert(
       dbLocal.tbAssuntos,
       novosRegistros.map((e) => e.toDbLocal()),
-    );
+    ));
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (resposta.dados != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -171,12 +178,12 @@ class DbServicos {
     final novosRegistros = await _dbRemoto.obterTbQuestaoAssunto(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questaoAssunto),
     );
-    final contagem = await dbLocal.upsert(
+    final resposta = (await dbLocal.upsert(
       dbLocal.tbQuestaoAssunto,
       novosRegistros.map((e) => e.toDbLocal()),
-    );
+    ));
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (resposta.dados != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -186,12 +193,12 @@ class DbServicos {
     final novosRegistros = await _dbRemoto.obterTbTiposAlternativa(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.tiposAlternativa),
     );
-    final contagem = await dbLocal.upsert(
+    final resposta = (await dbLocal.upsert(
       dbLocal.tbTiposAlternativa,
       novosRegistros.map((e) => e.toDbLocal()),
-    );
+    ));
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (resposta.dados != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -208,12 +215,12 @@ class DbServicos {
     final novosRegistros = await _dbRemoto.obterTbAlternativas(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.alternativas),
     );
-    final contagem = await dbLocal.upsert(
+    final resposta = (await dbLocal.upsert(
       dbLocal.tbAlternativas,
       novosRegistros.map((e) => e.toDbLocal()),
-    );
+    ));
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (resposta.dados != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -228,12 +235,12 @@ class DbServicos {
     final novosRegistros = await _dbRemoto.obterTbQuestoesCaderno(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questoesCaderno),
     );
-    final contagem = await dbLocal.upsert(
+    final resposta = (await dbLocal.upsert(
       dbLocal.tbQuestoesCaderno,
       novosRegistros.map((e) => e.toDbLocal()),
-    );
+    ));
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (resposta.dados != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -264,12 +271,12 @@ class DbServicos {
       modificadoApos:
           forcar ? null : await dbLocal.ultimaModificacao(Tabelas.usuarios),
     );
-    final contagem = await dbLocal.upsert(
+    final resposta = (await dbLocal.upsert(
       dbLocal.tbUsuarios,
       novosRegistros.map((e) => e.toDbLocal()),
-    );
+    ));
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (resposta.dados != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -292,7 +299,8 @@ class DbServicos {
     // Inserir ou atualizar os registros não marcados para exclusão.
     final upsert =
         novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal());
-    contagem += await dbLocal.upsert(dbLocal.tbClubes, upsert);
+    final resposta = await dbLocal.upsert(dbLocal.tbClubes, upsert);
+    contagem += (resposta.dados as int?) ?? 0;
     assert(() {
       if (contagem != novosRegistros.length) debugger();
       return true;
@@ -305,12 +313,12 @@ class DbServicos {
     final novosRegistros = await _dbRemoto.obterTbTiposPermissao(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.tiposPermissao),
     );
-    final contagem = await dbLocal.upsert(
+    final resposta = (await dbLocal.upsert(
       dbLocal.tbTiposPermissao,
       novosRegistros.map((e) => e.toDbLocal()),
-    );
+    ));
     assert(() {
-      if (contagem != novosRegistros.length) debugger();
+      if (resposta.dados != novosRegistros.length) debugger();
       return true;
     }());
   }
@@ -325,109 +333,139 @@ class DbServicos {
     if (!logado) return;
     if (!await _verificarConectividade()) return;
 
-    dependencias([bool forcar = false]) {
-      return Future.wait([
+    dependencias([bool forcar = false]) async {
+      await Future.wait([
         _sincronizarTbUsuarios(forcar: forcar),
         _sincronizarTbClubes(forcar: forcar),
         _sincronizarTbTiposPermissao(),
       ]);
     }
 
-    if (sincronizarDependencias || forcar) await dependencias(forcar);
+    if (sincronizarDependencias) await dependencias();
 
-    final dataModificacao =
-        await dbLocal.ultimaModificacao(Tabelas.clubeUsuario);
-    final novosRegistros = await _dbRemoto.obterTbClubeUsuario(
-      modificadoApos: forcar ? null : dataModificacao,
-    );
-    int contagem = 0;
-    // excluir os registros marcados para exclusão.
-    contagem += await dbLocal.deleteSamePrimaryKey(
-      dbLocal.tbClubeUsuario,
-      novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
-    );
-    // Inserir ou atualizar os registros não marcados para exclusão.
-    final upsert =
-        novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal());
-    final contSucesso = await dbLocal.upsert(dbLocal.tbClubeUsuario, upsert);
-    if (contSucesso != upsert.length) {
-      if (!forcar) {
-        await _sincronizarTbClubeUsuario(forcar: true);
-        return;
-      }
+    sinc() async {
+      final novosRegistros = await _dbRemoto.obterTbClubeUsuario(
+        modificadoApos: forcar
+            ? null
+            : await dbLocal.ultimaModificacao(Tabelas.clubeUsuario),
+      );
+      // excluir os registros marcados para exclusão.
+      await dbLocal.deleteSamePrimaryKey(
+        dbLocal.tbClubeUsuario,
+        novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
+      );
+      // Inserir ou atualizar os registros não marcados para exclusão.
+      final upsert =
+          novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal());
+
+      final resposta = await dbLocal.upsert(dbLocal.tbClubeUsuario, upsert);
+      return resposta;
     }
-    contagem += contSucesso;
-    assert(() {
-      if (contagem != novosRegistros.length) debugger();
-      return true;
-    }());
+
+    final resposta = await sinc();
+    if (resposta.erro == DriftDbErro.sqliteConstraintForeignKey) {
+      await dependencias(true);
+      await sinc();
+    }
+    return;
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbUsuarios] e
   /// [_sincronizarTbClubes] ser concluído.
-  Future<void> _sincronizarTbAtividades(
-      [bool sincronizarDependencias = false]) async {
+  Future<void> _sincronizarTbAtividades({
+    bool sincronizarDependencias = false,
+    bool forcar = false,
+  }) async {
     if (!logado) return;
     if (!await _verificarConectividade()) return;
-    if (sincronizarDependencias) {
-      await Future.wait([_sincronizarTbUsuarios(), _sincronizarTbClubes()]);
+
+    dependencias([bool forcar = false]) async {
+      await Future.wait([
+        _sincronizarTbUsuarios(forcar: forcar),
+        _sincronizarTbClubes(forcar: forcar),
+      ]);
     }
-    final novosRegistros = await _dbRemoto.obterTbAtividades(
-      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.atividades),
-    );
-    int contagem = 0;
-    // excluir os registros marcados para exclusão.
-    contagem += await dbLocal.deleteSamePrimaryKey(
-      dbLocal.tbAtividades,
-      novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
-    );
-    // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await dbLocal.upsert(
-      dbLocal.tbAtividades,
-      novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
-    );
-    assert(() {
-      if (contagem != novosRegistros.length) debugger();
-      return true;
-    }());
+
+    if (sincronizarDependencias) await dependencias();
+
+    sinc() async {
+      final novosRegistros = await _dbRemoto.obterTbAtividades(
+        modificadoApos:
+            forcar ? null : await dbLocal.ultimaModificacao(Tabelas.atividades),
+      );
+
+      // excluir os registros marcados para exclusão.
+      await dbLocal.deleteSamePrimaryKey(
+        dbLocal.tbAtividades,
+        novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
+      );
+      // Inserir ou atualizar os registros não marcados para exclusão.
+      final resposta = await dbLocal.upsert(
+        dbLocal.tbAtividades,
+        novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
+      );
+      return resposta;
+    }
+
+    final resposta = await sinc();
+    if (resposta.erro == DriftDbErro.sqliteConstraintForeignKey) {
+      await dependencias(true);
+      await sinc();
+    }
+    return;
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbQuestoesCaderno] e
   /// [_sincronizarTbAtividades] ser concluído.
-  Future<void> _sincronizarTbQuestaoAtividade(
-      [bool sincronizarDependencias = false]) async {
+  Future<void> _sincronizarTbQuestaoAtividade({
+    bool sincronizarDependencias = false,
+    bool forcar = false,
+  }) async {
     if (!logado) return;
     if (!await _verificarConectividade()) return;
-    if (sincronizarDependencias) {
+
+    dependencias([bool forcar = false]) async {
       await Future.wait([
         _sincronizarTbQuestoesCaderno(true),
-        _sincronizarTbAtividades(true),
+        _sincronizarTbAtividades(sincronizarDependencias: true, forcar: forcar),
       ]);
     }
-    final novosRegistros = await _dbRemoto.obterTbQuestaoAtividade(
-      modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questaoAtividade),
-    );
-    int contagem = 0;
-    // excluir os registros marcados para exclusão.
-    contagem += await dbLocal.deleteSamePrimaryKey(
-      dbLocal.tbQuestaoAtividade,
-      novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
-    );
-    // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await dbLocal.upsert(
-      dbLocal.tbQuestaoAtividade,
-      novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
-    );
-    assert(() {
-      if (contagem != novosRegistros.length) debugger();
-      return true;
-    }());
+
+    if (sincronizarDependencias) await dependencias();
+
+    sinc() async {
+      final novosRegistros = await _dbRemoto.obterTbQuestaoAtividade(
+        modificadoApos: forcar
+            ? null
+            : await dbLocal.ultimaModificacao(Tabelas.questaoAtividade),
+      );
+      // excluir os registros marcados para exclusão.
+      await dbLocal.deleteSamePrimaryKey(
+        dbLocal.tbQuestaoAtividade,
+        novosRegistros.where((e) => e.excluir).map((e) => e.toDbLocal()),
+      );
+      // Inserir ou atualizar os registros não marcados para exclusão.
+      final resposta = await dbLocal.upsert(
+        dbLocal.tbQuestaoAtividade,
+        novosRegistros.where((e) => !e.excluir).map((e) => e.toDbLocal()),
+      );
+      return resposta;
+    }
+
+    final resposta = await sinc();
+    if (resposta.erro == DriftDbErro.sqliteConstraintForeignKey) {
+      await dependencias(true);
+      await sinc();
+    }
+    return;
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbUsuarios] e
   /// [_sincronizarTbQuestaoAtividade] ser concluído.
-  Future<void> _sincronizarTbRespostaQuestaoAtividade(
-      [bool sincronizarDependencias = false]) async {
+  Future<void> _sincronizarTbRespostaQuestaoAtividade({
+    bool sincronizarDependencias = false,
+    bool forcar = false,
+  }) async {
     if (!logado) return;
     if (!await _verificarConectividade()) return;
 
@@ -447,31 +485,43 @@ class DbServicos {
       await _dbRemoto.upsertRespostasAtividade(novosLocal);
     }
 
-    if (sincronizarDependencias) {
+    dependencias([bool forcar = false]) async {
       await Future.wait([
-        _sincronizarTbUsuarios(),
-        _sincronizarTbQuestaoAtividade(true),
+        _sincronizarTbUsuarios(forcar: forcar),
+        _sincronizarTbQuestaoAtividade(
+          sincronizarDependencias: true,
+          forcar: forcar,
+        ),
       ]);
     }
-    final novosRemoto = await _dbRemoto.obterTbRespostaQuestaoAtividade(
-      modificadoApos:
-          await dbLocal.ultimaModificacao(Tabelas.respostaQuestaoAtividade),
-    );
-    int contagem = 0;
-    // excluir os registros marcados para exclusão.
-    contagem += await dbLocal.deleteSamePrimaryKey(
-      dbLocal.tbRespostaQuestaoAtividade,
-      novosRemoto.where((e) => e.excluir).map((e) => e.toDbLocal()),
-    );
-    // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await dbLocal.upsert(
-      dbLocal.tbRespostaQuestaoAtividade,
-      novosRemoto.where((e) => !e.excluir).map((e) => e.toDbLocal()),
-    );
-    assert(() {
-      if (contagem != novosRemoto.length) debugger();
-      return true;
-    }());
+
+    if (sincronizarDependencias) await dependencias();
+
+    sinc() async {
+      final novosRemoto = await _dbRemoto.obterTbRespostaQuestaoAtividade(
+        modificadoApos: forcar
+            ? null
+            : await dbLocal.ultimaModificacao(Tabelas.respostaQuestaoAtividade),
+      );
+      // excluir os registros marcados para exclusão.
+      await dbLocal.deleteSamePrimaryKey(
+        dbLocal.tbRespostaQuestaoAtividade,
+        novosRemoto.where((e) => e.excluir).map((e) => e.toDbLocal()),
+      );
+      // Inserir ou atualizar os registros não marcados para exclusão.
+      final resposta = await dbLocal.upsert(
+        dbLocal.tbRespostaQuestaoAtividade,
+        novosRemoto.where((e) => !e.excluir).map((e) => e.toDbLocal()),
+      );
+      return resposta;
+    }
+
+    final resposta = await sinc();
+    if (resposta.erro == DriftDbErro.sqliteConstraintForeignKey) {
+      await dependencias(true);
+      await sinc();
+    }
+    return;
   }
 
   /// Não deve ser chamado antes de um retorno de [_sincronizarTbQuestoes] e
@@ -514,10 +564,11 @@ class DbServicos {
       novosRemoto.where((e) => e.excluir).map((e) => e.toDbLocal()),
     );
     // Inserir ou atualizar os registros não marcados para exclusão.
-    contagem += await dbLocal.upsert(
+    final resposta = await dbLocal.upsert(
       dbLocal.tbRespostaQuestao,
       novosRemoto.where((e) => !e.excluir).map((e) => e.toDbLocal()),
     );
+    contagem += (resposta.dados as int?) ?? 0;
     assert(() {
       if (contagem != novosRemoto.length) debugger();
       return true;
@@ -570,7 +621,7 @@ class DbServicos {
         .map((e) => e.toAssunto())
         .get()
       ..catchError((e) {
-        debugger(); 
+        debugger();
         print(e);
       });
   }
@@ -817,13 +868,13 @@ class DbServicos {
 
     // Preparar os dados e inserir no banco de dados local.
     final linhas = _prepararUpsertRespostasAtividade(dados);
-    final contagem =
+    final resposta =
         await dbLocal.upsert(dbLocal.tbRespostaQuestaoAtividade, linhas);
     assert(() {
-      if (contagem != linhas.length) debugger();
+      if (resposta.dados != linhas.length) debugger();
       return true;
     }());
-    if (contagem != linhas.length) return false;
+    if (resposta.dados != linhas.length) return false;
 
     // Sincronizar com o banco de dados remoto.
     await sincronizarClubes();
@@ -863,7 +914,7 @@ class DbServicos {
   }
 
   Future<bool> salvarRespostaQuestao(RawRespostaQuestao resposta) async {
-    final sucesso = await dbLocal.upsertRespostaQuestao([
+    final dbResposta = await dbLocal.upsert(dbLocal.tbRespostaQuestao, [
       LinTbRespostaQuestao(
         dataModificacao: DbLocal.codificarData(DateTime.now().toUtc()),
         idQuestao: resposta.idQuestao!,
@@ -872,6 +923,7 @@ class DbServicos {
         sincronizar: true,
       )
     ]);
+    final sucesso = dbResposta.dados != null;
     if (sucesso) await _sincronizarTbRespostaQuestao();
     return sucesso;
   }
