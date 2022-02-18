@@ -131,11 +131,13 @@ class TbQuestoesCaderno extends _TbDbLocal {
 @DataClassName('LinTbUsuarios')
 class TbUsuarios extends _TbDbLocal {
   IntColumn get id => integer().named('id')();
-  TextColumn get email => text().named('email').nullable()();
+  TextColumn get email => text().named('email')();
   TextColumn get nome => text().named('nome').nullable()();
   TextColumn get foto => text().named('foto').nullable()();
   BoolColumn get softDelete =>
       boolean().named('soft_delete').withDefault(Constant(false))();
+  BoolColumn get sincronizar =>
+      boolean().named('sincronizar').withDefault(Constant(false))();
 
   @override
   Set<Column>? get primaryKey => {id};
@@ -252,6 +254,8 @@ class TbRespostaQuestaoAtividade extends _TbDbLocal {
       integer().named('id_questao_x_atividade')();
   IntColumn get idUsuario => integer().named('id_usuario')();
   IntColumn get resposta => integer().named('resposta').nullable()();
+  BoolColumn get sincronizar =>
+      boolean().named('sincronizar').withDefault(Constant(false))();
 
   @override
   Set<Column>? get primaryKey => {idQuestaoAtividade, idUsuario};
@@ -269,16 +273,18 @@ class TbRespostaQuestaoAtividade extends _TbDbLocal {
 @DataClassName('LinTbRespostaQuestao')
 class TbRespostaQuestao extends _TbDbLocal {
   IntColumn get idQuestao => integer().named('id_questao')();
-  IntColumn get idUsuario => integer().named('id_usuario')();
+  IntColumn get idUsuario => integer().named('id_usuario').nullable()();
   IntColumn get resposta => integer().named('resposta').nullable()();
+  BoolColumn get sincronizar =>
+      boolean().named('sincronizar').withDefault(Constant(false))();
 
   @override
-  Set<Column>? get primaryKey => {idQuestao, idUsuario};
+  Set<Column>? get primaryKey => {idQuestao /* , idUsuario */};
 
   @override
   List<String> get customConstraints => const [
         'FOREIGN KEY ("id_questao") REFERENCES "questoes" ("id") ON DELETE CASCADE ON UPDATE CASCADE',
-        'FOREIGN KEY ("id_usuario") REFERENCES "usuarios" ("id") ON DELETE CASCADE ON UPDATE CASCADE',
+        //'FOREIGN KEY ("id_usuario") REFERENCES "usuarios" ("id") ON DELETE CASCADE ON UPDATE CASCADE',
       ];
 
   @override
@@ -286,7 +292,8 @@ class TbRespostaQuestao extends _TbDbLocal {
 }
 
 class LinViewQuestoes {
-  final String id;
+  final String idAlfanumerico;
+  final int id;
   final int ano;
   final int nivel;
   final int indice;
@@ -296,6 +303,7 @@ class LinViewQuestoes {
   final List<LinTbAlternativas> alternativas;
   final String? imagensEnunciado;
   LinViewQuestoes({
+    required this.idAlfanumerico,
     required this.id,
     required this.ano,
     required this.nivel,
@@ -310,6 +318,7 @@ class LinViewQuestoes {
   @override
   String toString() {
     return (StringBuffer('LinViewQuestoes(')
+          ..write('idAlfanumerico: $idAlfanumerico, ')
           ..write('id: $id, ')
           ..write('ano: $ano, ')
           ..write('nivel: $nivel, ')
@@ -325,6 +334,7 @@ class LinViewQuestoes {
 
   @override
   int get hashCode => Object.hash(
+        idAlfanumerico,
         id,
         ano,
         nivel,
@@ -340,6 +350,7 @@ class LinViewQuestoes {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LinViewQuestoes &&
+          other.idAlfanumerico == this.idAlfanumerico &&
           other.id == this.id &&
           other.ano == this.ano &&
           other.nivel == this.nivel &&

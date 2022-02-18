@@ -8,7 +8,7 @@ class FeedbackQuestaoNaoEncontrada extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Center(
         child: Text(
-          'Erro ao localizar a questão',
+          'Nenhuma questão encontrada',
           style:
               Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 24.0),
           textAlign: TextAlign.center,

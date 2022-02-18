@@ -6,7 +6,7 @@ class LinTbUsuariosDbRemoto extends ILinTbUsuarios
     with LinTbMixin {
   LinTbUsuariosDbRemoto({
     required int id,
-    required String? email,
+    required String email,
     required String? nome,
     required String? foto,
     required bool softDelete,

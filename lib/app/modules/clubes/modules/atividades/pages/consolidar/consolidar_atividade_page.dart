@@ -116,8 +116,7 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
           ),
           actions: [
             Observer(builder: (_) {
-              if (!controle.atividade.liberada &&
-                  !controle.atividade.encerrada) {
+              if (controle.podeLiberar) {
                 return IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () => _liberarAtividade(context),
@@ -125,15 +124,25 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
               }
               return const SizedBox();
             }),
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () => _editarAtividade(context, controle.atividade),
-            ),
-            if (controle.podeExcluir)
-              IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () => _excluirAtividade(context),
-              ),
+            Observer(builder: (_) {
+              if (controle.podeEditar) {
+                return IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () =>
+                      _editarAtividade(context, controle.atividade),
+                );
+              }
+              return const SizedBox();
+            }),
+            Observer(builder: (_) {
+              if (controle.podeExcluir) {
+                return IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => _excluirAtividade(context),
+                );
+              }
+              return const SizedBox();
+            }),
           ],
         ),
         body: RefreshIndicator(

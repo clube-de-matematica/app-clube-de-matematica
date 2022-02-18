@@ -1,4 +1,3 @@
-import 'package:clubedematematica/app/modules/filtros/pages/home/filtro_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -14,6 +13,7 @@ import 'modules/clubes/pages/criar/criar_clube_page.dart';
 import 'modules/clubes/pages/editar/editar_clube_page.dart';
 import 'modules/clubes/pages/home/home_clubes_page.dart';
 import 'modules/filtros/filtros_module.dart';
+import 'modules/filtros/pages/home/filtro_home_page.dart';
 import 'modules/login/login_module.dart';
 import 'modules/login/pages/login_page.dart';
 import 'modules/perfil/page/perfil_page.dart';
@@ -179,7 +179,7 @@ abstract class Navegacao {
   static List<String?> paginas(BuildContext context) {
     return Navigator.of(context).widget.pages.map((pagina) {
       String? nome;
-      //TODO: Incluído após uma atualização do Modular.
+      // Incluído após uma atualização do Modular.
       final list = pagina.name?.split('@');
       if (list != null) {
         final nomeTemp = list[0];
@@ -299,12 +299,12 @@ abstract class Navegacao {
           case RotaPagina.editarAtividade:
             return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           default:
-            // TODO
             throw UnimplementedError(
                 'A rota $novaPagina não foi implementada.');
         }
       }
     }
+    return null;
   }
 
   /// Retorna o valor de [RotaPagina] correspondente a [nome].

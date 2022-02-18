@@ -150,7 +150,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
     await future;
     final dados = [
       {
-        DbConst.kDbDataQuestaoKeyId: '2019PF1N1Q01',
+        DbConst.kDbDataQuestaoKeyIdAlfanumerico: '2019PF1N1Q01',
         DbConst.kDbDataQuestaoKeyAno: 2019,
         DbConst.kDbDataQuestaoKeyNivel: 1,
         DbConst.kDbDataQuestaoKeyIndice: 1,
@@ -202,7 +202,7 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
         ],
       },
       {
-        DbConst.kDbDataQuestaoKeyId: '2019PF1N1Q02',
+        DbConst.kDbDataQuestaoKeyIdAlfanumerico: '2019PF1N1Q02',
         DbConst.kDbDataQuestaoKeyAno: 2019,
         DbConst.kDbDataQuestaoKeyNivel: 1,
         DbConst.kDbDataQuestaoKeyIndice: 2,
@@ -345,56 +345,4 @@ class MockDbRepository extends Fake implements IRemoteDbRepository {
       }
     ];
   }
-
-/* 
-  @override
-  Future<DataClube> enterClube(String accessCode, int idUser) {
-    // TODO: implement enterClube
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> exitClube(int idClube, int idUser) {
-    // TODO: implement exitClube
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> insertAssunto(DataDocument data) {
-    // TODO: implement insertAssunto
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<DataClube> insertClube(
-      {required String nome,
-      required int proprietario,
-      required String codigo,
-      String? descricao,
-      bool privado = false,
-      List<int>? administradores,
-      List<int>? membros,
-      String? capa}) {
-    // TODO: implement insertClube
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> insertQuestao(DataDocument data) {
-    // TODO: implement insertQuestao
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<DataClube> updateClube(DataClube data) {
-    // TODO: implement updateClube
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> updatePermissionUserClube(
-      int idClube, int idUser, int idPermission) {
-    // TODO: implement updatePermissionUserClube
-    throw UnimplementedError();
-  } */
 }

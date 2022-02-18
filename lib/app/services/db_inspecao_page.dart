@@ -1,16 +1,18 @@
-import 'package:clubedematematica/app/services/db_servicos.dart';
-import 'package:drift_db_viewer/drift_db_viewer.dart';
+/* import 'package:drift_db_viewer/drift_db_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-class TesteDbPage extends StatefulWidget {
-  const TesteDbPage({Key? key}) : super(key: key);
+import 'db_servicos.dart';
+
+/// TODO: [Widget] para inspecionar o banco de dados local.
+class DbInspecaoPage extends StatefulWidget {
+  const DbInspecaoPage({Key? key}) : super(key: key);
 
   @override
-  _TesteDbPageState createState() => _TesteDbPageState();
+  _DbInspecaoPageState createState() => _DbInspecaoPageState();
 }
 
-class _TesteDbPageState extends State<TesteDbPage> {
+class _DbInspecaoPageState extends State<DbInspecaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,3 +26,4 @@ class _TesteDbPageState extends State<TesteDbPage> {
     );
   }
 }
+ */

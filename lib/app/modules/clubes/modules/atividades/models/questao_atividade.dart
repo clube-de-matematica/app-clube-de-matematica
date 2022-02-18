@@ -26,6 +26,7 @@ abstract class _QuestaoAtividadeBase extends Questao with Store {
   })  : this.respostas = ObservableSet.of(respostas),
         super.noSingleton(
           id: questao.id,
+          idAlfanumerico: questao.idAlfanumerico,
           ano: questao.ano,
           nivel: questao.nivel,
           indice: questao.indice,
@@ -57,7 +58,7 @@ abstract class _QuestaoAtividadeBase extends Questao with Store {
     return {
       DbConst.kDbDataQuestaoAtividadeKeyId: idQuestaoAtividade,
       DbConst.kDbDataQuestaoAtividadeKeyIdAtividade: idAtividade,
-      DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno: id,
+      DbConst.kDbDataQuestaoAtividadeKeyIdQuestaoCaderno: idAlfanumerico,
     };
   }
 

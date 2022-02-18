@@ -11,10 +11,10 @@ import '../assuntos/filtro_assuntos_page.dart';
 import '../niveis/filtro_niveis_page.dart';
 import 'filtro_home_controller.dart';
 
-/// Esta é a página onde são listadas os tipos de filtro disponíveis: ano, assunto, 
+/// Esta é a página onde são listadas os tipos de filtro disponíveis: ano, assunto,
 /// nível, etc.
 ///
-/// Ao aplicar os filtros, as devidas alterações serão feitas no [Filtros] passado 
+/// Ao aplicar os filtros, as devidas alterações serão feitas no [Filtros] passado
 /// no construtor.
 class FiltroHomePage extends StatelessWidget {
   FiltroHomePage({
@@ -37,25 +37,23 @@ class FiltroHomePage extends StatelessWidget {
     }
 
     return FiltrosSelecionados(
-      children: [
-        Observer(builder: (_) {
-          final chips = [
-            ...controle.filtrosTemp.anos.map((ano) => construirChip(
-                  ano.toString(),
-                  () => controle.removerAno(ano),
-                )),
-            ...controle.filtrosTemp.niveis.map((nivel) => construirChip(
-                  'Nível $nivel',
-                  () => controle.removerNivel(nivel),
-                )),
-            ...controle.filtrosTemp.assuntos.map((idAssunto) => construirChip(
-                  (controle.obterAssunto(idAssunto).value?.titulo).toString(),
-                  () => controle.removerAssunto(idAssunto),
-                )),
-          ];
-          return Wrap(children: chips, spacing: 8);
-        })
-      ],
+      child: Observer(builder: (_) {
+        final chips = [
+          ...controle.filtrosTemp.anos.map((ano) => construirChip(
+                ano.toString(),
+                () => controle.removerAno(ano),
+              )),
+          ...controle.filtrosTemp.niveis.map((nivel) => construirChip(
+                'Nível $nivel',
+                () => controle.removerNivel(nivel),
+              )),
+          ...controle.filtrosTemp.assuntos.map((idAssunto) => construirChip(
+                (controle.obterAssunto(idAssunto).value?.titulo).toString(),
+                () => controle.removerAssunto(idAssunto),
+              )),
+        ];
+        return Wrap(children: chips, spacing: 8);
+      }),
       trailing: Observer(builder: (_) {
         return FiltroChipContador(controle.totalSelecinado.toString());
       }),
@@ -111,6 +109,7 @@ class FiltroHomePage extends StatelessWidget {
         if (valor != null) controle.aplicar();
       });
     }
+
     switch (tipo) {
       case TiposFiltro.ano:
         navegar(FiltroAnosPage(

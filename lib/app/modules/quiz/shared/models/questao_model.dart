@@ -11,7 +11,10 @@ import 'imagem_questao_model.dart';
 
 /// Contém as propriedades de uma questão.
 class Questao {
-  final String id;
+  /// Questões aplicadas em mais de um caderno têm [idAlfanumerico] diferentes, mas o mesmo [id].
+  final int id;
+  /// Questões aplicadas em mais de um caderno têm [idAlfanumerico] diferentes, mas o mesmo [id].
+  final String idAlfanumerico;
   final int ano;
   final int nivel;
   final int indice;
@@ -33,6 +36,7 @@ class Questao {
 
   Questao._interno({
     required this.id,
+    required this.idAlfanumerico,
     required this.ano,
     required this.nivel,
     required this.indice,
@@ -48,6 +52,7 @@ class Questao {
   /// Cria uma instância sem incluí-la em [instancias].
   Questao.noSingleton({
     required this.id,
+    required this.idAlfanumerico,
     required this.ano,
     required this.nivel,
     required this.indice,
@@ -64,7 +69,8 @@ class Questao {
   /// A função `orElse` retorna uma nova instância de [Questao].
   /// Essa instância é adiciona em [_instancias].
   factory Questao({
-    required String id,
+    required int id,
+    required String idAlfanumerico,
     required int ano,
     required int nivel,
     required int indice,
@@ -75,9 +81,10 @@ class Questao {
     required List<ImagemQuestao> imagensEnunciado,
   }) {
     return _instancias.firstWhere(
-      (element) => element.id == id,
+      (element) => element.idAlfanumerico == idAlfanumerico,
       orElse: () => Questao._interno(
         id: id,
+        idAlfanumerico: idAlfanumerico,
         ano: ano,
         nivel: nivel,
         indice: indice,
@@ -91,7 +98,7 @@ class Questao {
   }
 
   static Future<Questao> fromDataQuestao(Map<String, dynamic> dados) async {
-    final id = dados[DbConst.kDbDataQuestaoKeyId] as String;
+    final idAlfa = dados[DbConst.kDbDataQuestaoKeyIdAlfanumerico] as String;
     final List<Assunto> _assuntos;
     final _alternativas = <Alternativa>[];
 
@@ -109,7 +116,8 @@ class Questao {
     });
 
     return Questao(
-      id: id,
+      id: dados[DbConst.kDbDataQuestaoKeyId] as int,
+      idAlfanumerico: idAlfa,
       ano: dados[DbConst.kDbDataQuestaoKeyAno] as int,
       nivel: dados[DbConst.kDbDataQuestaoKeyNivel] as int,
       indice: dados[DbConst.kDbDataQuestaoKeyIndice] as int,
@@ -134,7 +142,7 @@ class Questao {
     for (var i = 0; i < dataImagensEnunciado.length; i++) {
       final imagemInfo = dataImagensEnunciado[i];
       imagemInfo[ImagemQuestao.kKeyName] =
-          '${jsonQuestao[DbConst.kDbDataQuestaoKeyId] as String}_enunciado_$i.png';
+          '${jsonQuestao[DbConst.kDbDataQuestaoKeyIdAlfanumerico] as String}_enunciado_$i.png';
       _imagensEnunciado.add(ImagemQuestao.fromMap(imagemInfo));
     }
     return _imagensEnunciado;
@@ -142,7 +150,7 @@ class Questao {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data[DbConst.kDbDataQuestaoKeyId] = this.id;
+    data[DbConst.kDbDataQuestaoKeyIdAlfanumerico] = this.idAlfanumerico;
     data[DbConst.kDbDataQuestaoKeyNivel] = this.nivel;
     data[DbConst.kDbDataQuestaoKeyIndice] = this.indice;
     data[DbConst.kDbDataQuestaoKeyAno] = this.ano;

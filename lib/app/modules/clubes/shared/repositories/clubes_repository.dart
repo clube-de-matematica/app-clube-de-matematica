@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../services/interface_db_servicos.dart';
+import '../../../../services/db_servicos.dart';
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/repositories/id_base62.dart';
 import '../../../perfil/models/userapp.dart';
@@ -22,27 +22,15 @@ part 'clubes_repository.g.dart';
 class ClubesRepository = _ClubesRepositoryBase with _$ClubesRepository;
 
 abstract class _ClubesRepositoryBase with Store implements Disposable {
-  final IDbServicos dbServicos;
+  final DbServicos dbServicos;
   final _disposers = <ReactionDisposer>[];
 
   _ClubesRepositoryBase(this.dbServicos) {
-    _assinaturaClubes = dbServicos.getClubes().listen((clubes) {
+    _assinaturaClubes = dbServicos.obterClubes().listen((clubes) {
       this.clubes
         ..removeAll(this.clubes.difference(clubes.toSet()))
         ..addAll(clubes);
     });
-
-    _disposers.add(
-      autorun(
-        (_) {
-          if (usuarioApp.id == null) {
-            // TODO: excluir clubes.
-          } else {
-            // TODO: baixar clubes.
-          }
-        },
-      ),
-    );
   }
 
   late final StreamSubscription _assinaturaClubes;
@@ -65,7 +53,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       permissao: PermissoesClube.proprietario,
     );
     final codigo = IdBase62.getIdClube();
-    final clube = await dbServicos.insertClube(
+    final clube = await dbServicos.inserirClube(
       dados.copyWith(
         codigo: codigo,
         usuarios: [proprietario, ...?dados.usuarios],
@@ -97,7 +85,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   /// Se o processo for bem sucedido, retorna o [Clube] correspondente.
   @action
   Future<Clube?> entrarClube(String codigo) async {
-    final clube = await dbServicos.enterClube(codigo);
+    final clube = await dbServicos.entrarClube(codigo);
     return clube;
   }
 
@@ -141,7 +129,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       capa: capa, // atualizarCapa ? capa : null,
     );
 
-    final _clube = await dbServicos.updateClube(dados);
+    final _clube = await dbServicos.atualizarClube(dados);
     return _clube == null ? false : true;
   }
 
@@ -154,7 +142,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     if (usuarioApp.id == null) return false;
     if (clube.id != usuario.idClube) return false;
     if (usuario.permissao == permissao) return true;
-    final sucesso = await dbServicos.updatePermissionUserClube(
+    final sucesso = await dbServicos.atualizarPermissaoUsuarioClube(
         clube.id, usuario.id, permissao.id);
     return sucesso;
   }
@@ -163,7 +151,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
 
   /// Retorna um [Stream] para a lista de atividades do [clube].
   Stream<List<Atividade>> atividades(Clube clube) {
-    return dbServicos.getAtividades(clube);
+    return dbServicos.obterAtividades(clube);
   }
 
   /// {@macro app.IDbRepository.insertAtividade}
@@ -182,14 +170,14 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     final idAutor = usuarioApp.id!;
     if (!clube.permissaoCriarAtividade(idAutor)) return false;
     if (questoes != null && questoes.isEmpty) questoes = null;
-    final atividade = await dbServicos.insertAtividade(
+    final atividade = await dbServicos.inserirAtividade(
       RawAtividade(
         idClube: clube.id,
         idAutor: idAutor,
         titulo: titulo,
         descricao: descricao,
         questoes: questoes
-            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.id))
+            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.idAlfanumerico))
             .toList(),
         liberacao: dataLiberacao,
         encerramento: dataEncerramento,
@@ -214,13 +202,13 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     final permitirUsuario = atividade.idAutor == usuarioApp.id!;
     assert(permitirUsuario);
     if (questoes != null && questoes.isEmpty) questoes = null;
-    final _atividade = await dbServicos.updateAtividade(
+    final _atividade = await dbServicos.atualizarAtividade(
       RawAtividade(
         id: atividade.id,
         titulo: titulo,
         descricao: descricao,
         questoes: questoes
-            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.id))
+            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.idAlfanumerico))
             .toList(),
         liberacao: dataLiberacao,
         encerramento: dataEncerramento,
@@ -235,7 +223,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
 
   Future<void> carregarQuestoesAtividade(Atividade atividade) async {
     if (usuarioApp.id == null) return;
-    final questoes = await dbServicos.getQuestoesAtividade(atividade);
+    final questoes = await dbServicos.obterQuestoesAtividade(atividade);
     atividade.questoes
       ..clear()
       ..addAll(questoes);
@@ -256,7 +244,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
         ));
       }
     });
-    final retorno = await dbServicos.upsertRespostasAtividade(dados);
+    final retorno = await dbServicos.salvarRespostasAtividade(dados);
     return retorno;
   }
 

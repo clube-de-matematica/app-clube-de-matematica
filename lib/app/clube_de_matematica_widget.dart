@@ -1,9 +1,10 @@
-import 'package:clubedematematica/app/services/db_servicos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'navigation.dart';
+import 'services/db_servicos.dart';
+import 'services/preferencias_servicos.dart';
 import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/theme/appTheme.dart';
 import 'shared/utils/constantes.dart';
@@ -11,7 +12,8 @@ import 'shared/utils/constantes.dart';
 /// O [Widget] principal do aplicativo.
 class ClubeDeMatematicaWidget extends StatefulWidget {
   @override
-  State<ClubeDeMatematicaWidget> createState() => _ClubeDeMatematicaWidgetState();
+  State<ClubeDeMatematicaWidget> createState() =>
+      _ClubeDeMatematicaWidgetState();
 }
 
 class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
@@ -20,20 +22,22 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
     Modular.get<DbServicos>().close();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
       theme: AppTheme.instance.temaClaro,
-      initialRoute: Modular.get<IAuthRepository>().logged
+      initialRoute: Modular.get<IAuthRepository>().logged ||
+              Preferencias.instancia.primeiroAcesso != null
           ? RotaPagina.quiz.nome
           : RotaPagina.login.nome,
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      supportedLocales: [
+        const Locale('pt', 'BR'),
+        const Locale('pt', ''),
       ],
-      supportedLocales: [const Locale('pt', 'BR')],
       /* builder: (context, child) {
         /// Isso criará um [Scaffold] abaixo do [Navigator], mas acima de todas as rotas.
         return Scaffold(

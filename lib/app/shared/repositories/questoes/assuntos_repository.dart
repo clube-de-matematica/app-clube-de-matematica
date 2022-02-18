@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../modules/quiz/shared/models/assunto_model.dart';
-import '../../../services/interface_db_servicos.dart';
+import '../../../services/db_servicos.dart';
 import '../../models/debug.dart';
 import '../interface_db_repository.dart';
 
@@ -13,7 +13,7 @@ import '../interface_db_repository.dart';
 class AssuntosRepository {
   AssuntosRepository(this._dbServicos);
 
-  final IDbServicos _dbServicos;
+  final DbServicos _dbServicos;
 
   /// {@template app.AssuntosRepository.carregando}
   /// Será verdadeiro se os assuntos estiverem em pocesso de carregamento.
@@ -62,7 +62,7 @@ class AssuntosRepository {
     List<Assunto> resultado;
     try {
       resultado =
-          await _dbServicos.getAssuntos().lastWhere((list) => list.isNotEmpty);
+          await _dbServicos.obterAssuntos().lastWhere((list) => list.isNotEmpty);
     } catch (e) {
       assert(Debug.printBetweenLine(
           "Erro a buscar os dados da coleção ${CollectionType.assuntos.name}."));

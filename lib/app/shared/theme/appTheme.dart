@@ -66,9 +66,9 @@ class AppTheme {
             ?.setEscalaFontSize(_escala),
       ),
       chipTheme: temp.chipTheme.copyWith(
-        labelStyle: temp.chipTheme.labelStyle.setEscalaFontSize(_escala),
+        labelStyle: temp.chipTheme.labelStyle?.setEscalaFontSize(_escala),
         secondaryLabelStyle:
-            temp.chipTheme.secondaryLabelStyle.setEscalaFontSize(_escala),
+            temp.chipTheme.secondaryLabelStyle?.setEscalaFontSize(_escala),
       ),
       cupertinoOverrideTheme: temp.cupertinoOverrideTheme?.copyWith(
         textTheme: temp.cupertinoOverrideTheme?.textTheme?.copyWith(

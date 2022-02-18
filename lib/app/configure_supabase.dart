@@ -1,14 +1,12 @@
-import 'package:clubedematematica/app/shared/models/exceptions/error_handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'shared/models/exceptions/error_handler.dart';
 import 'shared/repositories/supabase/auth_supabase_repository.dart';
 
 /// URL do projeto do Supabase.
-///
-/// TODO: NÃO CONSEGUI CORRIGIR O ERRO DE CERTIFICADO USANDO `https`.
 const _kSupabaseUrl = 'https://dlhhqapgjuyvzxktohck.supabase.co';
 
 /// Anon key do projeto do Supabase.

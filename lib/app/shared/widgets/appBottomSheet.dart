@@ -338,6 +338,36 @@ class BottomSheetErro extends AppBottomSheet {
   }
 }
 
+/// Uma página inferior para exibir quando o dispositivo estiver sem acesso a internete.
+class BottomSheetErroConexao extends AppBottomSheet {
+  const BottomSheetErroConexao({
+    Key? key,
+    this.rotuloAcao = 'FECHAR',
+    this.acao,
+  }) : super(key: key);
+
+  final String rotuloAcao;
+  final VoidCallback? acao;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBottomSheet(
+      title: const Text('Falha na conexão'),
+      content: const Text('Dispositivo sem acesso à internete.'),
+      actions: [
+        AppTextButton(
+          primary: false,
+          child: Text(rotuloAcao),
+          onPressed: () {
+            acao?.call();
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
 /// Uma página inferior que exibe dois botões de ação.
 /// Ao ser fechada, retorna:
 /// * [resultActionFirst] se o primeiro botão for acionado;

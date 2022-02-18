@@ -211,9 +211,10 @@ class TbQuestoesCompanion extends UpdateCompanion<LinTbQuestoes> {
 
 class $TbQuestoesTable extends TbQuestoes
     with TableInfo<$TbQuestoesTable, LinTbQuestoes> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbQuestoesTable(this._db, [this._alias]);
+  $TbQuestoesTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -295,7 +296,7 @@ class $TbQuestoesTable extends TbQuestoes
 
   @override
   $TbQuestoesTable createAlias(String alias) {
-    return $TbQuestoesTable(_db, alias);
+    return $TbQuestoesTable(attachedDatabase, alias);
   }
 }
 
@@ -478,9 +479,10 @@ class TbAssuntosCompanion extends UpdateCompanion<LinTbAssuntos> {
 
 class $TbAssuntosTable extends TbAssuntos
     with TableInfo<$TbAssuntosTable, LinTbAssuntos> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbAssuntosTable(this._db, [this._alias]);
+  $TbAssuntosTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -550,7 +552,7 @@ class $TbAssuntosTable extends TbAssuntos
 
   @override
   $TbAssuntosTable createAlias(String alias) {
-    return $TbAssuntosTable(_db, alias);
+    return $TbAssuntosTable(attachedDatabase, alias);
   }
 }
 
@@ -707,9 +709,10 @@ class TbQuestaoAssuntoCompanion extends UpdateCompanion<LinTbQuestaoAssunto> {
 
 class $TbQuestaoAssuntoTable extends TbQuestaoAssunto
     with TableInfo<$TbQuestaoAssuntoTable, LinTbQuestaoAssunto> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbQuestaoAssuntoTable(this._db, [this._alias]);
+  $TbQuestaoAssuntoTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -771,7 +774,7 @@ class $TbQuestaoAssuntoTable extends TbQuestaoAssunto
 
   @override
   $TbQuestaoAssuntoTable createAlias(String alias) {
-    return $TbQuestaoAssuntoTable(_db, alias);
+    return $TbQuestaoAssuntoTable(attachedDatabase, alias);
   }
 }
 
@@ -924,9 +927,10 @@ class TbTiposAlternativaCompanion
 
 class $TbTiposAlternativaTable extends TbTiposAlternativa
     with TableInfo<$TbTiposAlternativaTable, LinTbTiposAlternativa> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbTiposAlternativaTable(this._db, [this._alias]);
+  $TbTiposAlternativaTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -987,7 +991,7 @@ class $TbTiposAlternativaTable extends TbTiposAlternativa
 
   @override
   $TbTiposAlternativaTable createAlias(String alias) {
-    return $TbTiposAlternativaTable(_db, alias);
+    return $TbTiposAlternativaTable(attachedDatabase, alias);
   }
 }
 
@@ -1195,9 +1199,10 @@ class TbAlternativasCompanion extends UpdateCompanion<LinTbAlternativas> {
 
 class $TbAlternativasTable extends TbAlternativas
     with TableInfo<$TbAlternativasTable, LinTbAlternativas> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbAlternativasTable(this._db, [this._alias]);
+  $TbAlternativasTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -1283,7 +1288,7 @@ class $TbAlternativasTable extends TbAlternativas
 
   @override
   $TbAlternativasTable createAlias(String alias) {
-    return $TbAlternativasTable(_db, alias);
+    return $TbAlternativasTable(attachedDatabase, alias);
   }
 }
 
@@ -1515,9 +1520,10 @@ class TbQuestoesCadernoCompanion extends UpdateCompanion<LinTbQuestoesCaderno> {
 
 class $TbQuestoesCadernoTable extends TbQuestoesCaderno
     with TableInfo<$TbQuestoesCadernoTable, LinTbQuestoesCaderno> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbQuestoesCadernoTable(this._db, [this._alias]);
+  $TbQuestoesCadernoTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -1612,7 +1618,7 @@ class $TbQuestoesCadernoTable extends TbQuestoesCaderno
 
   @override
   $TbQuestoesCadernoTable createAlias(String alias) {
-    return $TbQuestoesCadernoTable(_db, alias);
+    return $TbQuestoesCadernoTable(attachedDatabase, alias);
   }
 }
 
@@ -1620,17 +1626,19 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
   /// Número de milisegundos desde a época Unix (no fuso horário UTC).
   final int dataModificacao;
   final int id;
-  final String? email;
+  final String email;
   final String? nome;
   final String? foto;
   final bool softDelete;
+  final bool sincronizar;
   LinTbUsuarios(
       {required this.dataModificacao,
       required this.id,
-      this.email,
+      required this.email,
       this.nome,
       this.foto,
-      required this.softDelete});
+      required this.softDelete,
+      required this.sincronizar});
   factory LinTbUsuarios.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return LinTbUsuarios(
@@ -1639,13 +1647,15 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
       id: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       email: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}email']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}email'])!,
       nome: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}nome']),
       foto: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}foto']),
       softDelete: const BoolType()
           .mapFromDatabaseResponse(data['${effectivePrefix}soft_delete'])!,
+      sincronizar: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sincronizar'])!,
     );
   }
   @override
@@ -1653,9 +1663,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     final map = <String, Expression>{};
     map['data_modificacao'] = Variable<int>(dataModificacao);
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || email != null) {
-      map['email'] = Variable<String?>(email);
-    }
+    map['email'] = Variable<String>(email);
     if (!nullToAbsent || nome != null) {
       map['nome'] = Variable<String?>(nome);
     }
@@ -1663,6 +1671,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
       map['foto'] = Variable<String?>(foto);
     }
     map['soft_delete'] = Variable<bool>(softDelete);
+    map['sincronizar'] = Variable<bool>(sincronizar);
     return map;
   }
 
@@ -1670,11 +1679,11 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return TbUsuariosCompanion(
       dataModificacao: Value(dataModificacao),
       id: Value(id),
-      email:
-          email == null && nullToAbsent ? const Value.absent() : Value(email),
+      email: Value(email),
       nome: nome == null && nullToAbsent ? const Value.absent() : Value(nome),
       foto: foto == null && nullToAbsent ? const Value.absent() : Value(foto),
       softDelete: Value(softDelete),
+      sincronizar: Value(sincronizar),
     );
   }
 
@@ -1684,10 +1693,11 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return LinTbUsuarios(
       dataModificacao: serializer.fromJson<int>(json['dataModificacao']),
       id: serializer.fromJson<int>(json['id']),
-      email: serializer.fromJson<String?>(json['email']),
+      email: serializer.fromJson<String>(json['email']),
       nome: serializer.fromJson<String?>(json['nome']),
       foto: serializer.fromJson<String?>(json['foto']),
       softDelete: serializer.fromJson<bool>(json['softDelete']),
+      sincronizar: serializer.fromJson<bool>(json['sincronizar']),
     );
   }
   @override
@@ -1696,10 +1706,11 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return <String, dynamic>{
       'dataModificacao': serializer.toJson<int>(dataModificacao),
       'id': serializer.toJson<int>(id),
-      'email': serializer.toJson<String?>(email),
+      'email': serializer.toJson<String>(email),
       'nome': serializer.toJson<String?>(nome),
       'foto': serializer.toJson<String?>(foto),
       'softDelete': serializer.toJson<bool>(softDelete),
+      'sincronizar': serializer.toJson<bool>(sincronizar),
     };
   }
 
@@ -1709,7 +1720,8 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
           String? email,
           String? nome,
           String? foto,
-          bool? softDelete}) =>
+          bool? softDelete,
+          bool? sincronizar}) =>
       LinTbUsuarios(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         id: id ?? this.id,
@@ -1717,6 +1729,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
         nome: nome ?? this.nome,
         foto: foto ?? this.foto,
         softDelete: softDelete ?? this.softDelete,
+        sincronizar: sincronizar ?? this.sincronizar,
       );
   @override
   String toString() {
@@ -1726,14 +1739,15 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
           ..write('email: $email, ')
           ..write('nome: $nome, ')
           ..write('foto: $foto, ')
-          ..write('softDelete: $softDelete')
+          ..write('softDelete: $softDelete, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(dataModificacao, id, email, nome, foto, softDelete);
+  int get hashCode => Object.hash(
+      dataModificacao, id, email, nome, foto, softDelete, sincronizar);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1743,16 +1757,18 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
           other.email == this.email &&
           other.nome == this.nome &&
           other.foto == this.foto &&
-          other.softDelete == this.softDelete);
+          other.softDelete == this.softDelete &&
+          other.sincronizar == this.sincronizar);
 }
 
 class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
   final Value<int> dataModificacao;
   final Value<int> id;
-  final Value<String?> email;
+  final Value<String> email;
   final Value<String?> nome;
   final Value<String?> foto;
   final Value<bool> softDelete;
+  final Value<bool> sincronizar;
   const TbUsuariosCompanion({
     this.dataModificacao = const Value.absent(),
     this.id = const Value.absent(),
@@ -1760,22 +1776,26 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
     this.nome = const Value.absent(),
     this.foto = const Value.absent(),
     this.softDelete = const Value.absent(),
+    this.sincronizar = const Value.absent(),
   });
   TbUsuariosCompanion.insert({
     required int dataModificacao,
     this.id = const Value.absent(),
-    this.email = const Value.absent(),
+    required String email,
     this.nome = const Value.absent(),
     this.foto = const Value.absent(),
     this.softDelete = const Value.absent(),
-  }) : dataModificacao = Value(dataModificacao);
+    this.sincronizar = const Value.absent(),
+  })  : dataModificacao = Value(dataModificacao),
+        email = Value(email);
   static Insertable<LinTbUsuarios> custom({
     Expression<int>? dataModificacao,
     Expression<int>? id,
-    Expression<String?>? email,
+    Expression<String>? email,
     Expression<String?>? nome,
     Expression<String?>? foto,
     Expression<bool>? softDelete,
+    Expression<bool>? sincronizar,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
@@ -1784,16 +1804,18 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
       if (nome != null) 'nome': nome,
       if (foto != null) 'foto': foto,
       if (softDelete != null) 'soft_delete': softDelete,
+      if (sincronizar != null) 'sincronizar': sincronizar,
     });
   }
 
   TbUsuariosCompanion copyWith(
       {Value<int>? dataModificacao,
       Value<int>? id,
-      Value<String?>? email,
+      Value<String>? email,
       Value<String?>? nome,
       Value<String?>? foto,
-      Value<bool>? softDelete}) {
+      Value<bool>? softDelete,
+      Value<bool>? sincronizar}) {
     return TbUsuariosCompanion(
       dataModificacao: dataModificacao ?? this.dataModificacao,
       id: id ?? this.id,
@@ -1801,6 +1823,7 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
       nome: nome ?? this.nome,
       foto: foto ?? this.foto,
       softDelete: softDelete ?? this.softDelete,
+      sincronizar: sincronizar ?? this.sincronizar,
     );
   }
 
@@ -1814,7 +1837,7 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
       map['id'] = Variable<int>(id.value);
     }
     if (email.present) {
-      map['email'] = Variable<String?>(email.value);
+      map['email'] = Variable<String>(email.value);
     }
     if (nome.present) {
       map['nome'] = Variable<String?>(nome.value);
@@ -1824,6 +1847,9 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
     }
     if (softDelete.present) {
       map['soft_delete'] = Variable<bool>(softDelete.value);
+    }
+    if (sincronizar.present) {
+      map['sincronizar'] = Variable<bool>(sincronizar.value);
     }
     return map;
   }
@@ -1836,7 +1862,8 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
           ..write('email: $email, ')
           ..write('nome: $nome, ')
           ..write('foto: $foto, ')
-          ..write('softDelete: $softDelete')
+          ..write('softDelete: $softDelete, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
@@ -1844,9 +1871,10 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
 
 class $TbUsuariosTable extends TbUsuarios
     with TableInfo<$TbUsuariosTable, LinTbUsuarios> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbUsuariosTable(this._db, [this._alias]);
+  $TbUsuariosTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -1861,8 +1889,8 @@ class $TbUsuariosTable extends TbUsuarios
   final VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String?> email = GeneratedColumn<String?>(
-      'email', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      'email', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
   late final GeneratedColumn<String?> nome = GeneratedColumn<String?>(
@@ -1881,9 +1909,18 @@ class $TbUsuariosTable extends TbUsuarios
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (soft_delete IN (0, 1))',
       defaultValue: Constant(false));
+  final VerificationMeta _sincronizarMeta =
+      const VerificationMeta('sincronizar');
+  @override
+  late final GeneratedColumn<bool?> sincronizar = GeneratedColumn<bool?>(
+      'sincronizar', aliasedName, false,
+      type: const BoolType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (sincronizar IN (0, 1))',
+      defaultValue: Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
-      [dataModificacao, id, email, nome, foto, softDelete];
+      [dataModificacao, id, email, nome, foto, softDelete, sincronizar];
   @override
   String get aliasedName => _alias ?? 'usuarios';
   @override
@@ -1907,6 +1944,8 @@ class $TbUsuariosTable extends TbUsuarios
     if (data.containsKey('email')) {
       context.handle(
           _emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));
+    } else if (isInserting) {
+      context.missing(_emailMeta);
     }
     if (data.containsKey('nome')) {
       context.handle(
@@ -1922,6 +1961,12 @@ class $TbUsuariosTable extends TbUsuarios
           softDelete.isAcceptableOrUnknown(
               data['soft_delete']!, _softDeleteMeta));
     }
+    if (data.containsKey('sincronizar')) {
+      context.handle(
+          _sincronizarMeta,
+          sincronizar.isAcceptableOrUnknown(
+              data['sincronizar']!, _sincronizarMeta));
+    }
     return context;
   }
 
@@ -1935,7 +1980,7 @@ class $TbUsuariosTable extends TbUsuarios
 
   @override
   $TbUsuariosTable createAlias(String alias) {
-    return $TbUsuariosTable(_db, alias);
+    return $TbUsuariosTable(attachedDatabase, alias);
   }
 }
 
@@ -2215,9 +2260,10 @@ class TbClubesCompanion extends UpdateCompanion<LinTbClubes> {
 
 class $TbClubesTable extends TbClubes
     with TableInfo<$TbClubesTable, LinTbClubes> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbClubesTable(this._db, [this._alias]);
+  $TbClubesTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -2343,7 +2389,7 @@ class $TbClubesTable extends TbClubes
 
   @override
   $TbClubesTable createAlias(String alias) {
-    return $TbClubesTable(_db, alias);
+    return $TbClubesTable(attachedDatabase, alias);
   }
 }
 
@@ -2497,9 +2543,10 @@ class TbTiposPermissaoCompanion extends UpdateCompanion<LinTbTiposPermissao> {
 
 class $TbTiposPermissaoTable extends TbTiposPermissao
     with TableInfo<$TbTiposPermissaoTable, LinTbTiposPermissao> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbTiposPermissaoTable(this._db, [this._alias]);
+  $TbTiposPermissaoTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -2560,7 +2607,7 @@ class $TbTiposPermissaoTable extends TbTiposPermissao
 
   @override
   $TbTiposPermissaoTable createAlias(String alias) {
-    return $TbTiposPermissaoTable(_db, alias);
+    return $TbTiposPermissaoTable(attachedDatabase, alias);
   }
 }
 
@@ -2768,9 +2815,10 @@ class TbClubeUsuarioCompanion extends UpdateCompanion<LinTbClubeUsuario> {
 
 class $TbClubeUsuarioTable extends TbClubeUsuario
     with TableInfo<$TbClubeUsuarioTable, LinTbClubeUsuario> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbClubeUsuarioTable(this._db, [this._alias]);
+  $TbClubeUsuarioTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -2860,7 +2908,7 @@ class $TbClubeUsuarioTable extends TbClubeUsuario
 
   @override
   $TbClubeUsuarioTable createAlias(String alias) {
-    return $TbClubeUsuarioTable(_db, alias);
+    return $TbClubeUsuarioTable(attachedDatabase, alias);
   }
 }
 
@@ -3171,9 +3219,10 @@ class TbAtividadesCompanion extends UpdateCompanion<LinTbAtividades> {
 
 class $TbAtividadesTable extends TbAtividades
     with TableInfo<$TbAtividadesTable, LinTbAtividades> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbAtividadesTable(this._db, [this._alias]);
+  $TbAtividadesTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -3310,7 +3359,7 @@ class $TbAtividadesTable extends TbAtividades
 
   @override
   $TbAtividadesTable createAlias(String alias) {
-    return $TbAtividadesTable(_db, alias);
+    return $TbAtividadesTable(attachedDatabase, alias);
   }
 }
 
@@ -3494,9 +3543,10 @@ class TbQuestaoAtividadeCompanion
 
 class $TbQuestaoAtividadeTable extends TbQuestaoAtividade
     with TableInfo<$TbQuestaoAtividadeTable, LinTbQuestaoAtividade> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbQuestaoAtividadeTable(this._db, [this._alias]);
+  $TbQuestaoAtividadeTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -3573,7 +3623,7 @@ class $TbQuestaoAtividadeTable extends TbQuestaoAtividade
 
   @override
   $TbQuestaoAtividadeTable createAlias(String alias) {
-    return $TbQuestaoAtividadeTable(_db, alias);
+    return $TbQuestaoAtividadeTable(attachedDatabase, alias);
   }
 }
 
@@ -3584,11 +3634,13 @@ class LinTbRespostaQuestaoAtividade extends DataClass
   final int idQuestaoAtividade;
   final int idUsuario;
   final int? resposta;
+  final bool sincronizar;
   LinTbRespostaQuestaoAtividade(
       {required this.dataModificacao,
       required this.idQuestaoAtividade,
       required this.idUsuario,
-      this.resposta});
+      this.resposta,
+      required this.sincronizar});
   factory LinTbRespostaQuestaoAtividade.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -3601,6 +3653,8 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}id_usuario'])!,
       resposta: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}resposta']),
+      sincronizar: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sincronizar'])!,
     );
   }
   @override
@@ -3612,6 +3666,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
     if (!nullToAbsent || resposta != null) {
       map['resposta'] = Variable<int?>(resposta);
     }
+    map['sincronizar'] = Variable<bool>(sincronizar);
     return map;
   }
 
@@ -3623,6 +3678,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
       resposta: resposta == null && nullToAbsent
           ? const Value.absent()
           : Value(resposta),
+      sincronizar: Value(sincronizar),
     );
   }
 
@@ -3634,6 +3690,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
       idQuestaoAtividade: serializer.fromJson<int>(json['idQuestaoAtividade']),
       idUsuario: serializer.fromJson<int>(json['idUsuario']),
       resposta: serializer.fromJson<int?>(json['resposta']),
+      sincronizar: serializer.fromJson<bool>(json['sincronizar']),
     );
   }
   @override
@@ -3644,6 +3701,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
       'idQuestaoAtividade': serializer.toJson<int>(idQuestaoAtividade),
       'idUsuario': serializer.toJson<int>(idUsuario),
       'resposta': serializer.toJson<int?>(resposta),
+      'sincronizar': serializer.toJson<bool>(sincronizar),
     };
   }
 
@@ -3651,12 +3709,14 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           {int? dataModificacao,
           int? idQuestaoAtividade,
           int? idUsuario,
-          int? resposta}) =>
+          int? resposta,
+          bool? sincronizar}) =>
       LinTbRespostaQuestaoAtividade(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         idQuestaoAtividade: idQuestaoAtividade ?? this.idQuestaoAtividade,
         idUsuario: idUsuario ?? this.idUsuario,
         resposta: resposta ?? this.resposta,
+        sincronizar: sincronizar ?? this.sincronizar,
       );
   @override
   String toString() {
@@ -3664,14 +3724,15 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           ..write('dataModificacao: $dataModificacao, ')
           ..write('idQuestaoAtividade: $idQuestaoAtividade, ')
           ..write('idUsuario: $idUsuario, ')
-          ..write('resposta: $resposta')
+          ..write('resposta: $resposta, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(dataModificacao, idQuestaoAtividade, idUsuario, resposta);
+  int get hashCode => Object.hash(
+      dataModificacao, idQuestaoAtividade, idUsuario, resposta, sincronizar);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3679,7 +3740,8 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           other.dataModificacao == this.dataModificacao &&
           other.idQuestaoAtividade == this.idQuestaoAtividade &&
           other.idUsuario == this.idUsuario &&
-          other.resposta == this.resposta);
+          other.resposta == this.resposta &&
+          other.sincronizar == this.sincronizar);
 }
 
 class TbRespostaQuestaoAtividadeCompanion
@@ -3688,17 +3750,20 @@ class TbRespostaQuestaoAtividadeCompanion
   final Value<int> idQuestaoAtividade;
   final Value<int> idUsuario;
   final Value<int?> resposta;
+  final Value<bool> sincronizar;
   const TbRespostaQuestaoAtividadeCompanion({
     this.dataModificacao = const Value.absent(),
     this.idQuestaoAtividade = const Value.absent(),
     this.idUsuario = const Value.absent(),
     this.resposta = const Value.absent(),
+    this.sincronizar = const Value.absent(),
   });
   TbRespostaQuestaoAtividadeCompanion.insert({
     required int dataModificacao,
     required int idQuestaoAtividade,
     required int idUsuario,
     this.resposta = const Value.absent(),
+    this.sincronizar = const Value.absent(),
   })  : dataModificacao = Value(dataModificacao),
         idQuestaoAtividade = Value(idQuestaoAtividade),
         idUsuario = Value(idUsuario);
@@ -3707,6 +3772,7 @@ class TbRespostaQuestaoAtividadeCompanion
     Expression<int>? idQuestaoAtividade,
     Expression<int>? idUsuario,
     Expression<int?>? resposta,
+    Expression<bool>? sincronizar,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
@@ -3714,6 +3780,7 @@ class TbRespostaQuestaoAtividadeCompanion
         'id_questao_x_atividade': idQuestaoAtividade,
       if (idUsuario != null) 'id_usuario': idUsuario,
       if (resposta != null) 'resposta': resposta,
+      if (sincronizar != null) 'sincronizar': sincronizar,
     });
   }
 
@@ -3721,12 +3788,14 @@ class TbRespostaQuestaoAtividadeCompanion
       {Value<int>? dataModificacao,
       Value<int>? idQuestaoAtividade,
       Value<int>? idUsuario,
-      Value<int?>? resposta}) {
+      Value<int?>? resposta,
+      Value<bool>? sincronizar}) {
     return TbRespostaQuestaoAtividadeCompanion(
       dataModificacao: dataModificacao ?? this.dataModificacao,
       idQuestaoAtividade: idQuestaoAtividade ?? this.idQuestaoAtividade,
       idUsuario: idUsuario ?? this.idUsuario,
       resposta: resposta ?? this.resposta,
+      sincronizar: sincronizar ?? this.sincronizar,
     );
   }
 
@@ -3745,6 +3814,9 @@ class TbRespostaQuestaoAtividadeCompanion
     if (resposta.present) {
       map['resposta'] = Variable<int?>(resposta.value);
     }
+    if (sincronizar.present) {
+      map['sincronizar'] = Variable<bool>(sincronizar.value);
+    }
     return map;
   }
 
@@ -3754,7 +3826,8 @@ class TbRespostaQuestaoAtividadeCompanion
           ..write('dataModificacao: $dataModificacao, ')
           ..write('idQuestaoAtividade: $idQuestaoAtividade, ')
           ..write('idUsuario: $idUsuario, ')
-          ..write('resposta: $resposta')
+          ..write('resposta: $resposta, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
@@ -3764,9 +3837,10 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
     with
         TableInfo<$TbRespostaQuestaoAtividadeTable,
             LinTbRespostaQuestaoAtividade> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbRespostaQuestaoAtividadeTable(this._db, [this._alias]);
+  $TbRespostaQuestaoAtividadeTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -3789,9 +3863,18 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
   late final GeneratedColumn<int?> resposta = GeneratedColumn<int?>(
       'resposta', aliasedName, true,
       type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _sincronizarMeta =
+      const VerificationMeta('sincronizar');
+  @override
+  late final GeneratedColumn<bool?> sincronizar = GeneratedColumn<bool?>(
+      'sincronizar', aliasedName, false,
+      type: const BoolType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (sincronizar IN (0, 1))',
+      defaultValue: Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
-      [dataModificacao, idQuestaoAtividade, idUsuario, resposta];
+      [dataModificacao, idQuestaoAtividade, idUsuario, resposta, sincronizar];
   @override
   String get aliasedName => _alias ?? 'resposta_x_questao_x_atividade';
   @override
@@ -3828,6 +3911,12 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
       context.handle(_respostaMeta,
           resposta.isAcceptableOrUnknown(data['resposta']!, _respostaMeta));
     }
+    if (data.containsKey('sincronizar')) {
+      context.handle(
+          _sincronizarMeta,
+          sincronizar.isAcceptableOrUnknown(
+              data['sincronizar']!, _sincronizarMeta));
+    }
     return context;
   }
 
@@ -3842,7 +3931,7 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
 
   @override
   $TbRespostaQuestaoAtividadeTable createAlias(String alias) {
-    return $TbRespostaQuestaoAtividadeTable(_db, alias);
+    return $TbRespostaQuestaoAtividadeTable(attachedDatabase, alias);
   }
 }
 
@@ -3851,13 +3940,15 @@ class LinTbRespostaQuestao extends DataClass
   /// Número de milisegundos desde a época Unix (no fuso horário UTC).
   final int dataModificacao;
   final int idQuestao;
-  final int idUsuario;
+  final int? idUsuario;
   final int? resposta;
+  final bool sincronizar;
   LinTbRespostaQuestao(
       {required this.dataModificacao,
       required this.idQuestao,
-      required this.idUsuario,
-      this.resposta});
+      this.idUsuario,
+      this.resposta,
+      required this.sincronizar});
   factory LinTbRespostaQuestao.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -3867,9 +3958,11 @@ class LinTbRespostaQuestao extends DataClass
       idQuestao: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id_questao'])!,
       idUsuario: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_usuario'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}id_usuario']),
       resposta: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}resposta']),
+      sincronizar: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sincronizar'])!,
     );
   }
   @override
@@ -3877,10 +3970,13 @@ class LinTbRespostaQuestao extends DataClass
     final map = <String, Expression>{};
     map['data_modificacao'] = Variable<int>(dataModificacao);
     map['id_questao'] = Variable<int>(idQuestao);
-    map['id_usuario'] = Variable<int>(idUsuario);
+    if (!nullToAbsent || idUsuario != null) {
+      map['id_usuario'] = Variable<int?>(idUsuario);
+    }
     if (!nullToAbsent || resposta != null) {
       map['resposta'] = Variable<int?>(resposta);
     }
+    map['sincronizar'] = Variable<bool>(sincronizar);
     return map;
   }
 
@@ -3888,10 +3984,13 @@ class LinTbRespostaQuestao extends DataClass
     return TbRespostaQuestaoCompanion(
       dataModificacao: Value(dataModificacao),
       idQuestao: Value(idQuestao),
-      idUsuario: Value(idUsuario),
+      idUsuario: idUsuario == null && nullToAbsent
+          ? const Value.absent()
+          : Value(idUsuario),
       resposta: resposta == null && nullToAbsent
           ? const Value.absent()
           : Value(resposta),
+      sincronizar: Value(sincronizar),
     );
   }
 
@@ -3901,8 +4000,9 @@ class LinTbRespostaQuestao extends DataClass
     return LinTbRespostaQuestao(
       dataModificacao: serializer.fromJson<int>(json['dataModificacao']),
       idQuestao: serializer.fromJson<int>(json['idQuestao']),
-      idUsuario: serializer.fromJson<int>(json['idUsuario']),
+      idUsuario: serializer.fromJson<int?>(json['idUsuario']),
       resposta: serializer.fromJson<int?>(json['resposta']),
+      sincronizar: serializer.fromJson<bool>(json['sincronizar']),
     );
   }
   @override
@@ -3911,8 +4011,9 @@ class LinTbRespostaQuestao extends DataClass
     return <String, dynamic>{
       'dataModificacao': serializer.toJson<int>(dataModificacao),
       'idQuestao': serializer.toJson<int>(idQuestao),
-      'idUsuario': serializer.toJson<int>(idUsuario),
+      'idUsuario': serializer.toJson<int?>(idUsuario),
       'resposta': serializer.toJson<int?>(resposta),
+      'sincronizar': serializer.toJson<bool>(sincronizar),
     };
   }
 
@@ -3920,12 +4021,14 @@ class LinTbRespostaQuestao extends DataClass
           {int? dataModificacao,
           int? idQuestao,
           int? idUsuario,
-          int? resposta}) =>
+          int? resposta,
+          bool? sincronizar}) =>
       LinTbRespostaQuestao(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         idQuestao: idQuestao ?? this.idQuestao,
         idUsuario: idUsuario ?? this.idUsuario,
         resposta: resposta ?? this.resposta,
+        sincronizar: sincronizar ?? this.sincronizar,
       );
   @override
   String toString() {
@@ -3933,14 +4036,15 @@ class LinTbRespostaQuestao extends DataClass
           ..write('dataModificacao: $dataModificacao, ')
           ..write('idQuestao: $idQuestao, ')
           ..write('idUsuario: $idUsuario, ')
-          ..write('resposta: $resposta')
+          ..write('resposta: $resposta, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(dataModificacao, idQuestao, idUsuario, resposta);
+      Object.hash(dataModificacao, idQuestao, idUsuario, resposta, sincronizar);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3948,52 +4052,58 @@ class LinTbRespostaQuestao extends DataClass
           other.dataModificacao == this.dataModificacao &&
           other.idQuestao == this.idQuestao &&
           other.idUsuario == this.idUsuario &&
-          other.resposta == this.resposta);
+          other.resposta == this.resposta &&
+          other.sincronizar == this.sincronizar);
 }
 
 class TbRespostaQuestaoCompanion extends UpdateCompanion<LinTbRespostaQuestao> {
   final Value<int> dataModificacao;
   final Value<int> idQuestao;
-  final Value<int> idUsuario;
+  final Value<int?> idUsuario;
   final Value<int?> resposta;
+  final Value<bool> sincronizar;
   const TbRespostaQuestaoCompanion({
     this.dataModificacao = const Value.absent(),
     this.idQuestao = const Value.absent(),
     this.idUsuario = const Value.absent(),
     this.resposta = const Value.absent(),
+    this.sincronizar = const Value.absent(),
   });
   TbRespostaQuestaoCompanion.insert({
     required int dataModificacao,
-    required int idQuestao,
-    required int idUsuario,
+    this.idQuestao = const Value.absent(),
+    this.idUsuario = const Value.absent(),
     this.resposta = const Value.absent(),
-  })  : dataModificacao = Value(dataModificacao),
-        idQuestao = Value(idQuestao),
-        idUsuario = Value(idUsuario);
+    this.sincronizar = const Value.absent(),
+  }) : dataModificacao = Value(dataModificacao);
   static Insertable<LinTbRespostaQuestao> custom({
     Expression<int>? dataModificacao,
     Expression<int>? idQuestao,
-    Expression<int>? idUsuario,
+    Expression<int?>? idUsuario,
     Expression<int?>? resposta,
+    Expression<bool>? sincronizar,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
       if (idQuestao != null) 'id_questao': idQuestao,
       if (idUsuario != null) 'id_usuario': idUsuario,
       if (resposta != null) 'resposta': resposta,
+      if (sincronizar != null) 'sincronizar': sincronizar,
     });
   }
 
   TbRespostaQuestaoCompanion copyWith(
       {Value<int>? dataModificacao,
       Value<int>? idQuestao,
-      Value<int>? idUsuario,
-      Value<int?>? resposta}) {
+      Value<int?>? idUsuario,
+      Value<int?>? resposta,
+      Value<bool>? sincronizar}) {
     return TbRespostaQuestaoCompanion(
       dataModificacao: dataModificacao ?? this.dataModificacao,
       idQuestao: idQuestao ?? this.idQuestao,
       idUsuario: idUsuario ?? this.idUsuario,
       resposta: resposta ?? this.resposta,
+      sincronizar: sincronizar ?? this.sincronizar,
     );
   }
 
@@ -4007,10 +4117,13 @@ class TbRespostaQuestaoCompanion extends UpdateCompanion<LinTbRespostaQuestao> {
       map['id_questao'] = Variable<int>(idQuestao.value);
     }
     if (idUsuario.present) {
-      map['id_usuario'] = Variable<int>(idUsuario.value);
+      map['id_usuario'] = Variable<int?>(idUsuario.value);
     }
     if (resposta.present) {
       map['resposta'] = Variable<int?>(resposta.value);
+    }
+    if (sincronizar.present) {
+      map['sincronizar'] = Variable<bool>(sincronizar.value);
     }
     return map;
   }
@@ -4021,7 +4134,8 @@ class TbRespostaQuestaoCompanion extends UpdateCompanion<LinTbRespostaQuestao> {
           ..write('dataModificacao: $dataModificacao, ')
           ..write('idQuestao: $idQuestao, ')
           ..write('idUsuario: $idUsuario, ')
-          ..write('resposta: $resposta')
+          ..write('resposta: $resposta, ')
+          ..write('sincronizar: $sincronizar')
           ..write(')'))
         .toString();
   }
@@ -4029,9 +4143,10 @@ class TbRespostaQuestaoCompanion extends UpdateCompanion<LinTbRespostaQuestao> {
 
 class $TbRespostaQuestaoTable extends TbRespostaQuestao
     with TableInfo<$TbRespostaQuestaoTable, LinTbRespostaQuestao> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TbRespostaQuestaoTable(this._db, [this._alias]);
+  $TbRespostaQuestaoTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
@@ -4042,20 +4157,29 @@ class $TbRespostaQuestaoTable extends TbRespostaQuestao
   @override
   late final GeneratedColumn<int?> idQuestao = GeneratedColumn<int?>(
       'id_questao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: const IntType(), requiredDuringInsert: false);
   final VerificationMeta _idUsuarioMeta = const VerificationMeta('idUsuario');
   @override
   late final GeneratedColumn<int?> idUsuario = GeneratedColumn<int?>(
-      'id_usuario', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      'id_usuario', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
   final VerificationMeta _respostaMeta = const VerificationMeta('resposta');
   @override
   late final GeneratedColumn<int?> resposta = GeneratedColumn<int?>(
       'resposta', aliasedName, true,
       type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _sincronizarMeta =
+      const VerificationMeta('sincronizar');
+  @override
+  late final GeneratedColumn<bool?> sincronizar = GeneratedColumn<bool?>(
+      'sincronizar', aliasedName, false,
+      type: const BoolType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (sincronizar IN (0, 1))',
+      defaultValue: Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
-      [dataModificacao, idQuestao, idUsuario, resposta];
+      [dataModificacao, idQuestao, idUsuario, resposta, sincronizar];
   @override
   String get aliasedName => _alias ?? 'resposta_x_questao';
   @override
@@ -4077,24 +4201,26 @@ class $TbRespostaQuestaoTable extends TbRespostaQuestao
     if (data.containsKey('id_questao')) {
       context.handle(_idQuestaoMeta,
           idQuestao.isAcceptableOrUnknown(data['id_questao']!, _idQuestaoMeta));
-    } else if (isInserting) {
-      context.missing(_idQuestaoMeta);
     }
     if (data.containsKey('id_usuario')) {
       context.handle(_idUsuarioMeta,
           idUsuario.isAcceptableOrUnknown(data['id_usuario']!, _idUsuarioMeta));
-    } else if (isInserting) {
-      context.missing(_idUsuarioMeta);
     }
     if (data.containsKey('resposta')) {
       context.handle(_respostaMeta,
           resposta.isAcceptableOrUnknown(data['resposta']!, _respostaMeta));
     }
+    if (data.containsKey('sincronizar')) {
+      context.handle(
+          _sincronizarMeta,
+          sincronizar.isAcceptableOrUnknown(
+              data['sincronizar']!, _sincronizarMeta));
+    }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {idQuestao, idUsuario};
+  Set<GeneratedColumn> get $primaryKey => {idQuestao};
   @override
   LinTbRespostaQuestao map(Map<String, dynamic> data, {String? tablePrefix}) {
     return LinTbRespostaQuestao.fromData(data,
@@ -4103,7 +4229,7 @@ class $TbRespostaQuestaoTable extends TbRespostaQuestao
 
   @override
   $TbRespostaQuestaoTable createAlias(String alias) {
-    return $TbRespostaQuestaoTable(_db, alias);
+    return $TbRespostaQuestaoTable(attachedDatabase, alias);
   }
 }
 

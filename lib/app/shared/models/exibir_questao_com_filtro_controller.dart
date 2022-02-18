@@ -22,13 +22,13 @@ class ExibirQuestaoComFiltroController = _ExibirQuestaoComFiltroControllerBase
 abstract class _ExibirQuestaoComFiltroControllerBase
     extends ExibirQuestaoController with Store implements Disposable {
   final Filtros filtros;
-  final QuestoesRepository _questoesRepository;
+  final QuestoesRepository repositorio;
   final _disposers = <ReactionDisposer>[];
 
   _ExibirQuestaoComFiltroControllerBase({
     required this.filtros,
-    required QuestoesRepository questoesRepository,
-  }) : _questoesRepository = questoesRepository {
+    required this.repositorio,
+  }) {
     _disposers.addAll([
       autorun((_) {
         if (_numQuestoesAssinc.status != FutureStatus.pending) {
@@ -40,7 +40,7 @@ abstract class _ExibirQuestaoComFiltroControllerBase
 
   @computed
   ObservableFuture<int> get _numQuestoesAssinc {
-    return _questoesRepository.nunQuestoes(
+    return repositorio.nunQuestoes(
       // Se os filtros forem passados por referência a reação não é disparada, pois o
       // observável não estará sendo lido.
       anos: [...filtros.anos],
@@ -110,7 +110,7 @@ abstract class _ExibirQuestaoComFiltroControllerBase
 
   ObservableFuture<Questao?> _questao(int indice) {
     if (indice < 0) return Future.value(null).asObservable();
-    return _questoesRepository
+    return repositorio
         .questoes(
           anos: filtros.anos,
           niveis: filtros.niveis,

@@ -1,11 +1,15 @@
 import 'dart:async';
 
+import 'package:fk_user_agent/fk_user_agent.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../configure_supabase.dart';
 import '../../../modules/perfil/models/userapp.dart';
 import '../../models/debug.dart';
+import '../../utils/constantes.dart';
 import '../interface_auth_repository.dart';
 
 /// Gerencia processos de autenticação com o Supabase Auth.
@@ -28,20 +32,34 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
         ..email = null
         ..id = null
         ..name = null
-        ..urlAvatar = null
-        ..isAnonymous = true;
+        ..urlAvatar = null;
     }
     userApp
       ..email = user?.email
       ..id = user?.appMetadata['id_usuario']
-      ..name = user?.userMetadata['full_name']
-      ..urlAvatar = user?.userMetadata['avatar_url']
-      ..isAnonymous = false;
+      ..name = user?.userMetadata['nome'] ?? user?.userMetadata['full_name']
+      ..urlAvatar = user?.userMetadata['avatar_url'];
   }
 
+  StatusSignIn _currenteStatus = StatusSignIn.none;
+
   /// Controle para o stream de alterações no estado de autenticação.
-  StreamController<StatusSignIn> _controller =
-      StreamController<StatusSignIn>.broadcast();
+  late StreamController<StatusSignIn> _controller =
+      StreamController<StatusSignIn>.broadcast()
+        ..stream.listen((status) => _currenteStatus = status);
+
+  /// Se [estado] é diferente do último evento de [status], adiciona-o ao fluxo.
+  /// Retorna [estado].
+  Future<StatusSignIn> _reportarEstado(StatusSignIn estado) async {
+    bool reportar;
+    try {
+      reportar = estado != _currenteStatus;
+    } catch (_) {
+      reportar = true;
+    }
+    if (reportar) _controller.add(estado);
+    return estado;
+  }
 
   @override
   Stream<StatusSignIn> get status => _controller.stream;
@@ -83,149 +101,124 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
 
   @override
   Future<StatusSignIn> signIn([String? dataSession]) async {
-    _controller.add(StatusSignIn.inProgress);
+    _reportarEstado(StatusSignIn.inProgress);
     var redirectUrl = dataSession ?? '';
-    var uri = Uri.parse(redirectUrl);
     GotrueSessionResponse session;
     try {
+      final uri = Uri.parse(redirectUrl);
       session = await _auth.getSessionFromUrl(uri);
     } catch (e) {
       assert(Debug.print(e.toString()));
-      rethrow;
+      return _reportarEstado(StatusSignIn.error);
     }
-//TODO: notificar o usuário.
+
+    //TODO: notificar o usuário.
     if (session.error != null) {
       if (session.error!.message.startsWith(r'<!DOCTYPE html>')) {
-        _controller.add(StatusSignIn.error);
-        return StatusSignIn.error;
+        return _reportarEstado(StatusSignIn.error);
       }
     }
 
     assert(session.user != null && session.error == null);
     if (session.user == null || session.error != null) {
-      _controller.add(StatusSignIn.error);
-      return StatusSignIn.error;
+      return _reportarEstado(StatusSignIn.error);
     } else {
-      _controller.add(StatusSignIn.success);
-      return StatusSignIn.success;
+      return _reportarEstado(StatusSignIn.success);
     }
   }
 
   @override
   Future<StatusSignIn> signInWithGoogle([bool replaceUser = false]) async {
-    // await Future.delayed(Duration(seconds: 20));
-    final _return = _listen();
     GotrueSessionResponse session;
+
     try {
       if (replaceUser && logged) await signOut();
-      _controller.add(StatusSignIn.inProgress);
+      _reportarEstado(StatusSignIn.inProgress);
       session = await _auth.signIn(
         provider: Provider.google,
         options: AuthOptions(redirectTo: authRedirectUri),
       );
     } catch (e) {
       assert(Debug.print(e.toString()));
-      rethrow;
+      return _reportarEstado(StatusSignIn.error);
     }
 
-    assert(session.error == null && session.url != null);
-    if (session.error != null || session.url == null) {
-      _controller.add(StatusSignIn.error);
+    final _url = Uri.tryParse(session.url.toString());
+
+    assert(session.error == null && _url != null);
+    if (session.error != null || _url == null) {
+      return _reportarEstado(StatusSignIn.error);
     }
 
-    launch(session.url!, webOnlyWindowName: '_self').catchError((error, stack) {
-      assert(Debug.print(
-        'Erro ao abrir o URL em AuthSupabaseRepository.signInWithGoogle(). \n'
-        'Erro: ${error.toString()}.\n'
-        'Pilha: ${stack.toString()}.',
-      ));
-    });
-
-    return _return;
-  }
-
-/* 
-  Future<StatusSignIn> signInWithWebView([bool replaceUser = false]) async {
-    // await Future.delayed(Duration(seconds: 20));
-    final _return = _listen();
-    GotrueSessionResponse session;
-    try {
-      if (replaceUser && logged) await signOut();
-      _controller.add(StatusSignIn.inProgress);
-      session = await _auth.signIn(
-        provider: Provider.google,
-        options: AuthOptions(redirectTo: authRedirectUri),
-      );
-    } catch (e) {
-      assert(Debug.print(e.toString()));
-      rethrow;
-    }
-
-    assert(session.error == null && session.url != null);
-    if (session.error != null || session.url == null) {
-      _controller.add(StatusSignIn.error);
-    }
-
-    await Modular.to.push(
-      MaterialPageRoute(
-        builder: (_) => Scaffold(
-          body: WebView(
-            initialUrl: session.url,
-            userAgent: 'random',
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebResourceError: (erro) {
-              debugger();
-              var url = erro.failingUrl;
-              if (url != null) {
-                if (url.startsWith(authRedirectUri ?? 'tornar false')) {
-                  //launch(url);
-                }
-              }
-            },
-          ),
-        ),
-      ),
-    );
-
-    return _return;
-  }
- */
-
-  /// Retorna um futuro que será concluido com a próxima emissão de [StatusSignIn.success],
-  /// [StatusSignIn.canceled] ou [StatusSignIn.error] por [status], ou após o tempo limite
-  /// [duration]. Neste caso, o futuro será concluído com [StatusSignIn.timeout].
-  Future<StatusSignIn> _listen(
-      [Duration duration = const Duration(seconds: 30)]) {
-    //TODO: verificar duração
-    final completer = Completer<StatusSignIn>();
-    final listen = status.listen((_) {});
-    listen.onData((status) {
-      final cases = [
-        StatusSignIn.success,
-        StatusSignIn.canceled,
-        StatusSignIn.error
-      ];
-      if (cases.contains(status)) {
-        if (!completer.isCompleted) completer.complete(status);
-        listen.cancel();
+    agente() async {
+      await FkUserAgent.init();
+      try {
+        // Se "wv" não for substituído o servidor emitirá o erro "disallowed_useragent"
+        final _agente =
+            FkUserAgent.webViewUserAgent?.replaceFirst('; wv)', ')');
+        return '$_agente WebViewApp $APP_NOME/$APP_VERSION';
+      } catch (_) {
+        return null;
       }
-    });
-    listen.onError((error, stack) {
-      assert(Debug.print(
-        'Erro: ${error.toString()}.\n'
-        'Pilha: ${stack.toString()}.',
-      ));
-      if (!completer.isCompleted) completer.complete(StatusSignIn.error);
-      listen.cancel();
-    });
-    return completer.future.timeout(
-      duration,
-      onTimeout: () {
-        listen.cancel();
-        _controller.add(StatusSignIn.timeout);
-        return StatusSignIn.timeout;
-      },
-    );
+    }
+
+    final _agente = await agente();
+
+    Future<FutureOr<StatusSignIn>?> requisitar() {
+      return Modular.to
+          .push<FutureOr<StatusSignIn>>(MaterialPageRoute(builder: (context) {
+        onLoadStart(InAppWebViewController controle, Uri? url) async {
+          if (url?.host == kAuthCallbackUrlHostname) {
+            await controle.stopLoading();
+            Navigator.pop(context, signIn(url.toString()));
+          }
+        }
+
+        onLoadError(InAppWebViewController controle, Uri? __, int ___,
+            String msg) async {
+          if (msg.contains('ERR_INTERNET_DISCONNECTED')) {
+            await controle.stopLoading();
+            Navigator.pop(context, StatusSignIn.error);
+          }
+        }
+
+        return Container(
+          color: Theme.of(context).colorScheme.primary,
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: InAppWebView(
+            initialUrlRequest: URLRequest(url: _url),
+            initialOptions: InAppWebViewGroupOptions(
+              crossPlatform: InAppWebViewOptions(
+                clearCache: replaceUser,
+                // Necessário para que o OAuth2 aceite a requisição.
+                userAgent: _agente ?? '',
+              ),
+            ),
+            onLoadStart: onLoadStart,
+            onLoadError: onLoadError,
+          ),
+        );
+      }));
+    }
+
+    final estado = (await requisitar()) ?? StatusSignIn.canceled;
+
+    return _reportarEstado(await estado);
+  }
+
+  @override
+  Future<bool> updateUserName(String name) async {
+    if (name == UserApp.instance.name) return true;
+    GotrueUserResponse response;
+    try {
+      // Se bem sucedido, onAuthStateChange será chamado.
+      response = await _auth.update(UserAttributes(data: {'nome': name}));
+      if (response.error != null) throw response.error!;
+    } catch (e) {
+      assert(Debug.print(e.toString()));
+      return false;
+    }
+    return true;
   }
 
   @override

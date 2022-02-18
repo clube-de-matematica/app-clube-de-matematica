@@ -6,21 +6,17 @@ import 'expansion_tile_personalizado.dart';
 
 ///Contém um [InputChip] para cada filtro selecionado.
 class FiltrosSelecionados extends StatelessWidget {
-  FiltrosSelecionados({Key? key, required this.children, this.trailing})
+  FiltrosSelecionados({Key? key, required this.child, this.trailing})
       : super(key: key);
   final Widget? trailing;
-  final List<Widget> children;
+  final Widget child;
 
   Color get textColor =>
       AppTheme.instance.temaClaro.colorScheme.onPrimary.withOpacity(0.8);
 
-  Color get backgroundColor =>
-      AppTheme.instance.temaClaro.colorScheme.primary;
+  Color get backgroundColor => AppTheme.instance.temaClaro.colorScheme.primary;
 
-  TextStyle? get textStyle => AppTheme.instance
-      .temaClaro
-      .textTheme
-      .bodyText1
+  TextStyle? get textStyle => AppTheme.instance.temaClaro.textTheme.bodyText1
       ?.copyWith(color: textColor);
 
   @override
@@ -38,7 +34,14 @@ class FiltrosSelecionados extends StatelessWidget {
         UIStrings.FILTRO_TEXTO_SECAO_FILROS_SELECINADO,
         //style: textStyle,
       ),
-      children: children,
+      children: [
+        AnimatedContainer(
+          duration: kExpand,
+          constraints: BoxConstraints(
+              maxHeight: .4 * MediaQuery.of(context).size.height),
+          child: SingleChildScrollView(child: child),
+        )
+      ],
       trailing: trailing,
       maintainState: true,
     );

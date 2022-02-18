@@ -10,8 +10,9 @@ import 'modules/perfil/models/userapp.dart';
 import 'modules/perfil/perfil_module.dart';
 import 'modules/quiz/quiz_module.dart';
 import 'navigation.dart';
+import 'services/conectividade.dart';
 import 'services/db_servicos.dart';
-import 'services/interface_db_servicos.dart';
+import 'services/preferencias_servicos.dart';
 import 'shared/repositories/drift/drift_db.dart';
 import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/repositories/interface_db_repository.dart';
@@ -38,6 +39,15 @@ class ClubeDeMatematicaModule extends Module {
         //Controles
         Bind((_) => ClubeDeMatematicaController()),
 
+        //Serviços
+        Bind((_) => Conectividade()),
+        Bind<DbServicos>((i) => DbServicos(
+              i.get<DriftDb>(),
+              i.get<SupabaseDbRepository>(),
+              i.get<IAuthRepository>(),
+            )),
+        Bind((_) => Preferencias.instancia),
+
         //Repositórios
         //Bind<IAuthRepository>((i) => AuthFirebaseRepository(i.get<FirebaseAuth>())),
         Bind<IAuthRepository>((i) => AuthSupabaseRepository(i.get<Supabase>())),
@@ -45,19 +55,15 @@ class ClubeDeMatematicaModule extends Module {
               i.get<Supabase>(),
               i.get<IAuthRepository>(),
             )),
-        Bind.lazySingleton((i) => ClubesRepository(i.get<IDbServicos>())),
+        Bind.lazySingleton((i) => ClubesRepository(i.get<DbServicos>())),
         /* Bind<IDbRepository>((i) => MockDbRepository()),
         Bind.lazySingleton((i) => ClubesRepository(
               i.get<MockDbRepository>(),
               i.get<UserApp>(),
             )), */
-        Bind.lazySingleton((i) => QuestoesRepository(i.get<IDbServicos>())),
-        Bind.lazySingleton((i) => AssuntosRepository(i.get<IDbServicos>())),
+        Bind.lazySingleton((i) => QuestoesRepository(i.get<DbServicos>())),
+        Bind.lazySingleton((i) => AssuntosRepository(i.get<DbServicos>())),
 
-        Bind<IDbServicos>((i) => DbServicos(
-              i.get<DriftDb>(),
-              i.get<SupabaseDbRepository>(),
-            )),
         Bind((_) => DriftDb()),
 
         //Supabase

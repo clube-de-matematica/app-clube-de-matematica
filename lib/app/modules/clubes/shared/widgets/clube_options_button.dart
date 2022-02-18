@@ -56,7 +56,7 @@ class ClubeOptionsButton extends StatelessWidget {
             value: OpcoesClube.compartilharCodigo,
             child: Text(OpcoesClube.compartilharCodigo.textButton),
           ),
-        if (proprietario || administrador)
+        if (proprietario)
           PopupMenuItem<OpcoesClube>(
             value: OpcoesClube.editar,
             child: Text(OpcoesClube.editar.textButton),

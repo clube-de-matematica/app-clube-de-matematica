@@ -1,15 +1,19 @@
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../../perfil/models/userapp.dart';
 import '../../../../shared/models/clube.dart';
 import '../../../../shared/models/usuario_clube.dart';
 import '../../models/atividade.dart';
 import '../../shared/models/interface_atividade_controller.dart';
 
-class ConsolidarAtividadeController extends IAtividadeController
-    with IAtividadeControllerMixinShowPageEditar {
-  ConsolidarAtividadeController({
+part 'consolidar_atividade_controller.g.dart';
+
+class ConsolidarAtividadeController = _ConsolidarAtividadeControllerBase
+    with _$ConsolidarAtividadeController;
+
+abstract class _ConsolidarAtividadeControllerBase extends IAtividadeController
+    with IAtividadeControllerMixinShowPageEditar, Store {
+  _ConsolidarAtividadeControllerBase({
     required Clube clube,
     required this.atividade,
   }) : super(clube) {
@@ -17,6 +21,8 @@ class ConsolidarAtividadeController extends IAtividadeController
   }
 
   final Atividade atividade;
+
+  int get _idUsuarioApp => repositorio.usuarioApp.id!;
 
   Future<void> _carregarQuestoes() =>
       repositorio.carregarQuestoesAtividade(atividade);
@@ -51,6 +57,12 @@ class ConsolidarAtividadeController extends IAtividadeController
     });
   }
 
+  /// Verdadeiro se o usuário atual tiver permissão para liberar [atividade]
+  /// aos membros de [clube].
+  @computed
+  bool get podeLiberar =>
+      podeEditar && !atividade.liberada && !atividade.encerrada;
+
   /// Libera a [atividade] para os membros com a data corrente.
   Future<bool> liberarAtividade() async {
     return repositorio.atualizarAtividade(
@@ -61,8 +73,9 @@ class ConsolidarAtividadeController extends IAtividadeController
   }
 
   /// Verdadeiro se o usuário atual tiver permissão para excluir [atividade].
+  @computed
   bool get podeExcluir {
-    final usuario = clube.getUsuario(UserApp.instance.id!);
+    final usuario = clube.getUsuario(_idUsuarioApp);
     if (usuario == null) return false;
     if (usuario.proprietario) return true;
     if (usuario.id == atividade.idAutor) return true;
@@ -73,6 +86,10 @@ class ConsolidarAtividadeController extends IAtividadeController
   Future<bool> excluirAtividade() async {
     return repositorio.excluirAtividade(atividade);
   }
+
+  /// Verdadeiro se o usuário atual tiver permissão para editar [atividade].
+  @computed
+  bool get podeEditar => atividade.idAutor == _idUsuarioApp;
 
   @override
   Future<bool> abrirPaginaEditarAtividade(

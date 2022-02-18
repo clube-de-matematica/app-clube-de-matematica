@@ -52,25 +52,31 @@ class QuestaoWidget extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   Widget _corpo() {
-    return Container(
-      padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-      child: Column(children: [
-        // Enunciado da questão.
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: _Enunciado(questao),
-        ),
+    return Column(
+      children: [
+        if (barraOpcoes != null) barraOpcoes!,
+        if (barraOpcoes != null) Divider(height: 4.0),
+        Container(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+          child: Column(children: [
+            // Enunciado da questão.
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: _Enunciado(questao),
+            ),
 
-        // Opções de resposta.
-        _Alternativas(
-          alternativas: questao.alternativas,
-          alternativaSelecionada: alternativaSelecionada,
-          alterando: alterandoAlternativa,
-          selecionavel: selecionavel,
-          verificar: verificar,
-          gabarito: questao.gabarito,
+            // Opções de resposta.
+            _Alternativas(
+              alternativas: questao.alternativas,
+              alternativaSelecionada: alternativaSelecionada,
+              alterando: alterandoAlternativa,
+              selecionavel: selecionavel,
+              verificar: verificar,
+              gabarito: questao.gabarito,
+            ),
+          ]),
         ),
-      ]),
+      ],
     );
   }
 
@@ -78,17 +84,9 @@ class QuestaoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: Column(
-        children: [
-          if (barraOpcoes != null) barraOpcoes!,
-          if (barraOpcoes != null) Divider(height: 4.0),
-          !rolavel
-              ? _corpo()
-              : Expanded(
-                  child: SingleChildScrollView(child: _corpo()),
-                ),
-        ],
-      ),
+      child: !rolavel
+          ? _corpo()
+          : SingleChildScrollView(child: _corpo()),
     );
   }
 }
@@ -108,7 +106,9 @@ class _Enunciado extends StatelessWidget {
     List<Widget> lista = [];
 
     // Lista com as partes do texto que ainda não foram montadas.
-    List<InlineSpan> blocosDeTexto = [];
+    List<InlineSpan> blocosDeTexto = [
+      TextSpan(text: '(OBMEP ${questao.ano}) ')
+    ];
 
     // Indica o índice da imágem na lista de imágens do enunciado.
     int contador = 0;

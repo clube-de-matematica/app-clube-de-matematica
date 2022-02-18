@@ -1,5 +1,5 @@
 ///As opções disponíveis para a questão.
 enum OpcoesQuestao {
-  filter,
+  //filter,
   none,
 }

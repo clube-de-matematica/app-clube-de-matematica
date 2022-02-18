@@ -1,7 +1,9 @@
-import 'package:clubedematematica/app/navigation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../../navigation.dart';
+import '../../../services/conectividade.dart';
+import '../../../services/preferencias_servicos.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
 import '../utils/assets_login.dart';
 
@@ -37,18 +39,17 @@ abstract class _LoginControllerBase with Store {
     isLoading = valor;
   }
 
+  /// {@macro Conectividade.verificar}
+  Future<bool> get conectadoInternete => Conectividade.instancia.verificar();
+
   /// Autenticar com a conta do Google.
   Future<StatusSignIn> onTapLoginWithGoogle() async {
     _setSelectedMethod(Login.google);
     _setIsLoading(true);
-    StatusSignIn result;
-    try {
-      result = await auth.signInWithGoogle();
-    } on MyExceptionAuthRepository catch (_) {
-      result = StatusSignIn.error;
-    }
+    StatusSignIn result = await auth.signInWithGoogle();
     _setIsLoading(false);
     _setSelectedMethod(Login.none);
+    Preferencias.instancia.primeiroAcesso = DateTime.now();
     return result;
   }
 
@@ -85,6 +86,7 @@ abstract class _LoginControllerBase with Store {
     }
     _setIsLoading(false);
     _setSelectedMethod(Login.none);
+    Preferencias.instancia.primeiroAcesso = DateTime.now();
     return result;
   }
 

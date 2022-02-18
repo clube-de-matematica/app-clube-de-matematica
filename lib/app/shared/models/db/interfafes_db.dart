@@ -108,7 +108,7 @@ abstract class ILinTbAlternativas extends LinTb {
 
 abstract class ILinTbUsuarios extends LinTb {
   final int id;
-  final String? email;
+  final String email;
   final String? nome;
   final String? foto;
   final bool softDelete;
