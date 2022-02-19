@@ -62,13 +62,13 @@ class LinTbAtividadesDbRemoto extends ILinTbAtividades with LinTbMixin {
   DateTime? decodificarDataLiberacao() {
     return dataLiberacao == null
         ? null
-        : DbRemoto.decodificarData(dataLiberacao!);
+        : DbRemoto.decodificarData(dataLiberacao);
   }
 
   @override
   DateTime? decodificarDataEncerramento() {
     return dataEncerramento == null
         ? null
-        : DbRemoto.decodificarData(dataEncerramento!);
+        : DbRemoto.decodificarData(dataEncerramento);
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../models/exceptions/error_handler.dart';
+import '../../models/exceptions/my_exception.dart';
 import 'package:flutter/painting.dart';
 
 import '../strings_db.dart';
@@ -9,13 +11,22 @@ abstract class DbRemoto {
     return data.toUtc().toIso8601String();
   }
 
-  static DateTime? decodificarData(String iso8601String) {
+  static DateTime? decodificarData(String? iso8601String) {
+    if (iso8601String == null) return null;
     // As datas salvas no Supabase estão sem fuso horário, no entanto,
     // estão em UTC. A rotina a seguir inclui o marcador do fuso horário UTC.
-    if (iso8601String.length == 23) iso8601String += 'Z';
+    iso8601String += 'Z';
     try {
       return DateTime.parse(iso8601String).toUtc();
-    } on FormatException catch (_) {
+    } on FormatException catch (_, stack) {
+      ErrorHandler.reportError(ErrorHandler.getDetails(
+        MyException(
+          'FormatException(DateTime.parse($iso8601String))',
+          originClass: 'DbRemoto',
+          originField: 'decodificarData',
+        ),
+        stack, //StackTrace.empty,
+      ));
       return null;
     }
   }

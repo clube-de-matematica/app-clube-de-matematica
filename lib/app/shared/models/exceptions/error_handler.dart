@@ -242,11 +242,15 @@ class ErrorHandler {
   }
 
   ///Produz um objeto [FlutterErrorDetails].
-  static FlutterErrorDetails getDetails(dynamic exception, StackTrace stack) {
+  static FlutterErrorDetails getDetails(
+    dynamic exception,
+    StackTrace stack, {
+    String? library = 'error_handler.dart',
+  }) {
     return FlutterErrorDetails(
       exception: exception,
       stack: stack,
-      library: 'error_handler.dart',
+      library: library,
     );
   }
 

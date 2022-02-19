@@ -326,7 +326,7 @@ class SupabaseDbRepository
     final stringData = dados[keyDataModificacao] as String;
     final _dados = DataAssunto.from(dados)
       ..[keyDataModificacao] =
-          DateTime.parse(stringData).toUtc().millisecondsSinceEpoch;
+          DbRemoto.decodificarData(stringData)!.toUtc().millisecondsSinceEpoch;
     return _dados;
   }
 
@@ -395,8 +395,7 @@ class SupabaseDbRepository
     _checkAuthentication('insertQuestao()');
     try {
       assert(Debug.print('[INFO] Inserindo a questão ${data.toString()}...'));
-      final response =
-          await _client.from(viewQuestoes).insert(data).execute();
+      final response = await _client.from(viewQuestoes).insert(data).execute();
 
       if (response.error != null) throw response.error!;
 
@@ -1056,7 +1055,7 @@ class SupabaseDbRepository
   Future<List<DataRespostaQuestaoAtividade>> getRespostas(int idUsuario) {
     throw UnimplementedError();
   }
-  
+
   // Usar o repositório de autenticação para atualizar dados de perfil.
   @override
   Future<bool> updateUser(RawUserApp dados) async {
@@ -1079,7 +1078,7 @@ class SupabaseDbRepository
 
       if (response.error != null) throw response.error!;
 
-      if (response.data== null) return false;
+      if (response.data == null) return false;
       return true;
     } catch (erro, stack) {
       assert(

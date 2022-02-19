@@ -107,48 +107,44 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
     return Theme(
       data: Modular.get<TemaClube>().tema,
       child: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: corTextoPrimaria),
-          backgroundColor: corPrimaria,
-          title: Text(
-            controle.atividade.titulo,
-            style: TextStyle(color: corTextoPrimaria),
-          ),
-          actions: [
-            Observer(builder: (_) {
-              if (controle.podeLiberar) {
-                return IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () => _liberarAtividade(context),
-                );
-              }
-              return const SizedBox();
-            }),
-            Observer(builder: (_) {
-              if (controle.podeEditar) {
-                return IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () =>
-                      _editarAtividade(context, controle.atividade),
-                );
-              }
-              return const SizedBox();
-            }),
-            Observer(builder: (_) {
-              if (controle.podeExcluir) {
-                return IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => _excluirAtividade(context),
-                );
-              }
-              return const SizedBox();
-            }),
-          ],
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: Observer(builder: (_) {
+            return AppBar(
+              iconTheme: IconThemeData(color: corTextoPrimaria),
+              backgroundColor: corPrimaria,
+              title: Text(
+                controle.atividade.titulo,
+                style: TextStyle(color: corTextoPrimaria),
+              ),
+              actions: [
+                if (controle.podeLiberar)
+                  IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () => _liberarAtividade(context),
+                  ),
+                if (controle.podeEditar)
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () =>
+                        _editarAtividade(context, controle.atividade),
+                  ),
+                if (controle.podeExcluir)
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () => _excluirAtividade(context),
+                  ),
+              ],
+            );
+          }),
         ),
         body: RefreshIndicator(
           backgroundColor: temaClube.primaria,
           color: temaClube.sobrePrimaria,
-          onRefresh: controle.sincronizar,
+          onRefresh: () async {
+            await controle.sincronizar();
+            //if (mounted) setState(() {});
+          },
           child: _Membros(controle),
         ),
       ),

@@ -53,12 +53,12 @@ class Atividade extends _AtividadeBase with _$Atividade {
       idClube: map[DbConst.kDbDataAtividadeKeyIdClube],
       idAutor: map[DbConst.kDbDataAtividadeKeyIdAutor],
       criacao: DbRemoto.decodificarData(
-              '${map[DbConst.kDbDataAtividadeKeyDataCriacao]}') ??
+              map[DbConst.kDbDataAtividadeKeyDataCriacao] as String?) ??
           DateTime.fromMillisecondsSinceEpoch(0),
       liberacao: DbRemoto.decodificarData(
-          '${map[DbConst.kDbDataAtividadeKeyDataLiberacao]}'),
+          map[DbConst.kDbDataAtividadeKeyDataLiberacao] as String?),
       encerramento: DbRemoto.decodificarData(
-          '${map[DbConst.kDbDataAtividadeKeyDataEncerramento]}'),
+          map[DbConst.kDbDataAtividadeKeyDataEncerramento] as String?),
       questoes: [],
       respostas: respostas(),
     );
