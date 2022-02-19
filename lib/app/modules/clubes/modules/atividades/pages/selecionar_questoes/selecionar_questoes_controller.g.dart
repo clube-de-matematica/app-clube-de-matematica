@@ -10,6 +10,13 @@ part of 'selecionar_questoes_controller.dart';
 
 mixin _$SelecionarQuestoesController
     on _SelecionarQuestoesControllerBase, Store {
+  Computed<int>? _$numQuestoesComputed;
+
+  @override
+  int get numQuestoes =>
+      (_$numQuestoesComputed ??= Computed<int>(() => super.numQuestoes,
+              name: '_SelecionarQuestoesControllerBase.numQuestoes'))
+          .value;
   Computed<int>? _$numQuestoesSelecionadasComputed;
 
   @override
@@ -26,18 +33,9 @@ mixin _$SelecionarQuestoesController
               name: '_SelecionarQuestoesControllerBase.selecionada'))
           .value;
 
-  @override
-  String toString() {
-    return '''
-numQuestoesSelecionadas: ${numQuestoesSelecionadas},
-selecionada: ${selecionada}
-    ''';
-  }
-}
-
-mixin _$_Filtros on __FiltrosBase, Store {
-  final _$mostrarSomenteQuestoesSelecionadasAtom =
-      Atom(name: '__FiltrosBase.mostrarSomenteQuestoesSelecionadas');
+  final _$mostrarSomenteQuestoesSelecionadasAtom = Atom(
+      name:
+          '_SelecionarQuestoesControllerBase.mostrarSomenteQuestoesSelecionadas');
 
   @override
   bool get mostrarSomenteQuestoesSelecionadas {
@@ -56,7 +54,10 @@ mixin _$_Filtros on __FiltrosBase, Store {
   @override
   String toString() {
     return '''
-mostrarSomenteQuestoesSelecionadas: ${mostrarSomenteQuestoesSelecionadas}
+mostrarSomenteQuestoesSelecionadas: ${mostrarSomenteQuestoesSelecionadas},
+numQuestoes: ${numQuestoes},
+numQuestoesSelecionadas: ${numQuestoesSelecionadas},
+selecionada: ${selecionada}
     ''';
   }
 }

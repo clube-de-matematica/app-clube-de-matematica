@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -41,7 +43,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
     return WillPopScope(
       onWillPop: () async {
         final modificado =
-            !listEquals(widget.questoes, controle.filtros.questoesSelecionadas);
+            !listEquals(widget.questoes, controle.questoesSelecionadas);
         if (!modificado) return true;
         final retorno = await BottomSheetSalvarSairCancelar(
           title: const Text('As questões não foram salvas'),
@@ -54,13 +56,18 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
         return retorno == 1;
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Questões'),
-          actions: [
-            _construirChip(),
-            _construirBotaoMenuFiltro(),
-            _construirBotaoAplicar(),
-          ],
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(kBottomNavigationBarHeight),
+          child: Observer(builder: (_) {
+            return AppBar(
+              title: const Text('Questões'),
+              actions: [
+                if (controle.numQuestoesSelecionadas > 0) _construirChip(),
+                _construirBotaoMenuFiltro(),
+                _construirBotaoAplicar(),
+              ],
+            );
+          }),
         ),
         body: FutureBuilder(
             future: controle.questaoAtual,
@@ -114,20 +121,6 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        /* Container(
-          child: Observer(builder: (_) {
-            return Row(
-              children: [
-                Checkbox(
-                  visualDensity: VisualDensity.standard,
-                  value: controle.selecionada,
-                  onChanged: (valor) => controle.alterarSelecao(),
-                ),
-                Text(controle.questao?.id ?? ''),
-              ],
-            );
-          }),
-        ), */
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
           child: Observer(builder: (_) {
@@ -187,28 +180,6 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
     });
   }
 
-/* 
-  FloatingActionButton _botaoFlutuante() {
-    return FloatingActionButton.small(
-      backgroundColor: tema.colorScheme.surface,
-      child: Observer(builder: (_) {
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          child: Icon(
-            controle.selecionada
-                ? Icons.radio_button_on
-                : Icons.radio_button_off,
-            size: 28.0,
-            color: controle.selecionada
-                ? tema.colorScheme.primary
-                : tema.disabledColor,
-          ),
-        );
-      }),
-      onPressed: controle.alterarSelecao,
-    );
-  }
- */
   IconButton _construirBotaoAplicar() {
     return IconButton(
       icon: Icon(Icons.save),
@@ -218,7 +189,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
     );
   }
 
-  PopupMenuButton<int> _construirBotaoMenuFiltro() {
+  Widget _construirBotaoMenuFiltro() {
     return PopupMenuButton(
       icon: Icon(Icons.filter_alt),
       itemBuilder: (_) => [
@@ -232,9 +203,9 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
             }
           },
         ),
-        PopupMenuItem(
-          value: 2,
-          child: const Text('Filtrar'),
+        _PopupMenuItemFiltrar(
+          controle: controle,
+          valor: 2,
         ),
         PopupMenuItem(
           value: 3,
@@ -260,20 +231,47 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
   }
 
   Widget _construirChip() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Chip(
+        backgroundColor: tema.colorScheme.onPrimary,
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        visualDensity: VisualDensity.compact,
+        label: Text('${controle.numQuestoesSelecionadas}'),
+      ),
+    );
+  }
+}
+
+class _PopupMenuItemFiltrar extends PopupMenuEntry<int> {
+  _PopupMenuItemFiltrar({
+    Key? key,
+    required this.controle,
+    required this.valor,
+  }) : super(key: key);
+
+  final SelecionarQuestoesController controle;
+  final int valor;
+
+  @override
+  double get height => kMinInteractiveDimension;
+
+  @override
+  bool represents(value) => value == this.valor;
+
+  @override
+  State<StatefulWidget> createState() => _PopupMenuItemFiltrarState();
+}
+
+class _PopupMenuItemFiltrarState extends State<_PopupMenuItemFiltrar> {
+  @override
+  Widget build(BuildContext context) {
     return Observer(builder: (_) {
-      final contador = controle.numQuestoesSelecionadas;
-      if (contador > 0) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Chip(
-            backgroundColor: tema.colorScheme.onPrimary,
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            visualDensity: VisualDensity.compact,
-            label: Text('$contador'),
-          ),
-        );
-      }
-      return const SizedBox();
+      return PopupMenuItem(
+        value: widget.valor,
+        child: const Text('Filtrar'),
+        enabled: !widget.controle.mostrarSomenteQuestoesSelecionadas,
+      );
     });
   }
 }

@@ -276,7 +276,7 @@ class _MembrosState extends State<_Membros> {
                 leading: CircleAvatar(
                   child: Text(
                     identificador,
-                    style: TextStyle(color: temaClube.enfaseSobreSuperficie),
+                    style: TextStyle(color: temaClube.sobreSuperficie),
                   ),
                   backgroundColor: enfase,
                 ),
