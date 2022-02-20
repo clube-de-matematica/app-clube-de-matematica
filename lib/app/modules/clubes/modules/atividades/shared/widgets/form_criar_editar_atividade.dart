@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../../../shared/widgets/appInputDatePickerFormField.dart';
 import '../../../../../../shared/widgets/app_text_form_field.dart';
 import '../../../../../quiz/shared/models/questao_model.dart';
+import '../../../../shared/utils/tema_clube.dart';
 import '../../pages/selecionar_questoes/selecionar_questoes_page.dart';
 
 typedef ValorSelecionarQuestoesFormField = List<Questao>;
@@ -119,7 +121,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
         final sizedBox = () => const SizedBox(height: 8.0);
         return Scaffold(
           floatingActionButton: FloatingActionButton(
-            //backgroundColor: ,
+            backgroundColor: Modular.get<TemaClube>().primaria,
             child: Icon(
               Icons.done,
               //color: ,
