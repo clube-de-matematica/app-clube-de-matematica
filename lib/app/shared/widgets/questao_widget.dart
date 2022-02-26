@@ -84,9 +84,7 @@ class QuestaoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: !rolavel
-          ? _corpo()
-          : SingleChildScrollView(child: _corpo()),
+      child: !rolavel ? _corpo() : SingleChildScrollView(child: _corpo()),
     );
   }
 }
@@ -136,7 +134,7 @@ class _Enunciado extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Center(
-              child: _ComponenteImagem(questao.imagensEnunciado[contador]),
+              child: ImagemQuestaoWidget(questao.imagensEnunciado[contador]),
             ),
           ),
         );
@@ -153,7 +151,7 @@ class _Enunciado extends StatelessWidget {
             child: Container(
               //height: 24,
               //margin: const EdgeInsets.only(top: 4, bottom: 4),
-              child: _ComponenteImagem(questao.imagensEnunciado[contador]),
+              child: ImagemQuestaoWidget(questao.imagensEnunciado[contador]),
             ),
           ),
         );
@@ -343,7 +341,7 @@ class _AlternativasState extends State<_Alternativas> {
                   }
                   // Caso o conteúdo da alternativa seja imágem.
                   else if (alternativa.isTipoImagem) {
-                    return _ComponenteImagem(
+                    return ImagemQuestaoWidget(
                         alternativa.conteudo as ImagemQuestao);
                   } else
                     return const SizedBox();
@@ -377,8 +375,8 @@ class _Text extends Text {
 }
 
 /// Estrutura que conterá uma imagem do enunciado ou da alternativa.
-class _ComponenteImagem extends StatelessWidget {
-  const _ComponenteImagem(this.imagem, {Key? key}) : super(key: key);
+class ImagemQuestaoWidget extends StatelessWidget {
+  const ImagemQuestaoWidget(this.imagem, {Key? key}) : super(key: key);
 
   final ImagemQuestao imagem;
 
@@ -394,6 +392,7 @@ class _ComponenteImagem extends StatelessWidget {
         return placeHolder;
       } else {
         return Image(
+          fit: BoxFit.scaleDown,
           image: imagem.provider!,
           width: imagem.width,
           height: imagem.height,

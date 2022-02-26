@@ -139,7 +139,7 @@ abstract class DbConst {
   /// * Se [kDbDataAlternativaKeyTipo] correspode a [kDbDataAlternativaKeyTipoValTexto],
   /// contém o texto da alternativa (pode conter um código LaTex).
   /// * Se [kDbDataAlternativaKeyTipo] correspode a [kDbDataAlternativaKeyTipoValImagem],
-  /// contém a string base64 da imagem.
+  /// contém a codificação json de [DataImagem].
   static const kDbDataAlternativaKeyConteudo = 'conteudo';
 
 /** 

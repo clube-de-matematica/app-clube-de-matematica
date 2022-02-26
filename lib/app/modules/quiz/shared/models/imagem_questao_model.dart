@@ -121,7 +121,8 @@ abstract class _ImagemQuestaoBase with Store {
       final file = await LocalStorageRepository.getFile(name);
 
       // Se o arquivo não existe, ele será criado.
-      if (!(await file.exists())) {
+      if (!await file.exists() ||
+          (await file.readAsBytes()).lengthInBytes != uint8List.lengthInBytes) {
         // Salvar os bytes da imagem no arquivo.
         await file.writeAsBytes(uint8List);
       }
@@ -129,4 +130,24 @@ abstract class _ImagemQuestaoBase with Store {
     }
     return null;
   }
+}
+
+class RawImagemQuestao {
+  RawImagemQuestao({
+    required this.name,
+    required this.base64,
+    required this.width,
+    required this.height,
+  });
+
+  final String? name;
+  final String? base64;
+  final double? width;
+  final double? height;
+
+  RawImagemQuestao.fromDataImagem(DataImagem dados)
+      : name = null,
+        base64 = dados[DbConst.kDbDataImagemKeyBase64],
+        width = dados[DbConst.kDbDataImagemKeyLargura],
+        height = dados[DbConst.kDbDataImagemKeyAltura];
 }
