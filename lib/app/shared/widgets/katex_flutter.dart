@@ -40,8 +40,10 @@ class KaTeX extends StatelessWidget {
     final String displayDelimiter =
         this.displayDelimiter.replaceAll(r'$', r'\$');
 
+    // (?<!R) exclui os casos em que o delimitador "$" é precedido por "R".
+    // Isso evita a identificação incorreta de Latex quando o texto contém duas ocorrências de "R$".
     final String rawRegExp =
-        '(($delimiter)([^$delimiter]*[^\\\\\\$delimiter])($delimiter)|($displayDelimiter)([^$displayDelimiter]*[^\\\\\\$displayDelimiter])($displayDelimiter))';
+        '((?<!R)($delimiter)([^$delimiter]*[^\\\\\\$delimiter])($delimiter)|($displayDelimiter)([^$displayDelimiter]*[^\\\\\\$displayDelimiter])($displayDelimiter))';
     List<RegExpMatch> matches =
         RegExp(rawRegExp, dotAll: true).allMatches(laTeXCode).toList();
 
