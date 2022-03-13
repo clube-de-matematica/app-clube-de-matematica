@@ -22,10 +22,11 @@ const kAuthCallbackUrlHostname = 'login-callback';
 /// URL (ou URI) de redirecionamento do projeto do Supabase.
 const _kAuthRedirectUri = '$kAuthCallbackUrlScheme://$kAuthCallbackUrlHostname';
 
-/// Retorna a URL (ou URI) de redirecionamento do projeto do Supabase.
-/// Para a web, retorna `null`.
+/// URL (ou URI) de redirecionamento do projeto do Supabase.
+/// Para a web é `null`.
 String? get authRedirectUri {
   if (kIsWeb) {
+    //return 'http://localhost:5000/#/auth.html';
     return null;
   } else {
     return _kAuthRedirectUri;

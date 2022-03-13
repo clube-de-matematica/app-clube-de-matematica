@@ -2,12 +2,12 @@ import 'dart:async';
 
 import '../../../modules/quiz/shared/models/questao_model.dart';
 import '../../../modules/quiz/shared/models/resposta_questao.dart';
-import '../../../services/db_servicos.dart';
+import '../../../services/db_servicos_interface.dart';
 
 /// Responsável por intermediar a relação entre o aplicativo e o banco de dados no que se
 /// refere às questões, excetuando-se os assuntos e as imágens.
 class QuestoesRepository {
-  final DbServicos dbServicos;
+  final IDbServicos dbServicos;
 
   QuestoesRepository(this.dbServicos);
 
@@ -43,7 +43,7 @@ class QuestoesRepository {
     );
   }
 
-  Future<bool> inserirRespostaQuestao(RawRespostaQuestao resposta)async {
+  Future<bool> inserirRespostaQuestao(RawRespostaQuestao resposta) async {
     return dbServicos.salvarRespostaQuestao(resposta);
   }
 

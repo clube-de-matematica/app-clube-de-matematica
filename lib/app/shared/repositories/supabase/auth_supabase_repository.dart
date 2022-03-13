@@ -1,15 +1,12 @@
 import 'dart:async';
 
-import 'package:fk_user_agent/fk_user_agent.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../configure_supabase.dart';
 import '../../../modules/perfil/models/userapp.dart';
 import '../../models/debug.dart';
-import '../../utils/constantes.dart';
 import '../interface_auth_repository.dart';
 
 /// Gerencia processos de autenticação com o Supabase Auth.
@@ -57,7 +54,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     } catch (_) {
       reportar = true;
     }
-    if (reportar) _controller.add(estado);
+    if (reportar && !_controller.isClosed) _controller.add(estado);
     return estado;
   }
 
@@ -105,8 +102,21 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     var redirectUrl = dataSession ?? '';
     GotrueSessionResponse session;
     try {
-      final uri = Uri.parse(redirectUrl);
-      session = await _auth.getSessionFromUrl(uri);
+      if (kIsWeb) {
+        final uriParameters =
+            SupabaseAuth.instance.parseUriParameters(Uri.base);
+        if (uriParameters.containsKey('access_token') &&
+            uriParameters.containsKey('refresh_token') &&
+            uriParameters.containsKey('expires_in')) {
+          /// Uri.base is a auth redirect link
+          /// Call recoverSessionFromUrl to continue
+          session = await _auth.getSessionFromUrl(Uri.base);
+        }
+        return _reportarEstado(StatusSignIn.error);
+      } else {
+        final uri = Uri.parse(redirectUrl);
+        session = await _auth.getSessionFromUrl(uri);
+      }
     } catch (e) {
       assert(Debug.print(e.toString()));
       return _reportarEstado(StatusSignIn.error);
@@ -150,6 +160,17 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       return _reportarEstado(StatusSignIn.error);
     }
 
+    final result = await FlutterWebAuth.authenticate(
+      url: _url.toString(),
+      callbackUrlScheme: kAuthCallbackUrlScheme,
+    );
+    final uri = Uri.tryParse(result);
+    if (uri?.host != kAuthCallbackUrlHostname){
+      return _reportarEstado(StatusSignIn.error);
+    }
+    
+    return signIn(result);
+  /* 
     agente() async {
       await FkUserAgent.init();
       try {
@@ -204,6 +225,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     final estado = (await requisitar()) ?? StatusSignIn.canceled;
 
     return _reportarEstado(await estado);
+   */
   }
 
   @override

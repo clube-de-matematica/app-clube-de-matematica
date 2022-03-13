@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
@@ -13,6 +11,7 @@ import 'imagem_questao_model.dart';
 class Questao {
   /// Questões aplicadas em mais de um caderno têm [idAlfanumerico] diferentes, mas o mesmo [id].
   final int id;
+
   /// Questões aplicadas em mais de um caderno têm [idAlfanumerico] diferentes, mas o mesmo [id].
   final String idAlfanumerico;
   final int ano;
@@ -134,7 +133,6 @@ class Questao {
   /// Retorna uma lista vazia se o enunciado não tiver imágem.
   /// [jsonQuestao] é o json retornado do banco de dados.
   static List<ImagemQuestao> _getImagensEnunciado(DataQuestao jsonQuestao) {
-    debugger();
     final _imagensEnunciado = <ImagemQuestao>[];
     final dataImagensEnunciado =
         ((jsonQuestao[DbConst.kDbDataQuestaoKeyImagensEnunciado] ?? []) as List)

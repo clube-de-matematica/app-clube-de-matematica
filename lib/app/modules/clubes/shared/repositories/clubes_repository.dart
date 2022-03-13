@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../services/db_servicos.dart';
+import '../../../../services/db_servicos_interface.dart';
 import '../../../../shared/models/debug.dart';
 import '../../../../shared/repositories/id_base62.dart';
 import '../../../perfil/models/userapp.dart';
@@ -22,7 +22,7 @@ part 'clubes_repository.g.dart';
 class ClubesRepository = _ClubesRepositoryBase with _$ClubesRepository;
 
 abstract class _ClubesRepositoryBase with Store implements Disposable {
-  final DbServicos dbServicos;
+  final IDbServicos dbServicos;
   final _disposers = <ReactionDisposer>[];
 
   _ClubesRepositoryBase(this.dbServicos) {
@@ -177,7 +177,8 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
         titulo: titulo,
         descricao: descricao,
         questoes: questoes
-            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.idAlfanumerico))
+            ?.map((questao) =>
+                RawQuestaoAtividade(idQuestao: questao.idAlfanumerico))
             .toList(),
         liberacao: dataLiberacao,
         encerramento: dataEncerramento,
@@ -208,7 +209,8 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
         titulo: titulo,
         descricao: descricao,
         questoes: questoes
-            ?.map((questao) => RawQuestaoAtividade(idQuestao: questao.idAlfanumerico))
+            ?.map((questao) =>
+                RawQuestaoAtividade(idQuestao: questao.idAlfanumerico))
             .toList(),
         liberacao: dataLiberacao,
         encerramento: dataEncerramento,

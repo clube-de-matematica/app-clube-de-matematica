@@ -1,7 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../services/db_servicos.dart';
+import '../../../../services/db_servicos_interface.dart';
 import '../../shared/models/filtro_controller_model.dart';
 import '../../shared/models/filtros_model.dart';
 import '../../shared/utils/ui_strings.dart';
@@ -36,7 +36,7 @@ abstract class _FiltroNiveisControllerBase extends FiltroController with Store {
 
   /// Lista com todos os níneis disponíveis.
   Future<List<int>> get niveis {
-    return Modular.get<DbServicos>().filtrarNiveis(
+    return Modular.get<IDbServicos>().filtrarNiveis(
       assuntos: filtrosTemp.assuntos,
       anos: filtrosTemp.anos,
     );

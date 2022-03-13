@@ -48,7 +48,7 @@ abstract class ILocalDbRepository implements IDbRepository {}
 abstract class IDbRepository {
   Future<bool> insertAssunto(RawAssunto data);
 
-  Future<bool> insertQuestao(DataDocument data);
+  Future<bool> insertQuestao(Questao data);
 
   Future<Clube?> insertClube(RawClube dados);
 
@@ -64,7 +64,13 @@ abstract class IDbRepository {
   /// {@endtemplate}
   Future<Atividade?> insertAtividade(RawAtividade dados);
 
+  Future<Assunto?> getAssunto(int id);
+
   Future<List<Assunto>> getAssuntos();
+
+  Future<int> getNumQuestoes();
+
+  Future<Questao?> getQuestao(String id);
 
   Future<List<Questao>> getQuestoes();
 

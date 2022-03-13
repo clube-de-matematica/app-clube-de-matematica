@@ -39,6 +39,22 @@ mixin _$ExibirQuestaoComFiltroController
           name: '_ExibirQuestaoComFiltroControllerBase.indice'))
       .value;
 
+  final _$_carregadoAtom =
+      Atom(name: '_ExibirQuestaoComFiltroControllerBase._carregado');
+
+  @override
+  Completer<bool> get _carregado {
+    _$_carregadoAtom.reportRead();
+    return super._carregado;
+  }
+
+  @override
+  set _carregado(Completer<bool> value) {
+    _$_carregadoAtom.reportWrite(value, super._carregado, () {
+      super._carregado = value;
+    });
+  }
+
   final _$_questaoAtualAtom =
       Atom(name: '_ExibirQuestaoComFiltroControllerBase._questaoAtual');
 
@@ -66,6 +82,18 @@ mixin _$ExibirQuestaoComFiltroController
 
   final _$_ExibirQuestaoComFiltroControllerBaseActionController =
       ActionController(name: '_ExibirQuestaoComFiltroControllerBase');
+
+  @override
+  Future<bool> recarregar() {
+    final _$actionInfo = _$_ExibirQuestaoComFiltroControllerBaseActionController
+        .startAction(name: '_ExibirQuestaoComFiltroControllerBase.recarregar');
+    try {
+      return super.recarregar();
+    } finally {
+      _$_ExibirQuestaoComFiltroControllerBaseActionController
+          .endAction(_$actionInfo);
+    }
+  }
 
   @override
   void voltar() {

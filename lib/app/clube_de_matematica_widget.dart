@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'navigation.dart';
-import 'services/db_servicos.dart';
+import 'services/db_servicos_interface.dart';
 import 'services/preferencias_servicos.dart';
 import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/theme/appTheme.dart';
@@ -19,25 +19,29 @@ class ClubeDeMatematicaWidget extends StatefulWidget {
 class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
   @override
   void dispose() {
-    Modular.get<DbServicos>().close();
+    Modular.get<IDbServicos>().close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: APP_NOME,
-      theme: AppTheme.instance.temaClaro,
-      initialRoute: Modular.get<IAuthRepository>().logged ||
+    Modular.setInitialRoute(
+      Modular.get<IAuthRepository>().logged ||
               Preferencias.instancia.primeiroAcesso != null
           ? RotaPagina.quiz.nome
           : RotaPagina.login.nome,
+    );
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: APP_NOME,
+      theme: AppTheme.instance.temaClaro,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: [
         const Locale('pt', 'BR'),
         const Locale('pt', ''),
       ],
+      routeInformationParser: Modular.routeInformationParser,
+      routerDelegate: Modular.routerDelegate,
       /* builder: (context, child) {
         /// Isso criará um [Scaffold] abaixo do [Navigator], mas acima de todas as rotas.
         return Scaffold(
@@ -46,7 +50,7 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
           body: child,
         );
       }, */
-    ).modular();
+    );
   }
 }
 /* 

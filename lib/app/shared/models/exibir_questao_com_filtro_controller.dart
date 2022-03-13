@@ -38,18 +38,34 @@ abstract class _ExibirQuestaoComFiltroControllerBase
     ]);
   }
 
+  @observable
+  Completer<bool> _carregado = Completer<bool>();
+
+  @action
+  Future<bool> recarregar() {
+    if (_carregado.isCompleted) {
+      _carregado = Completer<bool>();
+    }
+    return _carregado.future;
+  }
+
   @computed
   ObservableFuture<int> get _numQuestoesAssinc {
+    if (!_carregado.isCompleted) {
+      // Apenas para reagir às mudanças de _carregado.
+    }
     return repositorio.nunQuestoes(
       // Se os filtros forem passados por referência a reação não é disparada, pois o
       // observável não estará sendo lido.
       anos: [...filtros.anos],
       niveis: [...filtros.niveis],
       assuntos: [...filtros.assuntos],
-    )
-        //.then((value) => numQuestoes = value)
-        .catchError((erro) {
+    ).then((valor) {
+      if (!_carregado.isCompleted) _carregado.complete(true);
+      return valor;
+    }).catchError((erro) {
       assert(Debug.printBetweenLine(erro.toString()));
+      if (!_carregado.isCompleted) _carregado.complete(false);
       return numQuestoes = 0;
     }).asObservable();
   }

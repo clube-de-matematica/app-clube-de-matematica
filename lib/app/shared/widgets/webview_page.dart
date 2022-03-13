@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../../configure_supabase.dart';
@@ -80,3 +80,4 @@ class _WebViewPageState extends State<WebViewPage> {
     );
   }
 }
+ */

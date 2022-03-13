@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
 part 'conectividade.g.dart';
@@ -31,6 +32,7 @@ abstract class _ConectividadeBase with Store {
   /// {@endtemplate}
   @action
   Future<bool> verificar() async {
+    if (kIsWeb) return true;//TODO
     // Garantir que verificações desnecessárias não sejam feitas.
     if (!_verificando.isCompleted) return _verificando.future;
 

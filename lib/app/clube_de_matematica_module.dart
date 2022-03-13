@@ -1,19 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'clube_de_matematica_controller.dart';
-import 'deep_links.dart';
 import 'modules/clubes/clubes_module.dart';
 import 'modules/clubes/shared/repositories/clubes_repository.dart';
+import 'modules/inserir_questao/inserir_questao_module.dart';
 import 'modules/login/login_module.dart';
 import 'modules/perfil/models/userapp.dart';
 import 'modules/perfil/perfil_module.dart';
 import 'modules/quiz/quiz_module.dart';
 import 'navigation.dart';
 import 'services/conectividade.dart';
-import 'services/db_servicos.dart';
+import 'services/db_servicos_interface.dart';
+import 'services/db_servicos_outros.dart'
+    if (dart.library.ffi) 'services/db_servicos_android.dart'
+    if (dart.library.html) 'services/db_servicos_web.dart';
 import 'services/preferencias_servicos.dart';
-import 'shared/repositories/drift/drift_db.dart';
+import 'shared/repositories/drift/drift_db.dart'
+    if (dart.library.html) 'shared/repositories/drift/drift_db_sem_suporte.dart';
 import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/repositories/interface_db_repository.dart';
 import 'shared/repositories/questoes/assuntos_repository.dart';
@@ -34,15 +39,14 @@ class ClubeDeMatematicaModule extends Module {
   List<Bind> get binds => [
         //Bind((_) => AppTheme()),
         Bind<UserApp>((i) => i.get<IAuthRepository>().user),
-        Bind.singleton((_) => DeepAndAppLinks()),
+        //Bind.singleton((_) => DeepAndAppLinks()),
 
         //Controles
         Bind((_) => ClubeDeMatematicaController()),
 
         //Serviços
         Bind((_) => Conectividade()),
-        Bind<DbServicos>((i) => DbServicos(
-              i.get<DriftDb>(),
+        Bind<IDbServicos>((i) => DbServicos(
               i.get<SupabaseDbRepository>(),
               i.get<IAuthRepository>(),
             )),
@@ -55,16 +59,16 @@ class ClubeDeMatematicaModule extends Module {
               i.get<Supabase>(),
               i.get<IAuthRepository>(),
             )),
-        Bind.lazySingleton((i) => ClubesRepository(i.get<DbServicos>())),
+        Bind.lazySingleton((i) => ClubesRepository(i.get<IDbServicos>())),
         /* Bind<IDbRepository>((i) => MockDbRepository()),
         Bind.lazySingleton((i) => ClubesRepository(
               i.get<MockDbRepository>(),
               i.get<UserApp>(),
             )), */
-        Bind.lazySingleton((i) => QuestoesRepository(i.get<DbServicos>())),
-        Bind.lazySingleton((i) => AssuntosRepository(i.get<DbServicos>())),
+        Bind.lazySingleton((i) => QuestoesRepository(i.get<IDbServicos>())),
+        Bind.lazySingleton((i) => AssuntosRepository(i.get<IDbServicos>())),
 
-        Bind((_) => DriftDb()),
+        if (!kIsWeb) Bind((_) => DriftDb()),
 
         //Supabase
         Bind((_) => Supabase.instance),
@@ -78,6 +82,15 @@ class ClubeDeMatematicaModule extends Module {
         ModuleRoute(RotaModulo.perfil.nome, module: PerfilModule()),
         ModuleRoute(RotaModulo.quiz.nome, module: QuizModule()),
         ModuleRoute(RotaModulo.clubes.nome, module: ClubesModule()),
-        //WildcardRoute(child: (_, args) => Scaffold()),
+        ModuleRoute(
+          InserirQuestaoModule.kAbsoluteRouteModule,
+          module: InserirQuestaoModule(),
+        ),
+
+        /* WildcardRoute(child: (_, args) {
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }), */
       ];
 }

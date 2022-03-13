@@ -34,7 +34,9 @@ part 'drift_db.g.dart';
   ],
 )
 class DriftDb extends _$DriftDb {
-  DriftDb() : super(abrirConexao());
+  DriftDb() : super(abrirConexao()) {
+    if (kIsWeb) throw UnimplementedError();
+  }
   // super(NativeDatabase.memory(/* logStatements: true */));
 
   @override
@@ -174,6 +176,7 @@ class DriftDb extends _$DriftDb {
       );
     } catch (erro, stack) {
       _reportar() => _reportarErro(erro, stack, 'linhas: $naoInseridos');
+
       if (erro is SqliteException) {
         // SQLITE_CONSTRAINT_FOREIGNKEY
         if (erro.extendedResultCode == 787) {

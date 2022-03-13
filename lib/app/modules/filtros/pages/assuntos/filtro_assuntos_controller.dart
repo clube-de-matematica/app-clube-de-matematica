@@ -2,7 +2,7 @@ import 'package:diacritic/diacritic.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../services/db_servicos.dart';
+import '../../../../services/db_servicos_interface.dart';
 import '../../../../shared/repositories/questoes/assuntos_repository.dart';
 import '../../../quiz/shared/models/assunto_model.dart';
 import '../../shared/models/filtro_controller_model.dart';
@@ -39,7 +39,7 @@ abstract class _FiltroAssuntosControllerBase extends FiltroController
   void limpar() => filtrosTemp.limpar(TiposFiltro.assunto);
 
   /// Lista com todos os assuntos (incluindo as unidades) disponíveis.
-  late final _assuntos = Modular.get<DbServicos>()
+  late final _assuntos = Modular.get<IDbServicos>()
       .filtrarAssuntos(
         anos: filtrosTemp.anos,
         niveis: filtrosTemp.niveis,

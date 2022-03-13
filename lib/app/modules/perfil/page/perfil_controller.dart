@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../navigation.dart';
 import '../../../services/conectividade.dart';
-import '../../../services/db_servicos.dart';
+import '../../../services/db_servicos_interface.dart';
 import '../../../services/preferencias_servicos.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
 import '../models/userapp.dart';
@@ -45,7 +45,7 @@ class PerfilController {
     if (valor != null) {
       final dados = RawUserApp.fromDataUsuario(user.toDataUsuario())
           .copyWith(name: valor);
-      Modular.get<DbServicos>().atualizarUsuario(dados).then((resultado) {
+      Modular.get<IDbServicos>().atualizarUsuario(dados).then((resultado) {
         if (resultado) Preferencias.instancia.nome = valor;
       });
     }

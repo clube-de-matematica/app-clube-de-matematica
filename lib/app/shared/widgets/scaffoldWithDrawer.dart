@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../modules/clubes/shared/models/clube.dart';
 import '../../modules/clubes/shared/repositories/clubes_repository.dart';
+import '../../modules/inserir_questao/inserir_questao_module.dart';
 import '../../modules/perfil/models/userapp.dart';
 import '../../modules/perfil/widgets/avatar.dart';
 import '../../navigation.dart';
@@ -176,6 +177,13 @@ class _AppDrawerState extends State<_AppDrawer> {
             leading: icone(Icons.quiz_outlined),
             onTap: () => showPage(context, RotaPagina.quiz),
           ),
+          if (UserApp.instance.id == 125) //TODO
+            ListTile(
+              title: Text('Inserir questão'),
+              leading: icone(Icons.add),
+              onTap: () => Navigator.of(context).pushNamed(
+                  InserirQuestaoModule.kAbsoluteRouteInserirQuestaoPage),
+            ),
           /* 
           ListTile(
             title: Text('Favoritos'),

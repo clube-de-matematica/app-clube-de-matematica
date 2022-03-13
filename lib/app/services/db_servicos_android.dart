@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../modules/clubes/modules/atividades/models/atividade.dart';
@@ -36,9 +38,14 @@ import '../shared/utils/db/codificacao.dart';
 import '../shared/utils/strings_db.dart';
 import '../shared/utils/strings_db_sql.dart';
 import 'conectividade.dart';
+import 'db_servicos_interface.dart';
 
-class DbServicos {
-  DbServicos(this.dbLocal, this._dbRemoto, this.auth) {
+class DbServicos extends IDbServicos {
+  DbServicos(
+    SupabaseDbRepository dbRemoto,
+    IAuthRepository auth,
+  ) : super(dbRemoto, auth) {
+    if (kIsWeb) throw UnimplementedError();
     // TODO: Posteriormente transferir para IAuthRepository.
     bool sincronizar = true;
     Supabase.instance.client.auth.onAuthStateChange((evento, _) {
@@ -52,14 +59,7 @@ class DbServicos {
     });
   }
 
-  final DriftDb dbLocal;
-  //TODO final IRemoteDbRepository _dbRemoto;
-  final SupabaseDbRepository _dbRemoto;
-  final IAuthRepository auth;
-
-  bool get logado => auth.logged;
-
-  int? get idUsuarioApp => auth.user.id;
+  DriftDb get dbLocal => Modular.get<DriftDb>();
 
   late final _inicializando = _sincronizar();
 
@@ -139,7 +139,7 @@ class DbServicos {
 
   Future<void> _sincronizarTbQuestoes() async {
     if (!await _verificarConectividade()) return;
-    final novosRegistros = await _dbRemoto.obterTbQuestoes(
+    final novosRegistros = await dbRemoto.obterTbQuestoes(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questoes),
     );
     final resposta = (await dbLocal.upsert(
@@ -154,7 +154,7 @@ class DbServicos {
 
   Future<void> _sincronizarTbAssuntos() async {
     if (!await _verificarConectividade()) return;
-    final novosRegistros = await _dbRemoto.obterTbAssuntos(
+    final novosRegistros = await dbRemoto.obterTbAssuntos(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.assuntos),
     );
     final resposta = (await dbLocal.upsert(
@@ -175,7 +175,7 @@ class DbServicos {
     if (sincronizarDependencias) {
       await Future.wait([_sincronizarTbQuestoes(), _sincronizarTbAssuntos()]);
     }
-    final novosRegistros = await _dbRemoto.obterTbQuestaoAssunto(
+    final novosRegistros = await dbRemoto.obterTbQuestaoAssunto(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questaoAssunto),
     );
     final resposta = (await dbLocal.upsert(
@@ -190,7 +190,7 @@ class DbServicos {
 
   Future<void> _sincronizarTbTiposAlternativa() async {
     if (!await _verificarConectividade()) return;
-    final novosRegistros = await _dbRemoto.obterTbTiposAlternativa(
+    final novosRegistros = await dbRemoto.obterTbTiposAlternativa(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.tiposAlternativa),
     );
     final resposta = (await dbLocal.upsert(
@@ -212,7 +212,7 @@ class DbServicos {
       await Future.wait(
           [_sincronizarTbQuestoes(), _sincronizarTbTiposAlternativa()]);
     }
-    final novosRegistros = await _dbRemoto.obterTbAlternativas(
+    final novosRegistros = await dbRemoto.obterTbAlternativas(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.alternativas),
     );
     final resposta = (await dbLocal.upsert(
@@ -232,7 +232,7 @@ class DbServicos {
     if (sincronizarDependencias) {
       await _sincronizarTbQuestoes();
     }
-    final novosRegistros = await _dbRemoto.obterTbQuestoesCaderno(
+    final novosRegistros = await dbRemoto.obterTbQuestoesCaderno(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.questoesCaderno),
     );
     final resposta = (await dbLocal.upsert(
@@ -267,7 +267,7 @@ class DbServicos {
       //await _dbRemoto.updateUser(dadosLocal);
     }
 
-    final novosRegistros = await _dbRemoto.obterTbUsuarios(
+    final novosRegistros = await dbRemoto.obterTbUsuarios(
       modificadoApos:
           forcar ? null : await dbLocal.ultimaModificacao(Tabelas.usuarios),
     );
@@ -285,7 +285,7 @@ class DbServicos {
   Future<void> _sincronizarTbClubes({bool forcar = false}) async {
     if (!logado) return;
     if (!await _verificarConectividade()) return;
-    final novosRegistros = await _dbRemoto.obterTbClubes(
+    final novosRegistros = await dbRemoto.obterTbClubes(
       modificadoApos:
           forcar ? null : await dbLocal.ultimaModificacao(Tabelas.clubes),
     );
@@ -310,7 +310,7 @@ class DbServicos {
   Future<void> _sincronizarTbTiposPermissao() async {
     if (!logado) return;
     if (!await _verificarConectividade()) return;
-    final novosRegistros = await _dbRemoto.obterTbTiposPermissao(
+    final novosRegistros = await dbRemoto.obterTbTiposPermissao(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.tiposPermissao),
     );
     final resposta = (await dbLocal.upsert(
@@ -344,7 +344,7 @@ class DbServicos {
     if (sincronizarDependencias) await dependencias();
 
     sinc() async {
-      final novosRegistros = await _dbRemoto.obterTbClubeUsuario(
+      final novosRegistros = await dbRemoto.obterTbClubeUsuario(
         modificadoApos: forcar
             ? null
             : await dbLocal.ultimaModificacao(Tabelas.clubeUsuario),
@@ -389,7 +389,7 @@ class DbServicos {
     if (sincronizarDependencias) await dependencias();
 
     sinc() async {
-      final novosRegistros = await _dbRemoto.obterTbAtividades(
+      final novosRegistros = await dbRemoto.obterTbAtividades(
         modificadoApos:
             forcar ? null : await dbLocal.ultimaModificacao(Tabelas.atividades),
       );
@@ -434,7 +434,7 @@ class DbServicos {
     if (sincronizarDependencias) await dependencias();
 
     sinc() async {
-      final novosRegistros = await _dbRemoto.obterTbQuestaoAtividade(
+      final novosRegistros = await dbRemoto.obterTbQuestaoAtividade(
         modificadoApos: forcar
             ? null
             : await dbLocal.ultimaModificacao(Tabelas.questaoAtividade),
@@ -482,7 +482,7 @@ class DbServicos {
     }).get();
 
     if (novosLocal.isNotEmpty) {
-      await _dbRemoto.upsertRespostasAtividade(novosLocal);
+      await dbRemoto.upsertRespostasAtividade(novosLocal);
     }
 
     dependencias([bool forcar = false]) async {
@@ -498,7 +498,7 @@ class DbServicos {
     if (sincronizarDependencias) await dependencias();
 
     sinc() async {
-      final novosRemoto = await _dbRemoto.obterTbRespostaQuestaoAtividade(
+      final novosRemoto = await dbRemoto.obterTbRespostaQuestaoAtividade(
         modificadoApos: forcar
             ? null
             : await dbLocal.ultimaModificacao(Tabelas.respostaQuestaoAtividade),
@@ -545,7 +545,7 @@ class DbServicos {
     }).get();
 
     if (novosLocal.isNotEmpty) {
-      await _dbRemoto.upsertRespostas(novosLocal);
+      await dbRemoto.upsertRespostas(novosLocal);
     }
 
     if (sincronizarDependencias) {
@@ -554,7 +554,7 @@ class DbServicos {
         _sincronizarTbUsuarios(),
       ]);
     }
-    final novosRemoto = await _dbRemoto.obterTbRespostaQuestao(
+    final novosRemoto = await dbRemoto.obterTbRespostaQuestao(
       modificadoApos: await dbLocal.ultimaModificacao(Tabelas.respostaQuestao),
     );
     int contagem = 0;
@@ -573,6 +573,27 @@ class DbServicos {
       if (contagem != novosRemoto.length) debugger();
       return true;
     }());
+  }
+
+  /// {@template app.IDbServicos.sincronizarClubes}
+  /// Sincroniza os registros dos dados relacionados ao banco de questões entre os bancos
+  /// de dados local e remoto.
+  /// {@endtemplate}
+  Future<void> sincronizarBancoDeQuestoes() async {
+    if (!logado) return;
+
+    if (!await _verificarConectividade()) return;
+
+    await Future.wait([
+      _sincronizarTbQuestoes(),
+      _sincronizarTbAssuntos(),
+      _sincronizarTbTiposAlternativa(),
+    ]);
+    await Future.wait([
+      _sincronizarTbQuestaoAssunto(),
+      _sincronizarTbAlternativas(),
+      _sincronizarTbQuestoesCaderno(),
+    ]);
   }
 
   /// {@template app.IDbServicos.sincronizarClubes}
@@ -643,7 +664,7 @@ class DbServicos {
 
   Future<bool> inserirAssunto(RawAssunto dados) async {
     if (!await _verificarConectividade()) return false;
-    final sucesso = await _dbRemoto.insertAssunto(dados);
+    final sucesso = await dbRemoto.insertAssunto(dados);
     if (sucesso) await _sincronizarTbAssuntos();
     return sucesso;
   }
@@ -655,6 +676,7 @@ class DbServicos {
     Iterable<int> assuntos = const [],
   }) async {
     await _inicializando;
+
     return dbLocal.contarQuestoes(
       anos: anos,
       niveis: niveis,
@@ -701,10 +723,17 @@ class DbServicos {
     return dbQuestoes.map((dbQuestao) => dbQuestao.toQuestao()).toList();
   }
 
-  Future<bool> inserirQuestao(DataDocument data) async {
+  Future<bool> inserirQuestao(Questao data) async {
     if (!await _verificarConectividade()) return false;
-    final sucesso = await _dbRemoto.insertQuestao(data);
-    if (sucesso) await _sincronizarTbQuestoesCaderno(true);
+    final sucesso = await dbRemoto.insertQuestao(data);
+    if (sucesso) await sincronizarBancoDeQuestoes();
+    return sucesso;
+  }
+
+  Future<bool> inserirReferenciaQuestao(Questao data, int idReferencia) async {
+    if (!await _verificarConectividade()) return false;
+    final sucesso = await dbRemoto.insertReferenceQuestao(data, idReferencia);
+    if (sucesso) await sincronizarBancoDeQuestoes();
     return sucesso;
   }
 
@@ -722,7 +751,7 @@ class DbServicos {
   Future<Clube?> inserirClube(RawClube data) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
-    final clube = await _dbRemoto.insertClube(data);
+    final clube = await dbRemoto.insertClube(data);
     if (clube != null) await sincronizarClubes();
     return clube;
   }
@@ -730,7 +759,7 @@ class DbServicos {
   Future<Clube?> atualizarClube(RawClube data) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
-    final clube = await _dbRemoto.updateClube(data);
+    final clube = await dbRemoto.updateClube(data);
     if (clube != null) await sincronizarClubes();
     return clube;
   }
@@ -739,7 +768,7 @@ class DbServicos {
     final id = idUsuarioApp;
     if (id == null) return null;
     if (!await _verificarConectividade()) return null;
-    final dataClube = await _dbRemoto.enterClube(accessCode, id);
+    final dataClube = await dbRemoto.enterClube(accessCode, id);
     if (dataClube.isNotEmpty) {
       await sincronizarClubes();
       return Clube.fromDataClube(dataClube);
@@ -750,7 +779,7 @@ class DbServicos {
   Future<bool> removerUsuarioClube(int idClube, int idUser) async {
     if (idUsuarioApp == null) return false;
     if (!await _verificarConectividade()) return false;
-    final sucesso = await _dbRemoto.exitClube(idClube, idUser);
+    final sucesso = await dbRemoto.exitClube(idClube, idUser);
     if (sucesso) {
       if (idUser == idUsuarioApp) {
         final consultaExcluir = dbLocal.delete(dbLocal.tbClubes)
@@ -766,8 +795,8 @@ class DbServicos {
       int idClube, int idUser, int idPermission) async {
     if (idUsuarioApp == null) return false;
     if (!await _verificarConectividade()) return false;
-    final sucesso = await _dbRemoto.updatePermissionUserClube(
-        idClube, idUser, idPermission);
+    final sucesso =
+        await dbRemoto.updatePermissionUserClube(idClube, idUser, idPermission);
     if (sucesso) await sincronizarClubes();
     return sucesso;
   }
@@ -775,7 +804,7 @@ class DbServicos {
   Future<bool> excluirClube(Clube clube) async {
     if (idUsuarioApp == null) return false;
     if (!await _verificarConectividade()) return false;
-    final sucesso = await _dbRemoto.deleteClube(clube.id);
+    final sucesso = await dbRemoto.deleteClube(clube.id);
     if (sucesso) await sincronizarClubes();
     return sucesso;
   }
@@ -795,7 +824,7 @@ class DbServicos {
   Future<Atividade?> inserirAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
-    final atividade = await _dbRemoto.insertAtividade(dados);
+    final atividade = await dbRemoto.insertAtividade(dados);
     if (atividade != null) await sincronizarClubes();
     return atividade;
   }
@@ -803,7 +832,7 @@ class DbServicos {
   Future<Atividade?> atualizarAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
-    final atividade = await _dbRemoto.updateAtividade(dados);
+    final atividade = await dbRemoto.updateAtividade(dados);
     if (atividade != null) await sincronizarClubes();
     return atividade;
   }
@@ -811,7 +840,7 @@ class DbServicos {
   Future<bool> excluirAtividade(Atividade atividade) async {
     if (idUsuarioApp == null) return false;
     if (!await _verificarConectividade()) return false;
-    final sucesso = await _dbRemoto.deleteAtividade(atividade.id);
+    final sucesso = await dbRemoto.deleteAtividade(atividade.id);
     if (sucesso) await sincronizarClubes();
     return sucesso;
   }

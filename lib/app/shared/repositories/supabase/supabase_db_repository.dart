@@ -188,9 +188,8 @@ class SupabaseDbRepository
   /// Se não for nulo, [modificadoApos] será usado como filtro.
   Future<List<LinTbUsuariosDbRemoto>> obterTbUsuarios(
       {DateTime? modificadoApos}) async {
-    /// TODO: ajustar as permissões.
     final dados = await _obterDados(
-      tabela: Sql.tbUsuarios.tbNome,
+      tabela: 'view_usuarios',
       modificadoApos: modificadoApos,
     );
     return dados
@@ -291,6 +290,40 @@ class SupabaseDbRepository
   }
 
   @override
+  Future<Assunto?> getAssunto(int id) async {
+    assert(Debug.print('[INFO] Chamando SupabaseDbRepository.getAssunto()...'));
+    //_checkAuthentication('getAssuntos()');
+    final tabela = CollectionType.assuntos.name;
+    try {
+      assert(Debug.print(
+          '[INFO] Solicitando os dados do assunto com id "$id"...'));
+      final resposta = await _client
+          .from(tabela)
+          .select()
+          .eq(Sql.tbAssuntos.id, id)
+          .execute();
+
+      if (resposta.error != null) throw resposta.error!;
+
+      final dados = (resposta.data as List).cast<DataAssunto>();
+      return dados.isEmpty
+          ? null
+          : Assunto.fromDataAssunto(_decodeDataModificacao(dados.single));
+    } catch (erro, stack) {
+      assert(Debug.print(
+          '[ERROR] Erro ao solicitar os dados do assunto com id "$id".'));
+
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.getAssunto()',
+      );
+
+      return null;
+    }
+  }
+
+  @override
   Future<List<Assunto>> getAssuntos() async {
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository.getAssuntos()...'));
@@ -332,18 +365,19 @@ class SupabaseDbRepository
 
   /// [data] tem a estrutura {"assunto": [String], "id_assunto_pai": [int?]}.
   @override
-  Future<bool> insertAssunto(RawAssunto data) async {
+  Future<bool> insertAssunto(RawAssunto dados) async {
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository.insertAssunto()...'));
     _checkAuthentication('insertAssunto()');
+    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
+    final data = _prepareInsertAssunto(dados);
     try {
       assert(Debug.print('[INFO] Inserindo o assunto $data...'));
       final response =
           await _client.from('assunto_x_assunto_pai').insert(data).execute();
 
       if (response.error != null) throw response.error!;
-
-      return (response.count ?? 0) > 0;
+      return response.data != null;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir o assunto $data.'));
 
@@ -354,6 +388,78 @@ class SupabaseDbRepository
       );
 
       return false;
+    }
+  }
+
+  Map<String, dynamic> _prepareInsertAssunto(RawAssunto data) {
+    final titulo = (data.titulo ?? '').trim();
+    final condicao = titulo.isNotEmpty;
+    assert(condicao);
+    if (!condicao) return {};
+
+    final dados = {
+      'assunto': titulo,
+      'id_assunto_pai':
+          (data.hierarquia ?? []).isNotEmpty ? data.hierarquia?.last : null,
+    };
+
+    return dados;
+  }
+
+  @override
+  Future<int> getNumQuestoes() async {
+    assert(Debug.print(
+        '[INFO] Chamando SupabaseDbRepository.getNumQuestoes()...'));
+    //_checkAuthentication('getQuestoes()');
+    try {
+      assert(
+          Debug.print('[INFO] Solicitando a contagem em "$viewQuestoes"...'));
+      final response = await _client.rpc('get_num_questoes').execute();
+
+      if (response.error != null) throw response.error!;
+
+      return response.data as int;
+    } catch (erro, stack) {
+      assert(
+          Debug.print('[ERROR] Erro ao solicitar a contagem "$viewQuestoes".'));
+
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.getNumQuestoes()',
+      );
+
+      return 0;
+    }
+  }
+
+  @override
+  Future<Questao?> getQuestao(String id) async {
+    assert(Debug.print('[INFO] Chamando SupabaseDbRepository.getQuestao()...'));
+    //_checkAuthentication('getQuestoes()');
+    try {
+      assert(Debug.print('[INFO] Solicitando os dados da questão "$id"...'));
+      final response = await _client
+          .from(viewQuestoes)
+          .select()
+          .eq(DbConst.kDbDataQuestaoKeyIdAlfanumerico, id)
+          .execute();
+
+      if (response.error != null) throw response.error!;
+
+      final dados = (response.data as List).cast<DataQuestao>();
+      return dados.isEmpty ? null : Questao.fromDataQuestao(dados.single);
+    } catch (erro, stack) {
+      assert(
+          Debug.print('[ERROR] Erro ao solicitar os dados da questão "$id".'));
+
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.getQuestao()',
+      );
+
+      return null;
     }
   }
 
@@ -389,20 +495,23 @@ class SupabaseDbRepository
   }
 
   @override
-  Future<bool> insertQuestao(DataQuestao data) async {
+  Future<bool> insertQuestao(Questao dados) async {
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository.insertQuestao()...'));
     _checkAuthentication('insertQuestao()');
+    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
+    final data = _prepareInsertQuestao(dados);
+    if (data.isEmpty) return false;
     try {
       assert(Debug.print('[INFO] Inserindo a questão ${data.toString()}...'));
-      final response = await _client.from(viewQuestoes).insert(data).execute();
+      final response =
+          await _client.rpc('inserir_questao', params: data).execute();
 
       if (response.error != null) throw response.error!;
 
-      return (response.count ?? 0) > 0;
+      return response.data == dados.idAlfanumerico;
     } catch (erro, stack) {
-      assert(Debug.print(
-          '[ERROR] Erro ao solicitar os dados da tabela "$viewQuestoes".'));
+      assert(Debug.print('[ERROR] Erro ao inserir questão.'));
 
       _tratarErro(
         erro,
@@ -414,8 +523,73 @@ class SupabaseDbRepository
     }
   }
 
+  Map<String, dynamic> _prepareInsertQuestao(Questao data) {
+    final condicao = data.enunciado.isNotEmpty &&
+        data.assuntos.isNotEmpty &&
+        data.alternativas.isNotEmpty;
+    assert(condicao);
+    if (!condicao) return {};
+
+    final dados = {
+      '_enunciado': data.enunciado,
+      '_gabarito': data.gabarito,
+      '_imagens_enunciado':
+          data.imagensEnunciado.map((e) => e.toMap()).toList(),
+      '_assuntos': data.assuntos.map((e) => e.id).toList(),
+      '_alternativas': data.alternativas.map((e) => e.toJson()).toList(),
+      '_ano': data.ano,
+      '_nivel': data.nivel,
+      '_indice': data.indice,
+    };
+
+    return dados;
+  }
+
+  Future<bool> insertReferenceQuestao(Questao dados, int idReferencia) async {
+    assert(Debug.print(
+        '[INFO] Chamando SupabaseDbRepository.insertReferenceQuestao()...'));
+    _checkAuthentication('insertReferenceQuestao()');
+    // As chaves devem coincidir com os nomes dos parâmetros da função no banco de dados.
+    final data = _prepareInsertReferenceQuestao(dados, idReferencia);
+    if (data.isEmpty) return false;
+    try {
+      assert(Debug.print('[INFO] Inserindo referência para $idReferencia...'));
+      final response =
+          await _client.rpc('inserir_questao', params: data).execute();
+
+      if (response.error != null) throw response.error!;
+
+      return response.data == dados.idAlfanumerico;
+    } catch (erro, stack) {
+      assert(Debug.print('[ERROR] Erro ao inserir referência.'));
+
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.insertReferenceQuestao()',
+      );
+
+      return false;
+    }
+  }
+
+  Map<String, dynamic> _prepareInsertReferenceQuestao(
+    Questao data,
+    int idReferencia,
+  ) {
+    final dados = {
+      '_ano': data.ano,
+      '_nivel': data.nivel,
+      '_indice': data.indice,
+      '_id_referencia': idReferencia,
+    };
+
+    return dados;
+  }
+
   @override
   Future<List<Clube>> getClubes(int idUsuario) async {
+    if(kIsWeb) return [];//TODO
     assert(Debug.print('[INFO] Chamando SupabaseDbRepository.getClubes()...'));
     _checkAuthentication('getClubes()');
     try {
