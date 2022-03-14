@@ -1626,7 +1626,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
   /// Número de milisegundos desde a época Unix (no fuso horário UTC).
   final int dataModificacao;
   final int id;
-  final String email;
+  final String? email;
   final String? nome;
   final String? foto;
   final bool softDelete;
@@ -1634,7 +1634,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
   LinTbUsuarios(
       {required this.dataModificacao,
       required this.id,
-      required this.email,
+      this.email,
       this.nome,
       this.foto,
       required this.softDelete,
@@ -1647,7 +1647,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
       id: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       email: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}email'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}email']),
       nome: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}nome']),
       foto: const StringType()
@@ -1663,7 +1663,9 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     final map = <String, Expression>{};
     map['data_modificacao'] = Variable<int>(dataModificacao);
     map['id'] = Variable<int>(id);
-    map['email'] = Variable<String>(email);
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String?>(email);
+    }
     if (!nullToAbsent || nome != null) {
       map['nome'] = Variable<String?>(nome);
     }
@@ -1679,7 +1681,8 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return TbUsuariosCompanion(
       dataModificacao: Value(dataModificacao),
       id: Value(id),
-      email: Value(email),
+      email:
+          email == null && nullToAbsent ? const Value.absent() : Value(email),
       nome: nome == null && nullToAbsent ? const Value.absent() : Value(nome),
       foto: foto == null && nullToAbsent ? const Value.absent() : Value(foto),
       softDelete: Value(softDelete),
@@ -1693,7 +1696,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return LinTbUsuarios(
       dataModificacao: serializer.fromJson<int>(json['dataModificacao']),
       id: serializer.fromJson<int>(json['id']),
-      email: serializer.fromJson<String>(json['email']),
+      email: serializer.fromJson<String?>(json['email']),
       nome: serializer.fromJson<String?>(json['nome']),
       foto: serializer.fromJson<String?>(json['foto']),
       softDelete: serializer.fromJson<bool>(json['softDelete']),
@@ -1706,7 +1709,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
     return <String, dynamic>{
       'dataModificacao': serializer.toJson<int>(dataModificacao),
       'id': serializer.toJson<int>(id),
-      'email': serializer.toJson<String>(email),
+      'email': serializer.toJson<String?>(email),
       'nome': serializer.toJson<String?>(nome),
       'foto': serializer.toJson<String?>(foto),
       'softDelete': serializer.toJson<bool>(softDelete),
@@ -1764,7 +1767,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
 class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
   final Value<int> dataModificacao;
   final Value<int> id;
-  final Value<String> email;
+  final Value<String?> email;
   final Value<String?> nome;
   final Value<String?> foto;
   final Value<bool> softDelete;
@@ -1781,17 +1784,16 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
   TbUsuariosCompanion.insert({
     required int dataModificacao,
     this.id = const Value.absent(),
-    required String email,
+    this.email = const Value.absent(),
     this.nome = const Value.absent(),
     this.foto = const Value.absent(),
     this.softDelete = const Value.absent(),
     this.sincronizar = const Value.absent(),
-  })  : dataModificacao = Value(dataModificacao),
-        email = Value(email);
+  }) : dataModificacao = Value(dataModificacao);
   static Insertable<LinTbUsuarios> custom({
     Expression<int>? dataModificacao,
     Expression<int>? id,
-    Expression<String>? email,
+    Expression<String?>? email,
     Expression<String?>? nome,
     Expression<String?>? foto,
     Expression<bool>? softDelete,
@@ -1811,7 +1813,7 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
   TbUsuariosCompanion copyWith(
       {Value<int>? dataModificacao,
       Value<int>? id,
-      Value<String>? email,
+      Value<String?>? email,
       Value<String?>? nome,
       Value<String?>? foto,
       Value<bool>? softDelete,
@@ -1837,7 +1839,7 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
       map['id'] = Variable<int>(id.value);
     }
     if (email.present) {
-      map['email'] = Variable<String>(email.value);
+      map['email'] = Variable<String?>(email.value);
     }
     if (nome.present) {
       map['nome'] = Variable<String?>(nome.value);
@@ -1889,8 +1891,8 @@ class $TbUsuariosTable extends TbUsuarios
   final VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String?> email = GeneratedColumn<String?>(
-      'email', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
+      'email', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
   final VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
   late final GeneratedColumn<String?> nome = GeneratedColumn<String?>(
@@ -1944,8 +1946,6 @@ class $TbUsuariosTable extends TbUsuarios
     if (data.containsKey('email')) {
       context.handle(
           _emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));
-    } else if (isInserting) {
-      context.missing(_emailMeta);
     }
     if (data.containsKey('nome')) {
       context.handle(

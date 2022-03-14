@@ -64,6 +64,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         -->
 
+        <!-- 
         <activity 
             android:name="com.linusu.flutter_web_auth.CallbackActivity" 
             android:exported="true">
@@ -73,7 +74,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="com.sslourenco.clubedematematica" />
             </intent-filter>
-        </activity>
+        </activity> 
+        -->
 
         <!-- Por padrão, o Crashlytics coleta automaticamente relatórios de falhas para todos 
              os usuários do aplicativo. Para dar aos usuários mais controle sobre os dados que 

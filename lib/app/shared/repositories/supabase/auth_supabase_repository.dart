@@ -1,12 +1,16 @@
 import 'dart:async';
 
+import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../configure_supabase.dart';
 import '../../../modules/perfil/models/userapp.dart';
 import '../../models/debug.dart';
+import '../../utils/constantes.dart';
 import '../interface_auth_repository.dart';
 
 /// Gerencia processos de autenticação com o Supabase Auth.
@@ -160,17 +164,19 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       return _reportarEstado(StatusSignIn.error);
     }
 
-    final result = await FlutterWebAuth.authenticate(
-      url: _url.toString(),
-      callbackUrlScheme: kAuthCallbackUrlScheme,
-    );
-    final uri = Uri.tryParse(result);
-    if (uri?.host != kAuthCallbackUrlHostname){
-      return _reportarEstado(StatusSignIn.error);
+    if (kIsWeb) {
+      /* final result = await FlutterWebAuth.authenticate(
+        url: _url.toString(),
+        callbackUrlScheme: kAuthCallbackUrlScheme,
+        preferEphemeral: true,
+      );
+      final uri = Uri.tryParse(result);
+      if (uri?.host != kAuthCallbackUrlHostname) {
+        return _reportarEstado(StatusSignIn.error);
+      }
+      return signIn(result); */
     }
-    
-    return signIn(result);
-  /* 
+
     agente() async {
       await FkUserAgent.init();
       try {
@@ -225,7 +231,6 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     final estado = (await requisitar()) ?? StatusSignIn.canceled;
 
     return _reportarEstado(await estado);
-   */
   }
 
   @override
