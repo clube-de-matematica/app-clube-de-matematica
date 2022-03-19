@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
-
-import 'package:clubedematematica/app/shared/utils/strings_db.dart';
 
 import '../../../shared/extensions.dart';
 import '../../../shared/models/exceptions/my_exception.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
 import '../../../shared/repositories/local_storage_repository.dart';
+import '../../../shared/utils/strings_db.dart';
 
 part 'userapp.g.dart';
 
@@ -90,6 +90,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     String? urlAvatar,
   }) {
     this._id = id;
+    FirebaseCrashlytics.instance.setUserIdentifier('$id');
     this._name = name;
     this._email = email;
     this._pathAvatar = pathAvatar;
@@ -105,6 +106,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     String? urlAvatar,
   ) async {
     _id = id;
+    FirebaseCrashlytics.instance.setUserIdentifier('$id');
     _name = name;
     _email = email;
     _urlAvatar = urlAvatar;
@@ -131,6 +133,7 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   void _setId(int? id) {
     if (id != _id) {
       _id = id;
+      FirebaseCrashlytics.instance.setUserIdentifier('$id');
       notifyListeners();
     }
   }

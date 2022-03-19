@@ -32,6 +32,67 @@ part 'drift_db.g.dart';
     TbRespostaQuestaoAtividade,
     TbRespostaQuestao,
   ],
+/* 
+  queries: {
+    'questoes': '''
+SELECT 
+  questoes_caderno."id" AS id_questao_caderno, 
+  questoes_caderno.id_questao AS "id",
+  questoes_caderno.ano, 
+  questoes_caderno.nivel, 
+  questoes_caderno.indice, 
+  questoes.enunciado, 
+  questoes.gabarito, 
+  questoes.imagens_enunciado, 
+  (
+    SELECT json_group_array(
+      -- Exibir o ID dos assuntos.
+      id_assunto 
+    ) FROM questao_x_assunto WHERE id_questao = questoes_caderno.id_questao
+  ) AS assuntos, 
+  (
+    SELECT json_group_array(
+      json_object(
+        'id_questao', id_questao, 
+        'sequencial', sequencial, 
+        'id_tipo', id_tipo, 
+        'conteudo', conteudo
+      ) 
+    ) FROM alternativas WHERE id_questao = questoes."id"
+  ) AS alternativas
+  FROM questoes_caderno
+  INNER JOIN questoes ON questoes."id" = questoes_caderno.id_questao
+  WHERE 
+    (
+      (:ids IS NULL) OR 
+      (json_array_length(:ids) = 0) OR 
+      (id_questao_caderno IN (SELECT "value" FROM json_each((:ids))))
+    ) AND (
+      (:anos IS NULL) OR 
+      (json_array_length(:anos) = 0) OR 
+      (ano IN (SELECT "value" FROM json_each((:anos))))
+    ) AND (
+      (:niveis IS NULL) OR 
+      (json_array_length(:niveis) = 0) OR 
+      (nivel IN (SELECT "value" FROM json_each((:niveis))))
+    ) AND (
+      (:assuntos IS NULL) OR 
+      (json_array_length(:assuntos) = 0) OR 
+      (
+        json_array_length(assuntos) <> 
+        (
+          SELECT COUNT(*) FROM (
+            SELECT "value" FROM json_each((:assuntos))
+            EXCEPT
+            SELECT "value" FROM json_each((assuntos))
+          )
+        )
+      )
+    ) 
+  ;
+'''
+  }, 
+*/
 )
 class DriftDb extends _$DriftDb {
   DriftDb() : super(abrirConexao()) {
