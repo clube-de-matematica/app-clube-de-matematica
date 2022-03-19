@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../../pages/sobre_page.dart' show mostrarPolitica, mostrarTemos;
+import '../../services/preferencias_servicos.dart';
 import 'botoes.dart';
 
 /// Uma página exibida na parte inferior da tela.
@@ -93,7 +95,10 @@ class AppBottomSheet extends StatelessWidget {
   }
 
   Widget _buildDraggableScrollable(Widget child) {
-    final maxChildSize = 0.9;
+    final media = MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
+    final altura = media.size.height;
+    final maxChildSize =
+        (altura - media.padding.top - kBottomNavigationBarHeight) / altura;
     return DraggableScrollableSheet(
       initialChildSize: maximize ? maxChildSize : 0.4,
       minChildSize: 0.2,
@@ -262,7 +267,8 @@ class AppBottomSheet extends StatelessWidget {
           width: double.maxFinite,
           child: actions![i],
         ));
-        if (i < actions!.length - 1) _children.add(divider());
+        //if (i < actions!.length - 1)
+        _children.add(divider());
       }
       actionsWidget = Padding(
         padding: actionsPadding,
@@ -604,4 +610,66 @@ class __ChildBottomSheetCarregandoState
       ),
     );
   }
+}
+
+class BottomSheetAvisoConsentimento extends AppBottomSheet {
+  BottomSheetAvisoConsentimento({Key? key})
+      : super(
+          isScrollControlled: true,
+          maximize: true,
+          content: Builder(builder: (context) {
+            try {
+              Preferencias.instancia.aceiteTermosCondicoesPolitica =
+                  DateTime.now();
+            } catch (_) {}
+            bool naoReexibir = false;
+            return Column(
+              children: [
+                Text(
+                  'Ao utilizar este aplicativo você concorda com os Termos e Condições '
+                  'de uso e com a Política de Privacidade acessíveis na opção "Sobre" '
+                  'do menu principal.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      ?.copyWith(fontSize: 18),
+                ),
+                SizedBox(height: 16.0),
+                StatefulBuilder(builder: ((_, setState) {
+                  return CheckboxListTile(
+                    value: naoReexibir,
+                    contentPadding: EdgeInsets.all(0),
+                    title: Text('Não exibir esta mensagem novamente'),
+                    onChanged: (valor) {
+                      setState(() => naoReexibir = valor ?? false);
+                      try {
+                        Preferencias.instancia
+                            .exibirMsgTermosCondicoesPolitica = !naoReexibir;
+                      } catch (_) {}
+                    },
+                  );
+                }))
+              ],
+            );
+          }),
+          actions: [
+            AppTextButton(
+              primary: true,
+              child: const Text('LER POLÍTICA DE PRIVACIDADE'),
+              onPressed: () => mostrarPolitica(),
+            ),
+            AppTextButton(
+              primary: true,
+              child: const Text('LER TERMOS E CONDIÇÕES'),
+              onPressed: () => mostrarTemos(),
+            ),
+            Builder(builder: (context) {
+              return AppTextButton(
+                primary: false,
+                child: const Text('FECHAR'),
+                onPressed: () => Navigator.pop(context),
+              );
+            }),
+          ],
+        );
 }

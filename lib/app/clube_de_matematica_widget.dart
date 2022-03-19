@@ -43,12 +43,13 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
       routeInformationParser: Modular.routeInformationParser,
       routerDelegate: Modular.routerDelegate,
       /* builder: (context, child) {
-        /// Isso criará um [Scaffold] abaixo do [Navigator], mas acima de todas as rotas.
+        return child ?? SizedBox();
+        /* /// Isso criará um [Scaffold] abaixo do [Navigator], mas acima de todas as rotas.
         return Scaffold(
           key: rootScaffoldKey,
           drawer: AppDrawer(key: rootDrawerKey),
           body: child,
-        );
+        ); */
       }, */
     );
   }

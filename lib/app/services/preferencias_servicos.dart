@@ -48,6 +48,34 @@ class Preferencias implements Disposable {
     _preferencias.put('filtros_quiz', filtros.toJson());
   }
 
+  /// Coincide com o momento do primeiro acesso.
+  DateTime? get aceiteTermosCondicoesPolitica {
+    final data =
+        _preferencias.get('aceite_termos_condicoes_politica') as DateTime?;
+    return data?.toLocal();
+  }
+
+  /// Coincide com o momento do primeiro acesso.
+  set aceiteTermosCondicoesPolitica(DateTime? data) {
+    _preferencias.put('aceite_termos_condicoes_politica', data?.toUtc());
+  }
+
+  /// Se `false`, a mensagem de aceite dos Termos e Condições de uso e da Política de 
+  /// Privacidade não será exibida na inicialização.
+  bool get exibirMsgTermosCondicoesPolitica {
+    final valor = _preferencias.get(
+      'nao_reexibir_termos_condicoes_politica',
+      defaultValue: false,
+    ) as bool;
+    return valor;
+  }
+
+  /// Se `false`, a mensagem de aceite dos Termos e Condições de uso e da Política de 
+  /// Privacidade não será exibida na inicialização.
+  set exibirMsgTermosCondicoesPolitica(bool valor) {
+    _preferencias.put('nao_reexibir_termos_condicoes_politica', valor);
+  }
+
   @override
   void dispose() {
     _preferencias.close();

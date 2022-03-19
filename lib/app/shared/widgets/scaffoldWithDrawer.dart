@@ -1,3 +1,4 @@
+import '../../pages/sobre_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -177,7 +178,7 @@ class _AppDrawerState extends State<_AppDrawer> {
             leading: icone(Icons.quiz_outlined),
             onTap: () => showPage(context, RotaPagina.quiz),
           ),
-          if (UserApp.instance.id == 125) //TODO
+          if ([125, 118].contains(UserApp.instance.id)) //TODO
             ListTile(
               title: Text('Inserir questão'),
               leading: icone(Icons.add),
@@ -213,8 +214,12 @@ class _AppDrawerState extends State<_AppDrawer> {
           ListTile(
             title: Text('Sobre'),
             leading: icone(Icons.info_outlined),
-            onTap: () {
+            onTap: () async {
               // TODO: Navigator.push(context, MaterialPageRoute(builder: (_) => DbInspecaoPage()));
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => SobrePage()),
+              );
               Navigator.pop(context);
             },
           ),

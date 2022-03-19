@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../services/preferencias_servicos.dart';
 import '../../../../shared/theme/appTheme.dart';
 import '../../../../shared/utils/ui_strings.dart' as uiStringsApp;
+import '../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../shared/widgets/questao_widget.dart';
 import '../../../../shared/widgets/scaffoldWithDrawer.dart';
@@ -28,6 +30,23 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends ModularState<QuizPage, QuizController> {
   ThemeData get tema => AppTheme.instance.temaClaro;
   TextStyle? get textStyle => tema.textTheme.bodyText1;
+
+  @override
+  void initState() {
+    super.initState();
+    if (Preferencias.instancia.exibirMsgTermosCondicoesPolitica) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        () async {
+          int contador = 0;
+          while (!mounted) {
+            if (++contador > 30) return;
+            await Future.delayed(Duration(seconds: 1));
+          }
+          BottomSheetAvisoConsentimento().showModal(context);
+        }();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

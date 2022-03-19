@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../services/preferencias_servicos.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
 import '../../../shared/theme/appTheme.dart';
 import '../../../shared/widgets/appBottomSheet.dart';
@@ -37,6 +38,23 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
 
   /// Estilo do texto da mensagem.
   TextStyle? get textStyleH2 => textStyleH1?.copyWith(color: textColor2);
+
+  @override
+  void initState() {
+    super.initState();
+    Preferencias.instancia.exibirMsgTermosCondicoesPolitica = true;
+    Preferencias.instancia.aceiteTermosCondicoesPolitica = null;
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      () async {
+        int contador = 0;
+        while (!mounted) {
+          if (++contador > 30) return;
+          await Future.delayed(Duration(seconds: 1));
+        }
+        BottomSheetAvisoConsentimento().showModal(context);
+      }();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
