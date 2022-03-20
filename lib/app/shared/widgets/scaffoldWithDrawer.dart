@@ -144,7 +144,7 @@ class _AppDrawerState extends State<_AppDrawer> {
 
     final drawerItems = Observer(builder: (_) {
       final clubes = widget.user.isAnonymous
-          ? []
+          ? <Widget>[]
           : _buildClubes(
               context,
               Modular.get<ClubesRepository>().clubes.toList(),

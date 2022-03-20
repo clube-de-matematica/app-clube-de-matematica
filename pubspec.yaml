@@ -47,7 +47,7 @@ dependencies:
   image_picker: ^0.8.0 #Seletor de imagens.
   #image_cropper: ^1.5.0 #Cortar e girar imagem.
   file_utils: ^1.0.0 #Coleção de classes auxiliares para o sistema de arquivos: FileList, FilePath e FileUtils.
-  flutter_modular: ^4.5.0 #^3.2.2+1 #provedor de dependencias (widgets acessiveis em toda a sua sub-arvore) e rotas.
+  flutter_modular: ^3.2.2+1 #provedor de dependencias (widgets acessiveis em toda a sua sub-arvore) e rotas.
   mobx: ^2.0.1 
   flutter_mobx: ^2.0.0 
   collection: ^1.15.0-nullsafety.4

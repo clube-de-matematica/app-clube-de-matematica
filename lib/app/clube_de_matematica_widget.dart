@@ -25,13 +25,13 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Modular.setInitialRoute(
+    /* Modular.setInitialRoute(
       Modular.get<IAuthRepository>().logged ||
               Preferencias.instancia.primeiroAcesso != null
           ? RotaPagina.quiz.nome
           : RotaPagina.login.nome,
-    );
-    return MaterialApp.router(
+    ); */
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
       theme: AppTheme.instance.temaClaro,
@@ -40,8 +40,12 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
         const Locale('pt', 'BR'),
         const Locale('pt', ''),
       ],
-      routeInformationParser: Modular.routeInformationParser,
-      routerDelegate: Modular.routerDelegate,
+      initialRoute: Modular.get<IAuthRepository>().logged ||
+              Preferencias.instancia.primeiroAcesso != null
+          ? RotaPagina.quiz.nome
+          : RotaPagina.login.nome,
+      /* routeInformationParser: Modular.routeInformationParser,
+      routerDelegate: Modular.routerDelegate, */
       /* builder: (context, child) {
         return child ?? SizedBox();
         /* /// Isso criará um [Scaffold] abaixo do [Navigator], mas acima de todas as rotas.
@@ -51,7 +55,7 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
           body: child,
         ); */
       }, */
-    );
+    ).modular();
   }
 }
 /* 
