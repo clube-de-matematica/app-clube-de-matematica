@@ -16,7 +16,7 @@ import 'app/shared/models/exceptions/error_handler.dart';
 bool get _usarFirebaseCrashlytics => (!Debug.inDebugger || false) && !kIsWeb;
 
 void main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   //await Firebase.initializeApp();
   //final db = FirebaseFirestore.instance;
   //await testSqliteRepository();

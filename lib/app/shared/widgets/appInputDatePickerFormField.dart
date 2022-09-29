@@ -166,7 +166,7 @@ class _AppInputDatePickerFormFieldState
     super.didUpdateWidget(oldWidget);
     if (widget.dataInicial != oldWidget.dataInicial) {
       // Can't update the form field in the middle of a build, so do it next frame
-      WidgetsBinding.instance!.addPostFrameCallback((Duration timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
         setState(() {
           _selectedDate = widget.dataInicial;
           _updateValueForSelectedDate();

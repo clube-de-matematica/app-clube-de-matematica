@@ -35,7 +35,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
   void initState() {
     super.initState();
     if (Preferencias.instancia.exibirMsgTermosCondicoesPolitica) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         () async {
           int contador = 0;
           while (!mounted) {

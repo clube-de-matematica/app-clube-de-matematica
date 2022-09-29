@@ -44,7 +44,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
     super.initState();
     Preferencias.instancia.exibirMsgTermosCondicoesPolitica = true;
     Preferencias.instancia.aceiteTermosCondicoesPolitica = null;
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       () async {
         int contador = 0;
         while (!mounted) {
