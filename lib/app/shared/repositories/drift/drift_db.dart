@@ -7,7 +7,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/debug.dart';
-import '../../models/exceptions/error_handler.dart';
+import '../../models/exceptions/clube_error.dart';
 import '../../utils/db/codificacao.dart';
 import '../../utils/strings_db_sql.dart';
 import 'esquema.dart';
@@ -125,7 +125,7 @@ class DriftDb extends _$DriftDb {
   }
 
   void _reportarErro(Object erro, StackTrace? stack, String? mensagem) {
-    ErrorHandler.reportError(
+    ClubeError.reportFlutterError(
       FlutterErrorDetails(
         exception: erro,
         stack: stack,

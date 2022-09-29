@@ -81,6 +81,7 @@ class ErrorHandler {
           );
         }();
   }
+
   ErrorHandler._(
     this.key, {
     FlutterExceptionHandler? handler,
@@ -92,49 +93,40 @@ class ErrorHandler {
     } else {
       builder ??= (FlutterErrorDetails details) => _defaultErrorWidget(details);
     }
-    ensureInitialized();
+    _ensureInitialized();
     set(builder: builder, handler: handler);
   }
 
-  ///Instâncias desta classe.
+  /// Instâncias desta classe.
   static final _instances = <String, ErrorHandler>{};
 
-  ///Key para [this] em [_instances].
+  /// Key para [this] em [_instances].
   final String key;
 
-  ///[key] da instância usada em [runApp].
+  /// [key] da instância usada em [runApp].
   static const keyRoot = "root";
 
-  ///Retorna a instância assossiada à [key].
-  ///Retorna `null` se a instância não for encontrada.
+  /// Retorna a instância assossiada à [key].
+  /// Retorna `null` se a instância não for encontrada.
   static ErrorHandler? getOfKey(String key) => _instances[key];
 
-  ///Retorna a instância usada em [runApp].
-  ///Retorna `null` se [runApp] ainda não foi executado.
+  /// Retorna a instância usada em [runApp].
+  /// Retorna `null` se [runApp] ainda não foi executado.
   static ErrorHandler? getRoot() => getOfKey(keyRoot);
 
   /// Manipulador de erros padrão do Flutter.
-  ///
-  /// Ao executar essa função tenha certeza que [WidgetsFlutterBinding.ensureInitialized]
-  /// já foi chamado.
-  static final FlutterExceptionHandler? oldOnError =
-      (WidgetsBinding.instance != null)
-          ? FlutterError.onError
-          : () {
-              WidgetsFlutterBinding.ensureInitialized();
-              return FlutterError.onError;
-            }.call();
+  static final FlutterExceptionHandler? oldOnError = () {
+    WidgetsFlutterBinding.ensureInitialized();
+    return FlutterError.onError;
+  }.call();
 
   /// Construtor do Widget de erro padrão do Flutter.
-  ///
-  /// Ao executar essa função tenha certeza que [WidgetsFlutterBinding.ensureInitialized]
-  /// já foi chamado.
   static final ErrorWidgetBuilder _oldBuilder = () {
     WidgetsFlutterBinding.ensureInitialized();
     return ErrorWidget.builder;
   }.call();
 
-  ///Usado para evitar que [runApp] seja chamado mais de uma vez.
+  /// Usado para evitar que [runApp] seja chamado mais de uma vez.
   static bool _ranApp = false;
 
   /// Manipulador de erros.
@@ -149,9 +141,9 @@ class ErrorHandler {
   /// Redefinir para o construtor do Widget de erro padrão do Flutter.
   void resetBuilder() => set(builder: _oldBuilder);
 
-  ///Garantir que [oldOnError] e [_oldBuilder] sejam atribuídos antes da substituição de
-  ///[FlutterError.onError] e [FlutterError.onError].
-  static void ensureInitialized() {
+  /// Garantir que [oldOnError] e [_oldBuilder] sejam atribuídos antes da substituição de
+  /// [FlutterError.onError] e [FlutterError.onError].
+  static void _ensureInitialized() {
     if (_instances.isEmpty) {
       oldOnError.toString();
       _oldBuilder.toString();

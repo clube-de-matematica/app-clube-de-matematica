@@ -25,7 +25,7 @@ import '../../models/db/remoto/linha_tabela_tipos_alternativa.dart';
 import '../../models/db/remoto/linha_tabela_tipos_permissao.dart';
 import '../../models/db/remoto/linha_tabela_usuarios.dart';
 import '../../models/debug.dart';
-import '../../models/exceptions/error_handler.dart';
+import '../../models/exceptions/clube_error.dart';
 import '../../utils/db/codificacao.dart';
 import '../../utils/strings_db.dart';
 import '../../utils/strings_db_sql.dart';
@@ -60,7 +60,7 @@ class SupabaseDbRepository
         return;
       }
     }
-    ErrorHandler.reportError(FlutterErrorDetails(
+    ClubeError.reportFlutterError(FlutterErrorDetails(
       exception: erro,
       stack: stack,
       library: 'supabase_db_repository.dart',

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'shared/models/exceptions/error_handler.dart';
+import 'shared/models/exceptions/clube_error.dart';
 import 'shared/repositories/supabase/auth_supabase_repository.dart';
 
 /// URL do projeto do Supabase.
@@ -115,7 +115,9 @@ class SecureLocalStorage extends LocalStorage {
     try {
       return await storage.deleteAll(aOptions: _opcoesAndroid);
     } on PlatformException catch (e, stack) {
-      ErrorHandler.reportError(ErrorHandler.getDetails(e, stack));
+      ClubeError.reportFlutterError(
+        ClubeError.getDetails(e, stack, library: 'configure_supabase.dart'),
+      );
       return;
     }
   }

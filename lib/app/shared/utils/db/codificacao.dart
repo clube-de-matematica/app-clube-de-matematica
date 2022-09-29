@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../../models/exceptions/error_handler.dart';
+import '../../models/exceptions/clube_error.dart';
 import '../../models/exceptions/my_exception.dart';
 import 'package:flutter/painting.dart';
 
@@ -19,14 +19,14 @@ abstract class DbRemoto {
     try {
       return DateTime.parse(iso8601String).toUtc();
     } on FormatException catch (_, stack) {
-      ErrorHandler.reportError(ErrorHandler.getDetails(
+      ClubeError.reportError(
         MyException(
           'FormatException(DateTime.parse($iso8601String))',
           originClass: 'DbRemoto',
           originField: 'decodificarData',
         ),
         stack, //StackTrace.empty,
-      ));
+      );
       return null;
     }
   }
