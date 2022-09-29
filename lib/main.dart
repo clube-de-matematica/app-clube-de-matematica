@@ -12,6 +12,7 @@ import 'app/configure_supabase.dart';
 import 'app/services/preferencias_servicos.dart';
 import 'app/shared/models/debug.dart';
 import 'app/shared/models/exceptions/error_handler.dart';
+import 'firebase_options.dart';
 
 bool get _usarFirebaseCrashlytics => (!Debug.inDebugger || false) && !kIsWeb;
 
@@ -103,5 +104,7 @@ Future<void> _initBeforeCrashlytics() async {
 
   //Inicializando FlutterFire
   //Não depende de conexão com a internet.
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }

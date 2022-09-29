@@ -45,3 +45,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 clube-de-matematica-upload-keystore.jks
+firebase.exe
