@@ -22,7 +22,7 @@ environment:
 
 dependencies:
   flutter:
-    sdk: flutter
+    sdk: flutter #Flutter (Channel stable, 3.3.2, locale pt-BR)
   flutter_localizations:
     sdk: flutter
 
@@ -34,7 +34,7 @@ dependencies:
   #cloud_firestore: ^2.1.0 #Banco de dados
   #firebase_auth: ^2.0.0 #Autenticação
   #google_sign_in: ^5.0.4 #Login com uma conta Google
-  firebase_crashlytics: ^2.8.11 #Relatório de erros
+  firebase_crashlytics: ^2.8.11 #2.8.13 #Relatório de erros
   #catex: ^0.0.1+8 #^0.0.1+6
   flutter_math_fork: ^0.6.0 #Renderização de equações matemáticas em puro Dart & Flutter.
   #progressive_image: ^2.0.0 #Um widget de vibração que carrega progressivamente imagens grandes usando espaços reservados para imagens de baixa qualidade.
