@@ -41,6 +41,11 @@ class DbServicos extends IDbServicos {
   }
 
   @override
+  Future<bool> checarPermissaoInserirQuestao() {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool> inserirQuestao(Questao data) {
     throw UnimplementedError();
   }

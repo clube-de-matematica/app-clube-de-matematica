@@ -48,6 +48,9 @@ abstract class ILocalDbRepository implements IDbRepository {}
 abstract class IDbRepository {
   Future<bool> insertAssunto(RawAssunto data);
 
+  /// Retorna `TRUE` se o usuário atual tiver permisão para inserir questões no banco de dados.
+  Future<bool> checkPermissionInsertQuestao();
+
   Future<bool> insertQuestao(Questao data);
 
   Future<Clube?> insertClube(RawClube dados);

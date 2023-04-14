@@ -41,6 +41,11 @@ class DbServicos extends IDbServicos {
   }
 
   @override
+  Future<bool> checarPermissaoInserirQuestao() {
+    return dbRemoto.checkPermissionInsertQuestao();
+  }
+
+  @override
   Future<bool> inserirQuestao(Questao data) async {
     final sucesso = await dbRemoto.insertQuestao(data);
     return sucesso;

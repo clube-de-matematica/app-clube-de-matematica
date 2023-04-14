@@ -723,6 +723,11 @@ class DbServicos extends IDbServicos {
     return dbQuestoes.map((dbQuestao) => dbQuestao.toQuestao()).toList();
   }
 
+  @override
+  Future<bool> checarPermissaoInserirQuestao() {
+    return dbRemoto.checkPermissionInsertQuestao();
+  }
+
   Future<bool> inserirQuestao(Questao data) async {
     if (!await _verificarConectividade()) return false;
     final sucesso = await dbRemoto.insertQuestao(data);

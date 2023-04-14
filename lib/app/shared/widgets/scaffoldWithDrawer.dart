@@ -10,6 +10,7 @@ import '../../modules/perfil/models/userapp.dart';
 import '../../modules/perfil/widgets/avatar.dart';
 import '../../navigation.dart';
 import '../../services/conectividade.dart';
+import '../../services/db_servicos_interface.dart';
 import '../repositories/interface_auth_repository.dart';
 import '../utils/constantes.dart';
 import 'appBottomSheet.dart';
@@ -178,13 +179,23 @@ class _AppDrawerState extends State<_AppDrawer> {
             leading: icone(Icons.quiz_outlined),
             onTap: () => showPage(context, RotaPagina.quiz),
           ),
-          if ([125, 118].contains(UserApp.instance.id)) //TODO
-            ListTile(
-              title: Text('Inserir questão'),
-              leading: icone(Icons.add),
-              onTap: () => Navigator.of(context).pushNamed(
-                  InserirQuestaoModule.kAbsoluteRouteInserirQuestaoPage),
-            ),
+          FutureBuilder<bool>(
+            future: Modular.get<IDbServicos>().checarPermissaoInserirQuestao(),
+            initialData: false,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.data ?? false) {
+                  return ListTile(
+                    title: Text('Inserir questão'),
+                    leading: icone(Icons.add),
+                    onTap: () => Navigator.of(context).pushNamed(
+                        InserirQuestaoModule.kAbsoluteRouteInserirQuestaoPage),
+                  );
+                }
+              }
+              return SizedBox();
+            },
+          ),
           /* 
           ListTile(
             title: Text('Favoritos'),

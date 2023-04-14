@@ -495,6 +495,30 @@ class SupabaseDbRepository
   }
 
   @override
+  Future<bool> checkPermissionInsertQuestao() async {
+    try {
+      assert(Debug.print('[INFO] Verificando se o usuário tem permissão para inserrir questão...'));
+      final response =
+          await _client.rpc('get_permissao_inserir_questao').execute();
+
+      if (response.error != null) throw response.error!;
+
+      return response.data as bool;
+    } catch (erro, stack) {
+      assert(Debug.print('[ERROR] Erro ao verificar se o usuário tem permissão para inserrir questão.'));
+
+      _tratarErro(
+        erro,
+        stack,
+        'SupabaseDbRepository.checkPermissionInsertQuestao()',
+      );
+
+      return false;
+    }
+    
+  }
+
+  @override
   Future<bool> insertQuestao(Questao dados) async {
     assert(
         Debug.print('[INFO] Chamando SupabaseDbRepository.insertQuestao()...'));

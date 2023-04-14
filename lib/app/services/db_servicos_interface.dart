@@ -59,6 +59,8 @@ abstract class IDbServicos {
 
   Future<Clube?> inserirClube(RawClube data);
 
+  Future<bool> checarPermissaoInserirQuestao();
+
   Future<bool> inserirQuestao(Questao data);
 
   Future<bool> inserirReferenciaQuestao(Questao data, int idReferencia);
