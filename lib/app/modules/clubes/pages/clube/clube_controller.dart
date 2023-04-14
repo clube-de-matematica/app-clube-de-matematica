@@ -49,6 +49,7 @@ class ClubeController extends IClubeController
   final Clube clube;
 
   /// O [UsuarioClube] correspondente ao usuário atual do aplicativo para [clube].
+  // TODO: Erro ao tentar trocar a conta do usuário. Exception has occurred. _CastError (Null check operator used on a null value)
   UsuarioClube get usuarioApp => clube.getUsuario(UserApp.instance.id!)!;
 
   List<Atividade> _atividades = [];

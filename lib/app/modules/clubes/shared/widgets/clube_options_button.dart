@@ -26,6 +26,7 @@ class ClubeOptionsButton extends StatelessWidget {
   final VoidCallback onExcluir;
 
   /// ID do usuário do aplicativo.
+  // TODO: Erro ao tentar trocar a conta do usuário. Exception has occurred. _CastError (Null check operator used on a null value)
   int get idUsuarioApp => UserApp.instance.id!;
 
   @override

@@ -1,3 +1,4 @@
+import 'package:clubedematematica/app/shared/widgets/katex_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -264,12 +265,16 @@ class _MembrosState extends State<_Membros> {
               }
 
               return ListTile(
-                title: Text(
-                  [
-                    ...questao.enunciado.where((e) =>
-                        e != DbConst.kDbStringImagemNaoDestacada &&
-                        e != DbConst.kDbStringImagemDestacada)
-                  ].join(' '),
+                title: Text.rich(
+                  TextSpan(
+                    children: KaTeX(
+                      laTeXCode: [
+                        ...questao.enunciado.where((e) =>
+                            e != DbConst.kDbStringImagemNaoDestacada &&
+                            e != DbConst.kDbStringImagemDestacada)
+                      ].join(' '),
+                    ).blocosDoTexto,
+                  ),
                   //maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
