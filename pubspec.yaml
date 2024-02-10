@@ -22,7 +22,7 @@ environment:
 
 dependencies:
   flutter:
-    sdk: flutter #Flutter (Channel stable, 3.3.2, locale pt-BR)
+    sdk: flutter # Flutter version 3.7.3 on channel stable. Dart version 2.19.2.
   flutter_localizations:
     sdk: flutter
 

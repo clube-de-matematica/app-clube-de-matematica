@@ -55,12 +55,12 @@ class SobrePage extends StatelessWidget {
 // Abre uma guia personalizada para a Política de Privacidade do aplicativo.
 mostrarPolitica() {
   _launch(
-      'https://appclubedematematica.blogspot.com/2022/03/politicadeprivacidade.html');
+      'https://www.samylourenco.com/política-de-privacidade');
 }
 
 // Abre uma guia personalizada para os Termos e Condições de uso do aplicativo.
 mostrarTemos() {
-  _launch('https://appclubedematematica.blogspot.com/2022/03/termos.html');
+  _launch('https://www.samylourenco.com/termos-e-condições');
 }
 
 void _launch(String url) {
