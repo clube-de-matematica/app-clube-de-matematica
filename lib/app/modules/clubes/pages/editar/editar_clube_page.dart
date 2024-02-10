@@ -87,9 +87,9 @@ class _EditarClubePageState extends State<EditarClubePage> {
               onAplicar: () async {
                 if (!isLoading) {
                   final form = Form.of(context);
-                  if (form?.validate() ?? false) {
+                  if (form.validate()) {
                     isLoading = true;
-                    form?.save();
+                    form.save();
                     final futuro = controller.atualizar(
                       context,
                       clube: widget.clube,

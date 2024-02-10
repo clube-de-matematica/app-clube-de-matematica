@@ -644,6 +644,7 @@ class DbServicos extends IDbServicos {
       ..catchError((e) {
         debugger();
         print(e);
+        return <Assunto>[];
       });
   }
 

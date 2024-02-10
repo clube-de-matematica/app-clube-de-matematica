@@ -68,9 +68,9 @@ class _FormCriarClubeState extends State<FormCriarClube> {
                   ? null
                   : () async {
                       final form = Form.of(context);
-                      if (form?.validate() ?? false) {
+                      if (form.validate()) {
                         setState(() => isLoading = true);
-                        form?.save();
+                        form.save();
                         await widget.onCriar
                             ?.call(nome!, descricao, corTema!, !grupoAberto);
                         if (mounted) setState(() => isLoading = false);
