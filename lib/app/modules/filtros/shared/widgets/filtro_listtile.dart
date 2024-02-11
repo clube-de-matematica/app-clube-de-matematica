@@ -19,7 +19,7 @@ class FiltroListTile extends ListTile {
             builder: (context) {
               return Text(
                 titulo,
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               );
             },
           ),

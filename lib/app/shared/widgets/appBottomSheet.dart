@@ -221,7 +221,7 @@ class AppBottomSheet extends StatelessWidget {
         child: DefaultTextStyle(
           style: titleTextStyle ??
               dialogTheme.titleTextStyle ??
-              theme.textTheme.headline6 ??
+              theme.textTheme.titleLarge ??
               TextStyle(),
           child: Semantics(
             namesRoute: label == null,
@@ -247,7 +247,7 @@ class AppBottomSheet extends StatelessWidget {
         child: DefaultTextStyle(
           style: contentTextStyle ??
               dialogTheme.contentTextStyle ??
-              theme.textTheme.subtitle1!,
+              theme.textTheme.titleMedium!,
           child: Semantics(
             container: true,
             child: content,
@@ -631,7 +631,7 @@ class BottomSheetAvisoConsentimento extends AppBottomSheet {
                   'do menu principal.',
                   style: Theme.of(context)
                       .textTheme
-                      .bodyText1
+                      .bodyLarge
                       ?.copyWith(fontSize: 18),
                 ),
                 SizedBox(height: 16.0),

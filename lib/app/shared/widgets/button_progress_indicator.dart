@@ -110,9 +110,10 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
           child: setUpButtonChild(),
           builder: (context, child) {
             var styleFrom = ElevatedButton.styleFrom(
-              primary: _backgroundColor.value,
-              onPrimary: widget.onPrimary,
-              onSurface: widget.onSurface,
+              backgroundColor: _backgroundColor.value,
+              foregroundColor: widget.onPrimary,
+              disabledBackgroundColor: widget.onSurface,
+              disabledForegroundColor: widget.onSurface,
               padding: widget.padding,
               elevation: widget.elevation,
               fixedSize: Size(_width, _height),

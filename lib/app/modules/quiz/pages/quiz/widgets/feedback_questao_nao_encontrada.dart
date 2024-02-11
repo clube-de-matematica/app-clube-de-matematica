@@ -10,7 +10,7 @@ class FeedbackQuestaoNaoEncontrada extends StatelessWidget {
         child: Text(
           'Nenhuma questão encontrada',
           style:
-              Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 24.0),
+              Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 24.0),
           textAlign: TextAlign.center,
         ),
       ),

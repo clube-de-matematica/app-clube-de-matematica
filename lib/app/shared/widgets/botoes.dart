@@ -10,9 +10,9 @@ class BotaoPrimario extends ElevatedButton {
     VoidCallback? onPressed,
   }) : super(
           key: key,
-          style: ElevatedButton.styleFrom(
-            onSurface: Color(0xff003d33),
-          ),
+          /* style: ElevatedButton.styleFrom(
+            disabledForegroundColor: Color(0xff003d33),
+          ), */
           child: Text(label),
           onPressed: onPressed,
         );
@@ -31,9 +31,9 @@ class AppTextButton extends TextButton {
           key: key,
           style: style ??
               TextButton.styleFrom(
-                primary: primary
+                foregroundColor: primary
                     ? AppTheme.instance.temaClaro.colorScheme.primary
-                    : AppTheme.instance.temaClaro.textTheme.button?.color,
+                    : AppTheme.instance.temaClaro.textTheme.labelLarge?.color,
               ),
           onPressed: onPressed,
           child: child,

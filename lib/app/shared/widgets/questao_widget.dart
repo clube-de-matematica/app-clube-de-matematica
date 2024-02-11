@@ -223,7 +223,7 @@ class _AlternativasState extends State<_Alternativas> {
 
   ThemeData get tema => Theme.of(context);
 
-  TextStyle? get textStyle => tema.textTheme.bodyText1;
+  TextStyle? get textStyle => tema.textTheme.bodyLarge;
 
   bool get selecionavel => widget.selecionavel;
 
@@ -362,7 +362,7 @@ class _Text extends Text {
   }) : super.rich(
           TextSpan(
               children: blocosDeTexto,
-              style: AppTheme.instance.temaClaro.textTheme.bodyText1),
+              style: AppTheme.instance.temaClaro.textTheme.bodyLarge),
           textAlign: alinhamento,
           key: key,
         );

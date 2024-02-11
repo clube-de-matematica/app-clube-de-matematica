@@ -80,7 +80,7 @@ class FiltroHomePage extends StatelessWidget {
             }),
             title: Text(
               controle.tiposFiltroToString(tipo),
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             onTap: () => _navegar(context, tipo),
           );

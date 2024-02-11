@@ -16,7 +16,7 @@ class FiltrosSelecionados extends StatelessWidget {
 
   Color get backgroundColor => AppTheme.instance.temaClaro.colorScheme.primary;
 
-  TextStyle? get textStyle => AppTheme.instance.temaClaro.textTheme.bodyText1
+  TextStyle? get textStyle => AppTheme.instance.temaClaro.textTheme.bodyLarge
       ?.copyWith(color: textColor);
 
   @override

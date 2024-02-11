@@ -80,7 +80,7 @@ class _CategoriaAtividade extends Categoria {
                   contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
                   title: Text(
                     atividade.titulo,
-                    style: AppTheme.instance.temaClaro.textTheme.headline2,
+                    style: AppTheme.instance.temaClaro.textTheme.displayMedium,
                   ),
                   subtitle: Text(atividade.descricao ?? ''),
                   leading: CircleAvatar(

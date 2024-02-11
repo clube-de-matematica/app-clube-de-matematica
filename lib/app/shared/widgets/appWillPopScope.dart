@@ -20,7 +20,7 @@ class AppWillPopScope extends StatefulWidget {
 class _AppWillPopScopeState extends State<AppWillPopScope> {
   ThemeData get tema => AppTheme.instance.temaClaro;
 
-  TextStyle? get textStyle => tema.textTheme.bodyText1;
+  TextStyle? get textStyle => tema.textTheme.bodyLarge;
 
   int backCounter = 0;
 

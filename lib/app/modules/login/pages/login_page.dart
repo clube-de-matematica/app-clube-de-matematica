@@ -31,7 +31,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   Color get textColor2 => textColor1.withOpacity(0.5);
 
   /// Estilo do texto do "bem vindo".
-  TextStyle? get textStyleH1 => tema.textTheme.bodyText1?.copyWith(
+  TextStyle? get textStyleH1 => tema.textTheme.bodyLarge?.copyWith(
         fontSize: 24 * escala,
         color: textColor1,
       );
@@ -165,7 +165,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                 onEnd: () {},
                 child: Text(
                   UIStrings.LOGIN_TEXT_BUTTON_USER_ANONYMOUS,
-                  style: tema.textTheme.bodyText1?.copyWith(
+                  style: tema.textTheme.bodyLarge?.copyWith(
                     decoration: TextDecoration.underline,
                     decorationThickness: 0.75,
                     color: textColor2,
@@ -235,12 +235,12 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   /// Abre uma página inferior informando que houve um erro durante a autenticação.
   AppBottomSheet _buildBottomSheetErroLogin() {
     return AppBottomSheet(
-      titleTextStyle: tema.textTheme.bodyText1?.copyWith(
+      titleTextStyle: tema.textTheme.bodyLarge?.copyWith(
         fontSize: 18 * escala,
         color: textColor1,
         fontWeight: FontWeight.w500,
       ),
-      contentTextStyle: tema.textTheme.bodyText1?.copyWith(
+      contentTextStyle: tema.textTheme.bodyLarge?.copyWith(
         fontSize: 16 * escala,
         color: textColor2,
       ),

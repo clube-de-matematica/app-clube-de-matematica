@@ -23,7 +23,7 @@ class FeedbackFiltragemVazia extends StatelessWidget {
               'Nenhuma questão encontrada',
               style: Theme.of(context)
                   .textTheme
-                  .bodyText1
+                  .bodyLarge
                   ?.copyWith(fontSize: 24.0),
               textAlign: TextAlign.center,
             ),

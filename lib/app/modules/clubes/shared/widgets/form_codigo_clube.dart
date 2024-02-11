@@ -33,7 +33,7 @@ class _FormCodigoClubeState extends State<FormCodigoClube> {
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Text(
             'Entre com um código de acesso:',
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
         TextField(

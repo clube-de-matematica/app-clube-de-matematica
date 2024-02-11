@@ -22,7 +22,7 @@ class SobrePage extends StatelessWidget {
             'de uso e com a Política de Privacidade disponíveis em: '
             '\n\n',
             style:
-                Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
+                Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18),
           ),
           AppTextButton(
             child: const Text('Termos e Condições'),

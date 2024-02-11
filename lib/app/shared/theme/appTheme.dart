@@ -164,55 +164,55 @@ class AppTheme {
       */
 
       textTheme: temp.textTheme.copyWith(
-        headline1: temp.textTheme.headline1?.copyWith(
+        displayLarge: temp.textTheme.displayLarge?.copyWith(
           color: onSurface,
           fontSize: _escala * 16,
           fontWeight: FontWeight.bold,
           fontStyle: FontStyle.normal,
         ),
-        headline2: temp.textTheme.headline2?.copyWith(
+        displayMedium: temp.textTheme.displayMedium?.copyWith(
           color: onSurface,
           fontSize: _escala * 14,
           fontWeight: FontWeight.bold,
           fontStyle: FontStyle.normal,
         ),
-        headline3: temp.textTheme.headline3?.setEscalaFontSize(_escala),
-        headline4: temp.textTheme.headline4?.setEscalaFontSize(_escala),
-        headline5: temp.textTheme.headline5?.setEscalaFontSize(_escala),
-        headline6: temp.textTheme.headline6?.setEscalaFontSize(_escala),
-        subtitle1: temp.textTheme.subtitle1?.copyWith(
+        displaySmall: temp.textTheme.displaySmall?.setEscalaFontSize(_escala),
+        headlineMedium: temp.textTheme.headlineMedium?.setEscalaFontSize(_escala),
+        headlineSmall: temp.textTheme.headlineSmall?.setEscalaFontSize(_escala),
+        titleLarge: temp.textTheme.titleLarge?.setEscalaFontSize(_escala),
+        titleMedium: temp.textTheme.titleMedium?.copyWith(
           color: onSurface,
           fontSize: _escala * 16,
           fontWeight: FontWeight.w400,
           fontStyle: FontStyle.normal,
         ),
-        subtitle2: temp.textTheme.subtitle2?.copyWith(
+        titleSmall: temp.textTheme.titleSmall?.copyWith(
           color: onSurface,
           fontSize: _escala * 14,
           fontWeight: FontWeight.w400,
           fontStyle: FontStyle.normal,
         ),
-        bodyText1: temp.textTheme.bodyText1?.copyWith(
+        bodyLarge: temp.textTheme.bodyLarge?.copyWith(
           color: onSurface,
           fontSize: _escala * 16,
           fontWeight: FontWeight.w400,
           fontStyle: FontStyle.normal,
           letterSpacing: 0,
         ),
-        bodyText2: temp.textTheme.bodyText2?.copyWith(
+        bodyMedium: temp.textTheme.bodyMedium?.copyWith(
           color: onSurface,
           fontSize: _escala * 14,
           fontWeight: FontWeight.w400,
           fontStyle: FontStyle.normal,
           letterSpacing: 0,
         ),
-        caption: temp.textTheme.caption?.copyWith(
+        bodySmall: temp.textTheme.bodySmall?.copyWith(
           color: onSurface,
           fontSize: _escala * 12,
           fontWeight: FontWeight.w400,
           fontStyle: FontStyle.normal,
         ),
-        button: temp.textTheme.button?.copyWith(
+        labelLarge: temp.textTheme.labelLarge?.copyWith(
           color: onSurface.withOpacity(0.45),
           fontSize: _escala * 14,
           //fontWeight: FontWeight.w400,
@@ -221,7 +221,7 @@ class AppTheme {
           ///Também define o espaçamento entre os caracteres.
           letterSpacing: 1.8,
         ),
-        overline: temp.textTheme.overline?.copyWith(
+        labelSmall: temp.textTheme.labelSmall?.copyWith(
           color: onSurface,
           fontSize: _escala * 10,
           fontWeight: FontWeight.w400,
@@ -365,49 +365,49 @@ class AppTheme {
     ),
 
     textTheme: TextTheme(
-      headline6: TextStyle(
+      titleLarge: TextStyle(
         color: _corOnSurface,
         fontSize: _escala * 20,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      subtitle1: TextStyle(
+      titleMedium: TextStyle(
         color: _corOnSurface,
         fontSize: _escala * 16,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      bodyText2: TextStyle(
+      bodyMedium: TextStyle(
         color: _corOnSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      bodyText1: TextStyle(
+      bodyLarge: TextStyle(
         color: _corOnSurface,
         fontSize: _escala * 16,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      caption: TextStyle(
+      bodySmall: TextStyle(
         color: const Color( 0x8a000000 ),
         fontSize: _escala * 12,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      button: TextStyle(
+      labelLarge: TextStyle(
         color: _corOnSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      subtitle2: TextStyle(
+      titleSmall: TextStyle(
         color: _corOnSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      overline: TextStyle(
+      labelSmall: TextStyle(
         color: _corOnSurface,
         fontSize: _escala * 10,
         fontWeight: FontWeight?.w400,
@@ -416,49 +416,49 @@ class AppTheme {
     ),
 
     primaryTextTheme: TextTheme(
-      headline6: TextStyle(
+      titleLarge: TextStyle(
         color: _corSurface,
         fontSize: _escala * 20,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      subtitle1: TextStyle(
+      titleMedium: TextStyle(
         color: _corSurface,
         fontSize: _escala * 16,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      bodyText2: TextStyle(
+      bodyMedium: TextStyle(
         color: _corSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      bodyText1: TextStyle(
+      bodyLarge: TextStyle(
         color: _corSurface,
         fontSize: _escala * 16,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      caption: TextStyle(
+      bodySmall: TextStyle(
         color: const Color( 0xb3ffffff ),
         fontSize: _escala * 12,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      button: TextStyle(
+      labelLarge: TextStyle(
         color: _corSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      subtitle2: TextStyle(
+      titleSmall: TextStyle(
         color: _corSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      overline: TextStyle(
+      labelSmall: TextStyle(
         color: _corSurface,
         fontSize: _escala * 10,
         fontWeight: FontWeight?.w400,
@@ -467,49 +467,49 @@ class AppTheme {
     ),
 
     accentTextTheme: TextTheme(
-      headline6: TextStyle(
+      titleLarge: TextStyle(
         color: _corSurface,
         fontSize: _escala * 20,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      subtitle1: TextStyle(
+      titleMedium: TextStyle(
         color: _corSurface,
         fontSize: _escala * 16,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      bodyText2: TextStyle(
+      bodyMedium: TextStyle(
         color: _corSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      bodyText1: TextStyle(
+      bodyLarge: TextStyle(
         color: _corSurface,
         fontSize: _escala * 16,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      caption: TextStyle(
+      bodySmall: TextStyle(
         color: const Color( 0xb3ffffff ),
         fontSize: _escala * 12,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      button: TextStyle(
+      labelLarge: TextStyle(
         color: _corSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      subtitle2: TextStyle(
+      titleSmall: TextStyle(
         color: _corSurface,
         fontSize: _escala * 14,
         fontWeight: FontWeight?.w400,
         fontStyle: FontStyle?.normal,
       ),
-      overline: TextStyle(
+      labelSmall: TextStyle(
         color: _corSurface,
         fontSize: _escala * 10,
         fontWeight: FontWeight?.w400,

@@ -48,7 +48,7 @@ class _LoginWithGoogleButtonState extends State<LoginWithGoogleButton> {
             fit: FlexFit.loose,
             child: Text(
               UIStrings.LOGIN_TEXT_BUTTON_USER_GOOGLE,
-              style: tema.textTheme.bodyText1?.copyWith(
+              style: tema.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: textColor1,
                 fontSize: 18.0,

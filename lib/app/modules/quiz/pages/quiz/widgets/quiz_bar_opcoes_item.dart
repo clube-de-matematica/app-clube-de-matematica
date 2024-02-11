@@ -16,7 +16,7 @@ class QuizBarOpcoesQuestao extends StatelessWidget {
   final QuizController controller;
   final EdgeInsetsGeometry padding;
 
-  TextStyle? get textStyle => AppTheme.instance.temaClaro.textTheme.bodyText2;
+  TextStyle? get textStyle => AppTheme.instance.temaClaro.textTheme.bodyMedium;
   
   /* 
   /// As opções do popup de opções do item.

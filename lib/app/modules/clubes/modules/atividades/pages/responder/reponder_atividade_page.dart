@@ -125,7 +125,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
       return Center(
         child: Text(
           'Nenhuma questão encontrada',
-          style: AppTheme.instance.temaClaro.textTheme.bodyText1
+          style: AppTheme.instance.temaClaro.textTheme.bodyLarge
               ?.copyWith(fontSize: 24.0),
           textAlign: TextAlign.center,
         ),

@@ -30,42 +30,42 @@ extension MyExtensionTextTheme on TextTheme {
   ///Redefine a propriedade `fontSize` para os [TextStyle] correspondentes ao nome do
   ///parâmetro.
   ///[escala] é usada para uma variação proporcional no tamanho da fonte nos vários estilos.
-  ///Para [button] também será definido o espaçamento entre os caracteres.
+  ///Para [labelLarge] também será definido o espaçamento entre os caracteres.
   TextTheme overrideFontSizeInTextStyles(
     double escala, {
-    double? sizeHeadline1,
-    double? sizeHeadline2,
-    double? sizeHeadline3,
-    double? sizeHeadline4,
-    double? sizeHeadline5,
-    double? sizeHeadline6,
-    double? sizeSubtitle1,
-    double? sizeSubtitle2,
-    double? sizeBodyText1,
-    double? sizeBodyText2,
-    double? sizeCaption,
-    double? sizeButton,
-    double? sizeOverline,
+    double? sizeDisplayLarge,
+    double? sizeDisplayMedium,
+    double? sizeDisplaySmall,
+    double? sizeHeadlineMedium,
+    double? sizeHeadlineSmall,
+    double? sizeTitleLarge,
+    double? sizeTitleMedium,
+    double? sizeTitleSmall,
+    double? sizeBodyLarge,
+    double? sizeBodyMedium,
+    double? sizeBodySmall,
+    double? sizeLabelLarge,
+    double? sizeLabelSmall,
   }) {
     return copyWith(
-      headline1: this.headline1?.setEscalaFontSize(escala, sizeHeadline1),
-      headline2: this.headline2?.setEscalaFontSize(escala, sizeHeadline2),
-      headline3: this.headline3?.setEscalaFontSize(escala, sizeHeadline3),
-      headline4: this.headline4?.setEscalaFontSize(escala, sizeHeadline4),
-      headline5: this.headline5?.setEscalaFontSize(escala, sizeHeadline5),
-      headline6: this.headline6?.setEscalaFontSize(escala, sizeHeadline6),
-      subtitle1: this.subtitle1?.setEscalaFontSize(escala, sizeSubtitle1),
-      subtitle2: this.subtitle2?.setEscalaFontSize(escala, sizeSubtitle2),
-      bodyText1: this.bodyText1?.setEscalaFontSize(escala, sizeBodyText1),
-      bodyText2: this.bodyText2?.setEscalaFontSize(escala, sizeBodyText2),
-      caption: this.caption?.setEscalaFontSize(escala, sizeCaption),
+      displayLarge: this.displayLarge?.setEscalaFontSize(escala, sizeDisplayLarge),
+      displayMedium: this.displayMedium?.setEscalaFontSize(escala, sizeDisplayMedium),
+      displaySmall: this.displaySmall?.setEscalaFontSize(escala, sizeDisplaySmall),
+      headlineMedium: this.headlineMedium?.setEscalaFontSize(escala, sizeHeadlineMedium),
+      headlineSmall: this.headlineSmall?.setEscalaFontSize(escala, sizeHeadlineSmall),
+      titleLarge: this.titleLarge?.setEscalaFontSize(escala, sizeTitleLarge),
+      titleMedium: this.titleMedium?.setEscalaFontSize(escala, sizeTitleMedium),
+      titleSmall: this.titleSmall?.setEscalaFontSize(escala, sizeTitleSmall),
+      bodyLarge: this.bodyLarge?.setEscalaFontSize(escala, sizeBodyLarge),
+      bodyMedium: this.bodyMedium?.setEscalaFontSize(escala, sizeBodyMedium),
+      bodySmall: this.bodySmall?.setEscalaFontSize(escala, sizeBodySmall),
 
       ///Também define o espaçamento entre os caracteres.
-      button: this
-          .button
+      labelLarge: this
+          .labelLarge
           ?.letterSpacingForButton
-          .setEscalaFontSize(escala, sizeButton),
-      overline: this.overline?.setEscalaFontSize(escala, sizeOverline),
+          .setEscalaFontSize(escala, sizeLabelLarge),
+      labelSmall: this.labelSmall?.setEscalaFontSize(escala, sizeLabelSmall),
     );
   }
 }

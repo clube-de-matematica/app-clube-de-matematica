@@ -27,8 +27,8 @@ class FiltroChipContador extends StatelessWidget {
         : secondaryColor ?? tema.colorScheme.onSurface;
 
     final textStyle = valor == "0"
-        ? tema.textTheme.bodyText2
-        : tema.textTheme.bodyText2
+        ? tema.textTheme.bodyMedium
+        : tema.textTheme.bodyMedium
             ?.copyWith(color: tema.colorScheme.onPrimary.withOpacity(0.8));
 
     return Container(

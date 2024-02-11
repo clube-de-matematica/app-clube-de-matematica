@@ -29,7 +29,7 @@ class QuizPage extends StatefulWidget {
 /// de [_QuizPageState].
 class _QuizPageState extends ModularState<QuizPage, QuizController> {
   ThemeData get tema => AppTheme.instance.temaClaro;
-  TextStyle? get textStyle => tema.textTheme.bodyText1;
+  TextStyle? get textStyle => tema.textTheme.bodyLarge;
 
   @override
   void initState() {
@@ -81,7 +81,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                           uiStringsApp.UIStrings.APP_MSG_ERRO_INESPERADO,
                           style: Theme.of(context)
                               .textTheme
-                              .bodyText1
+                              .bodyLarge
                               ?.copyWith(fontSize: 24.0),
                           textAlign: TextAlign.center,
                         ),
