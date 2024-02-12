@@ -248,10 +248,12 @@ class DbServicos extends IDbServicos {
   /// [forcar] é usado para obter todos os registros, independentemente da data de modificação.
   Future<void> _sincronizarTbUsuarios({bool forcar = false}) async {
     if (idUsuarioApp == null) return;
+    final _id = idUsuarioApp!;
+    
     if (!await _verificarConectividade()) return;
 
     final consultaLocal = dbLocal.select(dbLocal.tbUsuarios)
-      ..where((tb) => tb.sincronizar.equals(true) & tb.id.equals(idUsuarioApp))
+      ..where((tb) => tb.sincronizar.equals(true) & tb.id.equals(_id))
       ..limit(1);
 
     final dadosLocal = await consultaLocal.map((linha) {

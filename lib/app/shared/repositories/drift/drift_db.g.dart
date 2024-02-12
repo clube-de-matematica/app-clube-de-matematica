@@ -3,10 +3,10 @@
 part of 'drift_db.dart';
 
 // **************************************************************************
-// MoorGenerator
+// DriftDatabaseGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
+// ignore_for_file: type=lint
 class LinTbQuestoes extends DataClass implements Insertable<LinTbQuestoes> {
   /// Número de milisegundos desde a época Unix (no fuso horário UTC).
   final int dataModificacao;
@@ -14,27 +14,12 @@ class LinTbQuestoes extends DataClass implements Insertable<LinTbQuestoes> {
   final String enunciado;
   final int gabarito;
   final String? imagensEnunciado;
-  LinTbQuestoes(
+  const LinTbQuestoes(
       {required this.dataModificacao,
       required this.id,
       required this.enunciado,
       required this.gabarito,
       this.imagensEnunciado});
-  factory LinTbQuestoes.fromData(Map<String, dynamic> data, {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbQuestoes(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      enunciado: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}enunciado'])!,
-      gabarito: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}gabarito'])!,
-      imagensEnunciado: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}imagens_enunciado']),
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -43,7 +28,7 @@ class LinTbQuestoes extends DataClass implements Insertable<LinTbQuestoes> {
     map['enunciado'] = Variable<String>(enunciado);
     map['gabarito'] = Variable<int>(gabarito);
     if (!nullToAbsent || imagensEnunciado != null) {
-      map['imagens_enunciado'] = Variable<String?>(imagensEnunciado);
+      map['imagens_enunciado'] = Variable<String>(imagensEnunciado);
     }
     return map;
   }
@@ -88,13 +73,15 @@ class LinTbQuestoes extends DataClass implements Insertable<LinTbQuestoes> {
           int? id,
           String? enunciado,
           int? gabarito,
-          String? imagensEnunciado}) =>
+          Value<String?> imagensEnunciado = const Value.absent()}) =>
       LinTbQuestoes(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         id: id ?? this.id,
         enunciado: enunciado ?? this.enunciado,
         gabarito: gabarito ?? this.gabarito,
-        imagensEnunciado: imagensEnunciado ?? this.imagensEnunciado,
+        imagensEnunciado: imagensEnunciado.present
+            ? imagensEnunciado.value
+            : this.imagensEnunciado,
       );
   @override
   String toString() {
@@ -149,7 +136,7 @@ class TbQuestoesCompanion extends UpdateCompanion<LinTbQuestoes> {
     Expression<int>? id,
     Expression<String>? enunciado,
     Expression<int>? gabarito,
-    Expression<String?>? imagensEnunciado,
+    Expression<String>? imagensEnunciado,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
@@ -191,7 +178,7 @@ class TbQuestoesCompanion extends UpdateCompanion<LinTbQuestoes> {
       map['gabarito'] = Variable<int>(gabarito.value);
     }
     if (imagensEnunciado.present) {
-      map['imagens_enunciado'] = Variable<String?>(imagensEnunciado.value);
+      map['imagens_enunciado'] = Variable<String>(imagensEnunciado.value);
     }
     return map;
   }
@@ -218,30 +205,30 @@ class $TbQuestoesTable extends TbQuestoes
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _enunciadoMeta = const VerificationMeta('enunciado');
   @override
-  late final GeneratedColumn<String?> enunciado = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> enunciado = GeneratedColumn<String>(
       'enunciado', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   final VerificationMeta _gabaritoMeta = const VerificationMeta('gabarito');
   @override
-  late final GeneratedColumn<int?> gabarito = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> gabarito = GeneratedColumn<int>(
       'gabarito', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _imagensEnunciadoMeta =
       const VerificationMeta('imagensEnunciado');
   @override
-  late final GeneratedColumn<String?> imagensEnunciado =
-      GeneratedColumn<String?>('imagens_enunciado', aliasedName, true,
-          type: const StringType(), requiredDuringInsert: false);
+  late final GeneratedColumn<String> imagensEnunciado = GeneratedColumn<String>(
+      'imagens_enunciado', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, enunciado, gabarito, imagensEnunciado];
@@ -290,8 +277,19 @@ class $TbQuestoesTable extends TbQuestoes
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbQuestoes map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbQuestoes.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbQuestoes(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      enunciado: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}enunciado'])!,
+      gabarito: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}gabarito'])!,
+      imagensEnunciado: attachedDatabase.options.types.read(
+          DriftSqlType.string, data['${effectivePrefix}imagens_enunciado']),
+    );
   }
 
   @override
@@ -306,24 +304,11 @@ class LinTbAssuntos extends DataClass implements Insertable<LinTbAssuntos> {
   final int id;
   final String assunto;
   final String? hierarquia;
-  LinTbAssuntos(
+  const LinTbAssuntos(
       {required this.dataModificacao,
       required this.id,
       required this.assunto,
       this.hierarquia});
-  factory LinTbAssuntos.fromData(Map<String, dynamic> data, {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbAssuntos(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      assunto: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}assunto'])!,
-      hierarquia: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}hierarquia']),
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -331,7 +316,7 @@ class LinTbAssuntos extends DataClass implements Insertable<LinTbAssuntos> {
     map['id'] = Variable<int>(id);
     map['assunto'] = Variable<String>(assunto);
     if (!nullToAbsent || hierarquia != null) {
-      map['hierarquia'] = Variable<String?>(hierarquia);
+      map['hierarquia'] = Variable<String>(hierarquia);
     }
     return map;
   }
@@ -372,12 +357,12 @@ class LinTbAssuntos extends DataClass implements Insertable<LinTbAssuntos> {
           {int? dataModificacao,
           int? id,
           String? assunto,
-          String? hierarquia}) =>
+          Value<String?> hierarquia = const Value.absent()}) =>
       LinTbAssuntos(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         id: id ?? this.id,
         assunto: assunto ?? this.assunto,
-        hierarquia: hierarquia ?? this.hierarquia,
+        hierarquia: hierarquia.present ? hierarquia.value : this.hierarquia,
       );
   @override
   String toString() {
@@ -424,7 +409,7 @@ class TbAssuntosCompanion extends UpdateCompanion<LinTbAssuntos> {
     Expression<int>? dataModificacao,
     Expression<int>? id,
     Expression<String>? assunto,
-    Expression<String?>? hierarquia,
+    Expression<String>? hierarquia,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
@@ -460,7 +445,7 @@ class TbAssuntosCompanion extends UpdateCompanion<LinTbAssuntos> {
       map['assunto'] = Variable<String>(assunto.value);
     }
     if (hierarquia.present) {
-      map['hierarquia'] = Variable<String?>(hierarquia.value);
+      map['hierarquia'] = Variable<String>(hierarquia.value);
     }
     return map;
   }
@@ -486,24 +471,24 @@ class $TbAssuntosTable extends TbAssuntos
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _assuntoMeta = const VerificationMeta('assunto');
   @override
-  late final GeneratedColumn<String?> assunto = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> assunto = GeneratedColumn<String>(
       'assunto', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   final VerificationMeta _hierarquiaMeta = const VerificationMeta('hierarquia');
   @override
-  late final GeneratedColumn<String?> hierarquia = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> hierarquia = GeneratedColumn<String>(
       'hierarquia', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, assunto, hierarquia];
@@ -546,8 +531,17 @@ class $TbAssuntosTable extends TbAssuntos
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbAssuntos map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbAssuntos.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbAssuntos(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      assunto: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}assunto'])!,
+      hierarquia: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}hierarquia']),
+    );
   }
 
   @override
@@ -562,22 +556,10 @@ class LinTbQuestaoAssunto extends DataClass
   final int dataModificacao;
   final int idQuestao;
   final int idAssunto;
-  LinTbQuestaoAssunto(
+  const LinTbQuestaoAssunto(
       {required this.dataModificacao,
       required this.idQuestao,
       required this.idAssunto});
-  factory LinTbQuestaoAssunto.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbQuestaoAssunto(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      idQuestao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_questao'])!,
-      idAssunto: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_assunto'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -716,19 +698,19 @@ class $TbQuestaoAssuntoTable extends TbQuestaoAssunto
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idQuestaoMeta = const VerificationMeta('idQuestao');
   @override
-  late final GeneratedColumn<int?> idQuestao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idQuestao = GeneratedColumn<int>(
       'id_questao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idAssuntoMeta = const VerificationMeta('idAssunto');
   @override
-  late final GeneratedColumn<int?> idAssunto = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idAssunto = GeneratedColumn<int>(
       'id_assunto', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [dataModificacao, idQuestao, idAssunto];
   @override
@@ -768,8 +750,15 @@ class $TbQuestaoAssuntoTable extends TbQuestaoAssunto
   Set<GeneratedColumn> get $primaryKey => {idQuestao, idAssunto};
   @override
   LinTbQuestaoAssunto map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbQuestaoAssunto.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbQuestaoAssunto(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      idQuestao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_questao'])!,
+      idAssunto: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_assunto'])!,
+    );
   }
 
   @override
@@ -784,20 +773,8 @@ class LinTbTiposAlternativa extends DataClass
   final int dataModificacao;
   final int id;
   final String tipo;
-  LinTbTiposAlternativa(
+  const LinTbTiposAlternativa(
       {required this.dataModificacao, required this.id, required this.tipo});
-  factory LinTbTiposAlternativa.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbTiposAlternativa(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      tipo: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}tipo'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -934,19 +911,19 @@ class $TbTiposAlternativaTable extends TbTiposAlternativa
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _tipoMeta = const VerificationMeta('tipo');
   @override
-  late final GeneratedColumn<String?> tipo = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
       'tipo', aliasedName, false,
-      type: const StringType(),
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'UNIQUE NOT NULL');
   @override
@@ -985,8 +962,15 @@ class $TbTiposAlternativaTable extends TbTiposAlternativa
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbTiposAlternativa map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbTiposAlternativa.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbTiposAlternativa(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      tipo: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}tipo'])!,
+    );
   }
 
   @override
@@ -1003,28 +987,12 @@ class LinTbAlternativas extends DataClass
   final int sequencial;
   final int idTipo;
   final String conteudo;
-  LinTbAlternativas(
+  const LinTbAlternativas(
       {required this.dataModificacao,
       required this.idQuestao,
       required this.sequencial,
       required this.idTipo,
       required this.conteudo});
-  factory LinTbAlternativas.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbAlternativas(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      idQuestao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_questao'])!,
-      sequencial: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sequencial'])!,
-      idTipo: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_tipo'])!,
-      conteudo: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}conteudo'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1206,29 +1174,29 @@ class $TbAlternativasTable extends TbAlternativas
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idQuestaoMeta = const VerificationMeta('idQuestao');
   @override
-  late final GeneratedColumn<int?> idQuestao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idQuestao = GeneratedColumn<int>(
       'id_questao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _sequencialMeta = const VerificationMeta('sequencial');
   @override
-  late final GeneratedColumn<int?> sequencial = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> sequencial = GeneratedColumn<int>(
       'sequencial', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idTipoMeta = const VerificationMeta('idTipo');
   @override
-  late final GeneratedColumn<int?> idTipo = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idTipo = GeneratedColumn<int>(
       'id_tipo', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _conteudoMeta = const VerificationMeta('conteudo');
   @override
-  late final GeneratedColumn<String?> conteudo = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> conteudo = GeneratedColumn<String>(
       'conteudo', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, idQuestao, sequencial, idTipo, conteudo];
@@ -1282,8 +1250,19 @@ class $TbAlternativasTable extends TbAlternativas
   Set<GeneratedColumn> get $primaryKey => {idQuestao, sequencial};
   @override
   LinTbAlternativas map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbAlternativas.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbAlternativas(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      idQuestao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_questao'])!,
+      sequencial: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}sequencial'])!,
+      idTipo: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_tipo'])!,
+      conteudo: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}conteudo'])!,
+    );
   }
 
   @override
@@ -1301,31 +1280,13 @@ class LinTbQuestoesCaderno extends DataClass
   final int nivel;
   final int indice;
   final int idQuestao;
-  LinTbQuestoesCaderno(
+  const LinTbQuestoesCaderno(
       {required this.dataModificacao,
       required this.id,
       required this.ano,
       required this.nivel,
       required this.indice,
       required this.idQuestao});
-  factory LinTbQuestoesCaderno.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbQuestoesCaderno(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      ano: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}ano'])!,
-      nivel: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}nivel'])!,
-      indice: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}indice'])!,
-      idQuestao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_questao'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1527,34 +1488,34 @@ class $TbQuestoesCadernoTable extends TbQuestoesCaderno
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<String?> id = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   final VerificationMeta _anoMeta = const VerificationMeta('ano');
   @override
-  late final GeneratedColumn<int?> ano = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> ano = GeneratedColumn<int>(
       'ano', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _nivelMeta = const VerificationMeta('nivel');
   @override
-  late final GeneratedColumn<int?> nivel = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> nivel = GeneratedColumn<int>(
       'nivel', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _indiceMeta = const VerificationMeta('indice');
   @override
-  late final GeneratedColumn<int?> indice = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> indice = GeneratedColumn<int>(
       'indice', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idQuestaoMeta = const VerificationMeta('idQuestao');
   @override
-  late final GeneratedColumn<int?> idQuestao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idQuestao = GeneratedColumn<int>(
       'id_questao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, ano, nivel, indice, idQuestao];
@@ -1612,8 +1573,21 @@ class $TbQuestoesCadernoTable extends TbQuestoesCaderno
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbQuestoesCaderno map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbQuestoesCaderno.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbQuestoesCaderno(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      ano: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}ano'])!,
+      nivel: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}nivel'])!,
+      indice: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}indice'])!,
+      idQuestao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_questao'])!,
+    );
   }
 
   @override
@@ -1631,7 +1605,7 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
   final String? foto;
   final bool softDelete;
   final bool sincronizar;
-  LinTbUsuarios(
+  const LinTbUsuarios(
       {required this.dataModificacao,
       required this.id,
       this.email,
@@ -1639,38 +1613,19 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
       this.foto,
       required this.softDelete,
       required this.sincronizar});
-  factory LinTbUsuarios.fromData(Map<String, dynamic> data, {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbUsuarios(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      email: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}email']),
-      nome: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}nome']),
-      foto: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}foto']),
-      softDelete: const BoolType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}soft_delete'])!,
-      sincronizar: const BoolType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sincronizar'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['data_modificacao'] = Variable<int>(dataModificacao);
     map['id'] = Variable<int>(id);
     if (!nullToAbsent || email != null) {
-      map['email'] = Variable<String?>(email);
+      map['email'] = Variable<String>(email);
     }
     if (!nullToAbsent || nome != null) {
-      map['nome'] = Variable<String?>(nome);
+      map['nome'] = Variable<String>(nome);
     }
     if (!nullToAbsent || foto != null) {
-      map['foto'] = Variable<String?>(foto);
+      map['foto'] = Variable<String>(foto);
     }
     map['soft_delete'] = Variable<bool>(softDelete);
     map['sincronizar'] = Variable<bool>(sincronizar);
@@ -1720,17 +1675,17 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
   LinTbUsuarios copyWith(
           {int? dataModificacao,
           int? id,
-          String? email,
-          String? nome,
-          String? foto,
+          Value<String?> email = const Value.absent(),
+          Value<String?> nome = const Value.absent(),
+          Value<String?> foto = const Value.absent(),
           bool? softDelete,
           bool? sincronizar}) =>
       LinTbUsuarios(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         id: id ?? this.id,
-        email: email ?? this.email,
-        nome: nome ?? this.nome,
-        foto: foto ?? this.foto,
+        email: email.present ? email.value : this.email,
+        nome: nome.present ? nome.value : this.nome,
+        foto: foto.present ? foto.value : this.foto,
         softDelete: softDelete ?? this.softDelete,
         sincronizar: sincronizar ?? this.sincronizar,
       );
@@ -1793,9 +1748,9 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
   static Insertable<LinTbUsuarios> custom({
     Expression<int>? dataModificacao,
     Expression<int>? id,
-    Expression<String?>? email,
-    Expression<String?>? nome,
-    Expression<String?>? foto,
+    Expression<String>? email,
+    Expression<String>? nome,
+    Expression<String>? foto,
     Expression<bool>? softDelete,
     Expression<bool>? sincronizar,
   }) {
@@ -1839,13 +1794,13 @@ class TbUsuariosCompanion extends UpdateCompanion<LinTbUsuarios> {
       map['id'] = Variable<int>(id.value);
     }
     if (email.present) {
-      map['email'] = Variable<String?>(email.value);
+      map['email'] = Variable<String>(email.value);
     }
     if (nome.present) {
-      map['nome'] = Variable<String?>(nome.value);
+      map['nome'] = Variable<String>(nome.value);
     }
     if (foto.present) {
-      map['foto'] = Variable<String?>(foto.value);
+      map['foto'] = Variable<String>(foto.value);
     }
     if (softDelete.present) {
       map['soft_delete'] = Variable<bool>(softDelete.value);
@@ -1880,43 +1835,43 @@ class $TbUsuariosTable extends TbUsuarios
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
-  late final GeneratedColumn<String?> email = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
       'email', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   final VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
-  late final GeneratedColumn<String?> nome = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> nome = GeneratedColumn<String>(
       'nome', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   final VerificationMeta _fotoMeta = const VerificationMeta('foto');
   @override
-  late final GeneratedColumn<String?> foto = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> foto = GeneratedColumn<String>(
       'foto', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   final VerificationMeta _softDeleteMeta = const VerificationMeta('softDelete');
   @override
-  late final GeneratedColumn<bool?> softDelete = GeneratedColumn<bool?>(
+  late final GeneratedColumn<bool> softDelete = GeneratedColumn<bool>(
       'soft_delete', aliasedName, false,
-      type: const BoolType(),
+      type: DriftSqlType.bool,
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (soft_delete IN (0, 1))',
       defaultValue: Constant(false));
   final VerificationMeta _sincronizarMeta =
       const VerificationMeta('sincronizar');
   @override
-  late final GeneratedColumn<bool?> sincronizar = GeneratedColumn<bool?>(
+  late final GeneratedColumn<bool> sincronizar = GeneratedColumn<bool>(
       'sincronizar', aliasedName, false,
-      type: const BoolType(),
+      type: DriftSqlType.bool,
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (sincronizar IN (0, 1))',
       defaultValue: Constant(false));
@@ -1974,8 +1929,23 @@ class $TbUsuariosTable extends TbUsuarios
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbUsuarios map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbUsuarios.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbUsuarios(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      email: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}email']),
+      nome: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}nome']),
+      foto: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}foto']),
+      softDelete: attachedDatabase.options.types
+          .read(DriftSqlType.bool, data['${effectivePrefix}soft_delete'])!,
+      sincronizar: attachedDatabase.options.types
+          .read(DriftSqlType.bool, data['${effectivePrefix}sincronizar'])!,
+    );
   }
 
   @override
@@ -1994,7 +1964,7 @@ class LinTbClubes extends DataClass implements Insertable<LinTbClubes> {
   final bool privado;
   final String codigo;
   final String? capa;
-  LinTbClubes(
+  const LinTbClubes(
       {required this.dataModificacao,
       required this.id,
       required this.nome,
@@ -2003,27 +1973,6 @@ class LinTbClubes extends DataClass implements Insertable<LinTbClubes> {
       required this.privado,
       required this.codigo,
       this.capa});
-  factory LinTbClubes.fromData(Map<String, dynamic> data, {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbClubes(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      nome: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}nome'])!,
-      descricao: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}descricao']),
-      dataCriacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_criacao'])!,
-      privado: const BoolType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}privado'])!,
-      codigo: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}codigo'])!,
-      capa: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}capa']),
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2031,13 +1980,13 @@ class LinTbClubes extends DataClass implements Insertable<LinTbClubes> {
     map['id'] = Variable<int>(id);
     map['nome'] = Variable<String>(nome);
     if (!nullToAbsent || descricao != null) {
-      map['descricao'] = Variable<String?>(descricao);
+      map['descricao'] = Variable<String>(descricao);
     }
     map['data_criacao'] = Variable<int>(dataCriacao);
     map['privado'] = Variable<bool>(privado);
     map['codigo'] = Variable<String>(codigo);
     if (!nullToAbsent || capa != null) {
-      map['capa'] = Variable<String?>(capa);
+      map['capa'] = Variable<String>(capa);
     }
     return map;
   }
@@ -2090,20 +2039,20 @@ class LinTbClubes extends DataClass implements Insertable<LinTbClubes> {
           {int? dataModificacao,
           int? id,
           String? nome,
-          String? descricao,
+          Value<String?> descricao = const Value.absent(),
           int? dataCriacao,
           bool? privado,
           String? codigo,
-          String? capa}) =>
+          Value<String?> capa = const Value.absent()}) =>
       LinTbClubes(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         id: id ?? this.id,
         nome: nome ?? this.nome,
-        descricao: descricao ?? this.descricao,
+        descricao: descricao.present ? descricao.value : this.descricao,
         dataCriacao: dataCriacao ?? this.dataCriacao,
         privado: privado ?? this.privado,
         codigo: codigo ?? this.codigo,
-        capa: capa ?? this.capa,
+        capa: capa.present ? capa.value : this.capa,
       );
   @override
   String toString() {
@@ -2173,11 +2122,11 @@ class TbClubesCompanion extends UpdateCompanion<LinTbClubes> {
     Expression<int>? dataModificacao,
     Expression<int>? id,
     Expression<String>? nome,
-    Expression<String?>? descricao,
+    Expression<String>? descricao,
     Expression<int>? dataCriacao,
     Expression<bool>? privado,
     Expression<String>? codigo,
-    Expression<String?>? capa,
+    Expression<String>? capa,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
@@ -2225,7 +2174,7 @@ class TbClubesCompanion extends UpdateCompanion<LinTbClubes> {
       map['nome'] = Variable<String>(nome.value);
     }
     if (descricao.present) {
-      map['descricao'] = Variable<String?>(descricao.value);
+      map['descricao'] = Variable<String>(descricao.value);
     }
     if (dataCriacao.present) {
       map['data_criacao'] = Variable<int>(dataCriacao.value);
@@ -2237,7 +2186,7 @@ class TbClubesCompanion extends UpdateCompanion<LinTbClubes> {
       map['codigo'] = Variable<String>(codigo.value);
     }
     if (capa.present) {
-      map['capa'] = Variable<String?>(capa.value);
+      map['capa'] = Variable<String>(capa.value);
     }
     return map;
   }
@@ -2267,52 +2216,52 @@ class $TbClubesTable extends TbClubes
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
-  late final GeneratedColumn<String?> nome = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> nome = GeneratedColumn<String>(
       'nome', aliasedName, false,
-      type: const StringType(),
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'UNIQUE NOT NULL');
   final VerificationMeta _descricaoMeta = const VerificationMeta('descricao');
   @override
-  late final GeneratedColumn<String?> descricao = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> descricao = GeneratedColumn<String>(
       'descricao', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   final VerificationMeta _dataCriacaoMeta =
       const VerificationMeta('dataCriacao');
   @override
-  late final GeneratedColumn<int?> dataCriacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataCriacao = GeneratedColumn<int>(
       'data_criacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _privadoMeta = const VerificationMeta('privado');
   @override
-  late final GeneratedColumn<bool?> privado = GeneratedColumn<bool?>(
+  late final GeneratedColumn<bool> privado = GeneratedColumn<bool>(
       'privado', aliasedName, false,
-      type: const BoolType(),
+      type: DriftSqlType.bool,
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (privado IN (0, 1))',
       defaultValue: Constant(false));
   final VerificationMeta _codigoMeta = const VerificationMeta('codigo');
   @override
-  late final GeneratedColumn<String?> codigo = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> codigo = GeneratedColumn<String>(
       'codigo', aliasedName, false,
-      type: const StringType(),
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'UNIQUE NOT NULL');
   final VerificationMeta _capaMeta = const VerificationMeta('capa');
   @override
-  late final GeneratedColumn<String?> capa = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> capa = GeneratedColumn<String>(
       'capa', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         dataModificacao,
@@ -2383,8 +2332,25 @@ class $TbClubesTable extends TbClubes
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbClubes map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbClubes.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbClubes(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      nome: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}nome'])!,
+      descricao: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}descricao']),
+      dataCriacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_criacao'])!,
+      privado: attachedDatabase.options.types
+          .read(DriftSqlType.bool, data['${effectivePrefix}privado'])!,
+      codigo: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}codigo'])!,
+      capa: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}capa']),
+    );
   }
 
   @override
@@ -2399,22 +2365,10 @@ class LinTbTiposPermissao extends DataClass
   final int dataModificacao;
   final int id;
   final String permissao;
-  LinTbTiposPermissao(
+  const LinTbTiposPermissao(
       {required this.dataModificacao,
       required this.id,
       required this.permissao});
-  factory LinTbTiposPermissao.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbTiposPermissao(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      permissao: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}permissao'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2550,19 +2504,19 @@ class $TbTiposPermissaoTable extends TbTiposPermissao
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _permissaoMeta = const VerificationMeta('permissao');
   @override
-  late final GeneratedColumn<String?> permissao = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> permissao = GeneratedColumn<String>(
       'permissao', aliasedName, false,
-      type: const StringType(),
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'UNIQUE NOT NULL');
   @override
@@ -2601,8 +2555,15 @@ class $TbTiposPermissaoTable extends TbTiposPermissao
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbTiposPermissao map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbTiposPermissao.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbTiposPermissao(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      permissao: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}permissao'])!,
+    );
   }
 
   @override
@@ -2619,28 +2580,12 @@ class LinTbClubeUsuario extends DataClass
   final int idUsuario;
   final int idPermissao;
   final int dataAdmissao;
-  LinTbClubeUsuario(
+  const LinTbClubeUsuario(
       {required this.dataModificacao,
       required this.idClube,
       required this.idUsuario,
       required this.idPermissao,
       required this.dataAdmissao});
-  factory LinTbClubeUsuario.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbClubeUsuario(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      idClube: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_clube'])!,
-      idUsuario: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_usuario'])!,
-      idPermissao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_permissao'])!,
-      dataAdmissao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_admissao'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2822,31 +2767,31 @@ class $TbClubeUsuarioTable extends TbClubeUsuario
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idClubeMeta = const VerificationMeta('idClube');
   @override
-  late final GeneratedColumn<int?> idClube = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idClube = GeneratedColumn<int>(
       'id_clube', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idUsuarioMeta = const VerificationMeta('idUsuario');
   @override
-  late final GeneratedColumn<int?> idUsuario = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idUsuario = GeneratedColumn<int>(
       'id_usuario', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idPermissaoMeta =
       const VerificationMeta('idPermissao');
   @override
-  late final GeneratedColumn<int?> idPermissao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idPermissao = GeneratedColumn<int>(
       'id_permissao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _dataAdmissaoMeta =
       const VerificationMeta('dataAdmissao');
   @override
-  late final GeneratedColumn<int?> dataAdmissao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataAdmissao = GeneratedColumn<int>(
       'data_admissao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, idClube, idUsuario, idPermissao, dataAdmissao];
@@ -2902,8 +2847,19 @@ class $TbClubeUsuarioTable extends TbClubeUsuario
   Set<GeneratedColumn> get $primaryKey => {idClube, idUsuario};
   @override
   LinTbClubeUsuario map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbClubeUsuario.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbClubeUsuario(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      idClube: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_clube'])!,
+      idUsuario: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_usuario'])!,
+      idPermissao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_permissao'])!,
+      dataAdmissao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_admissao'])!,
+    );
   }
 
   @override
@@ -2923,7 +2879,7 @@ class LinTbAtividades extends DataClass implements Insertable<LinTbAtividades> {
   final int dataCriacao;
   final int? dataLiberacao;
   final int? dataEncerramento;
-  LinTbAtividades(
+  const LinTbAtividades(
       {required this.dataModificacao,
       required this.id,
       required this.idClube,
@@ -2933,30 +2889,6 @@ class LinTbAtividades extends DataClass implements Insertable<LinTbAtividades> {
       required this.dataCriacao,
       this.dataLiberacao,
       this.dataEncerramento});
-  factory LinTbAtividades.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbAtividades(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      idClube: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_clube'])!,
-      titulo: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}titulo'])!,
-      descricao: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}descricao']),
-      idAutor: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_autor'])!,
-      dataCriacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_criacao'])!,
-      dataLiberacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_liberacao']),
-      dataEncerramento: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_encerramento']),
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2965,15 +2897,15 @@ class LinTbAtividades extends DataClass implements Insertable<LinTbAtividades> {
     map['id_clube'] = Variable<int>(idClube);
     map['titulo'] = Variable<String>(titulo);
     if (!nullToAbsent || descricao != null) {
-      map['descricao'] = Variable<String?>(descricao);
+      map['descricao'] = Variable<String>(descricao);
     }
     map['id_autor'] = Variable<int>(idAutor);
     map['data_criacao'] = Variable<int>(dataCriacao);
     if (!nullToAbsent || dataLiberacao != null) {
-      map['data_liberacao'] = Variable<int?>(dataLiberacao);
+      map['data_liberacao'] = Variable<int>(dataLiberacao);
     }
     if (!nullToAbsent || dataEncerramento != null) {
-      map['data_encerramento'] = Variable<int?>(dataEncerramento);
+      map['data_encerramento'] = Variable<int>(dataEncerramento);
     }
     return map;
   }
@@ -3034,21 +2966,24 @@ class LinTbAtividades extends DataClass implements Insertable<LinTbAtividades> {
           int? id,
           int? idClube,
           String? titulo,
-          String? descricao,
+          Value<String?> descricao = const Value.absent(),
           int? idAutor,
           int? dataCriacao,
-          int? dataLiberacao,
-          int? dataEncerramento}) =>
+          Value<int?> dataLiberacao = const Value.absent(),
+          Value<int?> dataEncerramento = const Value.absent()}) =>
       LinTbAtividades(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         id: id ?? this.id,
         idClube: idClube ?? this.idClube,
         titulo: titulo ?? this.titulo,
-        descricao: descricao ?? this.descricao,
+        descricao: descricao.present ? descricao.value : this.descricao,
         idAutor: idAutor ?? this.idAutor,
         dataCriacao: dataCriacao ?? this.dataCriacao,
-        dataLiberacao: dataLiberacao ?? this.dataLiberacao,
-        dataEncerramento: dataEncerramento ?? this.dataEncerramento,
+        dataLiberacao:
+            dataLiberacao.present ? dataLiberacao.value : this.dataLiberacao,
+        dataEncerramento: dataEncerramento.present
+            ? dataEncerramento.value
+            : this.dataEncerramento,
       );
   @override
   String toString() {
@@ -3125,11 +3060,11 @@ class TbAtividadesCompanion extends UpdateCompanion<LinTbAtividades> {
     Expression<int>? id,
     Expression<int>? idClube,
     Expression<String>? titulo,
-    Expression<String?>? descricao,
+    Expression<String>? descricao,
     Expression<int>? idAutor,
     Expression<int>? dataCriacao,
-    Expression<int?>? dataLiberacao,
-    Expression<int?>? dataEncerramento,
+    Expression<int>? dataLiberacao,
+    Expression<int>? dataEncerramento,
   }) {
     return RawValuesInsertable({
       if (dataModificacao != null) 'data_modificacao': dataModificacao,
@@ -3183,7 +3118,7 @@ class TbAtividadesCompanion extends UpdateCompanion<LinTbAtividades> {
       map['titulo'] = Variable<String>(titulo.value);
     }
     if (descricao.present) {
-      map['descricao'] = Variable<String?>(descricao.value);
+      map['descricao'] = Variable<String>(descricao.value);
     }
     if (idAutor.present) {
       map['id_autor'] = Variable<int>(idAutor.value);
@@ -3192,10 +3127,10 @@ class TbAtividadesCompanion extends UpdateCompanion<LinTbAtividades> {
       map['data_criacao'] = Variable<int>(dataCriacao.value);
     }
     if (dataLiberacao.present) {
-      map['data_liberacao'] = Variable<int?>(dataLiberacao.value);
+      map['data_liberacao'] = Variable<int>(dataLiberacao.value);
     }
     if (dataEncerramento.present) {
-      map['data_encerramento'] = Variable<int?>(dataEncerramento.value);
+      map['data_encerramento'] = Variable<int>(dataEncerramento.value);
     }
     return map;
   }
@@ -3226,52 +3161,52 @@ class $TbAtividadesTable extends TbAtividades
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _idClubeMeta = const VerificationMeta('idClube');
   @override
-  late final GeneratedColumn<int?> idClube = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idClube = GeneratedColumn<int>(
       'id_clube', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _tituloMeta = const VerificationMeta('titulo');
   @override
-  late final GeneratedColumn<String?> titulo = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> titulo = GeneratedColumn<String>(
       'titulo', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   final VerificationMeta _descricaoMeta = const VerificationMeta('descricao');
   @override
-  late final GeneratedColumn<String?> descricao = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> descricao = GeneratedColumn<String>(
       'descricao', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   final VerificationMeta _idAutorMeta = const VerificationMeta('idAutor');
   @override
-  late final GeneratedColumn<int?> idAutor = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idAutor = GeneratedColumn<int>(
       'id_autor', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _dataCriacaoMeta =
       const VerificationMeta('dataCriacao');
   @override
-  late final GeneratedColumn<int?> dataCriacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataCriacao = GeneratedColumn<int>(
       'data_criacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _dataLiberacaoMeta =
       const VerificationMeta('dataLiberacao');
   @override
-  late final GeneratedColumn<int?> dataLiberacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataLiberacao = GeneratedColumn<int>(
       'data_liberacao', aliasedName, true,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _dataEncerramentoMeta =
       const VerificationMeta('dataEncerramento');
   @override
-  late final GeneratedColumn<int?> dataEncerramento = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataEncerramento = GeneratedColumn<int>(
       'data_encerramento', aliasedName, true,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         dataModificacao,
@@ -3353,8 +3288,27 @@ class $TbAtividadesTable extends TbAtividades
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbAtividades map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbAtividades.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbAtividades(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      idClube: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_clube'])!,
+      titulo: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}titulo'])!,
+      descricao: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}descricao']),
+      idAutor: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_autor'])!,
+      dataCriacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_criacao'])!,
+      dataLiberacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_liberacao']),
+      dataEncerramento: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_encerramento']),
+    );
   }
 
   @override
@@ -3370,25 +3324,11 @@ class LinTbQuestaoAtividade extends DataClass
   final int id;
   final String idQuestaoCaderno;
   final int idAtividade;
-  LinTbQuestaoAtividade(
+  const LinTbQuestaoAtividade(
       {required this.dataModificacao,
       required this.id,
       required this.idQuestaoCaderno,
       required this.idAtividade});
-  factory LinTbQuestaoAtividade.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbQuestaoAtividade(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      idQuestaoCaderno: const StringType().mapFromDatabaseResponse(
-          data['${effectivePrefix}id_questao_caderno'])!,
-      idAtividade: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_atividade'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3550,26 +3490,26 @@ class $TbQuestaoAtividadeTable extends TbQuestaoAtividade
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _idQuestaoCadernoMeta =
       const VerificationMeta('idQuestaoCaderno');
   @override
-  late final GeneratedColumn<String?> idQuestaoCaderno =
-      GeneratedColumn<String?>('id_questao_caderno', aliasedName, false,
-          type: const StringType(), requiredDuringInsert: true);
+  late final GeneratedColumn<String> idQuestaoCaderno = GeneratedColumn<String>(
+      'id_questao_caderno', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   final VerificationMeta _idAtividadeMeta =
       const VerificationMeta('idAtividade');
   @override
-  late final GeneratedColumn<int?> idAtividade = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idAtividade = GeneratedColumn<int>(
       'id_atividade', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, idQuestaoCaderno, idAtividade];
@@ -3617,8 +3557,17 @@ class $TbQuestaoAtividadeTable extends TbQuestaoAtividade
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   LinTbQuestaoAtividade map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbQuestaoAtividade.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbQuestaoAtividade(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      idQuestaoCaderno: attachedDatabase.options.types.read(
+          DriftSqlType.string, data['${effectivePrefix}id_questao_caderno'])!,
+      idAtividade: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_atividade'])!,
+    );
   }
 
   @override
@@ -3635,28 +3584,12 @@ class LinTbRespostaQuestaoAtividade extends DataClass
   final int idUsuario;
   final int? resposta;
   final bool sincronizar;
-  LinTbRespostaQuestaoAtividade(
+  const LinTbRespostaQuestaoAtividade(
       {required this.dataModificacao,
       required this.idQuestaoAtividade,
       required this.idUsuario,
       this.resposta,
       required this.sincronizar});
-  factory LinTbRespostaQuestaoAtividade.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbRespostaQuestaoAtividade(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      idQuestaoAtividade: const IntType().mapFromDatabaseResponse(
-          data['${effectivePrefix}id_questao_x_atividade'])!,
-      idUsuario: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_usuario'])!,
-      resposta: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}resposta']),
-      sincronizar: const BoolType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sincronizar'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3664,7 +3597,7 @@ class LinTbRespostaQuestaoAtividade extends DataClass
     map['id_questao_x_atividade'] = Variable<int>(idQuestaoAtividade);
     map['id_usuario'] = Variable<int>(idUsuario);
     if (!nullToAbsent || resposta != null) {
-      map['resposta'] = Variable<int?>(resposta);
+      map['resposta'] = Variable<int>(resposta);
     }
     map['sincronizar'] = Variable<bool>(sincronizar);
     return map;
@@ -3709,13 +3642,13 @@ class LinTbRespostaQuestaoAtividade extends DataClass
           {int? dataModificacao,
           int? idQuestaoAtividade,
           int? idUsuario,
-          int? resposta,
+          Value<int?> resposta = const Value.absent(),
           bool? sincronizar}) =>
       LinTbRespostaQuestaoAtividade(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         idQuestaoAtividade: idQuestaoAtividade ?? this.idQuestaoAtividade,
         idUsuario: idUsuario ?? this.idUsuario,
-        resposta: resposta ?? this.resposta,
+        resposta: resposta.present ? resposta.value : this.resposta,
         sincronizar: sincronizar ?? this.sincronizar,
       );
   @override
@@ -3771,7 +3704,7 @@ class TbRespostaQuestaoAtividadeCompanion
     Expression<int>? dataModificacao,
     Expression<int>? idQuestaoAtividade,
     Expression<int>? idUsuario,
-    Expression<int?>? resposta,
+    Expression<int>? resposta,
     Expression<bool>? sincronizar,
   }) {
     return RawValuesInsertable({
@@ -3812,7 +3745,7 @@ class TbRespostaQuestaoAtividadeCompanion
       map['id_usuario'] = Variable<int>(idUsuario.value);
     }
     if (resposta.present) {
-      map['resposta'] = Variable<int?>(resposta.value);
+      map['resposta'] = Variable<int>(resposta.value);
     }
     if (sincronizar.present) {
       map['sincronizar'] = Variable<bool>(sincronizar.value);
@@ -3844,31 +3777,31 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idQuestaoAtividadeMeta =
       const VerificationMeta('idQuestaoAtividade');
   @override
-  late final GeneratedColumn<int?> idQuestaoAtividade = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idQuestaoAtividade = GeneratedColumn<int>(
       'id_questao_x_atividade', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idUsuarioMeta = const VerificationMeta('idUsuario');
   @override
-  late final GeneratedColumn<int?> idUsuario = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idUsuario = GeneratedColumn<int>(
       'id_usuario', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _respostaMeta = const VerificationMeta('resposta');
   @override
-  late final GeneratedColumn<int?> resposta = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> resposta = GeneratedColumn<int>(
       'resposta', aliasedName, true,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _sincronizarMeta =
       const VerificationMeta('sincronizar');
   @override
-  late final GeneratedColumn<bool?> sincronizar = GeneratedColumn<bool?>(
+  late final GeneratedColumn<bool> sincronizar = GeneratedColumn<bool>(
       'sincronizar', aliasedName, false,
-      type: const BoolType(),
+      type: DriftSqlType.bool,
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (sincronizar IN (0, 1))',
       defaultValue: Constant(false));
@@ -3925,8 +3858,19 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
   @override
   LinTbRespostaQuestaoAtividade map(Map<String, dynamic> data,
       {String? tablePrefix}) {
-    return LinTbRespostaQuestaoAtividade.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbRespostaQuestaoAtividade(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      idQuestaoAtividade: attachedDatabase.options.types.read(
+          DriftSqlType.int, data['${effectivePrefix}id_questao_x_atividade'])!,
+      idUsuario: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_usuario'])!,
+      resposta: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}resposta']),
+      sincronizar: attachedDatabase.options.types
+          .read(DriftSqlType.bool, data['${effectivePrefix}sincronizar'])!,
+    );
   }
 
   @override
@@ -3943,38 +3887,22 @@ class LinTbRespostaQuestao extends DataClass
   final int? idUsuario;
   final int? resposta;
   final bool sincronizar;
-  LinTbRespostaQuestao(
+  const LinTbRespostaQuestao(
       {required this.dataModificacao,
       required this.idQuestao,
       this.idUsuario,
       this.resposta,
       required this.sincronizar});
-  factory LinTbRespostaQuestao.fromData(Map<String, dynamic> data,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return LinTbRespostaQuestao(
-      dataModificacao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}data_modificacao'])!,
-      idQuestao: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_questao'])!,
-      idUsuario: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id_usuario']),
-      resposta: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}resposta']),
-      sincronizar: const BoolType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sincronizar'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['data_modificacao'] = Variable<int>(dataModificacao);
     map['id_questao'] = Variable<int>(idQuestao);
     if (!nullToAbsent || idUsuario != null) {
-      map['id_usuario'] = Variable<int?>(idUsuario);
+      map['id_usuario'] = Variable<int>(idUsuario);
     }
     if (!nullToAbsent || resposta != null) {
-      map['resposta'] = Variable<int?>(resposta);
+      map['resposta'] = Variable<int>(resposta);
     }
     map['sincronizar'] = Variable<bool>(sincronizar);
     return map;
@@ -4020,14 +3948,14 @@ class LinTbRespostaQuestao extends DataClass
   LinTbRespostaQuestao copyWith(
           {int? dataModificacao,
           int? idQuestao,
-          int? idUsuario,
-          int? resposta,
+          Value<int?> idUsuario = const Value.absent(),
+          Value<int?> resposta = const Value.absent(),
           bool? sincronizar}) =>
       LinTbRespostaQuestao(
         dataModificacao: dataModificacao ?? this.dataModificacao,
         idQuestao: idQuestao ?? this.idQuestao,
-        idUsuario: idUsuario ?? this.idUsuario,
-        resposta: resposta ?? this.resposta,
+        idUsuario: idUsuario.present ? idUsuario.value : this.idUsuario,
+        resposta: resposta.present ? resposta.value : this.resposta,
         sincronizar: sincronizar ?? this.sincronizar,
       );
   @override
@@ -4079,8 +4007,8 @@ class TbRespostaQuestaoCompanion extends UpdateCompanion<LinTbRespostaQuestao> {
   static Insertable<LinTbRespostaQuestao> custom({
     Expression<int>? dataModificacao,
     Expression<int>? idQuestao,
-    Expression<int?>? idUsuario,
-    Expression<int?>? resposta,
+    Expression<int>? idUsuario,
+    Expression<int>? resposta,
     Expression<bool>? sincronizar,
   }) {
     return RawValuesInsertable({
@@ -4117,10 +4045,10 @@ class TbRespostaQuestaoCompanion extends UpdateCompanion<LinTbRespostaQuestao> {
       map['id_questao'] = Variable<int>(idQuestao.value);
     }
     if (idUsuario.present) {
-      map['id_usuario'] = Variable<int?>(idUsuario.value);
+      map['id_usuario'] = Variable<int>(idUsuario.value);
     }
     if (resposta.present) {
-      map['resposta'] = Variable<int?>(resposta.value);
+      map['resposta'] = Variable<int>(resposta.value);
     }
     if (sincronizar.present) {
       map['sincronizar'] = Variable<bool>(sincronizar.value);
@@ -4150,30 +4078,30 @@ class $TbRespostaQuestaoTable extends TbRespostaQuestao
   final VerificationMeta _dataModificacaoMeta =
       const VerificationMeta('dataModificacao');
   @override
-  late final GeneratedColumn<int?> dataModificacao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> dataModificacao = GeneratedColumn<int>(
       'data_modificacao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   final VerificationMeta _idQuestaoMeta = const VerificationMeta('idQuestao');
   @override
-  late final GeneratedColumn<int?> idQuestao = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idQuestao = GeneratedColumn<int>(
       'id_questao', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _idUsuarioMeta = const VerificationMeta('idUsuario');
   @override
-  late final GeneratedColumn<int?> idUsuario = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> idUsuario = GeneratedColumn<int>(
       'id_usuario', aliasedName, true,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _respostaMeta = const VerificationMeta('resposta');
   @override
-  late final GeneratedColumn<int?> resposta = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> resposta = GeneratedColumn<int>(
       'resposta', aliasedName, true,
-      type: const IntType(), requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   final VerificationMeta _sincronizarMeta =
       const VerificationMeta('sincronizar');
   @override
-  late final GeneratedColumn<bool?> sincronizar = GeneratedColumn<bool?>(
+  late final GeneratedColumn<bool> sincronizar = GeneratedColumn<bool>(
       'sincronizar', aliasedName, false,
-      type: const BoolType(),
+      type: DriftSqlType.bool,
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (sincronizar IN (0, 1))',
       defaultValue: Constant(false));
@@ -4223,8 +4151,19 @@ class $TbRespostaQuestaoTable extends TbRespostaQuestao
   Set<GeneratedColumn> get $primaryKey => {idQuestao};
   @override
   LinTbRespostaQuestao map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return LinTbRespostaQuestao.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LinTbRespostaQuestao(
+      dataModificacao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}data_modificacao'])!,
+      idQuestao: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_questao'])!,
+      idUsuario: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id_usuario']),
+      resposta: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}resposta']),
+      sincronizar: attachedDatabase.options.types
+          .read(DriftSqlType.bool, data['${effectivePrefix}sincronizar'])!,
+    );
   }
 
   @override
@@ -4234,7 +4173,7 @@ class $TbRespostaQuestaoTable extends TbRespostaQuestao
 }
 
 abstract class _$DriftDb extends GeneratedDatabase {
-  _$DriftDb(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
+  _$DriftDb(QueryExecutor e) : super(e);
   late final $TbQuestoesTable tbQuestoes = $TbQuestoesTable(this);
   late final $TbAssuntosTable tbAssuntos = $TbAssuntosTable(this);
   late final $TbQuestaoAssuntoTable tbQuestaoAssunto =
@@ -4257,7 +4196,8 @@ abstract class _$DriftDb extends GeneratedDatabase {
   late final $TbRespostaQuestaoTable tbRespostaQuestao =
       $TbRespostaQuestaoTable(this);
   @override
-  Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
+  Iterable<TableInfo<Table, dynamic>> get allTables =>
+      allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
         tbQuestoes,

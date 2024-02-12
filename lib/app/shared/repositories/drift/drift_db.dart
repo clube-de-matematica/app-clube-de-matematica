@@ -138,7 +138,7 @@ class DriftDb extends _$DriftDb {
   /// Retorna a data da última modificação de [tabela].
   Future<DateTime?> ultimaModificacao(Tabelas tabela) async {
     final TableInfo _tabela;
-    final GeneratedColumn<int?> coluna;
+    final GeneratedColumn<int> coluna;
     switch (tabela) {
       case Tabelas.questoes:
         _tabela = tbQuestoes;
@@ -495,7 +495,7 @@ WHERE
     );
 
     final retorno = query.map((linha) {
-      return LinTbAssuntos.fromData(linha.data);
+      return tbAssuntos.map(linha.data);
     });
     return retorno;
   }
@@ -539,7 +539,7 @@ WHERE
     );
 
     final questoes = join.map((linha) async {
-      final id = linha.read(tbQuestoes.id);
+      final id = linha.read(tbQuestoes.id)!;
 
       final queryIdsAssuntos = selectOnly(tbQuestaoAssunto)
         ..addColumns([tbQuestaoAssunto.idAssunto])
@@ -554,7 +554,7 @@ WHERE
 
       return LinViewQuestoes(
         idAlfanumerico: linha.read(tbQuestoesCaderno.id)!,
-        id: linha.read(tbQuestoes.id)!,
+        id: id,
         ano: linha.read(tbQuestoesCaderno.ano)!,
         nivel: linha.read(tbQuestoesCaderno.nivel)!,
         indice: linha.read(tbQuestoesCaderno.indice)!,
