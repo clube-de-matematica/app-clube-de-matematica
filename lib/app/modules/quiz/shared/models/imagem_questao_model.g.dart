@@ -6,7 +6,7 @@ part of 'imagem_questao_model.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ImagemQuestao on _ImagemQuestaoBase, Store {
   Computed<ImageProvider<Object>?>? _$providerComputed;
@@ -17,7 +17,8 @@ mixin _$ImagemQuestao on _ImagemQuestaoBase, Store {
               name: '_ImagemQuestaoBase.provider'))
       .value;
 
-  final _$_providerAtom = Atom(name: '_ImagemQuestaoBase._provider');
+  late final _$_providerAtom =
+      Atom(name: '_ImagemQuestaoBase._provider', context: context);
 
   @override
   ImageProvider<Object>? get _provider {
@@ -32,8 +33,8 @@ mixin _$ImagemQuestao on _ImagemQuestaoBase, Store {
     });
   }
 
-  final _$_ImagemQuestaoBaseActionController =
-      ActionController(name: '_ImagemQuestaoBase');
+  late final _$_ImagemQuestaoBaseActionController =
+      ActionController(name: '_ImagemQuestaoBase', context: context);
 
   @override
   void _setProvider(ImageProvider<Object>? valor) {

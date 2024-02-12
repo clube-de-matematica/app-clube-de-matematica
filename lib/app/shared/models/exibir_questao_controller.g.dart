@@ -6,7 +6,7 @@ part of 'exibir_questao_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
   Computed<bool>? _$podeAvancarComputed;
@@ -24,7 +24,8 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
               name: '_ExibirQuestaoControllerBase.podeVoltar'))
           .value;
 
-  final _$_indiceAtom = Atom(name: '_ExibirQuestaoControllerBase._indice');
+  late final _$_indiceAtom =
+      Atom(name: '_ExibirQuestaoControllerBase._indice', context: context);
 
   int get indice {
     _$_indiceAtom.reportRead();
@@ -41,8 +42,8 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
     });
   }
 
-  final _$numQuestoesAtom =
-      Atom(name: '_ExibirQuestaoControllerBase.numQuestoes');
+  late final _$numQuestoesAtom =
+      Atom(name: '_ExibirQuestaoControllerBase.numQuestoes', context: context);
 
   @override
   int get numQuestoes {
@@ -57,8 +58,8 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
     });
   }
 
-  final _$_questaoAtualAtom =
-      Atom(name: '_ExibirQuestaoControllerBase._questaoAtual');
+  late final _$_questaoAtualAtom = Atom(
+      name: '_ExibirQuestaoControllerBase._questaoAtual', context: context);
 
   ObservableFuture<Questao?> get questaoAtual {
     _$_questaoAtualAtom.reportRead();
@@ -75,10 +76,11 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
     });
   }
 
-  final _$_ExibirQuestaoControllerBaseActionController =
-      ActionController(name: '_ExibirQuestaoControllerBase');
+  late final _$_ExibirQuestaoControllerBaseActionController =
+      ActionController(name: '_ExibirQuestaoControllerBase', context: context);
 
   @override
+  @protected
   void definirIndice(int valor, {bool forcar = false}) {
     final _$actionInfo = _$_ExibirQuestaoControllerBaseActionController
         .startAction(name: '_ExibirQuestaoControllerBase.definirIndice');

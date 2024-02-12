@@ -6,7 +6,7 @@ part of 'clube.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$Clube on _ClubeBase, Store {
   Computed<Iterable<UsuarioClube>>? _$administradoresComputed;
@@ -24,7 +24,7 @@ mixin _$Clube on _ClubeBase, Store {
               name: '_ClubeBase.membros'))
       .value;
 
-  final _$nomeAtom = Atom(name: '_ClubeBase.nome');
+  late final _$nomeAtom = Atom(name: '_ClubeBase.nome', context: context);
 
   @override
   String get nome {
@@ -39,7 +39,8 @@ mixin _$Clube on _ClubeBase, Store {
     });
   }
 
-  final _$descricaoAtom = Atom(name: '_ClubeBase.descricao');
+  late final _$descricaoAtom =
+      Atom(name: '_ClubeBase.descricao', context: context);
 
   @override
   String? get descricao {
@@ -54,7 +55,7 @@ mixin _$Clube on _ClubeBase, Store {
     });
   }
 
-  final _$capaAtom = Atom(name: '_ClubeBase.capa');
+  late final _$capaAtom = Atom(name: '_ClubeBase.capa', context: context);
 
   @override
   Color get capa {
@@ -69,7 +70,7 @@ mixin _$Clube on _ClubeBase, Store {
     });
   }
 
-  final _$codigoAtom = Atom(name: '_ClubeBase.codigo');
+  late final _$codigoAtom = Atom(name: '_ClubeBase.codigo', context: context);
 
   @override
   String get codigo {

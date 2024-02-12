@@ -6,34 +6,35 @@ part of 'clubes_repository.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ClubesRepository on _ClubesRepositoryBase, Store {
-  final _$criarClubeAsyncAction =
-      AsyncAction('_ClubesRepositoryBase.criarClube');
+  late final _$criarClubeAsyncAction =
+      AsyncAction('_ClubesRepositoryBase.criarClube', context: context);
 
   @override
   Future<Clube?> criarClube(RawClube dados) {
     return _$criarClubeAsyncAction.run(() => super.criarClube(dados));
   }
 
-  final _$sairClubeAsyncAction = AsyncAction('_ClubesRepositoryBase.sairClube');
+  late final _$sairClubeAsyncAction =
+      AsyncAction('_ClubesRepositoryBase.sairClube', context: context);
 
   @override
   Future<bool> sairClube(Clube clube) {
     return _$sairClubeAsyncAction.run(() => super.sairClube(clube));
   }
 
-  final _$entrarClubeAsyncAction =
-      AsyncAction('_ClubesRepositoryBase.entrarClube');
+  late final _$entrarClubeAsyncAction =
+      AsyncAction('_ClubesRepositoryBase.entrarClube', context: context);
 
   @override
   Future<Clube?> entrarClube(String codigo) {
     return _$entrarClubeAsyncAction.run(() => super.entrarClube(codigo));
   }
 
-  final _$atualizarClubeAsyncAction =
-      AsyncAction('_ClubesRepositoryBase.atualizarClube');
+  late final _$atualizarClubeAsyncAction =
+      AsyncAction('_ClubesRepositoryBase.atualizarClube', context: context);
 
   @override
   Future<bool> atualizarClube(

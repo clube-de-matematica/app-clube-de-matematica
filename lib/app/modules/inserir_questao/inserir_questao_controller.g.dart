@@ -6,10 +6,11 @@ part of 'inserir_questao_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$InserirQuestaoController on _InserirQuestaoControllerBase, Store {
-  final _$nivelAtom = Atom(name: '_InserirQuestaoControllerBase.nivel');
+  late final _$nivelAtom =
+      Atom(name: '_InserirQuestaoControllerBase.nivel', context: context);
 
   @override
   int? get nivel {
@@ -24,7 +25,8 @@ mixin _$InserirQuestaoController on _InserirQuestaoControllerBase, Store {
     });
   }
 
-  final _$gabaritoAtom = Atom(name: '_InserirQuestaoControllerBase.gabarito');
+  late final _$gabaritoAtom =
+      Atom(name: '_InserirQuestaoControllerBase.gabarito', context: context);
 
   @override
   int? get gabarito {
@@ -39,8 +41,8 @@ mixin _$InserirQuestaoController on _InserirQuestaoControllerBase, Store {
     });
   }
 
-  final _$referenciaAtom =
-      Atom(name: '_InserirQuestaoControllerBase.referencia');
+  late final _$referenciaAtom =
+      Atom(name: '_InserirQuestaoControllerBase.referencia', context: context);
 
   @override
   bool get referencia {
@@ -55,8 +57,8 @@ mixin _$InserirQuestaoController on _InserirQuestaoControllerBase, Store {
     });
   }
 
-  final _$nivelReferenciaAtom =
-      Atom(name: '_InserirQuestaoControllerBase.nivelReferencia');
+  late final _$nivelReferenciaAtom = Atom(
+      name: '_InserirQuestaoControllerBase.nivelReferencia', context: context);
 
   @override
   int? get nivelReferencia {
@@ -71,8 +73,8 @@ mixin _$InserirQuestaoController on _InserirQuestaoControllerBase, Store {
     });
   }
 
-  final _$_InserirQuestaoControllerBaseActionController =
-      ActionController(name: '_InserirQuestaoControllerBase');
+  late final _$_InserirQuestaoControllerBaseActionController =
+      ActionController(name: '_InserirQuestaoControllerBase', context: context);
 
   @override
   void limpar() {

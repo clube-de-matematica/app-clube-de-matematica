@@ -6,7 +6,7 @@ part of 'userapp.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$UserApp on _UserAppBase, Store {
   Computed<int?>? _$idComputed;
@@ -22,7 +22,7 @@ mixin _$UserApp on _UserAppBase, Store {
           Computed<String?>(() => super.name, name: '_UserAppBase.name'))
       .value;
 
-  final _$_idAtom = Atom(name: '_UserAppBase._id');
+  late final _$_idAtom = Atom(name: '_UserAppBase._id', context: context);
 
   @override
   int? get _id {
@@ -37,7 +37,7 @@ mixin _$UserApp on _UserAppBase, Store {
     });
   }
 
-  final _$_nameAtom = Atom(name: '_UserAppBase._name');
+  late final _$_nameAtom = Atom(name: '_UserAppBase._name', context: context);
 
   @override
   String? get _name {
@@ -52,7 +52,8 @@ mixin _$UserApp on _UserAppBase, Store {
     });
   }
 
-  final _$setAsyncAction = AsyncAction('_UserAppBase.set');
+  late final _$setAsyncAction =
+      AsyncAction('_UserAppBase.set', context: context);
 
   @override
   Future<void> set(int? id, String? name, String? email, String? pathAvatar,
@@ -61,7 +62,8 @@ mixin _$UserApp on _UserAppBase, Store {
         .run(() => super.set(id, name, email, pathAvatar, urlAvatar));
   }
 
-  final _$_UserAppBaseActionController = ActionController(name: '_UserAppBase');
+  late final _$_UserAppBaseActionController =
+      ActionController(name: '_UserAppBase', context: context);
 
   @override
   void _setId(int? id) {

@@ -6,7 +6,7 @@ part of 'usuario_clube.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$UsuarioClube on _UsuarioClubeBase, Store {
   Computed<bool>? _$proprietarioComputed;
@@ -30,7 +30,8 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
           Computed<bool>(() => super.membro, name: '_UsuarioClubeBase.membro'))
       .value;
 
-  final _$emailAtom = Atom(name: '_UsuarioClubeBase.email');
+  late final _$emailAtom =
+      Atom(name: '_UsuarioClubeBase.email', context: context);
 
   @override
   String? get email {
@@ -45,7 +46,8 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
     });
   }
 
-  final _$nomeAtom = Atom(name: '_UsuarioClubeBase.nome');
+  late final _$nomeAtom =
+      Atom(name: '_UsuarioClubeBase.nome', context: context);
 
   @override
   String? get nome {
@@ -60,7 +62,8 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
     });
   }
 
-  final _$fotoAtom = Atom(name: '_UsuarioClubeBase.foto');
+  late final _$fotoAtom =
+      Atom(name: '_UsuarioClubeBase.foto', context: context);
 
   @override
   String? get foto {
@@ -75,7 +78,8 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
     });
   }
 
-  final _$permissaoAtom = Atom(name: '_UsuarioClubeBase.permissao');
+  late final _$permissaoAtom =
+      Atom(name: '_UsuarioClubeBase.permissao', context: context);
 
   @override
   PermissoesClube get permissao {
@@ -90,8 +94,8 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
     });
   }
 
-  final _$_UsuarioClubeBaseActionController =
-      ActionController(name: '_UsuarioClubeBase');
+  late final _$_UsuarioClubeBaseActionController =
+      ActionController(name: '_UsuarioClubeBase', context: context);
 
   @override
   void mesclar(UsuarioClube outro) {

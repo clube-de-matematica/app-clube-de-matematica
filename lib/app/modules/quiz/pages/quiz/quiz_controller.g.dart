@@ -6,7 +6,7 @@ part of 'quiz_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$QuizController on _QuizControllerBase, Store {
   Computed<ObservableFuture<Questao?>>? _$questaoAtualComputed;
@@ -24,7 +24,8 @@ mixin _$QuizController on _QuizControllerBase, Store {
               name: '_QuizControllerBase.alternativaSelecionada'))
       .value;
 
-  final _$_respostaAtom = Atom(name: '_QuizControllerBase._resposta');
+  late final _$_respostaAtom =
+      Atom(name: '_QuizControllerBase._resposta', context: context);
 
   RespostaQuestao? get resposta {
     _$_respostaAtom.reportRead();
@@ -41,8 +42,8 @@ mixin _$QuizController on _QuizControllerBase, Store {
     });
   }
 
-  final _$_QuizControllerBaseActionController =
-      ActionController(name: '_QuizControllerBase');
+  late final _$_QuizControllerBaseActionController =
+      ActionController(name: '_QuizControllerBase', context: context);
 
   @override
   void _definirResposta(RespostaQuestao? valor) {
