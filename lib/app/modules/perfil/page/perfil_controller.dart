@@ -79,9 +79,9 @@ class PerfilController {
   }
 
   /// Entrar com outra conta do Google.
-  Future<StatusSignIn> signInWithAnotherAccount(BuildContext context) async {
+  Future<SignInChangeState> signInWithAnotherAccount(BuildContext context) async {
     final result = await auth.signInWithGoogle(true);
-    if (result != StatusSignIn.success) {
+    if (result != SignInChangeState.success) {
       Navegacao.abrirPagina(context, RotaPagina.login);
     }
     return result;

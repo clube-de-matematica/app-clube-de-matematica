@@ -5,7 +5,7 @@ import '../models/debug.dart';
 import '../models/exceptions/my_exception.dart';
 
 /// Estado da solicitação de login.
-enum StatusSignIn {
+enum SignInChangeState {
   /// Solicitação de autenticação cancelada pelo usuário.
   canceled,
 
@@ -25,6 +25,16 @@ enum StatusSignIn {
   timeout,
 }
 
+/// Estado de login.
+enum AuthChangeState {
+  passwordRecovery,
+  signedIn,
+  signedOut,
+  tokenRefreshed,
+  userUpdated,
+  userDeleted,
+}
+
 /// Gerencia processos de autenticação com o Firebase Auth.
 abstract class IAuthRepository implements Disposable {
   static const _className = 'IAuthRepository';
@@ -32,8 +42,11 @@ abstract class IAuthRepository implements Disposable {
   /// Usuário do aplicativo.
   UserApp get user;
 
-  /// Stream que reporna as alterações no estado de autencicação;
-  Stream<StatusSignIn> get status;
+  /// Stream que retorna as alterações durante o processo de autenticação;
+  Stream<SignInChangeState> get signInState;
+
+  /// Stream que retorna as alterações no estado de autencicação;
+  Stream<AuthChangeState> get authState;
 
   /// Retorna o nome do usuário atual.
   String? get currentUserName;
@@ -61,10 +74,10 @@ abstract class IAuthRepository implements Disposable {
 
   /// Solicitar login.
   /// Se não for nulo, [dataSession] será usado para iniciar a sessão.
-  Future<StatusSignIn> signIn([String? dataSession]);
+  Future<SignInChangeState> signIn([String? dataSession]);
 
   /// Solicitar login com uma cota Google.
-  Future<StatusSignIn> signInWithGoogle([bool replaceUser = false]);
+  Future<SignInChangeState> signInWithGoogle([bool replaceUser = false]);
 
   /// Desconecta o usuário em [_googleSignIn] (definindo `_googleSignIn.currentUser` para `null`).
   /// Também desconecta o usuário em [_auth].

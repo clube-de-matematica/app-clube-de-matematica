@@ -43,10 +43,10 @@ abstract class _LoginControllerBase with Store {
   Future<bool> get conectadoInternete => Conectividade.instancia.verificar();
 
   /// Autenticar com a conta do Google.
-  Future<StatusSignIn> onTapLoginWithGoogle() async {
+  Future<SignInChangeState> onTapLoginWithGoogle() async {
     _setSelectedMethod(Login.google);
     _setIsLoading(true);
-    StatusSignIn result = await auth.signInWithGoogle();
+    SignInChangeState result = await auth.signInWithGoogle();
     _setIsLoading(false);
     _setSelectedMethod(Login.none);
     Preferencias.instancia.primeiroAcesso = DateTime.now();

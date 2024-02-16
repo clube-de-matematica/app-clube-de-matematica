@@ -18,7 +18,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.2+12
 
 environment:
-  sdk: '>=2.13.0 <3.0.0'
+  sdk: '>=2.19.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -33,7 +33,7 @@ dependencies:
   #firebase_storage: ^9.0.0 #Armazenamento de arquivos
   #cloud_firestore: ^2.1.0 #Banco de dados
   #firebase_auth: ^2.0.0 #Autenticação
-  #google_sign_in: ^5.0.4 #Login com uma conta Google
+  google_sign_in: ^6.1.4 #Login com uma conta Google
   firebase_crashlytics: ^3.4.9 #2.8.13 #Relatório de erros
   #catex: ^0.0.1+8 #^0.0.1+6
   flutter_math_fork: ^0.6.3+1 #Renderização de equações matemáticas em puro Dart & Flutter.
@@ -56,17 +56,17 @@ dependencies:
   hive_flutter: ^1.1.0
   flutter_secure_storage: ^6.1.0
   #crypto: ^3.0.1
-  supabase_flutter: ^0.3.3
+  supabase_flutter: ^1.0.0 #0.3.3
   flutter_inappwebview: ^5.8.0
   flutter_custom_tabs: ^1.0.4
   #flutter_web_auth: ^0.4.1
   #webview_flutter: ^3.0.0
-  #flutter_custom_tabs: ^1.0.3
   flutter_material_color_picker: ^1.1.0+2
   #url_launcher: ^6.0.17
-  fk_user_agent: ^2.1.0 # UserAgent
+  #fk_user_agent: ^2.1.0 # UserAgent
   drift: ^2.8.0 #1.7.1 #1.5.0 # Banco de dados.
   sqlite3_flutter_libs: ^0.5.0 # Inclui o sqlite mais recente no Android. Necessário para algumas funcionalidades do drift.
+  firebase_analytics: ^10.8.0
   #drift_db_viewer: ^1.0.0 #Permite visualizar o banco de dados no aplicativo de desenvolvimento sem a necessidade de exportar seu arquivo de banco de dados.
   #flutter_native_splash: ^2.0.3+1
   

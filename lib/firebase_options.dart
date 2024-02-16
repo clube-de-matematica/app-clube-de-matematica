@@ -47,7 +47,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyA_MBTEqlhJST8H0NZ2rx8xF2koo5gIj7c',
+    apiKey: 'AIzaSyDlQYxuraoy2pXxVrS_O3_tDsfi42kPajs',
     appId: '1:760657363926:web:6fb3d53a38b6cfe3851a77',
     messagingSenderId: '760657363926',
     projectId: 'clube-de-matematica',

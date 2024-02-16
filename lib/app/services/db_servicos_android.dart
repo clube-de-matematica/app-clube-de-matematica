@@ -45,10 +45,11 @@ class DbServicos extends IDbServicos {
     SupabaseDbRepository dbRemoto,
     IAuthRepository auth,
   ) : super(dbRemoto, auth) {
-    if (kIsWeb) throw UnimplementedError();
-    // TODO: Posteriormente transferir para IAuthRepository.
+    if (kIsWeb) {
+      throw UnimplementedError();
+    }
     bool sincronizar = true;
-    Supabase.instance.client.auth.onAuthStateChange((evento, _) {
+    _authStateSubscription = auth.authState.listen((evento) {
       if (evento == AuthChangeEvent.signedIn) {
         if (sincronizar) _sincronizar();
         sincronizar = false;
@@ -59,6 +60,8 @@ class DbServicos extends IDbServicos {
     });
   }
 
+  late final StreamSubscription<AuthChangeState> _authStateSubscription;
+
   DriftDb get dbLocal => Modular.get<DriftDb>();
 
   late final _inicializando = _sincronizar();
@@ -68,6 +71,7 @@ class DbServicos extends IDbServicos {
 
   void close() {
     dbLocal.close();
+    _authStateSubscription.cancel();
   }
 
   /// Última verificação de conectividade.
@@ -249,7 +253,7 @@ class DbServicos extends IDbServicos {
   Future<void> _sincronizarTbUsuarios({bool forcar = false}) async {
     if (idUsuarioApp == null) return;
     final _id = idUsuarioApp!;
-    
+
     if (!await _verificarConectividade()) return;
 
     final consultaLocal = dbLocal.select(dbLocal.tbUsuarios)

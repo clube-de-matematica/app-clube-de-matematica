@@ -54,7 +54,7 @@ class SupabaseDbRepository
 
   /// Trata erros ocorridos nas operações com o Supabase.
   void _tratarErro(Object erro, StackTrace stack, String mensagem) {
-    if (erro is PostgrestError) {
+    if (erro is PostgrestException) {
       if (erro.code == _kSocketExceptionCode) {
         assert(Debug.print('[ERROR] Sem conexão com a internet.'));
         return;
@@ -87,9 +87,8 @@ class SupabaseDbRepository
       if (modificadoApos != null) {
         filtro = filtro.gt(Sql.dataModificacao, modificadoApos);
       }
-      final resposta = await filtro.execute();
-      if (resposta.error != null) throw resposta.error!;
-      return (resposta.data as List).cast();
+      final resposta = await filtro;
+      return (resposta as List).cast();
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao solicitar os dados da tabela "$tabela".'));
@@ -297,15 +296,10 @@ class SupabaseDbRepository
     try {
       assert(Debug.print(
           '[INFO] Solicitando os dados do assunto com id "$id"...'));
-      final resposta = await _client
-          .from(tabela)
-          .select()
-          .eq(Sql.tbAssuntos.id, id)
-          .execute();
+      final resposta =
+          await _client.from(tabela).select().eq(Sql.tbAssuntos.id, id);
 
-      if (resposta.error != null) throw resposta.error!;
-
-      final dados = (resposta.data as List).cast<DataAssunto>();
+      final dados = (resposta as List).cast<DataAssunto>();
       return dados.isEmpty
           ? null
           : Assunto.fromDataAssunto(_decodeDataModificacao(dados.single));
@@ -331,11 +325,9 @@ class SupabaseDbRepository
     final tabela = CollectionType.assuntos.name;
     try {
       assert(Debug.print('[INFO] Solicitando os dados da tabela "$tabela"...'));
-      final resposta = await _client.from(tabela).select().execute();
+      final resposta = await _client.from(tabela).select();
 
-      if (resposta.error != null) throw resposta.error!;
-
-      return (resposta.data as List).cast<DataAssunto>().map((dados) {
+      return (resposta as List).cast<DataAssunto>().map((dados) {
         return Assunto.fromDataAssunto(_decodeDataModificacao(dados));
       }).toList();
     } catch (erro, stack) {
@@ -374,10 +366,9 @@ class SupabaseDbRepository
     try {
       assert(Debug.print('[INFO] Inserindo o assunto $data...'));
       final response =
-          await _client.from('assunto_x_assunto_pai').insert(data).execute();
+          await _client.from('assunto_x_assunto_pai').insert(data).select();
 
-      if (response.error != null) throw response.error!;
-      return response.data != null;
+      return response != null;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir o assunto $data.'));
 
@@ -414,11 +405,9 @@ class SupabaseDbRepository
     try {
       assert(
           Debug.print('[INFO] Solicitando a contagem em "$viewQuestoes"...'));
-      final response = await _client.rpc('get_num_questoes').execute();
+      final response = await _client.rpc('get_num_questoes');
 
-      if (response.error != null) throw response.error!;
-
-      return response.data as int;
+      return response as int;
     } catch (erro, stack) {
       assert(
           Debug.print('[ERROR] Erro ao solicitar a contagem "$viewQuestoes".'));
@@ -442,12 +431,9 @@ class SupabaseDbRepository
       final response = await _client
           .from(viewQuestoes)
           .select()
-          .eq(DbConst.kDbDataQuestaoKeyIdAlfanumerico, id)
-          .execute();
+          .eq(DbConst.kDbDataQuestaoKeyIdAlfanumerico, id);
 
-      if (response.error != null) throw response.error!;
-
-      final dados = (response.data as List).cast<DataQuestao>();
+      final dados = (response as List).cast<DataQuestao>();
       return dados.isEmpty ? null : Questao.fromDataQuestao(dados.single);
     } catch (erro, stack) {
       assert(
@@ -471,12 +457,10 @@ class SupabaseDbRepository
     try {
       assert(Debug.print(
           '[INFO] Solicitando os dados da tabela "$viewQuestoes"...'));
-      final response = await _client.from(viewQuestoes).select().execute();
-
-      if (response.error != null) throw response.error!;
+      final response = await _client.from(viewQuestoes).select();
 
       return Future.wait(
-        (response.data as List)
+        (response as List)
             .cast<DataQuestao>()
             .map((dados) => Questao.fromDataQuestao(dados)),
       );
@@ -497,15 +481,14 @@ class SupabaseDbRepository
   @override
   Future<bool> checkPermissionInsertQuestao() async {
     try {
-      assert(Debug.print('[INFO] Verificando se o usuário tem permissão para inserrir questão...'));
-      final response =
-          await _client.rpc('get_permissao_inserir_questao').execute();
+      assert(Debug.print(
+          '[INFO] Verificando se o usuário tem permissão para inserrir questão...'));
+      final response = await _client.rpc('get_permissao_inserir_questao');
 
-      if (response.error != null) throw response.error!;
-
-      return response.data as bool;
+      return response as bool;
     } catch (erro, stack) {
-      assert(Debug.print('[ERROR] Erro ao verificar se o usuário tem permissão para inserrir questão.'));
+      assert(Debug.print(
+          '[ERROR] Erro ao verificar se o usuário tem permissão para inserrir questão.'));
 
       _tratarErro(
         erro,
@@ -515,7 +498,6 @@ class SupabaseDbRepository
 
       return false;
     }
-    
   }
 
   @override
@@ -528,12 +510,9 @@ class SupabaseDbRepository
     if (data.isEmpty) return false;
     try {
       assert(Debug.print('[INFO] Inserindo a questão ${data.toString()}...'));
-      final response =
-          await _client.rpc('inserir_questao', params: data).execute();
+      final response = await _client.rpc('inserir_questao', params: data);
 
-      if (response.error != null) throw response.error!;
-
-      return response.data == dados.idAlfanumerico;
+      return response == dados.idAlfanumerico;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir questão.'));
 
@@ -578,12 +557,9 @@ class SupabaseDbRepository
     if (data.isEmpty) return false;
     try {
       assert(Debug.print('[INFO] Inserindo referência para $idReferencia...'));
-      final response =
-          await _client.rpc('inserir_questao', params: data).execute();
+      final response = await _client.rpc('inserir_questao', params: data);
 
-      if (response.error != null) throw response.error!;
-
-      return response.data == dados.idAlfanumerico;
+      return response == dados.idAlfanumerico;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir referência.'));
 
@@ -613,7 +589,7 @@ class SupabaseDbRepository
 
   @override
   Future<List<Clube>> getClubes(int idUsuario) async {
-    if(kIsWeb) return [];//TODO
+    if (kIsWeb) return []; //TODO
     assert(Debug.print('[INFO] Chamando SupabaseDbRepository.getClubes()...'));
     _checkAuthentication('getClubes()');
     try {
@@ -622,11 +598,9 @@ class SupabaseDbRepository
       final response = await _client.rpc(
         'get_clubes',
         params: {'id_usuario': idUsuario},
-      ).execute();
+      );
 
-      if (response.error != null) throw response.error!;
-
-      final clubes = (response.data as List)
+      final clubes = (response as List)
           .cast<DataClube>()
           .map((dataClube) => Clube.fromDataClube(dataClube))
           .toList();
@@ -655,12 +629,9 @@ class SupabaseDbRepository
     if (data.isEmpty) return null;
     try {
       assert(Debug.print('[INFO] Inserindo o clube ${data.toString()}...'));
-      final response =
-          await _client.rpc('inserir_clube', params: data).execute();
+      final response = await _client.rpc('inserir_clube', params: data);
 
-      if (response.error != null) throw response.error!;
-
-      final list = (response.data as List).cast<DataClube>();
+      final list = (response as List).cast<DataClube>();
       return list.isNotEmpty ? Clube.fromDataClube(list.first) : null;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir o clube $data. \n$erro'));
@@ -738,11 +709,9 @@ class SupabaseDbRepository
           })
           .eq(tbClubeXUsuarioColIdUsuario, idUser)
           .eq(tbClubeXUsuarioColIdClube, idClube)
-          .execute();
+          .select();
 
-      if (response.error != null) throw response.error!;
-
-      return true;
+      return response != null;
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao excluir o usuário cujo "idUser = $idUser" do clube cujo '
@@ -770,12 +739,9 @@ class SupabaseDbRepository
         '_codigo_clube': accessCode,
         '_id_permissao': 2,
       };
-      final response =
-          await _client.rpc('entrar_clube', params: data).execute();
+      final response = await _client.rpc('entrar_clube', params: data);
 
-      if (response.error != null) throw response.error!;
-
-      final list = (response.data as List).cast<DataClube>();
+      final list = (response as List).cast<DataClube>();
       return list.isNotEmpty ? list[0] : DataClube();
     } catch (erro, stack) {
       assert(Debug.print(
@@ -802,12 +768,9 @@ class SupabaseDbRepository
     try {
       assert(Debug.print(
           '[INFO] Atualizando os dados do clube cujo "id = ${dados.id}"...'));
-      final response =
-          await _client.rpc('atualizar_clube', params: data).execute();
+      final response = await _client.rpc('atualizar_clube', params: data);
 
-      if (response.error != null) throw response.error!;
-
-      final list = (response.data as List).cast<DataClube>();
+      final list = (response as List).cast<DataClube>();
       return list.isNotEmpty ? Clube.fromDataClube(list.first) : null;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao atualizar o clube com os dados: '
@@ -888,11 +851,9 @@ class SupabaseDbRepository
           .update({tbClubeXUsuarioColIdPermissao: idPermission})
           .eq(tbClubeXUsuarioColIdUsuario, idUser)
           .eq(tbClubeXUsuarioColIdClube, idClube)
-          .execute();
+          .select();
 
-      if (response.error != null) throw response.error!;
-
-      return true;
+      return response != null;
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao atualizar a permissão de acesso do usuário ao clube'));
@@ -921,11 +882,9 @@ class SupabaseDbRepository
           .from(tabela)
           .update({Sql.tbClubes.excluir: true})
           .eq(Sql.tbClubes.id, id)
-          .execute();
+          .select();
 
-      if (response.error != null) throw response.error!;
-
-      return true;
+      return response != null;
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao marcar como excluído o clube cujo ID é "$id". '
@@ -952,12 +911,9 @@ class SupabaseDbRepository
       final response = await _client
           .from(viewAtividades)
           .select()
-          .eq(DbConst.kDbDataAtividadeKeyIdClube, idClube)
-          .execute();
+          .eq(DbConst.kDbDataAtividadeKeyIdClube, idClube);
 
-      if (response.error != null) throw response.error!;
-
-      return (response.data as List).cast<DataAtividade>();
+      return (response as List).cast<DataAtividade>();
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao solicitar as atividades para o clube com o ID $idClube. '
@@ -983,12 +939,9 @@ class SupabaseDbRepository
     if (data.isEmpty) return null;
     try {
       assert(Debug.print('[INFO] Inserindo a atividade ${data.toString()}...'));
-      final response =
-          await _client.rpc('inserir_atividade', params: data).execute();
+      final response = await _client.rpc('inserir_atividade', params: data);
 
-      if (response.error != null) throw response.error!;
-
-      final list = (response.data as List).cast<DataAtividade>();
+      final list = (response as List).cast<DataAtividade>();
       return list.isNotEmpty ? Atividade.fromDataAtividade(list[0]) : null;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir a atividade $data. '
@@ -1051,12 +1004,9 @@ class SupabaseDbRepository
     try {
       assert(Debug.print(
           '[INFO] Atualizando os dados da atividade cujo "id = ${dados.id}".'));
-      final response =
-          await _client.rpc('atualizar_atividade', params: data).execute();
+      final response = await _client.rpc('atualizar_atividade', params: data);
 
-      if (response.error != null) throw response.error!;
-
-      final list = (response.data as List).cast<DataAtividade>();
+      final list = (response as List).cast<DataAtividade>();
       return list.isNotEmpty ? Atividade.fromDataAtividade(list[0]) : null;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao atualizar a atividade. \n$erro'));
@@ -1114,11 +1064,9 @@ class SupabaseDbRepository
           .from(tabela)
           .update({Sql.tbClubes.excluir: true})
           .eq(Sql.tbAtividades.id, id)
-          .execute();
+          .select();
 
-      if (resposta.error != null) throw resposta.error!;
-
-      return true;
+      return resposta != null;
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao marcar como excluída a atividade cujo ID é "$id". '
@@ -1149,13 +1097,10 @@ class SupabaseDbRepository
     };
     try {
       assert(Debug.print('[INFO] Solicitando os dados da tabela "$table"...'));
-      final response = await _client
-          .rpc('get_respostas_x_questoes_x_atividade', params: data)
-          .execute();
+      final response = await _client.rpc('get_respostas_x_questoes_x_atividade',
+          params: data);
 
-      if (response.error != null) throw response.error!;
-
-      return (response.data as List)
+      return (response as List)
           .cast<Map>()
           .map((e) => e.cast<String, int>())
           .toList();
@@ -1185,11 +1130,9 @@ class SupabaseDbRepository
     final table = Sql.tbRespostaQuestaoAtividade.tbNome;
     try {
       assert(Debug.print('[INFO] Inserindo os dados na tabela "$table"...'));
-      final response = await _client.from(table).upsert(dados).execute();
+      final response = await _client.from(table).upsert(dados).select();
 
-      if (response.error != null) throw response.error!;
-
-      return true;
+      return response != null;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'));
 
@@ -1222,11 +1165,9 @@ class SupabaseDbRepository
     final table = Sql.tbRespostaQuestao.tbNome;
     try {
       assert(Debug.print('[INFO] Inserindo os dados na tabela "$table"...'));
-      final response = await _client.from(table).upsert(_dados).execute();
+      final response = await _client.from(table).upsert(_dados).select();
 
-      if (response.error != null) throw response.error!;
-
-      return true;
+      return response != null;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'));
 
@@ -1272,12 +1213,9 @@ class SupabaseDbRepository
           .from(tbNome)
           .update({tb.nome: dados.name})
           .eq(tb.id, dados.id)
-          .execute();
+          .select();
 
-      if (response.error != null) throw response.error!;
-
-      if (response.data == null) return false;
-      return true;
+      return response != null;
     } catch (erro, stack) {
       assert(
           Debug.print('[ERROR] Erro ao atualizar os dados na tabela $tbNome.'));

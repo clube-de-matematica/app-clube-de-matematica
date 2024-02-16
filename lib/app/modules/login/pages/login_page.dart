@@ -116,9 +116,9 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                             }
                             final result =
                                 await controller.onTapLoginWithGoogle();
-                            if (result == StatusSignIn.success) {
+                            if (result == SignInChangeState.success) {
                               controller.showPerfilPage(context);
-                            } else if (result == StatusSignIn.error) {
+                            } else if (result == SignInChangeState.error) {
                               _buildBottomSheetErroLogin().showModal(context);
                             }
                           }

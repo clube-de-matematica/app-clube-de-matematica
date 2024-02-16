@@ -107,7 +107,7 @@ class _AppDrawerState extends State<_AppDrawer> {
         return;
       }
       result = (await Modular.get<IAuthRepository>().signInWithGoogle()) ==
-          StatusSignIn.success;
+          SignInChangeState.success;
     }
     if (result) {
       showPage(context, RotaPagina.perfil);

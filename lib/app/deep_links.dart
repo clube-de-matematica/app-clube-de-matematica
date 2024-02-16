@@ -52,7 +52,7 @@ class DeepAndAppLinks extends Disposable {
 
         // Atualmente, na web, o código acima reinicia o App assim as instâncias são perdidas.
         // Por isso alguns erros ocorrem e o trecho a seguir não é executado.
-        if (result == StatusSignIn.success) {
+        if (result == SignInChangeState.success) {
           // Para evitar chamar `pop` de dentro de uma função `pop`, precisamos adiar a chamada para
           // `pop` para depois da conclusão do `pop` em execução.
           // Para isso pode-se apenas usar um `Future` com atraso zero, o que fará com que o DART

@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "760657363926-7t0el18h5keqemvr76eju8mtkbhnki3t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sslourenco.clubedematematica",
+            "certificate_hash": "17da1882a7a4b79f9a8f5161a0219ee81f78ef75"
+          }
+        },
+        {
+          "client_id": "760657363926-p8vkfr63chd5nv8iu7edrib43094caah.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sslourenco.clubedematematica",
+            "certificate_hash": "0c78a0c9111ad335543a71c0630264da8f1c227a"
+          }
+        },
+        {
           "client_id": "760657363926-353ciircs66psa361hqmt77n0t73vkut.apps.googleusercontent.com",
           "client_type": 3
         }
