@@ -54,8 +54,7 @@ class SobrePage extends StatelessWidget {
 
 // Abre uma guia personalizada para a Política de Privacidade do aplicativo.
 mostrarPolitica() {
-  _launch(
-      'https://www.samylourenco.com/política-de-privacidade');
+  _launch('https://www.samylourenco.com/política-de-privacidade');
 }
 
 // Abre uma guia personalizada para os Termos e Condições de uso do aplicativo.
@@ -64,19 +63,21 @@ mostrarTemos() {
 }
 
 void _launch(String url) {
-  launch(
-    url,
-    customTabsOption: CustomTabsOption(
-      //toolbarColor: Theme.of(context).primaryColor,
-      enableUrlBarHiding: true,
-      showPageTitle: false,
-      animation: CustomTabsSystemAnimation.slideIn(),
-      extraCustomTabs: <String>[
-        'org.mozilla.firefox',
-        'com.microsoft.emmx',
-      ],
+  launchUrl(
+    Uri.parse(url),
+    customTabsOptions: CustomTabsOptions(
+      urlBarHidingEnabled: true,
+      showTitle: false,
+      animations: CustomTabsSystemAnimations.slideIn(),
+      browser: CustomTabsBrowserConfiguration(
+        fallbackCustomTabs: [
+          'org.mozilla.firefox',
+          'com.microsoft.emmx',
+        ],
+        headers: {'key': 'value'},
+      ),
     ),
-    safariVCOption: SafariViewControllerOption(
+    safariVCOptions: SafariViewControllerOptions(
       //preferredBarTintColor: Theme.of(context).primaryColor,
       preferredControlTintColor: Colors.white,
       barCollapsingEnabled: true,

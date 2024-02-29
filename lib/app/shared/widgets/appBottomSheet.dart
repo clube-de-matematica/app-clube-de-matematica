@@ -95,7 +95,7 @@ class AppBottomSheet extends StatelessWidget {
   }
 
   Widget _buildDraggableScrollable(Widget child) {
-    final media = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    final media = MediaQueryData.fromView(WidgetsBinding.instance.window);
     final altura = media.size.height;
     final maxChildSize =
         (altura - media.padding.top - kBottomNavigationBarHeight) / altura;

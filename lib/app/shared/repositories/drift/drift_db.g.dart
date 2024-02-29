@@ -42,9 +42,10 @@ class $TbQuestoesTable extends TbQuestoes
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, enunciado, gabarito, imagensEnunciado];
   @override
-  String get aliasedName => _alias ?? 'questoes';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'questoes';
+  String get actualTableName => $name;
+  static const String $name = 'questoes';
   @override
   VerificationContext validateIntegrity(Insertable<LinTbQuestoes> instance,
       {bool isInserting = false}) {
@@ -329,9 +330,10 @@ class $TbAssuntosTable extends TbAssuntos
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, assunto, hierarquia];
   @override
-  String get aliasedName => _alias ?? 'assuntos';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'assuntos';
+  String get actualTableName => $name;
+  static const String $name = 'assuntos';
   @override
   VerificationContext validateIntegrity(Insertable<LinTbAssuntos> instance,
       {bool isInserting = false}) {
@@ -577,9 +579,10 @@ class $TbQuestaoAssuntoTable extends TbQuestaoAssunto
   @override
   List<GeneratedColumn> get $columns => [dataModificacao, idQuestao, idAssunto];
   @override
-  String get aliasedName => _alias ?? 'questao_x_assunto';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'questao_x_assunto';
+  String get actualTableName => $name;
+  static const String $name = 'questao_x_assunto';
   @override
   VerificationContext validateIntegrity(
       Insertable<LinTbQuestaoAssunto> instance,
@@ -807,9 +810,10 @@ class $TbTiposAlternativaTable extends TbTiposAlternativa
   @override
   List<GeneratedColumn> get $columns => [dataModificacao, id, tipo];
   @override
-  String get aliasedName => _alias ?? 'tipos_alternativa';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'tipos_alternativa';
+  String get actualTableName => $name;
+  static const String $name = 'tipos_alternativa';
   @override
   VerificationContext validateIntegrity(
       Insertable<LinTbTiposAlternativa> instance,
@@ -1031,9 +1035,10 @@ class $TbAlternativasTable extends TbAlternativas
   List<GeneratedColumn> get $columns =>
       [dataModificacao, idQuestao, sequencial, idTipo, conteudo];
   @override
-  String get aliasedName => _alias ?? 'alternativas';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'alternativas';
+  String get actualTableName => $name;
+  static const String $name = 'alternativas';
   @override
   VerificationContext validateIntegrity(Insertable<LinTbAlternativas> instance,
       {bool isInserting = false}) {
@@ -1340,9 +1345,10 @@ class $TbQuestoesCadernoTable extends TbQuestoesCaderno
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, ano, nivel, indice, idQuestao];
   @override
-  String get aliasedName => _alias ?? 'questoes_caderno';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'questoes_caderno';
+  String get actualTableName => $name;
+  static const String $name = 'questoes_caderno';
   @override
   VerificationContext validateIntegrity(
       Insertable<LinTbQuestoesCaderno> instance,
@@ -1670,36 +1676,31 @@ class $TbUsuariosTable extends TbUsuarios
   static const VerificationMeta _softDeleteMeta =
       const VerificationMeta('softDelete');
   @override
-  late final GeneratedColumn<bool> softDelete =
-      GeneratedColumn<bool>('soft_delete', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("soft_delete" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: Constant(false));
+  late final GeneratedColumn<bool> softDelete = GeneratedColumn<bool>(
+      'soft_delete', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("soft_delete" IN (0, 1))'),
+      defaultValue: Constant(false));
   static const VerificationMeta _sincronizarMeta =
       const VerificationMeta('sincronizar');
   @override
-  late final GeneratedColumn<bool> sincronizar =
-      GeneratedColumn<bool>('sincronizar', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("sincronizar" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: Constant(false));
+  late final GeneratedColumn<bool> sincronizar = GeneratedColumn<bool>(
+      'sincronizar', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("sincronizar" IN (0, 1))'),
+      defaultValue: Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, email, nome, foto, softDelete, sincronizar];
   @override
-  String get aliasedName => _alias ?? 'usuarios';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'usuarios';
+  String get actualTableName => $name;
+  static const String $name = 'usuarios';
   @override
   VerificationContext validateIntegrity(Insertable<LinTbUsuarios> instance,
       {bool isInserting = false}) {
@@ -2041,16 +2042,13 @@ class $TbClubesTable extends TbClubes
   static const VerificationMeta _privadoMeta =
       const VerificationMeta('privado');
   @override
-  late final GeneratedColumn<bool> privado =
-      GeneratedColumn<bool>('privado', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("privado" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: Constant(false));
+  late final GeneratedColumn<bool> privado = GeneratedColumn<bool>(
+      'privado', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("privado" IN (0, 1))'),
+      defaultValue: Constant(false));
   static const VerificationMeta _codigoMeta = const VerificationMeta('codigo');
   @override
   late final GeneratedColumn<String> codigo = GeneratedColumn<String>(
@@ -2075,9 +2073,10 @@ class $TbClubesTable extends TbClubes
         capa
       ];
   @override
-  String get aliasedName => _alias ?? 'clubes';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'clubes';
+  String get actualTableName => $name;
+  static const String $name = 'clubes';
   @override
   VerificationContext validateIntegrity(Insertable<LinTbClubes> instance,
       {bool isInserting = false}) {
@@ -2441,9 +2440,10 @@ class $TbTiposPermissaoTable extends TbTiposPermissao
   @override
   List<GeneratedColumn> get $columns => [dataModificacao, id, permissao];
   @override
-  String get aliasedName => _alias ?? 'tipos_permissao';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'tipos_permissao';
+  String get actualTableName => $name;
+  static const String $name = 'tipos_permissao';
   @override
   VerificationContext validateIntegrity(
       Insertable<LinTbTiposPermissao> instance,
@@ -2667,9 +2667,10 @@ class $TbClubeUsuarioTable extends TbClubeUsuario
   List<GeneratedColumn> get $columns =>
       [dataModificacao, idClube, idUsuario, idPermissao, dataAdmissao];
   @override
-  String get aliasedName => _alias ?? 'clube_x_usuario';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'clube_x_usuario';
+  String get actualTableName => $name;
+  static const String $name = 'clube_x_usuario';
   @override
   VerificationContext validateIntegrity(Insertable<LinTbClubeUsuario> instance,
       {bool isInserting = false}) {
@@ -3007,9 +3008,10 @@ class $TbAtividadesTable extends TbAtividades
         dataEncerramento
       ];
   @override
-  String get aliasedName => _alias ?? 'atividades';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'atividades';
+  String get actualTableName => $name;
+  static const String $name = 'atividades';
   @override
   VerificationContext validateIntegrity(Insertable<LinTbAtividades> instance,
       {bool isInserting = false}) {
@@ -3421,9 +3423,10 @@ class $TbQuestaoAtividadeTable extends TbQuestaoAtividade
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, idQuestaoCaderno, idAtividade];
   @override
-  String get aliasedName => _alias ?? 'questao_x_atividade';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'questao_x_atividade';
+  String get actualTableName => $name;
+  static const String $name = 'questao_x_atividade';
   @override
   VerificationContext validateIntegrity(
       Insertable<LinTbQuestaoAtividade> instance,
@@ -3682,23 +3685,21 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
   static const VerificationMeta _sincronizarMeta =
       const VerificationMeta('sincronizar');
   @override
-  late final GeneratedColumn<bool> sincronizar =
-      GeneratedColumn<bool>('sincronizar', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("sincronizar" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: Constant(false));
+  late final GeneratedColumn<bool> sincronizar = GeneratedColumn<bool>(
+      'sincronizar', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("sincronizar" IN (0, 1))'),
+      defaultValue: Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, idQuestaoAtividade, idUsuario, resposta, sincronizar];
   @override
-  String get aliasedName => _alias ?? 'resposta_x_questao_x_atividade';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'resposta_x_questao_x_atividade';
+  String get actualTableName => $name;
+  static const String $name = 'resposta_x_questao_x_atividade';
   @override
   VerificationContext validateIntegrity(
       Insertable<LinTbRespostaQuestaoAtividade> instance,
@@ -4000,23 +4001,21 @@ class $TbRespostaQuestaoTable extends TbRespostaQuestao
   static const VerificationMeta _sincronizarMeta =
       const VerificationMeta('sincronizar');
   @override
-  late final GeneratedColumn<bool> sincronizar =
-      GeneratedColumn<bool>('sincronizar', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("sincronizar" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: Constant(false));
+  late final GeneratedColumn<bool> sincronizar = GeneratedColumn<bool>(
+      'sincronizar', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("sincronizar" IN (0, 1))'),
+      defaultValue: Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, idQuestao, idUsuario, resposta, sincronizar];
   @override
-  String get aliasedName => _alias ?? 'resposta_x_questao';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'resposta_x_questao';
+  String get actualTableName => $name;
+  static const String $name = 'resposta_x_questao';
   @override
   VerificationContext validateIntegrity(
       Insertable<LinTbRespostaQuestao> instance,

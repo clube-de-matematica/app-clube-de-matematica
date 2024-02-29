@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../modules/clubes/modules/atividades/models/atividade.dart';
 import '../modules/clubes/modules/atividades/models/questao_atividade.dart';
@@ -50,11 +49,11 @@ class DbServicos extends IDbServicos {
     }
     bool sincronizar = true;
     _authStateSubscription = auth.authState.listen((evento) {
-      if (evento == AuthChangeEvent.signedIn) {
+      if (evento == AuthChangeState.signedIn) {
         if (sincronizar) _sincronizar();
         sincronizar = false;
       }
-      if (evento == AuthChangeEvent.signedOut) {
+      if (evento == AuthChangeState.signedOut) {
         sincronizar = true;
       }
     });

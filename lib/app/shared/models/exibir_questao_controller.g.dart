@@ -35,10 +35,14 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
   @override
   int get _indice => indice;
 
+  bool __indiceIsInitialized = false;
+
   @override
   set _indice(int value) {
-    _$_indiceAtom.reportWrite(value, super._indice, () {
+    _$_indiceAtom
+        .reportWrite(value, __indiceIsInitialized ? super._indice : null, () {
       super._indice = value;
+      __indiceIsInitialized = true;
     });
   }
 

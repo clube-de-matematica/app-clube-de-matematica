@@ -11,7 +11,7 @@ import 'app/shared/models/exceptions/clube_error.dart';
 
 void main() async {
   //WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp();
+  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   //final db = FirebaseFirestore.instance;
   //await testSqliteRepository();
   ClubeError.runApp(

@@ -66,10 +66,14 @@ mixin _$ExibirQuestaoComFiltroController
     return super._questaoAtual;
   }
 
+  bool __questaoAtualIsInitialized = false;
+
   @override
   set _questaoAtual(ObservableFuture<Questao?> value) {
-    _$_questaoAtualAtom.reportWrite(value, super._questaoAtual, () {
+    _$_questaoAtualAtom.reportWrite(
+        value, __questaoAtualIsInitialized ? super._questaoAtual : null, () {
       super._questaoAtual = value;
+      __questaoAtualIsInitialized = true;
     });
   }
 
