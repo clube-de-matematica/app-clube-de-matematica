@@ -46,6 +46,19 @@ mixin _$ResponderAtividadeController
           Computed<RespostaQuestaoAtividade?>(() => super.resposta,
               name: '_ResponderAtividadeControllerBase.resposta'))
       .value;
+  Computed<bool>? _$isEmptyComputed;
+
+  @override
+  bool get isEmpty => (_$isEmptyComputed ??= Computed<bool>(() => super.isEmpty,
+          name: '_ResponderAtividadeControllerBase.isEmpty'))
+      .value;
+  Computed<bool>? _$isNotEmptyComputed;
+
+  @override
+  bool get isNotEmpty =>
+      (_$isNotEmptyComputed ??= Computed<bool>(() => super.isNotEmpty,
+              name: '_ResponderAtividadeControllerBase.isNotEmpty'))
+          .value;
   Computed<bool>? _$podeConcluirComputed;
 
   @override
@@ -61,6 +74,8 @@ questoes: ${questoes},
 numQuestoes: ${numQuestoes},
 questaoAtual: ${questaoAtual},
 resposta: ${resposta},
+isEmpty: ${isEmpty},
+isNotEmpty: ${isNotEmpty},
 podeConcluir: ${podeConcluir}
     ''';
   }

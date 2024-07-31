@@ -32,7 +32,7 @@ class AppTextField extends TextField {
           maxLines: maxLines,
           style: style,
           decoration: InputDecoration()
-              .applyDefaults(AppTheme.instance.temaClaro.inputDecorationTheme)
+              .applyDefaults(AppTheme.instance.light.inputDecorationTheme)
               .copyWith(
                 labelText: labelText,
                 hintText: hintText,

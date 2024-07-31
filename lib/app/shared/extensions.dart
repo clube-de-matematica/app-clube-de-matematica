@@ -7,13 +7,6 @@ import 'models/exceptions/my_exception.dart';
 
 ///Adiciona novos métodos à classe [TextStyle].
 extension MyExtensionTextStyle on TextStyle {
-  ///Redefine a propriedade [fontSize].
-  ///[escala] é usada para uma variação proporcional no tamanho da fonte.
-  TextStyle setEscalaFontSize([double escala = 1.0, double? size]) {
-    size ??= fontSize;
-    return copyWith(fontSize: (size == null) ? null : escala * size);
-  }
-
   ///Retorna um novo [TextStyle] com base nesta instância, com a fonte em negrito.
   TextStyle get bold => copyWith(fontWeight: FontWeight.bold);
 
@@ -23,51 +16,6 @@ extension MyExtensionTextStyle on TextStyle {
   ///Retorna um novo [TextStyle] com base nesta instância, com o espaçamento entre caracteres
   ///que será usado nos botões.
   TextStyle get letterSpacingForButton => copyWith(letterSpacing: 1.2);
-}
-
-///Adiciona novos métodos à classe [TextTheme].
-extension MyExtensionTextTheme on TextTheme {
-  ///Redefine a propriedade `fontSize` para os [TextStyle] correspondentes ao nome do
-  ///parâmetro.
-  ///[escala] é usada para uma variação proporcional no tamanho da fonte nos vários estilos.
-  ///Para [labelLarge] também será definido o espaçamento entre os caracteres.
-  TextTheme overrideFontSizeInTextStyles(
-    double escala, {
-    double? sizeDisplayLarge,
-    double? sizeDisplayMedium,
-    double? sizeDisplaySmall,
-    double? sizeHeadlineMedium,
-    double? sizeHeadlineSmall,
-    double? sizeTitleLarge,
-    double? sizeTitleMedium,
-    double? sizeTitleSmall,
-    double? sizeBodyLarge,
-    double? sizeBodyMedium,
-    double? sizeBodySmall,
-    double? sizeLabelLarge,
-    double? sizeLabelSmall,
-  }) {
-    return copyWith(
-      displayLarge: this.displayLarge?.setEscalaFontSize(escala, sizeDisplayLarge),
-      displayMedium: this.displayMedium?.setEscalaFontSize(escala, sizeDisplayMedium),
-      displaySmall: this.displaySmall?.setEscalaFontSize(escala, sizeDisplaySmall),
-      headlineMedium: this.headlineMedium?.setEscalaFontSize(escala, sizeHeadlineMedium),
-      headlineSmall: this.headlineSmall?.setEscalaFontSize(escala, sizeHeadlineSmall),
-      titleLarge: this.titleLarge?.setEscalaFontSize(escala, sizeTitleLarge),
-      titleMedium: this.titleMedium?.setEscalaFontSize(escala, sizeTitleMedium),
-      titleSmall: this.titleSmall?.setEscalaFontSize(escala, sizeTitleSmall),
-      bodyLarge: this.bodyLarge?.setEscalaFontSize(escala, sizeBodyLarge),
-      bodyMedium: this.bodyMedium?.setEscalaFontSize(escala, sizeBodyMedium),
-      bodySmall: this.bodySmall?.setEscalaFontSize(escala, sizeBodySmall),
-
-      ///Também define o espaçamento entre os caracteres.
-      labelLarge: this
-          .labelLarge
-          ?.letterSpacingForButton
-          .setEscalaFontSize(escala, sizeLabelLarge),
-      labelSmall: this.labelSmall?.setEscalaFontSize(escala, sizeLabelSmall),
-    );
-  }
 }
 
 ///Adiciona novos métodos à classe [File].

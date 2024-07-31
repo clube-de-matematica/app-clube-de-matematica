@@ -10,6 +10,13 @@ part of 'selecionar_questoes_controller.dart';
 
 mixin _$SelecionarQuestoesController
     on _SelecionarQuestoesControllerBase, Store {
+  Computed<bool>? _$alteradaComputed;
+
+  @override
+  bool get alterada =>
+      (_$alteradaComputed ??= Computed<bool>(() => super.alterada,
+              name: '_SelecionarQuestoesControllerBase.alterada'))
+          .value;
   Computed<int>? _$numQuestoesComputed;
 
   @override
@@ -56,6 +63,7 @@ mixin _$SelecionarQuestoesController
   String toString() {
     return '''
 mostrarSomenteQuestoesSelecionadas: ${mostrarSomenteQuestoesSelecionadas},
+alterada: ${alterada},
 numQuestoes: ${numQuestoes},
 numQuestoesSelecionadas: ${numQuestoesSelecionadas},
 selecionada: ${selecionada}

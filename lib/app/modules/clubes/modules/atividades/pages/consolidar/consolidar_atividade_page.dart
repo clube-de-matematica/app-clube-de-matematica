@@ -103,21 +103,14 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
   @override
   Widget build(BuildContext context) {
     final temaClube = Modular.get<TemaClube>();
-    final corPrimaria = temaClube.primaria;
-    final corTextoPrimaria = temaClube.sobrePrimaria;
     return Theme(
-      data: Modular.get<TemaClube>().tema,
+      data: temaClube.tema,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Observer(builder: (_) {
             return AppBar(
-              iconTheme: IconThemeData(color: corTextoPrimaria),
-              backgroundColor: corPrimaria,
-              title: Text(
-                controle.atividade.titulo,
-                style: TextStyle(color: corTextoPrimaria),
-              ),
+              title: Text(controle.atividade.titulo),
               actions: [
                 if (controle.podeLiberar)
                   IconButton(
@@ -321,7 +314,7 @@ class _MembrosState extends State<_Membros> {
             expansionCallback: (indice, expandido) {
               for (var i = 0; i < estados.length; i++) estados[i] = false;
               setState(() {
-                estados[indice] = !expandido;
+                estados[indice] = expandido;
               });
             },
           );

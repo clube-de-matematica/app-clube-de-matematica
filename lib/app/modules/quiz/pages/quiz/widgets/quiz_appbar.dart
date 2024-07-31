@@ -61,7 +61,7 @@ class QuizAppBar extends PreferredSize {
 
   final QuizController controller;
 
-  static ThemeData get _tema => AppTheme.instance.temaClaro;
+  static ThemeData get _tema => AppTheme.instance.light;
 
   ///Necessário para que este [Widget] possa ser usado como o `appbar` de um [Scaffold].
   //@override

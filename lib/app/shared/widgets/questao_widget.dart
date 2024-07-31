@@ -218,7 +218,7 @@ class _Alternativas extends StatefulWidget {
 
 class _AlternativasState extends State<_Alternativas> {
   int? alternativaSelecionada;
-  late final corSelecionada = tema.colorScheme.background.withOpacity(0.5);
+  late final corSelecionada = tema.colorScheme.primary.withOpacity(0.5);
   late final corNaoSelecionada = tema.colorScheme.onSurface.withOpacity(0.07);
 
   ThemeData get tema => Theme.of(context);
@@ -274,7 +274,7 @@ class _AlternativasState extends State<_Alternativas> {
       borderRadius: const BorderRadius.all(const Radius.circular(4)),
       color: () {
         final selecionada = _selecionada(alternativa);
-
+    
         if (widget.verificar) {
           if (alternativa.verificar(widget.gabarito)) return AppTheme.corAcerto;
           return selecionada ? AppTheme.corErro : corNaoSelecionada;
@@ -362,7 +362,7 @@ class _Text extends Text {
   }) : super.rich(
           TextSpan(
               children: blocosDeTexto,
-              style: AppTheme.instance.temaClaro.textTheme.bodyLarge),
+              style: AppTheme.instance.light.textTheme.bodyLarge),
           textAlign: alinhamento,
           key: key,
         );

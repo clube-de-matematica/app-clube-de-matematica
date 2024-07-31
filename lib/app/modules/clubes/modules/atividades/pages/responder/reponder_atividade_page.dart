@@ -52,13 +52,27 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
             }),
           ],
         ),
-        body: WillPopScope(
-          onWillPop: _onWillPop,
-          child: Observer(builder: (_) {
-            return controle.questaoAtual.value == null
-                ? _corpoSemQuestao()
-                : _corpoComQuestao();
-          }),
+        body: Observer(
+          builder: (context) {
+            return PopScope(
+              canPop: controle.isEmpty,
+              onPopInvoked: (canPop) async {
+                if (!canPop) {
+                  final newCanPop = await _willPop(context);
+                  if (newCanPop) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
+                }
+              },
+              child: Observer(builder: (_) {
+                return controle.questaoAtual.value == null
+                    ? _corpoSemQuestao()
+                    : _corpoComQuestao();
+              }),
+            );
+          },
         ),
         bottomNavigationBar: _barraInferior(),
         floatingActionButton: Observer(builder: (_) {
@@ -76,10 +90,9 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
     );
   }
 
-  /// Retorna verdadeiro se o fechamento da página não implicar a perda de dados não salvos.
-  Future<bool> _onWillPop() async {
-    if (controle.questoesModificadas.isEmpty) return true;
-
+  /// Retorna verdadeiro, assincronamente, se o fechamento da página não implicar a perda de dados não salvos, caso contrário, exibe um [BottomSheetSalvarSairCancelar] e retorna um [bool] correspondente a escolha do usuário.
+  Future<bool> _willPop(BuildContext context) async {
+    if (controle.isEmpty) return true;
     /// Retorná:
     /// * 0 se o usuário escolher cancelar;
     /// * 1 se o usuário escolher sair; e
@@ -125,7 +138,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
       return Center(
         child: Text(
           'Nenhuma questão encontrada',
-          style: AppTheme.instance.temaClaro.textTheme.bodyLarge
+          style: AppTheme.instance.light.textTheme.bodyLarge
               ?.copyWith(fontSize: 24.0),
           textAlign: TextAlign.center,
         ),

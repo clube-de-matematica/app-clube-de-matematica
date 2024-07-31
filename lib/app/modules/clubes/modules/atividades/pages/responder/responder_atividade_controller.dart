@@ -99,10 +99,21 @@ abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
     }).toList();
   }
 
+  /// Retorna verdadeiro se não houver dados não salvos.
+  @computed
+  bool get isEmpty {
+    return questoesModificadas.isEmpty;
+  }
+
+  /// Retorna verdadeiro se houver dados não salvos.
+  @computed
+  bool get isNotEmpty {
+    return questoesModificadas.isNotEmpty;
+  }
+
   /// Retorna um `bool` que define se há uma resposta a ser confirmada.
   @computed
-  bool get podeConcluir =>
-      questoesModificadas.isNotEmpty && !atividadeEncerrada;
+  bool get podeConcluir => isNotEmpty && !atividadeEncerrada;
 
   bool get atividadeEncerrada => atividade.encerrada;
 

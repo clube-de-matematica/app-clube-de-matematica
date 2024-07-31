@@ -28,7 +28,7 @@ class QuizPage extends StatefulWidget {
 /// [ModularState] é que automáticamente será feito o `dispose` de [controller] junto com o
 /// de [_QuizPageState].
 class _QuizPageState extends ModularState<QuizPage, QuizController> {
-  ThemeData get tema => AppTheme.instance.temaClaro;
+  ThemeData get tema => AppTheme.instance.light;
   TextStyle? get textStyle => tema.textTheme.bodyLarge;
 
   @override

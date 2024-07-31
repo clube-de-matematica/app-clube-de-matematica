@@ -12,6 +12,7 @@ import '../../navigation.dart';
 import '../../services/conectividade.dart';
 import '../../services/db_servicos_interface.dart';
 import '../repositories/interface_auth_repository.dart';
+import '../theme/appTheme.dart';
 import '../utils/constantes.dart';
 import 'appBottomSheet.dart';
 import 'appWillPopScope.dart';
@@ -19,7 +20,7 @@ import 'appWillPopScope.dart';
 /// Indica a página em que [ScaffoldWithDrawer] está sendo exibido.
 enum AppDrawerPage { quiz, clubes }
 
-/// Um [Scaffold] com o [Drawer] e o [WillPopScope] do aplicativo.
+/// Um [Scaffold] com o [Drawer] e o [PopScope] do aplicativo.
 class ScaffoldWithDrawer extends Scaffold {
   ScaffoldWithDrawer({
     Key? key,
@@ -135,10 +136,13 @@ class _AppDrawerState extends State<_AppDrawer> {
           ),
         );
 
-        return UserAccountsDrawerHeader(
-          accountName: accountName,
-          accountEmail: Text(widget.user.email ?? ''),
-          currentAccountPicture: currentAccountPicture,
+        return Theme(
+          data: AppTheme.instance.light,
+          child: UserAccountsDrawerHeader(
+            accountName: accountName,
+            accountEmail: Text(widget.user.email ?? ''),
+            currentAccountPicture: currentAccountPicture,
+          ),
         );
       },
     );

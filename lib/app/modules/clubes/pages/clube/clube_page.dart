@@ -38,9 +38,7 @@ class _ClubePage extends StatefulWidget {
 class _ClubePageState extends State<_ClubePage> {
   ClubeController get controller => Modular.get<ClubeController>();
   TemaClube get temaClube => Modular.get<TemaClube>();
-  Color get sobrePrimaria => temaClube.sobrePrimaria;
   Color get enfaseSobreSuperficie => temaClube.enfaseSobreSuperficie;
-  Color get primaria => temaClube.primaria;
 
   @override
   Widget build(BuildContext context) {
@@ -67,16 +65,12 @@ class _ClubePageState extends State<_ClubePage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      //iconTheme: IconThemeData(color: sobrePrimaria),
-      //backgroundColor: primaria,
-      title: Text(
-        controller.clube.nome,
-        //style: TextStyle(color: sobrePrimaria),
-      ),
+      title: Text(controller.clube.nome),
       actions: [
         Builder(builder: (context) {
           return ClubeOptionsButton(
             clube: controller.clube,
+            iconColor: temaClube.tema.appBarTheme.foregroundColor,
             onSair: () async {
               final sair = controller.sair();
               await BottomSheetCarregando(future: sair)

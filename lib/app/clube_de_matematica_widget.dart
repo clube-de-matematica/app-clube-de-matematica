@@ -34,7 +34,7 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
-      theme: AppTheme.instance.temaClaro,
+      theme: AppTheme.instance.light,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: [
         const Locale('pt', 'BR'),

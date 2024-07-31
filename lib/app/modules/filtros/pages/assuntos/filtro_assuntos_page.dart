@@ -27,7 +27,7 @@ class FiltroAssuntosPage extends StatelessWidget {
 
   final FiltroAssuntosController controle;
 
-  ThemeData get tema => AppTheme.instance.temaClaro;
+  ThemeData get tema => AppTheme.instance.light;
 
   Color get backgroundColor => tema.primaryColor.withOpacity(0.07);
 

@@ -133,7 +133,7 @@ class _ResultadoQuizPageState extends State<ResultadoQuizPage> {
                   expansionCallback: (indice, expandido) {
                     for (var i = 0; i < estados.length; i++) estados[i] = false;
                     setState(() {
-                      estados[indice] = !expandido;
+                      estados[indice] = expandido;
                     });
                   },
                 ),

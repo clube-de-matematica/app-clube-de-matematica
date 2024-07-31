@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -36,58 +35,82 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
     super.dispose();
   }
 
+  Future<bool> _willPop(BuildContext context) async {
+    if (!controle.alterada) {
+      return true;
+    }
+
+    /// Retorná:
+    /// * 0 se o usuário escolher cancelar;
+    /// * 1 se o usuário escolher sair; e
+    /// * 2 se o usuário escolher salvar.
+    final retorno = await BottomSheetSalvarSairCancelar(
+      title: const Text('As questões não foram salvas'),
+      message: 'Ao sair as questões selecionadas não serão salvas.',
+    ).showModal<int>(context);
+    if (retorno == 2) {
+      controle.aplicar();
+      return true;
+    } else if (retorno == 1) {
+      controle.cancelar();
+      return true;
+    } else
+      return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final modificado =
-            !listEquals(widget.questoes, controle.questoesSelecionadas);
-        if (!modificado) return true;
-        final retorno = await BottomSheetSalvarSairCancelar(
-          title: const Text('As questões não foram salvas'),
-          message: 'Ao sair as questões selecionadas não serão salvas.',
-        ).showModal<int>(context);
-        if (retorno == 2) {
-          Navigator.of(context).pop(controle.aplicar());
-          return true;
-        }
-        return retorno == 1;
-      },
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kBottomNavigationBarHeight),
-          child: Observer(builder: (_) {
-            return AppBar(
-              title: const Text('Questões'),
-              actions: [
-                if (controle.numQuestoesSelecionadas > 0) _construirChip(),
-                _construirBotaoMenuFiltro(),
-                _construirBotaoAplicar(),
-              ],
-            );
-          }),
-        ),
-        body: FutureBuilder(
-            future: controle.questaoAtual,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                // Carregando...
-                return Center(child: const CircularProgressIndicator());
-              } else {
-                return Observer(builder: (_) {
-                  if (controle.numQuestoes == 0) {
-                    // Carregado sem questões a serem exibidas.
-                    return _corpoSemQuestao();
-                  }
-                  // Carregado com questões a serem exibidas.
-                  return _corpoComQuestao();
-                });
+    return Observer(
+      builder: (context) {
+        return PopScope(
+          canPop: !controle.alterada,
+          onPopInvoked: (canPop) async {
+            if (!canPop) {
+              final newCanPop = await _willPop(context);
+              if (newCanPop) {
+                if (context.mounted) {
+                  Navigator.of(context).pop(controle.questoesSelecionadas);
+                }
               }
-            }),
-        bottomNavigationBar: _barraInferior(),
-        //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        //floatingActionButton: _botaoFlutuante(),
-      ),
+            }
+          },
+          child: Scaffold(
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(kBottomNavigationBarHeight),
+              child: Observer(builder: (_) {
+                return AppBar(
+                  title: const Text('Questões'),
+                  actions: [
+                    if (controle.numQuestoesSelecionadas > 0) _construirChip(),
+                    _construirBotaoMenuFiltro(),
+                    _construirBotaoAplicar(),
+                  ],
+                );
+              }),
+            ),
+            body: FutureBuilder(
+                future: controle.questaoAtual,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    // Carregando...
+                    return Center(child: const CircularProgressIndicator());
+                  } else {
+                    return Observer(builder: (_) {
+                      if (controle.numQuestoes == 0) {
+                        // Carregado sem questões a serem exibidas.
+                        return _corpoSemQuestao();
+                      }
+                      // Carregado com questões a serem exibidas.
+                      return _corpoComQuestao();
+                    });
+                  }
+                }),
+            bottomNavigationBar: _barraInferior(),
+            //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            //floatingActionButton: _botaoFlutuante(),
+          ),
+        );
+      },
     );
   }
 

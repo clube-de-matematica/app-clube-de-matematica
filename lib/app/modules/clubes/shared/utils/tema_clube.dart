@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../shared/theme/appTheme.dart';
 import '../models/clube.dart';
 
 part 'tema_clube.g.dart';
@@ -15,10 +14,23 @@ abstract class _TemaClubeBase with Store {
   final Clube _clube;
 
   @computed
-  MaterialColor get amostraPrincipal => AppTheme.obterAmostra(_clube.capa);
-
-  @computed
-  ThemeData get tema => ThemeData(primarySwatch: amostraPrincipal);
+  ThemeData get tema {
+    final base = _clube.capa;
+    final _colors = ColorScheme.fromSeed(
+      seedColor: base,
+      brightness: Brightness.light, //ThemeData.estimateBrightnessForColor(base),
+    );
+    
+    return ThemeData.from(
+      colorScheme: _colors,
+    ).copyWith(
+      appBarTheme: AppBarTheme(
+      elevation: 0,
+      foregroundColor: _colors.onPrimary,
+      backgroundColor: _colors.primary,
+    ),
+    );
+  }
 
   @computed
   Brightness get brilho => tema.colorScheme.brightness;

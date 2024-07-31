@@ -18,7 +18,7 @@ class HomeClubesOptionsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = this.textStyle ??
         TextStyle(
-          color: AppTheme.instance.temaClaro.colorScheme.onPrimary,
+          color: AppTheme.instance.light.colorScheme.onPrimary,
           fontSize: AppTheme.escala * 26,
           fontWeight: FontWeight.w400,
         );

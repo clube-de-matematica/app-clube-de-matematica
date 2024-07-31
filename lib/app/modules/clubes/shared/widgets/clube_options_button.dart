@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '../../../../shared/theme/appTheme.dart';
 import '../../../perfil/models/userapp.dart';
 import '../../pages/home/home_clubes_controller.dart';
 import '../../pages/home/widgets/bottom_sheets.dart';
 import '../models/clube.dart';
-import '../utils/tema_clube.dart';
 
 /// O botão para o menu de opções do clube.
 class ClubeOptionsButton extends StatelessWidget {
   const ClubeOptionsButton({
     Key? key,
     required this.clube,
-    this.textStyle,
+    this.iconColor,
     required this.onSair,
     required this.onEditar,
     required this.onCompartilharCodigo,
     required this.onExcluir,
   }) : super(key: key);
   final Clube clube;
-  final TextStyle? textStyle;
+  final Color? iconColor;
   final VoidCallback onSair;
   final VoidCallback onEditar;
   final VoidCallback onCompartilharCodigo;
@@ -31,12 +29,6 @@ class ClubeOptionsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = this.textStyle ??
-        TextStyle(
-          color: TemaClube(clube).sobrePrimaria,
-          fontSize: AppTheme.escala * 26,
-          fontWeight: FontWeight.w400,
-        );
     final permissao = clube.permissao(idUsuarioApp);
     final proprietario = permissao == PermissoesClube.proprietario;
     final administrador = permissao == PermissoesClube.administrador;
@@ -47,8 +39,7 @@ class ClubeOptionsButton extends StatelessWidget {
         onPressed: null,
         icon: Icon(
           Icons.more_vert,
-          size: textStyle.fontSize,
-          color: textStyle.color,
+          color: iconColor, //Necessário para que não pareça desabilitado, pois "onPressed" é "null"
         ),
       ),
       itemBuilder: (context) => [

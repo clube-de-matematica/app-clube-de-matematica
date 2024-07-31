@@ -12,11 +12,11 @@ class FiltrosSelecionados extends StatelessWidget {
   final Widget child;
 
   Color get textColor =>
-      AppTheme.instance.temaClaro.colorScheme.onPrimary.withOpacity(0.8);
+      AppTheme.instance.light.colorScheme.onPrimary.withOpacity(0.8);
 
-  Color get backgroundColor => AppTheme.instance.temaClaro.colorScheme.primary;
+  Color get backgroundColor => AppTheme.instance.light.colorScheme.primary;
 
-  TextStyle? get textStyle => AppTheme.instance.temaClaro.textTheme.bodyLarge
+  TextStyle? get textStyle => AppTheme.instance.light.textTheme.bodyLarge
       ?.copyWith(color: textColor);
 
   @override

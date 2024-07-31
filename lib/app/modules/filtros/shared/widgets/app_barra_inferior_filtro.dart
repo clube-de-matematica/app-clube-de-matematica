@@ -17,26 +17,24 @@ class AppBarraInferiorFiltro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                child: const Text(UIStrings.FILTRO_TEXTO_BOTAO_LIMPAR),
-                onPressed: onPressedLimpar,
-              ),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Expanded(
+            child: FilledButton.tonal(
+              child: const Text(UIStrings.FILTRO_TEXTO_BOTAO_LIMPAR),
+              onPressed: onPressedLimpar,
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: BotaoPrimario(
-                label: UIStrings.FILTRO_TEXTO_BOTAO_APLICAR,
-                onPressed: onPressedAplicar,
-              ),
-            )
-          ],
-        ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: BotaoPrimario(
+              label: UIStrings.FILTRO_TEXTO_BOTAO_APLICAR,
+              onPressed: onPressedAplicar,
+            ),
+          )
+        ],
       ),
     );
   }

@@ -81,8 +81,8 @@ class AppBottomSheet extends StatelessWidget {
   }
 
   /// Exibir bottom sheet persistente.
-  PersistentBottomSheetController<T> show<T>(BuildContext context) {
-    return showBottomSheet<T>(
+  PersistentBottomSheetController show(BuildContext context) {
+    return showBottomSheet(
       context: context,
       shape: shape,
       elevation: elevation,
@@ -95,28 +95,31 @@ class AppBottomSheet extends StatelessWidget {
   }
 
   Widget _buildDraggableScrollable(Widget child) {
-    final media = MediaQueryData.fromView(WidgetsBinding.instance.window);
-    final altura = media.size.height;
-    final maxChildSize =
-        (altura - media.padding.top - kBottomNavigationBarHeight) / altura;
-    return DraggableScrollableSheet(
-      initialChildSize: maximize ? maxChildSize : 0.4,
-      minChildSize: 0.2,
-      maxChildSize: maxChildSize,
-      expand: false,
-      builder: (context, controller) => _buildContainer(
-        context: context,
-        ancorar: true,
-        child: Expanded(
-          child: ListView(
-            controller: controller,
-            children: [
-              child,
-            ],
+    return LayoutBuilder(builder: (context,constraints) {
+      final media = MediaQueryData.fromView(View.of(context));
+      final altura = media.size.height;
+      final maxChildSize =
+          (altura - media.padding.top - kBottomNavigationBarHeight) / altura;
+
+      return DraggableScrollableSheet( //TODO: Pode-se usar Offstage para renderizar o Widget filho antes de exibi-lo. Assim dápara usar seu context.size para determinar o tamanho inicial de DraggableScrollableSheet 
+        initialChildSize: maximize ? maxChildSize : 0.4,
+        minChildSize: 0.2,
+        maxChildSize: maxChildSize,
+        expand: false,
+        builder: (context, controller) => _buildContainer(
+          context: context,
+          ancorar: true,
+          child: Expanded(
+            child: ListView(
+              controller: controller,
+              children: [
+                child,
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildContainer({
@@ -159,13 +162,12 @@ class AppBottomSheet extends StatelessWidget {
       child,
     ];
 
-    Widget dialogChild = IntrinsicWidth(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: columnChildren,
-      ),
-    );
+    Widget dialogChild = //IntrinsicWidth(child:
+        Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: columnChildren,
+    ); //,);
 
     if (label != null)
       dialogChild = Semantics(
@@ -200,7 +202,7 @@ class AppBottomSheet extends StatelessWidget {
     // The paddingScaleFactor is used to adjust the padding of Dialog's
     // children.
     final double paddingScaleFactor =
-        _paddingScaleFactor(MediaQuery.of(context).textScaleFactor);
+        _paddingScaleFactor(MediaQuery.textScalerOf(context).textScaleFactor);
     final TextDirection? textDirection = Directionality.maybeOf(context);
 
     Widget? titleWidget;
@@ -308,7 +310,6 @@ class AppBottomSheet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: columnChildren,
     );
-
     return isScrollControlled
         ? _buildDraggableScrollable(columnChild)
         : _buildContainer(context: context, child: columnChild, ancorar: true);

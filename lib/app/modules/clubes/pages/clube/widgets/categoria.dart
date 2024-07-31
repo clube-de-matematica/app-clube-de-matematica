@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
-
-import '../clube_controller.dart';
 
 class Categoria extends StatelessWidget {
   final String categoria;
@@ -16,16 +13,13 @@ class Categoria extends StatelessWidget {
   })  : assert(!(itens.isNotEmpty && builder != null)),
         super(key: key);
 
-  Color get cor => Modular.get<ClubeController>().clube.capa;
-
-  Color get corTexto {
-    final brightness = ThemeData.estimateBrightnessForColor(this.cor);
-    return brightness == Brightness.light ? Colors.black : this.cor;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final cor = Theme.of(context).primaryColor;
+    final brightness = ThemeData.estimateBrightnessForColor(cor);
+    final corTexto = brightness == Brightness.light ? Colors.black : cor;
     final _itens = builder?.call(context) ?? itens;
+    
     return Padding(
       padding: const EdgeInsets.only(top: 24.0, bottom: 8.0),
       child: Column(

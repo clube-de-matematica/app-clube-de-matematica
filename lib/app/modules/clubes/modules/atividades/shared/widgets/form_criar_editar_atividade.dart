@@ -54,13 +54,14 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
   final focoDescricao = FocusNode();
   final focoLiberacao = FocusNode();
   final focoEncerramento = FocusNode();
-  bool carregando = false;
+  bool _salvando = false;
   late String titulo;
   String? descricao;
   late DateTime liberacao;
   DateTime? encerramento;
   late List<Questao> questoes;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool _podeFechar = true;
 
   @override
   void initState() {
@@ -82,12 +83,17 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
   }
 
   FutureOr<void> _salvar() async {
-    if (!carregando) {
+    if (!_salvando) {
       //final form = Form.of(contexto);
       final form = formKey.currentState;
       if (form?.validate() ?? false) {
-        setState(() => carregando = true);
+        setState(() {
+          _salvando = true;
+        });
         form?.save();
+        setState(() {
+          _podeFechar = true; //Deve ocorrer antes da chamada de widget.salvar
+        });
         await widget.salvar?.call(
           descricao: descricao,
           encerramento: encerramento,
@@ -95,37 +101,64 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
           titulo: titulo,
           questoes: questoes,
         );
-        if (mounted) setState(() => carregando = false);
+        if (mounted) {
+          setState(() {
+            _salvando = false;
+          });
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      onWillPop: () async {
+    void onPopInvoked(canPop) async {
+      if (!canPop) {
         final retorno = await BottomSheetSalvarSairCancelar(
-          title: const Text('Há dados não salvos'),
+          title: const Text('Pode haver dados não salvos'),
           message: 'Ao sair os dados não salvos serão descartados.',
         ).showModal<int>(context);
         if (retorno == 2) {
-          final validado = formKey.currentState?.validate() ?? false;
-          if (!validado) return false;
           await _salvar();
-          return true;
+        } else {
+          if (mounted) {
+            setState(() {
+              _podeFechar = retorno == 1;
+            });
+          }
+          if (_podeFechar) {
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          }
         }
-        return retorno == 1;
-      },
+      }
+    }
+
+    void onChanged() {
+      if (_podeFechar) {
+        if (mounted) {
+          setState(() {
+            _podeFechar = false;
+          });
+        }
+      }
+    }
+
+    return Form(
+      key: formKey,
+      canPop: _podeFechar,
+      onPopInvoked: onPopInvoked,
+      onChanged: onChanged,
       child: Builder(builder: (context) {
+        final tema = Modular.get<TemaClube>();
         final sizedBox = () => const SizedBox(height: 8.0);
         return Scaffold(
           floatingActionButton: FloatingActionButton(
-            backgroundColor: Modular.get<TemaClube>().primaria,
+            backgroundColor: tema.primaria,
             child: Icon(
               Icons.done,
-              //color: ,
-              size: 28.0,
+              color: tema.sobrePrimaria,
             ),
             onPressed: () => _salvar(),
           ),

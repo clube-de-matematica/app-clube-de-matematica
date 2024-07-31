@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
@@ -14,13 +15,21 @@ class SelecionarQuestoesController = _SelecionarQuestoesControllerBase
 abstract class _SelecionarQuestoesControllerBase
     extends ExibirQuestaoComFiltroController with Store {
   _SelecionarQuestoesControllerBase(Iterable<Questao> questoesSelecionadas)
-      : this.questoesSelecionadas = ObservableList.of(questoesSelecionadas),
+      : this._selecaoInicial = questoesSelecionadas.toList(growable: false),
+        this.questoesSelecionadas = ObservableList.of(questoesSelecionadas),
         super(
           filtros: Filtros(),
           repositorio: Modular.get<QuestoesRepository>(),
         );
 
+  final List<Questao> _selecaoInicial;
   final ObservableList<Questao> questoesSelecionadas;
+
+  /// Retorna verdadeiro se a lista de questões selecionadas tiver sido alterada.
+  @computed
+  bool get alterada {
+    return !listEquals(_selecaoInicial.toList(), questoesSelecionadas.toList());
+  }
 
   @observable
   bool mostrarSomenteQuestoesSelecionadas = false;
@@ -57,6 +66,17 @@ abstract class _SelecionarQuestoesControllerBase
 
   bool _selecionada(Questao questao) => questoesSelecionadas
       .any((quest) => questao.idAlfanumerico == quest.idAlfanumerico);
+
+  /// Desfaz as alterações feitas na seleção inicial.
+  List<Questao> cancelar() {
+    limpar();
+    questoesSelecionadas.addAll(_selecaoInicial);
+    return questoesSelecionadas;
+  }
+
+  void limpar() {
+    questoesSelecionadas.clear();
+  }
 
   /// Retorna a lista de questões selecionadas.
   List<Questao> aplicar() => questoesSelecionadas;

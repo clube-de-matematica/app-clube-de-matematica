@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/appTheme.dart';
 
 /// Botão com a cor primária do tema.
-class BotaoPrimario extends ElevatedButton {
+class BotaoPrimario extends FilledButton {
   BotaoPrimario({
     Key? key,
     required String label,
@@ -32,8 +32,8 @@ class AppTextButton extends TextButton {
           style: style ??
               TextButton.styleFrom(
                 foregroundColor: primary
-                    ? AppTheme.instance.temaClaro.colorScheme.primary
-                    : AppTheme.instance.temaClaro.textTheme.labelLarge?.color,
+                    ? AppTheme.instance.light.colorScheme.primary
+                    : AppTheme.instance.light.textTheme.labelLarge?.color,
               ),
           onPressed: onPressed,
           child: child,
