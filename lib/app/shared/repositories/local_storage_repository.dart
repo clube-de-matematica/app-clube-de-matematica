@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../extensions.dart';
 import '../models/exceptions/my_exception.dart';
-import '../utils/file_utils/file_utils.dart';
+import '../utils/file_manager/file_manager.dart';
 
 ///Gerencia as operações com o armazenamento local.
 ///Não disponível para a versão web.
@@ -18,19 +18,19 @@ abstract class LocalStorageRepository {
   ///O nome do diretório de logs.
   static const DIR_LOG = "Log";
 
-  ///O path do diretório de logs relativo a [appDocDir].
+  ///O path do diretório de logs relativo a [_appDocDir].
   static const DIR_LOG_RELATIVE_PATH = "$DIR_LOG/";
 
   ///O nome do diretório de mídias.
   static const DIR_MEDIA = "Media";
 
-  ///O path do diretório de mídias relativo a [appDocDir].
+  ///O path do diretório de mídias relativo a [_appDocDir].
   static const DIR_MEDIA_RELATIVE_PATH = "$DIR_MEDIA/";
 
   ///O nome do diretório de fotos de perfil.
   static const DIR_PROFILE_PHOTOS = "Profile Photos";
 
-  ///O path do diretório de fotos de perfil relativo a [appDocDir].
+  ///O path do diretório de fotos de perfil relativo a [_appDocDir].
   static const DIR_PROFILE_PHOTOS_RELATIVE_PATH =
       "$DIR_MEDIA/$DIR_PROFILE_PHOTOS/";
 
@@ -38,7 +38,7 @@ abstract class LocalStorageRepository {
   ///Se não for possível, fáz o mesmo que para o IOS.
   ///No IOS: Retorna assincronamente o diretório onde o aplicativo pode colocar dados gerados pelo usuário ou que não
   ///podem ser recriados pelo aplicativo.
-  static Future<Directory> get appDocDir async {
+  static Future<Directory> get _appDocDir async {
     if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
@@ -48,15 +48,15 @@ abstract class LocalStorageRepository {
 
     if (Platform.isAndroid) {
       final a = (await getExternalStorageDirectory());
-      final b=    await getApplicationDocumentsDirectory();
-      return a??b;
+      final b = await getApplicationDocumentsDirectory();
+      return a ?? b;
     } else {
       return getApplicationDocumentsDirectory();
     }
   }
 
   ///Retorna assincronamente o path do diretório reservado ao aplicativo.
-  static Future<String> get appDocDirPath async {
+  static Future<String> get _appDocDirPath async {
     if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
@@ -64,11 +64,11 @@ abstract class LocalStorageRepository {
       );
     }
 
-    return (await appDocDir).path;
+    return (await _appDocDir).path;
   }
 
   ///Retorna o path completo para [relativePath].
-  static Future<String> getFullPath(String relativePath,
+  static Future<String> _getFullPath(String relativePath,
       {FutureOr<String>? parent}) async {
     assert(relativePath.isNotEmpty);
 
@@ -88,7 +88,7 @@ abstract class LocalStorageRepository {
       );
     }
 
-    parent ??= appDocDirPath;
+    parent ??= _appDocDirPath;
     final pathParent = await parent;
     if (pathParent.isEmpty) {
       throw MyException(
@@ -115,10 +115,10 @@ abstract class LocalStorageRepository {
       );
     }
 
-    return Directory(await getFullPath(DIR_PROFILE_PHOTOS_RELATIVE_PATH));
+    return Directory(await _getFullPath(DIR_PROFILE_PHOTOS_RELATIVE_PATH));
   }
 
-  ///Retorna assincronamente uma instância de [File] em [relativePath] relativo a [appDocDir].
+  ///Retorna assincronamente uma instância de [File] em [relativePath] relativo a [_appDocDir].
   static Future<File> getFile(String relativePath) async {
     assert(relativePath.isNotEmpty);
     if (relativePath.isEmpty) {
@@ -129,16 +129,21 @@ abstract class LocalStorageRepository {
       );
     }
 
-    return File(await getFullPath(relativePath));
+    return File(await _getFullPath(relativePath));
   }
 
   ///Copia o arquivo em [path] ou [relativePath] para [newPath] ou [newRelativePath] e retorna a nova cópia.
+  ///
   ///[path] é o path absoluto do arquivo a ser copiado.
-  ///[relativePath] é o path relativo a [appDocDir] do arquivo a ser copiado.
+  ///
+  ///[relativePath] é o path relativo a [_appDocDir] do arquivo a ser copiado.
+  ///
   ///[newPath] é o path absoluto da cópia do arquivo.
-  ///[newRelativePath] é o path relativo a [appDocDir] da cópia do arquivo.
-  ///Se existir um arquivo no path especificado, esse arquivo será substituído se [replace] for `true`. Se [replace] for
-  ///`false` será retornado `null`.
+  ///
+  ///[newRelativePath] é o path relativo a [_appDocDir] da cópia do arquivo.
+  ///
+  ///Se existir um arquivo no path especificado, esse arquivo será substituído se [replace] for `true`. Se [replace] for `false` será retornado `null`.
+  ///
   ///Será retornado `null` caso ocorra qualquer erro no processo de cópia.
   static Future<File?> copyFile({
     FutureOr<String>? path,
@@ -173,8 +178,8 @@ abstract class LocalStorageRepository {
     }
 
     if (validation1 && validation2) {
-      pathSync ??= await getFullPath(relativePath!);
-      newPathSync ??= await getFullPath(newRelativePath!);
+      pathSync ??= await _getFullPath(relativePath!);
+      newPathSync ??= await _getFullPath(newRelativePath!);
       final file = File(pathSync);
 
       if (file.existsSync() && !replace) return null;
@@ -192,11 +197,14 @@ abstract class LocalStorageRepository {
   }
 
   ///Localiza arquivos e diretórios com base em [path] ou [relativePath].
+  ///
   ///[path] é o path absoluto para a busca.
-  ///[relativePath] é o path relativo a [appDocDir] para a busca.
-  ///Há suporte para padrões com os caracteres curingas "*" e "?" que representam, respectivamente, uma sequência de
-  ///caracteres e um único caracter.
-  static Future<FileList> find({
+  ///
+  ///[relativePath] é o path relativo a [_appDocDir] para a busca.
+  ///
+  ///Há suporte para padrões com os caracteres curingas "*" e "?" que representam,
+  ///respectivamente, uma sequência de caracteres e um único caracter.
+  static Future<PathList> find({
     FutureOr<String>? path,
     String? relativePath,
   }) async {
@@ -218,8 +226,12 @@ abstract class LocalStorageRepository {
     }
 
     if (validation) {
-      pathSync ??= await getFullPath(relativePath!);
-      return FileUtils.glob(pathSync) as FutureOr<FileList>;
+      pathSync ??= await _getFullPath(relativePath!);
+      final list = await FileManager.glob(
+        root: await _appDocDirPath,
+        globPattern: pathSync,
+      );
+      return list.map((e) => e.path).toList();
     } else {
       throw MyException(
         "Não foi possível determinar o path.",
@@ -232,15 +244,19 @@ abstract class LocalStorageRepository {
     }
   }
 
-  ///Remove o(s) arquivo(s) e diretório(s) especificado(s) em [path], [relativePth] ou [fileList] e retorna `true`
-  ///se a operação for bem-sucedida; caso contrário, `false`.
+  ///Remove o(s) arquivo(s) e diretório(s) especificado(s) em [path], [relativePath] ou [fileList] e retorna `true` se a operação for bem-sucedida; caso contrário, `false`.
   ///Apenas um desses parâmetros deve ser fornecido.
+  ///
   ///[path] é o path absoluto do arquivo a ser deletado.
-  ///[relativePath] é o path relativo a [appDocDir] do arquivo a ser deletado.
+  ///
+  ///[relativePath] é o path relativo a [_appDocDir] do arquivo a ser deletado.
+  ///
   ///[fileList] é a lista do(s) arquivo(s) e diretório(s) a ser(em) deletado(s).
+  ///
   ///Por padrão, ele não remove diretórios.
-  ///Se [directory] for definido como `true`, remove os diretórios se estiverem vazios.
+  ///
   ///Se [force] for definido como `true`, ignora arquivos inexistentes.
+  ///
   ///Se [recursive] for definido como `true`, remove os diretórios e seus conteúdos recursivamente.
   static Future<bool> delete({
     FutureOr<String>? path,
@@ -267,25 +283,25 @@ abstract class LocalStorageRepository {
     if (validation) {
       fileList ??= <String>[];
       if (pathSync != null) fileList.add(pathSync);
-      if (relativePath != null) fileList.add(await getFullPath(relativePath));
-      final result = _rm(fileList,
-          directory: directory, force: force, recursive: recursive);
+      if (relativePath != null) fileList.add(await _getFullPath(relativePath));
+      final result = _rm(fileList, force: force, recursive: recursive);
       return result;
     } else {
       return false;
     }
   }
 
-  ///Remove o(s) arquivo(s) e diretório(s) especificado(s) em [paths] e retorna `true` se a operação for bem-sucedida;
-  ///caso contrário, `false`.
-  ///Por padrão, ele não remove diretórios.
-  ///Se [directory] for definido como `true`, remove os diretórios se estiverem vazios.
+  ///Remove o(s) arquivo(s) e diretório(s) especificado(s) em [paths] e retorna `true` se a operação for bem-sucedida; caso contrário, `false`.
+  ///
+  ///Por padrão, não remove diretórios.
+  ///
   ///Se [force] for definido como `true`, ignora arquivos inexistentes e não aborta se ocorrer algum erro.
+  ///
   ///Se [recursive] for definido como `true`, remove os diretórios e seus conteúdos recursivamente.
+  ///
   ///Adaptado de [FileUtils.rm(files)].
   static bool _rm(
-    List<String> paths, {
-    bool directory = false,
+    PathList paths, {
     bool force = false,
     bool recursive = false,
   }) {
@@ -309,18 +325,10 @@ abstract class LocalStorageRepository {
         continue;
       }
 
-      FileSystemEntity? entity;
-      var isDirectory = false;
-      if (FileUtils.testfile(name, 'link') ?? false) {
-        entity = Link(name);
-      } else if (FileUtils.testfile(name, 'file') ?? false) {
-        entity = File(name);
-      } else if (FileUtils.testfile(name, 'directory') ?? false) {
-        entity = Directory(name);
-        isDirectory = true;
-      }
+      final entity = FileManager.entity(name);
+      var isDirectory = entity is Directory;
 
-      if (entity == null) {
+      if (entity == null || !entity.existsSync()) {
         if (!force) {
           return false;
         }
@@ -336,8 +344,6 @@ abstract class LocalStorageRepository {
               }
               continue;
             }
-          } else if (directory) {
-            result = FileUtils.rmdir([entity.path], parents: true);
           } else {
             if (!force) {
               return false;

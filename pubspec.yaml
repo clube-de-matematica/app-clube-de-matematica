@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.2+12
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.4.4 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,7 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
-    sdk: flutter # Flutter version 3.22.0 on channel stable. Dart version 3.4.0.
+    sdk: flutter # Flutter version 3.22.3 on channel stable. Dart version 3.4.4.
   flutter_localizations:
     sdk: flutter
 
@@ -53,15 +53,15 @@ dependencies:
   #transparent_image: ^2.0.0 #Uma imagem transparente simples. Representado como um Uint8List. Este pacote exporta uma constante: kTransparentImage.
   #image_size_getter: ^1.0.0 #Usado para obter a largura e a altura dos arquivos de imágem.
   diacritic: ^0.1.3 #Remove acentos comuns e sinais diacríticos de uma string, substituindo-os por um caractere equivalente.
-  image_picker: ^0.8.9 #Seletor de imagens.
+  image_picker: ^1.1.2 #Seletor de imagens.
   #image_cropper: ^1.5.0 #Cortar e girar imagem.
   #file_utils: ^1.0.1 #DESCONTINUADO #Coleção de classes auxiliares para o sistema de arquivos: FileList, FilePath e FileUtils.
-  globbing: ^1.0.0
+  glob: ^2.1.2 #Usado para localizar arquivos e diretórios.
   flutter_modular: ^3.4.1+1 #provedor de dependencias (widgets acessiveis em toda a sua sub-arvore) e rotas.
   mobx: ^2.0.1 
   flutter_mobx: ^2.0.0 
   collection: ^1.18.0
-  shimmer: ^2.0.0 #Fornece uma maneira fácil de adicionar efeito de brilho.
+  shimmer: ^3.0.0 #Fornece uma maneira fácil de adicionar efeito de brilho.
   #logging: ^1.0.1 #Manipulador de logs.
   hive_flutter: ^1.1.0
   flutter_secure_storage: ^6.1.0

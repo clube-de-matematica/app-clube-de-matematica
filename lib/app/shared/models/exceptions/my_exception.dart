@@ -42,19 +42,25 @@ class MyException implements Exception {
   }
 }
 
+///Lançada quando um recurso indisponível é solicitado.
+///[causeError] deve seguir o padão: "MinhaClasse(meuCampo ou meuMetodo(...): Causa do erro: ...)".
+class MyExceptionUnsupportedError extends MyException {
+  MyExceptionUnsupportedError(
+    String? message, {
+    super.originClass,
+    super.originField,
+    super.fieldDetails,
+    super.causeError,
+  }) : super(message ?? "Recurso não suportado.");
+}
+
 ///Lançada quando um recurso indisponível para a web é solicitado pela versão web do aplicativo.
 ///[causeError] deve seguir o padão: "MinhaClasse(meuCampo ou meuMetodo(...): Causa do erro: ...)".
-class MyExceptionNoWebSupport extends MyException {
+class MyExceptionNoWebSupport extends MyExceptionUnsupportedError {
   MyExceptionNoWebSupport({
-    String? originClass,
-    String? originField,
-    String? fieldDetails,
-    String? causeError,
-  }) : super(
-          "Não disponível para a versão web.",
-          originClass: originClass,
-          originField: originField,
-          fieldDetails: fieldDetails,
-          causeError: causeError,
-        );
+    super.originClass,
+    super.originField,
+    super.fieldDetails,
+    super.causeError,
+  }) : super("Não disponível para a versão web.");
 }

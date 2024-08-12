@@ -1,5 +1,7 @@
 import 'dart:core' as core;
 
+import 'package:flutter/foundation.dart';
+
 /// Rotinas para serem executadas apenas se não estiver na versão de lançamento.
 /// Todas as rotinas retornam `true` para que possam ser usadas dentro de um assert, pois
 /// este é removido na versão de lançamento.
@@ -41,7 +43,9 @@ abstract class Debug {
         if (afixo.isNotEmpty) {
           text = "${line(afixo, 5)} $text ${line(afixo, length - 7 - text.length)}";
         }
-        core.print(text);
+        if (kDebugMode) {
+          core.print(text);
+        }
       }),
     );
     return true;
