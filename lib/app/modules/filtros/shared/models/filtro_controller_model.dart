@@ -8,15 +8,16 @@ import 'filtros_model.dart';
 part 'filtro_controller_model.g.dart';
 
 /// A superclasse para os controles das páginas de filtro.
-abstract class FiltroController = _FiltroControllerBase with _$FiltroController;
+abstract class FiltroController = FiltroControllerBase with _$FiltroController;
 
-abstract class _FiltroControllerBase with Store {
+abstract class FiltroControllerBase with Store {
   final Filtros filtrosSalvos;
   final Filtros filtrosTemp;
 
-  _FiltroControllerBase(
-      {required Filtros filtrosSalvos, required this.filtrosTemp})
-      : this.filtrosSalvos = filtrosSalvos;
+  FiltroControllerBase({
+    required this.filtrosSalvos,
+    required this.filtrosTemp,
+  });
 
   /// Retorna o título usado na `AppBar` das páginas de filtro.
   String get tituloAppBar;

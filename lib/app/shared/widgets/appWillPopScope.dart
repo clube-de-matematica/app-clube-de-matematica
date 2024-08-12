@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 class AppWillPopScope extends StatefulWidget {
   final Widget child;
   const AppWillPopScope({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
-  _AppWillPopScopeState createState() => _AppWillPopScopeState();
+  AppWillPopScopeState createState() => AppWillPopScopeState();
 }
 
-class _AppWillPopScopeState extends State<AppWillPopScope> {
+class AppWillPopScopeState extends State<AppWillPopScope> {
   final duration = const Duration(seconds: 2);
 
   int _backCounter = 0;
@@ -60,7 +60,6 @@ class _AppWillPopScopeState extends State<AppWillPopScope> {
   Widget build(BuildContext context) {
     bool podeFechar = _willPop(context);
     return PopScope(
-      child: widget.child,
       canPop: podeFechar,
       onPopInvoked: (_) {
         // _ é o valor de _podeFechar quando onPopInvoked é chamado.
@@ -71,13 +70,14 @@ class _AppWillPopScopeState extends State<AppWillPopScope> {
               .showSnackBar(
                 SnackBar(
                   behavior: SnackBarBehavior.floating,
-                  content: Text('Pressione novamente para sair.'),
+                  content: const Text('Pressione novamente para sair.'),
                   duration: duration,
                 ),
               )
               .closed;
         }
       },
+      child: widget.child,
     );
   }
 }

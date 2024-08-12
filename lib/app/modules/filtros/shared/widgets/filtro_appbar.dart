@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 class FiltroAppBar extends AppBar {
   FiltroAppBar(
     String titulo, {
-    Key? key,
+    super.key,
   }) : super(
-          key: key,
           elevation: 0,
           title: Text(titulo),
         );

@@ -17,10 +17,9 @@ import 'consolidar_atividade_controller.dart';
 
 /// Página destinada a responder às questões de uma atividade.
 class ConsolidarAtividadePage extends StatefulWidget {
-  ConsolidarAtividadePage(ArgumentosAtividadePage args, {Key? key})
+  ConsolidarAtividadePage(ArgumentosAtividadePage args, {super.key})
       : atividade = args.atividade,
-        clube = args.clube,
-        super(key: key);
+        clube = args.clube;
 
   final Atividade atividade;
   final Clube clube;
@@ -51,7 +50,9 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
           'A atividade já foi liberada. Algum membro pode estar resolvendo-a');
       if (!editar) return;
     }
-    controle.abrirPaginaEditarAtividade(context);
+    if (context.mounted) {
+      controle.abrirPaginaEditarAtividade(context);
+    }
   }
 
   Future<bool> _abrirPaginaInferior(
@@ -73,7 +74,10 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
     await BottomSheetCarregando(future: futuro).showModal(context);
     final sucesso = await futuro;
     if (!sucesso) {
-      await BottomSheetErro('A atividade não foi enviada').showModal(context);
+      if (context.mounted) {
+        await const BottomSheetErro('A atividade não foi enviada')
+            .showModal(context);
+      }
     }
   }
 
@@ -88,14 +92,20 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
       if (!excluir) return;
     }
     final futuro = controle.excluirAtividade();
-    await BottomSheetCarregando(future: futuro).showModal(context);
+    if (context.mounted) {
+      await BottomSheetCarregando(future: futuro).showModal(context);
+    }
     final sucesso = await futuro;
     if (mounted) {
       if (sucesso) {
-        Navigator.of(context).pop();
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
       } else {
-        await BottomSheetErro('A atividade não foi excluída')
-            .showModal(context);
+        if (context.mounted) {
+          await const BottomSheetErro('A atividade não foi excluída')
+              .showModal(context);
+        }
       }
     }
   }
@@ -107,25 +117,25 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
       data: temaClube.tema,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
+          preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Observer(builder: (_) {
             return AppBar(
               title: Text(controle.atividade.titulo),
               actions: [
                 if (controle.podeLiberar)
                   IconButton(
-                    icon: Icon(Icons.send),
+                    icon: const Icon(Icons.send),
                     onPressed: () => _liberarAtividade(context),
                   ),
                 if (controle.podeEditar)
                   IconButton(
-                    icon: Icon(Icons.edit),
+                    icon: const Icon(Icons.edit),
                     onPressed: () =>
                         _editarAtividade(context, controle.atividade),
                   ),
                 if (controle.podeExcluir)
                   IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () => _excluirAtividade(context),
                   ),
               ],
@@ -147,10 +157,7 @@ class _ConsolidarAtividadePageState extends State<ConsolidarAtividadePage> {
 }
 
 class _Membros extends StatefulWidget {
-  const _Membros(
-    this.controle, {
-    Key? key,
-  }) : super(key: key);
+  const _Membros(this.controle);
 
   final ConsolidarAtividadeController controle;
 
@@ -191,11 +198,11 @@ class _MembrosState extends State<_Membros> {
             title:
                 Text(membro.nome ?? membro.email ?? 'Membro não identificado'),
             leading: CircleAvatar(
+              backgroundColor: temaClube.primaria.withOpacity(0.3),
               child: Icon(
                 Icons.person,
                 color: temaClube.enfaseSobreSuperficie,
               ),
-              backgroundColor: temaClube.primaria.withOpacity(0.3),
             ),
             trailing: _construirIndicadorErrosAcertos(membro),
           ),
@@ -272,11 +279,11 @@ class _MembrosState extends State<_Membros> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 leading: CircleAvatar(
+                  backgroundColor: enfase,
                   child: Text(
                     identificador,
                     style: TextStyle(color: temaClube.sobreSuperficie),
                   ),
-                  backgroundColor: enfase,
                 ),
                 trailing: trailing,
                 onTap: () {
@@ -312,7 +319,9 @@ class _MembrosState extends State<_Membros> {
             //dividerColor: Colors.transparent,
             children: controle.clube.membros.isEmpty ? [] : _construirMembros(),
             expansionCallback: (indice, expandido) {
-              for (var i = 0; i < estados.length; i++) estados[i] = false;
+              for (var i = 0; i < estados.length; i++) {
+                estados[i] = false;
+              }
               setState(() {
                 estados[indice] = expandido;
               });

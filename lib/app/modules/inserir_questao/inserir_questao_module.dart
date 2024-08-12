@@ -22,6 +22,6 @@ class InserirQuestaoModule extends Module {
   @override
   List<ModularRoute> get routes => [
         //ChildRoute(Modular.initialRoute, child: (_, __) => InserirQuestaoPage()),
-        ChildRoute(kRelativeRouteInserirQuestaoPage, child: (_, __) => InserirQuestaoPage()),
+        ChildRoute(kRelativeRouteInserirQuestaoPage, child: (_, __) => const InserirQuestaoPage()),
       ];
 }

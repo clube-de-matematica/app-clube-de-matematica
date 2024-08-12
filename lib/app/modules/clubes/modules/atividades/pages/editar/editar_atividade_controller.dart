@@ -1,11 +1,10 @@
 import '../../../../../quiz/shared/models/questao_model.dart';
-import '../../../../shared/models/clube.dart';
 import '../../models/atividade.dart';
 import '../../shared/models/interface_atividade_controller.dart';
 
 class EditarAtividadeController extends IAtividadeController
     with IAtividadeControllerMixinCriarEditar {
-  EditarAtividadeController(Clube clube, this.atividade) : super(clube);
+  EditarAtividadeController(super.clube, this.atividade);
 
   final Atividade atividade;
 

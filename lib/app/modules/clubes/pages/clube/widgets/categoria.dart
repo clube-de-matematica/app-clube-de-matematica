@@ -6,19 +6,18 @@ class Categoria extends StatelessWidget {
   final List<Widget> Function(BuildContext context)? builder;
 
   Categoria({
-    Key? key,
+    super.key,
     required this.categoria,
     this.itens = const [],
     this.builder,
-  })  : assert(!(itens.isNotEmpty && builder != null)),
-        super(key: key);
+  })  : assert(!(itens.isNotEmpty && builder != null));
 
   @override
   Widget build(BuildContext context) {
     final cor = Theme.of(context).primaryColor;
     final brightness = ThemeData.estimateBrightnessForColor(cor);
     final corTexto = brightness == Brightness.light ? Colors.black : cor;
-    final _itens = builder?.call(context) ?? itens;
+    final listItens = builder?.call(context) ?? itens;
     
     return Padding(
       padding: const EdgeInsets.only(top: 24.0, bottom: 8.0),
@@ -38,7 +37,7 @@ class Categoria extends StatelessWidget {
               thickness: 2.0,
             ),
           ),
-          for (final item in _itens) item,
+          for (final item in listItens) item,
         ],
       ),
     );

@@ -46,10 +46,10 @@ extension OpcoesClubeExtension on OpcoesClube {
   }
 }
 
-class HomeClubesController = _HomeClubesControllerBase
+class HomeClubesController = HomeClubesControllerBase
     with _$HomeClubesController;
 
-abstract class _HomeClubesControllerBase extends IClubeController
+abstract class HomeClubesControllerBase extends IClubeController
     with
         Store,
         IClubeControllerMixinSairExcluir,

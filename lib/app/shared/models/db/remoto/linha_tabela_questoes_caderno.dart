@@ -5,23 +5,16 @@ import 'mixin.dart';
 class LinTbQuestoesCadernoDbRemoto extends ILinTbQuestoesCaderno
     with LinTbMixin {
   LinTbQuestoesCadernoDbRemoto({
-    required String id,
-    required int ano,
-    required int nivel,
-    required int indice,
-    required int idQuestao,
-    required String dataModificacao,
-  }) : super(
-          id: id,
-          ano: ano,
-          nivel: nivel,
-          indice: indice,
-          idQuestao: idQuestao,
-          dataModificacao: dataModificacao,
-        );
+    required super.id,
+    required super.ano,
+    required super.nivel,
+    required super.indice,
+    required super.idQuestao,
+    required String super.dataModificacao,
+  });
 
   factory LinTbQuestoesCadernoDbRemoto.fromMap(Map map) {
-    final tb = Sql.tbQuestoesCaderno;
+    const tb = Sql.tbQuestoesCaderno;
     return LinTbQuestoesCadernoDbRemoto(
       id: map[tb.id],
       ano: map[tb.ano],

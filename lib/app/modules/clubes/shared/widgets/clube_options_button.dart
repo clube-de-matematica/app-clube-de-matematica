@@ -8,14 +8,14 @@ import '../models/clube.dart';
 /// O botão para o menu de opções do clube.
 class ClubeOptionsButton extends StatelessWidget {
   const ClubeOptionsButton({
-    Key? key,
+    super.key,
     required this.clube,
     this.iconColor,
     required this.onSair,
     required this.onEditar,
     required this.onCompartilharCodigo,
     required this.onExcluir,
-  }) : super(key: key);
+  });
   final Clube clube;
   final Color? iconColor;
   final VoidCallback onSair;

@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import '../../../../shared/utils/constantes.dart';
 
 /// Strings para a página do quiz.

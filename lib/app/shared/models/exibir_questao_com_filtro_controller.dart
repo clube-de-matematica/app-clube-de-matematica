@@ -16,16 +16,16 @@ part 'exibir_questao_com_filtro_controller.g.dart';
 
 /// Base do controle de páginas que exibem questões e têm a opção de filtrar.
 /// * Para páginas sem a opção de filtrar, veja [ExibirQuestaoController].
-class ExibirQuestaoComFiltroController = _ExibirQuestaoComFiltroControllerBase
+class ExibirQuestaoComFiltroController = ExibirQuestaoComFiltroControllerBase
     with _$ExibirQuestaoComFiltroController;
 
-abstract class _ExibirQuestaoComFiltroControllerBase
+abstract class ExibirQuestaoComFiltroControllerBase
     extends ExibirQuestaoController with Store implements Disposable {
   final Filtros filtros;
   final QuestoesRepository repositorio;
   final _disposers = <ReactionDisposer>[];
 
-  _ExibirQuestaoComFiltroControllerBase({
+  ExibirQuestaoComFiltroControllerBase({
     required this.filtros,
     required this.repositorio,
   }) {

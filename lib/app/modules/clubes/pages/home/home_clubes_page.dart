@@ -16,13 +16,13 @@ enum _OpcaoAdicionarClube { entrar, criar }
 
 /// Página inicial para visualização dos clubes do usuário.
 class HomeClubesPage extends StatefulWidget {
-  const HomeClubesPage({Key? key}) : super(key: key);
+  const HomeClubesPage({super.key});
 
   @override
-  _HomeClubesPageState createState() => _HomeClubesPageState();
+  HomeClubesPageState createState() => HomeClubesPageState();
 }
 
-class _HomeClubesPageState
+class HomeClubesPageState
     extends ModularState<HomeClubesPage, HomeClubesController> {
   @override
   Widget build(BuildContext context) {
@@ -89,11 +89,11 @@ class _HomeClubesPageState
         ),
       ),
       itemBuilder: (context) => [
-        PopupMenuItem<_OpcaoAdicionarClube>(
+        const PopupMenuItem<_OpcaoAdicionarClube>(
           value: _OpcaoAdicionarClube.entrar,
           child: Text('Entrar com um código'),
         ),
-        PopupMenuItem<_OpcaoAdicionarClube>(
+        const PopupMenuItem<_OpcaoAdicionarClube>(
           value: _OpcaoAdicionarClube.criar,
           child: Text('Criar'),
         ),
@@ -110,10 +110,15 @@ class _HomeClubesPageState
                       .showModal(context);
                   final clube = await future;
                   if (clube != null) {
-                    Navigator.of(context).pop();
-                    controller.abrirPaginaClube(context, clube);
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                      controller.abrirPaginaClube(context, clube);
+                    }
                   } else {
-                    await BottomSheetErroParticiparClube().showModal(context);
+                    if (context.mounted) {
+                      await const BottomSheetErroParticiparClube()
+                          .showModal(context);
+                    }
                   }
                 },
               ),

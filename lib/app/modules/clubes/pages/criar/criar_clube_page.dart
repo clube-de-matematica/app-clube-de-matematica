@@ -6,13 +6,13 @@ import 'criar_clube_controller.dart';
 import 'widgets/form_criar_clube.dart';
 
 class CriarClubePage extends StatefulWidget {
-  const CriarClubePage({Key? key}) : super(key: key);
+  const CriarClubePage({super.key});
 
   @override
-  _CriarClubePageState createState() => _CriarClubePageState();
+  CriarClubePageState createState() => CriarClubePageState();
 }
 
-class _CriarClubePageState extends State<CriarClubePage> {
+class CriarClubePageState extends State<CriarClubePage> {
   final controller = AdicionarClubeController();
 
   @override
@@ -43,9 +43,13 @@ class _CriarClubePageState extends State<CriarClubePage> {
     await BottomSheetCarregando(future: future).showModal(context);
     final clube = await future;
     if (clube != null) {
-      controller.abrirPaginaClube(context, clube);
+      if (context.mounted) {
+        controller.abrirPaginaClube(context, clube);
+      }
     } else {
-      await BottomSheetErroCriarClube().showModal(context);
+      if (context.mounted) {
+        await const BottomSheetErroCriarClube().showModal(context);
+      }
     }
   }
 }

@@ -191,14 +191,14 @@ abstract class Navegacao {
 
   /// Penúltima página da pilha.
   static String? paginaAnterior(BuildContext context) {
-    final _paginas = paginas(context);
-    return _paginas.length < 2 ? null : _paginas[_paginas.length - 2];
+    final paginas = Navegacao.paginas(context);
+    return paginas.length < 2 ? null : paginas[paginas.length - 2];
   }
 
   /// Última página da pilha.
   static String? paginaAtual(BuildContext context) {
-    final _paginas = paginas(context);
-    return _paginas.isEmpty ? null : _paginas[_paginas.length - 1];
+    final paginas = Navegacao.paginas(context);
+    return paginas.isEmpty ? null : paginas[paginas.length - 1];
   }
 
   static bool Function(Route<dynamic>) _haRotaComNome(String nome) {

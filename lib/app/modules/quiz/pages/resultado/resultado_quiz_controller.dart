@@ -9,11 +9,11 @@ part 'resultado_quiz_controller.g.dart';
 
 typedef _Dados = ObservableList<MapEntry<Questao, RespostaQuestao?>>;
 
-class ResultadoQuizController = _ResultadoQuizControllerBase
+class ResultadoQuizController = ResultadoQuizControllerBase
     with _$ResultadoQuizController;
 
-abstract class _ResultadoQuizControllerBase with Store {
-  _ResultadoQuizControllerBase({
+abstract class ResultadoQuizControllerBase with Store {
+  ResultadoQuizControllerBase({
     required this.repositorio,
   }) {
     carregar();
@@ -35,7 +35,7 @@ abstract class _ResultadoQuizControllerBase with Store {
       return;
     }
     final questoes = await repositorio.questoes(ids: ids);
-    final map = Map<Questao, RespostaQuestao?>();
+    final map = <Questao, RespostaQuestao?>{};
     final respostasAssinc = questoes.map((q) async {
       final futuro = repositorio.obterResposta(q);
       map[q] = await futuro;

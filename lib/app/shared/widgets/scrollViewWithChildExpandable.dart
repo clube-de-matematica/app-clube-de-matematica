@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 class ScrollViewWithChildExpandable extends StatelessWidget {
   final Widget child;
 
-  const ScrollViewWithChildExpandable({Key? key, required this.child})
-      : super(key: key);
+  const ScrollViewWithChildExpandable({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

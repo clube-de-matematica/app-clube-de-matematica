@@ -6,10 +6,10 @@ import '../utils/ui_strings.dart';
 /// Barra de botões na parte inferior das páginas de filtros.
 class AppBarraInferiorFiltro extends StatelessWidget {
   const AppBarraInferiorFiltro({
-    Key? key,
+    super.key,
     required this.onPressedLimpar,
     required this.onPressedAplicar,
-  }) : super(key: key);
+  });
 
   final VoidCallback? onPressedLimpar;
   final VoidCallback? onPressedAplicar;
@@ -23,8 +23,8 @@ class AppBarraInferiorFiltro extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: FilledButton.tonal(
-              child: const Text(UIStrings.FILTRO_TEXTO_BOTAO_LIMPAR),
               onPressed: onPressedLimpar,
+              child: const Text(UIStrings.FILTRO_TEXTO_BOTAO_LIMPAR),
             ),
           ),
           const SizedBox(width: 10),

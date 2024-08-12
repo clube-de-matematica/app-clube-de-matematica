@@ -5,44 +5,31 @@ import '../theme/appTheme.dart';
 /// O [TextFormField] padrão do aplicativo.
 class AppTextFormField extends TextFormField {
   AppTextFormField({
-    Key? key,
-    bool autofocus = false,
-    FocusNode? focusNode,
-    TextAlign textAlign = TextAlign.start,
+    super.key,
+    super.autofocus,
+    super.focusNode,
+    super.textAlign,
     TextInputType? keyboardType,
-    TextInputAction? textInputAction,
+    super.textInputAction,
     String? labelText,
     String? hintText,
-    String? initialValue,
-    int? maxLength,
-    int? maxLines,
-    TextStyle? style,
+    super.initialValue,
+    super.maxLength,
+    super.maxLines = null,
+    super.style,
     Widget? suffixIcon,
-    String? Function(String?)? validator,
-    void Function(String?)? onSaved,
-    void Function(String)? onChanged,
-    void Function(String)? onFieldSubmitted,
+    super.validator,
+    super.onSaved,
+    super.onChanged,
+    super.onFieldSubmitted,
   }) : super(
-          key: key,
-          autofocus: autofocus,
-          focusNode: focusNode,
-          textAlign: textAlign,
           keyboardType: keyboardType ?? TextInputType.text,
-          textInputAction: textInputAction,
-          maxLength: maxLength,
-          maxLines: maxLines,
-          style: style,
-          decoration: InputDecoration()
+          decoration: const InputDecoration()
               .applyDefaults(AppTheme.instance.light.inputDecorationTheme)
               .copyWith(
                 labelText: labelText,
                 hintText: hintText,
                 suffixIcon: suffixIcon,
               ),
-          initialValue: initialValue,
-          validator: validator,
-          onSaved: onSaved,
-          onChanged: onChanged,
-          onFieldSubmitted: onFieldSubmitted,
         );
 }

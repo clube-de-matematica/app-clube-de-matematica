@@ -3,28 +3,22 @@ import 'package:shimmer/shimmer.dart';
 
 ///Widget com efeito de brilho para ser usado como espaço reservado.
 class AppShimmer extends Shimmer {
-  AppShimmer({
+  AppShimmer({super.key, 
     Widget? child,
     double? width,
     double? height,
-    Color baseColor = const Color(0xFFEEEEEE), //Color(0xFFEBEBF4),
-    Color highlightColor = const Color(0xFFFCFCFC), //Color(0xFFF4F4F4),
-    Duration period = const Duration(milliseconds: 1500),
-    ShimmerDirection direction = ShimmerDirection.ltr,
-    int loop = 0,
-    bool enabled = true,
+    super.baseColor = const Color(0xFFEEEEEE), //Color(0xFFEBEBF4),
+    super.highlightColor = const Color(0xFFFCFCFC), //Color(0xFFF4F4F4),
+    super.period,
+    super.direction,
+    super.loop,
+    super.enabled,
   }) : super.fromColors(
           child: Container(
             width: width,
             height: height,
             color: Colors.white, //Necessário para o Shimmer.
             child: child,
-          ),
-          baseColor: baseColor,
-          highlightColor: highlightColor, //Color(0xFFF4F4F4),
-          period: period,
-          direction: direction,
-          loop: loop,
-          enabled: enabled
+          )
         );
 }

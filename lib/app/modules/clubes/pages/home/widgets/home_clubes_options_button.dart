@@ -7,10 +7,10 @@ import '../home_clubes_controller.dart';
 /// O botão para o menu de opções do clube.
 class HomeClubesOptionsButton extends StatelessWidget {
   const HomeClubesOptionsButton({
-    Key? key,
+    super.key,
     this.textStyle,
     required this.controller,
-  }) : super(key: key);
+  });
   final TextStyle? textStyle;
   final HomeClubesController controller;
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Formulario para participar de um clube com o código.
 class FormCodigoClube extends StatefulWidget {
-  const FormCodigoClube({Key? key, this.onParticipar}) : super(key: key);
+  const FormCodigoClube({super.key, this.onParticipar});
 
   /// Ação executada ao precionar o botão de confirmação.
   final Future Function(String)? onParticipar;
@@ -43,9 +43,9 @@ class _FormCodigoClubeState extends State<FormCodigoClube> {
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.done,
           maxLength: maxLength,
-          style: TextStyle(fontSize: 26.0),
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
+          style: const TextStyle(fontSize: 26.0),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
             contentPadding: EdgeInsets.all(0),
           ),
           onChanged: (value) {
@@ -55,7 +55,6 @@ class _FormCodigoClubeState extends State<FormCodigoClube> {
           },
         ),
         TextButton(
-          child: const Text('PARTICIPAR'),
           onPressed: activateButton && !isLoading
               ? () async {
                   setState(() => isLoading = true);
@@ -63,6 +62,7 @@ class _FormCodigoClubeState extends State<FormCodigoClube> {
                   setState(() => isLoading = false);
                 }
               : null,
+          child: const Text('PARTICIPAR'),
         ),
       ],
     );

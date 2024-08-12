@@ -15,11 +15,13 @@ import 'login_controller.dart';
 
 /// Página de login.
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends ModularState<LoginPage, LoginController> {
+class LoginPageState extends ModularState<LoginPage, LoginController> {
   double get escala => AppTheme.escala;
 
   ThemeData get tema => Theme.of(context);
@@ -49,9 +51,13 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         int contador = 0;
         while (!mounted) {
           if (++contador > 30) return;
-          await Future.delayed(Duration(seconds: 1));
+          await Future.delayed(const Duration(seconds: 1));
         }
-        BottomSheetAvisoConsentimento().showModal(context);
+        if (mounted) {
+          if (context.mounted) {
+            BottomSheetAvisoConsentimento().showModal(context);
+          }
+        }
       }();
     });
   }
@@ -86,7 +92,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                UIStrings.LOGIN_MSG_BEM_VINDO + "\n",
+                                "${UIStrings.LOGIN_MSG_BEM_VINDO}\n",
                                 style: textStyleH1,
                                 textAlign: TextAlign.center,
                               ),
@@ -101,25 +107,30 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                       ),
                     ),
 
-                    Expanded(child: const SizedBox()),
+                    const Expanded(child: SizedBox()),
 
                     /// Botão de login com o Google.
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: LoginWithGoogleButton(
-                        margin: EdgeInsets.all(16.0),
+                        margin: const EdgeInsets.all(16.0),
                         onPressed: () async {
                           if (!controller.isLoading) {
                             if (!await controller.conectadoInternete) {
-                              BottomSheetErroConexao().showModal(context);
+                              if (context.mounted) {
+                                const BottomSheetErroConexao()
+                                    .showModal(context);
+                              }
                               return;
                             }
                             final result =
                                 await controller.onTapLoginWithGoogle();
-                            if (result == SignInChangeState.success) {
-                              controller.showPerfilPage(context);
-                            } else if (result == SignInChangeState.error) {
-                              _buildBottomSheetErroLogin().showModal(context);
+                            if (context.mounted) {
+                              if (result == SignInChangeState.success) {
+                                controller.showPerfilPage(context);
+                              } else if (result == SignInChangeState.error) {
+                                _buildBottomSheetErroLogin().showModal(context);
+                              }
                             }
                           }
                         },
@@ -154,7 +165,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             visualDensity: VisualDensity.compact,
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
           ),
           child: Stack(
             alignment: AlignmentDirectional.center,
@@ -178,8 +189,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                       width: 16.0,
                       height: 16.0,
                       child: Center(
-                        child:
-                            const CircularProgressIndicator(strokeWidth: 2.0),
+                        child: CircularProgressIndicator(strokeWidth: 2.0),
                       ),
                     ),
             ],
@@ -187,16 +197,25 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
           onPressed: () async {
             if (!controller.isLoading) {
               if (!await controller.conectadoInternete) {
-                BottomSheetErroConexao().showModal(context);
+                if (context.mounted) {
+                  const BottomSheetErroConexao().showModal(context);
+                }
                 return;
               }
-              final result = await _buildBottomSheetConfirmarLoginAnonymously()
-                  .showModal<bool>(context);
-              if (result ?? false) {
-                final autenticado =
-                    await controller.onTapConnectAnonymously(context);
-                if (!autenticado) {
-                  _buildBottomSheetErroLogin().showModal(context);
+              if (context.mounted) {
+                final result =
+                    await _buildBottomSheetConfirmarLoginAnonymously()
+                        .showModal<bool>(context);
+                if (result ?? false) {
+                  if (context.mounted) {
+                    final autenticado =
+                        await controller.onTapConnectAnonymously(context);
+                    if (!autenticado) {
+                      if (context.mounted) {
+                        _buildBottomSheetErroLogin().showModal(context);
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -248,8 +267,8 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         UIStrings.LOGIN_DIALOG_ERROR_TITLE,
         textAlign: TextAlign.justify,
       ),
-      content: SingleChildScrollView(
-        child: const Text(
+      content: const SingleChildScrollView(
+        child: Text(
           UIStrings.LOGIN_DIALOG_ERROR_MSG,
           textAlign: TextAlign.justify,
         ),

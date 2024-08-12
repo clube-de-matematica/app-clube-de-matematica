@@ -62,28 +62,19 @@ class PermissoesClube {
 
 class Clube extends _ClubeBase with _$Clube {
   Clube({
-    required int id,
-    required String nome,
-    String? descricao,
-    Iterable<UsuarioClube>? usuarios,
-    Color? capa,
-    required String codigo,
-    required bool privado,
-    Iterable<Atividade>? atividades,
-  }) : super(
-          id: id,
-          nome: nome,
-          descricao: descricao,
-          usuarios: usuarios,
-          capa: capa,
-          codigo: codigo,
-          privado: privado,
-          atividades: atividades,
-        );
+    required super.id,
+    required super.nome,
+    super.descricao,
+    super.usuarios,
+    super.capa,
+    required super.codigo,
+    required super.privado,
+    super.atividades,
+  });
 
   /// Cria um objeto [Clube] a partir do [DataClube] [map].
   factory Clube.fromDataClube(DataClube map) {
-    final _usuarios = (map[DbConst.kDbDataClubeKeyUsuarios] as List)
+    final usuarios = (map[DbConst.kDbDataClubeKeyUsuarios] as List)
         .cast<DataUsuarioClube>()
         .map((dados) => UsuarioClube.fromDataUsuarioClube(dados));
 
@@ -91,7 +82,7 @@ class Clube extends _ClubeBase with _$Clube {
       id: map[DbConst.kDbDataClubeKeyId],
       nome: map[DbConst.kDbDataClubeKeyNome],
       descricao: map[DbConst.kDbDataClubeKeyDescricao],
-      usuarios: _usuarios,
+      usuarios: usuarios,
       capa: DbRemoto.decodificarCapaClube(
           map[DbConst.kDbDataClubeKeyCapa].toString()),
       codigo: map[DbConst.kDbDataClubeKeyCodigo],
@@ -135,10 +126,10 @@ abstract class _ClubeBase with Store {
     required this.codigo,
     required this.privado,
     Iterable<Atividade>? atividades,
-  })  : this.capa = capa ?? RandomColor(),
-        this.atividades = ObservableSetAtividades(idClube: id)
+  })  : capa = capa ?? RandomColor(),
+        atividades = ObservableSetAtividades(idClube: id)
           ..addAll(atividades ?? []),
-        this.usuarios = ObservableSetUsuariosClube(idClube: id)
+        usuarios = ObservableSetUsuariosClube(idClube: id)
           ..addAll(usuarios ?? []);
 
   /// ID do clube.
@@ -213,7 +204,7 @@ abstract class _ClubeBase with Store {
   /// Sobrescreve os campos modificáveis deste clube com os respectivos
   /// valores em [outro], desde que os tenham o mesmo ID.
   void mesclar(Clube outro) {
-    if (this.id == outro.id) {
+    if (id == outro.id) {
       nome = outro.nome;
       descricao = outro.descricao;
       capa = outro.capa;
@@ -252,13 +243,13 @@ class RawClube {
   final List<Atividade>? atividades;
 
   DataClube toDataClube() {
-    final _usuarios =
+    final usuarios =
         this.usuarios?.map((usuario) => usuario.toDataUsuarioClube()).toList();
     return {
       DbConst.kDbDataClubeKeyId: id,
       DbConst.kDbDataClubeKeyNome: nome,
       DbConst.kDbDataClubeKeyDescricao: descricao,
-      DbConst.kDbDataClubeKeyUsuarios: _usuarios,
+      DbConst.kDbDataClubeKeyUsuarios: usuarios,
       DbConst.kDbDataClubeKeyCapa:
           capa != null ? DbRemoto.codificarCapaClube(capa!) : null,
       DbConst.kDbDataClubeKeyCodigo: codigo,
@@ -300,16 +291,16 @@ class ObservableSetUsuariosClube extends ObservableSet<UsuarioClube> {
   final int idClube;
 
   @override
-  bool contains(Object? usuario) {
-    if (usuario is UsuarioClube) {
-      if (usuario.idClube != idClube) return false;
-      return where((e) => e.id == usuario.id).isNotEmpty;
+  bool contains(Object? element) {
+    if (element is UsuarioClube) {
+      if (element.idClube != idClube) return false;
+      return where((e) => e.id == element.id).isNotEmpty;
     }
     return false;
   }
 
   @override
-  bool add(UsuarioClube usuario) => _add(usuario);
+  bool add(UsuarioClube value) => _add(value);
 
   @action
   bool _add(UsuarioClube usuario) {
@@ -323,8 +314,8 @@ class ObservableSetUsuariosClube extends ObservableSet<UsuarioClube> {
   }
 
   @override
-  bool remove(Object? usuario) {
-    if (usuario is UsuarioClube) return _remove(usuario);
+  bool remove(Object? value) {
+    if (value is UsuarioClube) return _remove(value);
     return false;
   }
 
@@ -338,19 +329,19 @@ class ObservableSetUsuariosClube extends ObservableSet<UsuarioClube> {
   }
 
   @override
-  Set<UsuarioClube> intersection(Set<Object?> outro) {
+  Set<UsuarioClube> intersection(Set<Object?> other) {
     Set<UsuarioClube> resultado = toSet();
     resultado.removeWhere(
-      (usuario) => !outro.any((e) => e is UsuarioClube && e.id == usuario.id),
+      (usuario) => !other.any((e) => e is UsuarioClube && e.id == usuario.id),
     );
     return resultado;
   }
 
   @override
-  Set<UsuarioClube> difference(Set<Object?> outro) {
+  Set<UsuarioClube> difference(Set<Object?> other) {
     Set<UsuarioClube> resultado = toSet();
     resultado.removeWhere(
-      (usuario) => outro.any((e) => e is UsuarioClube && e.id == usuario.id),
+      (usuario) => other.any((e) => e is UsuarioClube && e.id == usuario.id),
     );
     return resultado;
   }
@@ -365,16 +356,16 @@ class ObservableSetAtividades extends ObservableSet<Atividade> {
   final int idClube;
 
   @override
-  bool contains(Object? atividade) {
-    if (atividade is Atividade) {
-      if (atividade.idClube != idClube) return false;
-      return where((e) => e.id == atividade.id).isNotEmpty;
+  bool contains(Object? element) {
+    if (element is Atividade) {
+      if (element.idClube != idClube) return false;
+      return where((e) => e.id == element.id).isNotEmpty;
     }
     return false;
   }
 
   @override
-  bool add(Atividade atividade) => _add(atividade);
+  bool add(Atividade value) => _add(value);
 
   @action
   bool _add(Atividade atividade) {
@@ -388,8 +379,8 @@ class ObservableSetAtividades extends ObservableSet<Atividade> {
   }
 
   @override
-  bool remove(Object? atividade) {
-    if (atividade is Atividade) return _remove(atividade);
+  bool remove(Object? value) {
+    if (value is Atividade) return _remove(value);
     return false;
   }
 
@@ -403,19 +394,19 @@ class ObservableSetAtividades extends ObservableSet<Atividade> {
   }
 
   @override
-  Set<Atividade> intersection(Set<Object?> outro) {
+  Set<Atividade> intersection(Set<Object?> other) {
     Set<Atividade> resultado = toSet();
     resultado.removeWhere(
-      (atividade) => !outro.any((e) => e is Atividade && e.id == atividade.id),
+      (atividade) => !other.any((e) => e is Atividade && e.id == atividade.id),
     );
     return resultado;
   }
 
   @override
-  Set<Atividade> difference(Set<Object?> outro) {
+  Set<Atividade> difference(Set<Object?> other) {
     Set<Atividade> resultado = toSet();
     resultado.removeWhere(
-      (atividade) => outro.any((e) => e is Atividade && e.id == atividade.id),
+      (atividade) => other.any((e) => e is Atividade && e.id == atividade.id),
     );
     return resultado;
   }

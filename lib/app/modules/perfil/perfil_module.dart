@@ -27,6 +27,6 @@ class PerfilModule extends Module {
   @override
   List<ModularRoute> get routes => [
         //ChildRoute(Modular.initialRoute, child: (_, __) => PerfilPage()),
-        ChildRoute(kRelativeRoutePerfilPage, child: (_, __) => PerfilPage()),
+        ChildRoute(kRelativeRoutePerfilPage, child: (_, __) => const PerfilPage()),
       ];
 }

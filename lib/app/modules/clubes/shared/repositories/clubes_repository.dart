@@ -19,13 +19,13 @@ part 'clubes_repository.g.dart';
 
 /// Responsável por intermediar a relação entre o aplicativo e o banco de dados no que se
 /// refere aos clubes.
-class ClubesRepository = _ClubesRepositoryBase with _$ClubesRepository;
+class ClubesRepository = ClubesRepositoryBase with _$ClubesRepository;
 
-abstract class _ClubesRepositoryBase with Store implements Disposable {
+abstract class ClubesRepositoryBase with Store implements Disposable {
   final IDbServicos dbServicos;
   final _disposers = <ReactionDisposer>[];
 
-  _ClubesRepositoryBase(this.dbServicos) {
+  ClubesRepositoryBase(this.dbServicos) {
     _assinaturaClubes = dbServicos.obterClubes().listen((clubes) {
       this.clubes
         ..removeAll(this.clubes.difference(clubes.toSet()))
@@ -38,7 +38,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   UserApp get usuarioApp => UserApp.instance;
 
   /// {@macro app._ObservableSetClubes}
-  final _ObservableSetClubes clubes = _ObservableSetClubes();
+  final ObservableSetClubes clubes = ObservableSetClubes();
 
   /// {@macro app.IDbServicos.sincronizarClubes}
   Future<void> sincronizarClubes() => dbServicos.sincronizarClubes();
@@ -129,8 +129,8 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       capa: capa, // atualizarCapa ? capa : null,
     );
 
-    final _clube = await dbServicos.atualizarClube(dados);
-    return _clube == null ? false : true;
+    final clubeAtualizado = await dbServicos.atualizarClube(dados);
+    return clubeAtualizado == null ? false : true;
   }
 
   /// Atualiza a permissão do [usuario] para [permissao] em [clube].
@@ -203,7 +203,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
     final permitirUsuario = atividade.idAutor == usuarioApp.id!;
     assert(permitirUsuario);
     if (questoes != null && questoes.isEmpty) questoes = null;
-    final _atividade = await dbServicos.atualizarAtividade(
+    final atividadeAtualizada = await dbServicos.atualizarAtividade(
       RawAtividade(
         id: atividade.id,
         titulo: titulo,
@@ -217,7 +217,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
       ),
     );
 
-    return _atividade == null ? false : true;
+    return atividadeAtualizada == null ? false : true;
   }
 
   Future<bool> excluirAtividade(Atividade atividade) =>
@@ -236,7 +236,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
   Future<bool> atualizarInserirRespostaAtividade(Atividade atividade) async {
     if (usuarioApp.id == null) return false;
     final List<RawRespostaQuestaoAtividade> dados = [];
-    atividade.questoes.forEach((questao) {
+    for (var questao in atividade.questoes) {
       final resposta = questao.resposta(usuarioApp.id!);
       if (resposta != null) {
         dados.add(RawRespostaQuestaoAtividade(
@@ -245,7 +245,7 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
           sequencial: resposta.sequencialTemporario,
         ));
       }
-    });
+    }
     final retorno = await dbServicos.salvarRespostasAtividade(dados);
     return retorno;
   }
@@ -263,17 +263,17 @@ abstract class _ClubesRepositoryBase with Store implements Disposable {
 /// {@template app._ObservableSetClubes}
 /// Conjunto com os [Clube] do usuário.
 /// {@endtemplate}
-class _ObservableSetClubes extends ObservableSet<Clube> {
+class ObservableSetClubes extends ObservableSet<Clube> {
   @override
-  bool contains(Object? clube) {
-    if (clube is Clube) {
-      return where((e) => e.id == clube.id).isNotEmpty;
+  bool contains(Object? element) {
+    if (element is Clube) {
+      return where((e) => e.id == element.id).isNotEmpty;
     }
     return false;
   }
 
   @override
-  bool add(Clube clube) => _add(clube);
+  bool add(Clube value) => _add(value);
 
   @action
   bool _add(Clube clube) {
@@ -286,8 +286,8 @@ class _ObservableSetClubes extends ObservableSet<Clube> {
   }
 
   @override
-  bool remove(Object? clube) {
-    if (clube is Clube) return _remove(clube);
+  bool remove(Object? value) {
+    if (value is Clube) return _remove(value);
     return false;
   }
 
@@ -301,19 +301,19 @@ class _ObservableSetClubes extends ObservableSet<Clube> {
   }
 
   @override
-  Set<Clube> intersection(Set<Object?> outro) {
+  Set<Clube> intersection(Set<Object?> other) {
     Set<Clube> resultado = toSet();
     resultado.removeWhere(
-      (clube) => !outro.any((e) => e is Clube && e.id == clube.id),
+      (clube) => !other.any((e) => e is Clube && e.id == clube.id),
     );
     return resultado;
   }
 
   @override
-  Set<Clube> difference(Set<Object?> outro) {
+  Set<Clube> difference(Set<Object?> other) {
     Set<Clube> resultado = toSet();
     resultado.removeWhere(
-      (clube) => outro.any((e) => e is Clube && e.id == clube.id),
+      (clube) => other.any((e) => e is Clube && e.id == clube.id),
     );
     return resultado;
   }

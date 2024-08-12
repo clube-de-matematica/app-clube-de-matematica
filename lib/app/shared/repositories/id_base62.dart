@@ -75,9 +75,9 @@ abstract class IdBase62 {
     for (i = chars.length - 1; i >= 0 && chars[i] == kDictionary[61]; i--) {
       chars[i] = kDictionary[0];
     }
-    if (i < 0)
+    if (i < 0) {
       return kDictionary[1] + chars.join();
-    else {
+    } else {
       var newIndex = kDictionary.indexOf(chars[i]) + 1;
       chars[i] = kDictionary[newIndex];
       return chars.join();

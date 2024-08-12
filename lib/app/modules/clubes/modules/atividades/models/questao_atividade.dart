@@ -9,21 +9,21 @@ part 'questao_atividade.g.dart';
 enum EstadoResposta { correta, incorreta, emBranco }
 
 /// Modelo para as questões usadas em uma atividade.
-class QuestaoAtividade = _QuestaoAtividadeBase with _$QuestaoAtividade;
+class QuestaoAtividade = QuestaoAtividadeBase with _$QuestaoAtividade;
 
-abstract class _QuestaoAtividadeBase extends Questao with Store {
+abstract class QuestaoAtividadeBase extends Questao with Store {
   final int idQuestaoAtividade;
   final int idAtividade;
 
   /// Conjunto com as respostas atibuídas a essa questão.
   final ObservableSet<RespostaQuestaoAtividade> respostas;
 
-  _QuestaoAtividadeBase({
+  QuestaoAtividadeBase({
     required Questao questao,
     required this.idQuestaoAtividade,
     required this.idAtividade,
     Iterable<RespostaQuestaoAtividade> respostas = const [],
-  })  : this.respostas = ObservableSet.of(respostas),
+  })  : respostas = ObservableSet.of(respostas),
         super.noSingleton(
           id: questao.id,
           idAlfanumerico: questao.idAlfanumerico,
@@ -66,7 +66,7 @@ abstract class _QuestaoAtividadeBase extends Questao with Store {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is _QuestaoAtividadeBase &&
+    return other is QuestaoAtividadeBase &&
         other.idQuestaoAtividade == idQuestaoAtividade &&
         other.idAtividade == idAtividade;
   }

@@ -11,9 +11,8 @@ import 'selecionar_assuntos_controller.dart';
 class SelecionarAssuntosPage extends StatelessWidget {
   SelecionarAssuntosPage(
     Iterable<ArvoreAssuntos> assuntosSelecionados, {
-    Key? key,
-  })  : controle = SelecionarAssuntosController(assuntosSelecionados),
-        super(key: key);
+    super.key,
+  })  : controle = SelecionarAssuntosController(assuntosSelecionados);
 
   final SelecionarAssuntosController controle;
 
@@ -29,7 +28,7 @@ class SelecionarAssuntosPage extends StatelessWidget {
         final unidades = controle.arvores..ordenarDesconsiderandoAcentos();
 
         if (unidades.isEmpty) {
-          return Center(
+          return const Center(
             child: Text('Não há opções disponíveis'),
           );
         }
@@ -55,7 +54,7 @@ class SelecionarAssuntosPage extends StatelessWidget {
     // Título para o componente da unidade.
     final titulo = Text(
       '${arvore.assunto.titulo} '
-      '${arvore.subAssuntos.isEmpty ? "" : "(" + arvore.subAssuntos.length.toString() + ")"}',
+      '${arvore.subAssuntos.isEmpty ? "" : "(${arvore.subAssuntos.length})"}',
     );
 
     final selecionado = controle.selecionado(arvore);
@@ -75,15 +74,15 @@ class SelecionarAssuntosPage extends StatelessWidget {
     return ExpansionTilePersonalizado(
       trailing: trailing,
       title: titulo,
-      children: [
-        ...arvore.subAssuntos.map((subArvore) => _construirOpcao(subArvore)),
-        _construirWidgetNovoAssunto(arvore.assunto),
-      ],
       //textColor: textColor,
       collapsedTextColor: textColor,
       //iconColor: textColor,
       collapsedIconColor: textColor,
       backgroundColor: backgroundColor,
+      children: [
+        ...arvore.subAssuntos.map((subArvore) => _construirOpcao(subArvore)),
+        _construirWidgetNovoAssunto(arvore.assunto),
+      ],
     );
   }
 
@@ -91,21 +90,21 @@ class SelecionarAssuntosPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 16.0),
       child: Builder(builder: (context) {
-        bool _inserindo = false;
+        bool inserindo = false;
         String assunto = '';
         return TextField(
           //controller: textControle,
           decoration: InputDecoration(
             label: const Text('Novo'),
             suffixIcon: IconButton(
-              icon: Icon(Icons.done),
+              icon: const Icon(Icons.done),
               onPressed: () async {
-                if (_inserindo) return;
-                _inserindo = true;
+                if (inserindo) return;
+                inserindo = true;
                 final futuro = controle.inserirAssunto(assunto, assuntoPai);
                 await BottomSheetCarregando(future: futuro).showModal(context);
                 await futuro;
-                _inserindo = false;
+                inserindo = false;
               },
             ),
           ),

@@ -18,13 +18,12 @@ import 'filtro_home_controller.dart';
 /// no construtor.
 class FiltroHomePage extends StatelessWidget {
   FiltroHomePage({
-    Key? key,
+    super.key,
     required Filtros filtro,
   })  : controle = FiltroHomeController(
           filtrosSalvos: filtro,
           filtrosTemp: Filtros.from(filtro),
-        ),
-        super(key: key);
+        );
 
   final FiltroHomeController controle;
 
@@ -37,6 +36,9 @@ class FiltroHomePage extends StatelessWidget {
     }
 
     return FiltrosSelecionados(
+      trailing: Observer(builder: (_) {
+        return FiltroChipContador(controle.totalSelecinado.toString());
+      }),
       child: Observer(builder: (_) {
         final chips = [
           ...controle.filtrosTemp.anos.map((ano) => construirChip(
@@ -52,10 +54,7 @@ class FiltroHomePage extends StatelessWidget {
                 () => controle.removerAssunto(idAssunto),
               )),
         ];
-        return Wrap(children: chips, spacing: 8);
-      }),
-      trailing: Observer(builder: (_) {
-        return FiltroChipContador(controle.totalSelecinado.toString());
+        return Wrap(spacing: 8, children: chips);
       }),
     );
   }

@@ -11,18 +11,15 @@ import '../../shared/utils/ui_strings.dart';
 
 part 'filtro_assuntos_controller.g.dart';
 
-class FiltroAssuntosController = _FiltroAssuntosControllerBase
+class FiltroAssuntosController = FiltroAssuntosControllerBase
     with _$FiltroAssuntosController;
 
-abstract class _FiltroAssuntosControllerBase extends FiltroController
+abstract class FiltroAssuntosControllerBase extends FiltroController
     with Store {
-  _FiltroAssuntosControllerBase({
-    required Filtros filtrosSalvos,
-    required Filtros filtrosTemp,
-  }) : super(
-          filtrosSalvos: filtrosSalvos,
-          filtrosTemp: filtrosTemp,
-        );
+  FiltroAssuntosControllerBase({
+    required super.filtrosSalvos,
+    required super.filtrosTemp,
+  });
 
   @override
   String get tituloAppBar => UIStrings.FILTRO_TEXTO_TIPO_ASSUNTO;
@@ -110,8 +107,8 @@ abstract class _FiltroAssuntosControllerBase extends FiltroController
   }
 
   Future<bool> remover(int id) async {
-    final _assuntos = await this.assuntos;
-    final assunto = _assuntos.cast<Assunto?>().firstWhere(
+    final assuntos = await this.assuntos;
+    final assunto = assuntos.cast<Assunto?>().firstWhere(
           (e) => e!.id == id,
           orElse: () => null,
         );
@@ -120,7 +117,7 @@ abstract class _FiltroAssuntosControllerBase extends FiltroController
         removerUnidade(assunto);
         return true;
       }
-      final unidade = _assuntos.cast<Assunto?>().firstWhere(
+      final unidade = assuntos.cast<Assunto?>().firstWhere(
             (e) => e!.id == assunto.idUnidade,
             orElse: () => null,
           );

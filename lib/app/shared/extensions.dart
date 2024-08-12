@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as pathPackage;
+import 'package:path/path.dart' as path_package;
 
 import 'models/exceptions/my_exception.dart';
 
@@ -21,7 +21,7 @@ extension MyExtensionTextStyle on TextStyle {
 ///Adiciona novos métodos à classe [File].
 extension MyExtensionFile on File {
   ///Retorna o nome do arquivo, incluindo a extensão.
-  String get name => pathPackage.basename(this.path);
+  String get name => path_package.basename(path);
 
   ///Retorna a extensão do arquivo. É uma substring de [name] que inicia no [level]ésimo ponto antes do final de [name],
   ///desconsiderando pontos consecutivos e pontos no início ou no final de [name].
@@ -34,10 +34,11 @@ extension MyExtensionFile on File {
   String extension({int level = 1}) {
     assert(level > 0);
 
-    if (level <= 0)
+    if (level <= 0) {
       throw MyException(
           "MyExtensionFile: extension(): Erro: level deve ser maior que zero.");
-    return pathPackage.extension(this.path, level);
+    }
+    return path_package.extension(path, level);
   }
 }
 
@@ -58,8 +59,9 @@ extension MyExtensionBool on bool {
     if (others.isNotEmpty) {
       final contTrue = others.where((element) => element).length;
       return (this && contTrue == 0) || (!this && contTrue == 1);
-    } else
+    } else {
       throw MyException(
           "MyExtensionBool: xor(): Erro: Algum dos valores não pode ser testado.");
+    }
   }
 }

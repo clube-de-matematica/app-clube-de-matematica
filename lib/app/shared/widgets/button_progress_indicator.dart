@@ -23,7 +23,7 @@ class ButtonProgressIndicator extends StatefulWidget {
   final bool isLoading;
 
   const ButtonProgressIndicator({
-    Key? key,
+    super.key,
     required this.onPressed,
     this.child,
     this.primary,
@@ -35,14 +35,14 @@ class ButtonProgressIndicator extends StatefulWidget {
     this.elevation,
     this.transform = false,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
-  _ButtonProgressIndicatorState createState() =>
-      _ButtonProgressIndicatorState();
+  ButtonProgressIndicatorState createState() =>
+      ButtonProgressIndicatorState();
 }
 
-class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
+class ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
     with TickerProviderStateMixin {
   /// Será `true` quando [widget.onParticipar] estiver em andamento e `false` nos
   /// demais casos.
@@ -77,11 +77,12 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
     if (widget.transform) {
       _animation = Tween(begin: 0.0, end: 1).animate(_controller)
         ..addListener(() {
-          if (mounted)
+          if (mounted) {
             setState(() {
               _width = _initialWidth -
                   ((_initialWidth - _height) * _animation.value);
             });
+          }
         });
     }
   }
@@ -120,7 +121,7 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(_height / 2),
               ),
-              animationDuration: Duration(milliseconds: 1000),
+              animationDuration: const Duration(milliseconds: 1000),
             );
             return ElevatedButton(
               style: styleFrom,
@@ -156,8 +157,8 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
   }
 
   void animateButton() {
-    final _onPressed = widget.onPressed;
-    if (_onPressed != null) {
+    final onPressed = widget.onPressed;
+    if (onPressed != null) {
       if (mounted) {
         setState(() {
           _isLoading = true;
@@ -166,7 +167,7 @@ class _ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
 
       if (widget.transform) _controller.forward();
 
-      _onPressed().whenComplete(() async {
+      onPressed().whenComplete(() async {
         if (widget.transform) {
           if (_controller.isAnimating) _controller.stop();
           await _controller.reverse();

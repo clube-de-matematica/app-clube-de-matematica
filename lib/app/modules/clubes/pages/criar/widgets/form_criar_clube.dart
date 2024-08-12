@@ -7,11 +7,11 @@ import '../../../shared/widgets/text_form_fields.dart';
 /// Formulário para a criação de um clube.
 class FormCriarClube extends StatefulWidget {
   const FormCriarClube({
-    Key? key,
+    super.key,
     this.initialColor,
     this.validarNome,
     this.onCriar,
-  }) : super(key: key);
+  });
 
   /// Valor inicial para a cor do tema.
   final Color? initialColor;
@@ -63,7 +63,6 @@ class _FormCriarClubeState extends State<FormCriarClube> {
               },
             ), */
             TextButton(
-              child: const Text('CRIAR'),
               onPressed: isLoading
                   ? null
                   : () async {
@@ -76,6 +75,7 @@ class _FormCriarClubeState extends State<FormCriarClube> {
                         if (mounted) setState(() => isLoading = false);
                       }
                     },
+              child: const Text('CRIAR'),
             ),
           ],
         );

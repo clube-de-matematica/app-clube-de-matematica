@@ -5,12 +5,12 @@ import '../shared/utils/constantes.dart';
 import '../shared/widgets/botoes.dart';
 
 class SobrePage extends StatelessWidget {
-  const SobrePage({Key? key}) : super(key: key);
+  const SobrePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(APP_NOME)),
+      appBar: AppBar(title: const Text(APP_NOME)),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
@@ -25,7 +25,6 @@ class SobrePage extends StatelessWidget {
                 Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18),
           ),
           AppTextButton(
-            child: const Text('Termos e Condições'),
             primary: true,
             onPressed: () {
               mostrarTemos();
@@ -38,13 +37,14 @@ class SobrePage extends StatelessWidget {
                 }),
               ); */
             },
+            child: const Text('Termos e Condições'),
           ),
           AppTextButton(
-            child: const Text('Política de Privacidade'),
             primary: true,
             onPressed: () {
               mostrarPolitica();
             },
+            child: const Text('Política de Privacidade'),
           )
         ],
       ),
@@ -69,7 +69,7 @@ void _launch(String url) {
       urlBarHidingEnabled: true,
       showTitle: false,
       animations: CustomTabsSystemAnimations.slideIn(),
-      browser: CustomTabsBrowserConfiguration(
+      browser: const CustomTabsBrowserConfiguration(
         fallbackCustomTabs: [
           'org.mozilla.firefox',
           'com.microsoft.emmx',
@@ -77,7 +77,7 @@ void _launch(String url) {
         headers: {'key': 'value'},
       ),
     ),
-    safariVCOptions: SafariViewControllerOptions(
+    safariVCOptions: const SafariViewControllerOptions(
       //preferredBarTintColor: Theme.of(context).primaryColor,
       preferredControlTintColor: Colors.white,
       barCollapsingEnabled: true,

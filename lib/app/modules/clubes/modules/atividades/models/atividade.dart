@@ -11,28 +11,17 @@ part 'atividade.g.dart';
 /// Modelo para os dados das atividades dos clubes.
 class Atividade extends _AtividadeBase with _$Atividade {
   Atividade({
-    required int id,
-    required String titulo,
-    String? descricao,
-    required int idClube,
-    required int idAutor,
-    required DateTime criacao,
-    DateTime? liberacao,
-    DateTime? encerramento,
-    Iterable<QuestaoAtividade>? questoes,
-    Iterable<RespostaQuestaoAtividade>? respostas,
-  }) : super(
-          id: id,
-          titulo: titulo,
-          descricao: descricao,
-          idClube: idClube,
-          idAutor: idAutor,
-          criacao: criacao,
-          liberacao: liberacao,
-          encerramento: encerramento,
-          questoes: questoes,
-          respostas: respostas,
-        );
+    required super.id,
+    required super.titulo,
+    super.descricao,
+    required super.idClube,
+    required super.idAutor,
+    required super.criacao,
+    super.liberacao,
+    super.encerramento,
+    super.questoes,
+    super.respostas,
+  });
 
   factory Atividade.fromDataAtividade(DataAtividade map) {
     respostas() {
@@ -107,8 +96,8 @@ abstract class _AtividadeBase with Store {
     this.encerramento,
     Iterable<QuestaoAtividade>? questoes,
     Iterable<RespostaQuestaoAtividade>? respostas,
-  })  : questoes = ObservableList.of(questoes ?? Iterable.empty()),
-        respostas = ObservableSet.of(respostas ?? Iterable.empty());
+  })  : questoes = ObservableList.of(questoes ?? const Iterable.empty()),
+        respostas = ObservableSet.of(respostas ?? const Iterable.empty());
 
   @computed
   bool get encerrada {
@@ -123,7 +112,7 @@ abstract class _AtividadeBase with Store {
   /// Sobrescreve os campos modificáveis desta atividade com os respectivos valores em
   /// [outra], desde que tenham o mesmo ID.
   void mesclar(Atividade outra) {
-    if (this.id == outra.id) {
+    if (id == outra.id) {
       titulo = outra.titulo;
       descricao = outra.descricao;
       liberacao = outra.liberacao;

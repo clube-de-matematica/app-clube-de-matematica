@@ -2,6 +2,7 @@ import 'package:clubedematematica/app/modules/clubes/shared/models/clube.dart';
 import 'package:clubedematematica/app/modules/quiz/shared/models/questao_model.dart';
 import 'package:clubedematematica/app/shared/repositories/interface_db_repository.dart';
 import 'package:clubedematematica/app/shared/utils/strings_db.dart';
+// ignore: depend_on_referenced_packages
 import 'package:mockito/mockito.dart';
 
 import 'modules/quiz/shared/models/assunto_model.dart';

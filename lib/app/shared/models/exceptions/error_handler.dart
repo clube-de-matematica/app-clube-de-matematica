@@ -162,7 +162,7 @@ class ErrorHandler {
       if (builder != null) ErrorWidget.builder = builder;
 
       if (handler != null) {
-        final onError = (FlutterErrorDetails details) {
+        onError(FlutterErrorDetails details) {
           // Se houver um erro no manipulador de erros customizado, queremos saber sobre isso.
           // runZonedGuarded deve ser usado para o tratamento pois também lida com erros
           // assíncronos, ao contrário de try{}catch(){}.
@@ -186,15 +186,12 @@ class ErrorHandler {
               oldOnError?.call(getDetails(error, stack));
             },
           );
-        };
+        }
 
         FlutterError.onError = onError;
         assert(
           onError != oldOnError,
-          "oldOnError foi atribuído após a substituição de [FlutterError.onError]." +
-              "\n" +
-              "Certifique-se de chamar [ErrorHandler.ensureInitialized] antes de " +
-              "substituir [FlutterError.onError].",
+          "oldOnError foi atribuído após a substituição de [FlutterError.onError].\nCertifique-se de chamar [ErrorHandler.ensureInitialized] antes de substituir [FlutterError.onError].",
         );
       }
     }
@@ -289,7 +286,7 @@ class ErrorHandler {
       // Capture quaisquer erros na função main() após este método ser chamado.
       // Teoricamente, esta rotina nunca será chamada, pois o erro seria capturado
       ///primeiramente pela zona raíz [Zone.root].
-      Isolate.current.addErrorListener(new RawReceivePort((dynamic pair) async {
+      Isolate.current.addErrorListener(RawReceivePort((dynamic pair) async {
         assert(
           Debug.printBetweenLine(
               "ERRO DETECTADO PELO Isolate.current.addErrorListener"),
@@ -319,7 +316,7 @@ class ErrorHandler {
 Widget _defaultErrorWidget(FlutterErrorDetails details) {
   String message;
   try {
-    message = "Erro\n\n" + details.exception.toString() + "\n\n";
+    message = "Erro\n\n${details.exception}\n\n";
     /* 
     List<String> stackTrace = details.stack.toString().split("\n");
     
@@ -362,16 +359,17 @@ class _WidgetError extends LeafRenderObjectWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    if (_flutterError == null)
+    if (_flutterError == null) {
       properties.add(
         StringProperty('message', message, quoted: false),
       );
-    else
+    } else {
       properties.add(
-        _flutterError!.toDiagnosticsNode(
+        _flutterError.toDiagnosticsNode(
           style: DiagnosticsTreeStyle.whitespace,
         ),
       );
+    }
   }
 }
 
@@ -470,7 +468,7 @@ class _ErrorBox extends RenderBox {
     try {
       context.canvas.drawRect(offset & size, Paint()..color = backgroundColor);
       if (_paragraph != null) {
-        final paragraph = this._paragraph!;
+        final paragraph = _paragraph!;
         double width = size.width;
         double left = 0.0;
         // Garantir a vizualização abaixo da barra de status.

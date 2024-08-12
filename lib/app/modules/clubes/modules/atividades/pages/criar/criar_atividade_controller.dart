@@ -1,10 +1,9 @@
 import '../../../../../quiz/shared/models/questao_model.dart';
-import '../../../../shared/models/clube.dart';
 import '../../shared/models/interface_atividade_controller.dart';
 
 class CriarAtividadeController extends IAtividadeController
     with IAtividadeControllerMixinCriarEditar {
-  CriarAtividadeController(Clube clube) : super(clube);
+  CriarAtividadeController(super.clube);
 
   @override
   Future<bool> salvar({

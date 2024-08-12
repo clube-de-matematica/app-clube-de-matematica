@@ -6,10 +6,10 @@ import '../utils/random_colors.dart';
 /// Um [ListTile] que exibe um diálogo para a seleção de cor.
 class ColorPickerListTile extends StatefulWidget {
   const ColorPickerListTile({
-    Key? key,
+    super.key,
     this.colorChange,
     this.initialColor,
-  }) : super(key: key);
+  });
 
   /// Função chamada sempre que uma nova cor é confimada. O parâmetro da função é o valor
   /// da nova cor.
@@ -19,17 +19,17 @@ class ColorPickerListTile extends StatefulWidget {
   final Color? initialColor;
 
   @override
-  _ColorPickerListTileState createState() => _ColorPickerListTileState();
+  ColorPickerListTileState createState() => ColorPickerListTileState();
 }
 
-class _ColorPickerListTileState extends State<ColorPickerListTile> {
+class ColorPickerListTileState extends State<ColorPickerListTile> {
   late final seletor = ColorPicker(widget.initialColor);
   late Color? cor = widget.initialColor ?? seletor.shadeColor;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 0),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
       title: const Text('Tema'),
       subtitle: const Text('Cor da capa e do avatar do clube'),
       trailing: Padding(
@@ -71,8 +71,8 @@ class ColorPicker {
           content: content,
           actions: [
             TextButton(
-              child: const Text('CANCELAR'),
               onPressed: Navigator.of(context).pop,
+              child: const Text('CANCELAR'),
             ),
             TextButton(
               child: const Text('APLICAR'),
@@ -143,11 +143,10 @@ class ColorPicker {
 /// Usado para definir a cor do tema do clube.
 class ColorPickerListTileFormField extends FormField<Color> {
   ColorPickerListTileFormField({
-    Key? key,
+    super.key,
     Color? initialColor,
-    void Function(Color?)? onSaved,
+    super.onSaved,
   }) : super(
-          key: key,
           initialValue: initialColor,
           builder: (field) {
             return UnmanagedRestorationScope(
@@ -158,6 +157,5 @@ class ColorPickerListTileFormField extends FormField<Color> {
               ),
             );
           },
-          onSaved: onSaved,
         );
 }

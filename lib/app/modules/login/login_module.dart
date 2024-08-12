@@ -27,6 +27,6 @@ class LoginModule extends Module {
   @override
   List<ModularRoute> get routes => [
         //ChildRoute(Modular.initialRoute, child: (_, __) => LoginPage()),
-        ChildRoute(kRelativeRouteLoginPage, child: (_, __) => LoginPage()),
+        ChildRoute(kRelativeRouteLoginPage, child: (_, __) => const LoginPage()),
       ];
 }

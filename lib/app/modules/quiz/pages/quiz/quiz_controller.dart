@@ -6,7 +6,6 @@ import 'package:mobx/mobx.dart';
 
 import '../../../../services/preferencias_servicos.dart';
 import '../../../../shared/models/exibir_questao_com_filtro_controller.dart';
-import '../../../../shared/repositories/questoes/questoes_repository.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
 import '../../../perfil/models/userapp.dart';
 import '../../shared/models/alternativa_questao_model.dart';
@@ -17,17 +16,14 @@ import '../resultado/resultado_quiz_page.dart';
 
 part 'quiz_controller.g.dart';
 
-class QuizController = _QuizControllerBase with _$QuizController;
+class QuizController = QuizControllerBase with _$QuizController;
 
-abstract class _QuizControllerBase extends ExibirQuestaoComFiltroController
+abstract class QuizControllerBase extends ExibirQuestaoComFiltroController
     with Store {
-  _QuizControllerBase({
-    required Filtros filtros,
-    required QuestoesRepository repositorio,
-  }) : super(
-          filtros: filtros,
-          repositorio: repositorio,
-        );
+  QuizControllerBase({
+    required super.filtros,
+    required super.repositorio,
+  });
 
   Preferencias get _preferencias => Preferencias.instancia;
 

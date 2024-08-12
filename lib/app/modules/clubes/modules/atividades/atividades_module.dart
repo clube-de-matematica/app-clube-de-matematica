@@ -59,7 +59,7 @@ class AtividadesModule extends Module {
             case PermissoesClube.membro:
               return ResponderAtividadePage(argumentos);
             default:
-              return Scaffold(body: Center(child: Text('Permissão negada.')));
+              return const Scaffold(body: Center(child: Text('Permissão negada.')));
           }
         }),
         ChildRoute(kRelativeRouteCriarPage,

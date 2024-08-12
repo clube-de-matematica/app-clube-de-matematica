@@ -135,9 +135,9 @@ class TbUsuarios extends _TbDbLocal {
   TextColumn get nome => text().named('nome').nullable()();
   TextColumn get foto => text().named('foto').nullable()();
   BoolColumn get softDelete =>
-      boolean().named('soft_delete').withDefault(Constant(false))();
+      boolean().named('soft_delete').withDefault(const Constant(false))();
   BoolColumn get sincronizar =>
-      boolean().named('sincronizar').withDefault(Constant(false))();
+      boolean().named('sincronizar').withDefault(const Constant(false))();
 
   @override
   Set<Column>? get primaryKey => {id};
@@ -154,7 +154,7 @@ class TbClubes extends _TbDbLocal {
   TextColumn get descricao => text().named('descricao').nullable()();
   IntColumn get dataCriacao => integer().named('data_criacao')();
   BoolColumn get privado =>
-      boolean().named('privado').withDefault(Constant(false))();
+      boolean().named('privado').withDefault(const Constant(false))();
   TextColumn get codigo =>
       text().named('codigo').customConstraint('UNIQUE NOT NULL')();
   TextColumn get capa => text().named('capa').nullable()();
@@ -255,7 +255,7 @@ class TbRespostaQuestaoAtividade extends _TbDbLocal {
   IntColumn get idUsuario => integer().named('id_usuario')();
   IntColumn get resposta => integer().named('resposta').nullable()();
   BoolColumn get sincronizar =>
-      boolean().named('sincronizar').withDefault(Constant(false))();
+      boolean().named('sincronizar').withDefault(const Constant(false))();
 
   @override
   Set<Column>? get primaryKey => {idQuestaoAtividade, idUsuario};
@@ -276,7 +276,7 @@ class TbRespostaQuestao extends _TbDbLocal {
   IntColumn get idUsuario => integer().named('id_usuario').nullable()();
   IntColumn get resposta => integer().named('resposta').nullable()();
   BoolColumn get sincronizar =>
-      boolean().named('sincronizar').withDefault(Constant(false))();
+      boolean().named('sincronizar').withDefault(const Constant(false))();
 
   @override
   Set<Column>? get primaryKey => {idQuestao /* , idUsuario */};
@@ -350,16 +350,16 @@ class LinViewQuestoes {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LinViewQuestoes &&
-          other.idAlfanumerico == this.idAlfanumerico &&
-          other.id == this.id &&
-          other.ano == this.ano &&
-          other.nivel == this.nivel &&
-          other.indice == this.indice &&
-          other.enunciado == this.enunciado &&
-          other.gabarito == this.gabarito &&
-          listEquals(other.assuntos, this.assuntos) &&
-          listEquals(other.alternativas, this.alternativas) &&
-          other.imagensEnunciado == this.imagensEnunciado);
+          other.idAlfanumerico == idAlfanumerico &&
+          other.id == id &&
+          other.ano == ano &&
+          other.nivel == nivel &&
+          other.indice == indice &&
+          other.enunciado == enunciado &&
+          other.gabarito == gabarito &&
+          listEquals(other.assuntos, assuntos) &&
+          listEquals(other.alternativas, alternativas) &&
+          other.imagensEnunciado == imagensEnunciado);
 }
 
 class LinViewClubes {
@@ -413,14 +413,14 @@ class LinViewClubes {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LinViewClubes &&
-          other.id == this.id &&
-          other.nome == this.nome &&
-          other.descricao == this.descricao &&
-          other.dataCriacao == this.dataCriacao &&
-          other.privado == this.privado &&
-          other.codigo == this.codigo &&
-          other.capa == this.capa &&
-          other.usuarios == this.usuarios);
+          other.id == id &&
+          other.nome == nome &&
+          other.descricao == descricao &&
+          other.dataCriacao == dataCriacao &&
+          other.privado == privado &&
+          other.codigo == codigo &&
+          other.capa == capa &&
+          other.usuarios == usuarios);
 }
 
 class LinViewAtividades {
@@ -483,14 +483,14 @@ class LinViewAtividades {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LinViewAtividades &&
-          other.id == this.id &&
-          other.idClube == this.idClube &&
-          other.titulo == this.titulo &&
-          other.descricao == this.descricao &&
-          other.idAutor == this.idAutor &&
-          other.dataCriacao == this.dataCriacao &&
-          other.dataLiberacao == this.dataLiberacao &&
-          other.dataEncerramento == this.dataEncerramento &&
-          listEquals(other.questoes, this.questoes) &&
-          listEquals(other.respostas, this.respostas));
+          other.id == id &&
+          other.idClube == idClube &&
+          other.titulo == titulo &&
+          other.descricao == descricao &&
+          other.idAutor == idAutor &&
+          other.dataCriacao == dataCriacao &&
+          other.dataLiberacao == dataLiberacao &&
+          other.dataEncerramento == dataEncerramento &&
+          listEquals(other.questoes, questoes) &&
+          listEquals(other.respostas, respostas));
 }

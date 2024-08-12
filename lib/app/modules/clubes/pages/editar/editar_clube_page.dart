@@ -13,13 +13,13 @@ import '../../shared/widgets/text_form_fields.dart';
 
 class EditarClubePage extends StatefulWidget {
   final Clube clube;
-  const EditarClubePage(this.clube, {Key? key}) : super(key: key);
+  const EditarClubePage(this.clube, {super.key});
 
   @override
-  _EditarClubePageState createState() => _EditarClubePageState();
+  EditarClubePageState createState() => EditarClubePageState();
 }
 
-class _EditarClubePageState extends State<EditarClubePage> {
+class EditarClubePageState extends State<EditarClubePage> {
   final controller = EditarClubeController();
   bool isLoading = false;
   late String nome;
@@ -103,9 +103,14 @@ class _EditarClubePageState extends State<EditarClubePage> {
                         .showModal(context);
                     final sucesso = await futuro;
                     if (sucesso) {
-                      Navigator.of(context).pop(true);
+                      if (context.mounted) {
+                        Navigator.of(context).pop(true);
+                      }
                     } else {
-                      await BottomSheetErroAtualizarClube().showModal(context);
+                      if (context.mounted) {
+                        await const BottomSheetErroAtualizarClube()
+                            .showModal(context);
+                      }
                     }
                     isLoading = false;
                   }

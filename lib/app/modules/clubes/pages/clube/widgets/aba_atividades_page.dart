@@ -10,7 +10,7 @@ import 'categoria.dart';
 
 /// A subpágina exibida na aba "Atividades" da página do [clube].
 class AtividadesPage extends StatefulWidget {
-  const AtividadesPage({Key? key}) : super(key: key);
+  const AtividadesPage({super.key});
 
   @override
   State<AtividadesPage> createState() => _AtividadesPageState();
@@ -64,11 +64,9 @@ class _CategoriaAtividade extends Categoria {
   final List<Atividade> atividades;
   final void Function(BuildContext context, Atividade atividade) onAtividade;
   _CategoriaAtividade({
-    Key? key,
     required this.atividades,
     required this.onAtividade,
   }) : super(
-          key: key,
           categoria: 'Atividades',
           itens: List.generate(
             atividades.length,
@@ -77,18 +75,18 @@ class _CategoriaAtividade extends Categoria {
                 final atividade = atividades[index];
                 final temaClube = Modular.get<TemaClube>();
                 return ListTile(
-                  contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
+                  contentPadding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
                   title: Text(
                     atividade.titulo,
                     style: AppTheme.instance.light.textTheme.displayMedium,
                   ),
                   subtitle: Text(atividade.descricao ?? ''),
                   leading: CircleAvatar(
+                    backgroundColor: temaClube.primaria.withOpacity(0.3),
                     child: Icon(
                       Icons.task_outlined,
                       color: temaClube.enfaseSobreSuperficie,
                     ),
-                    backgroundColor: temaClube.primaria.withOpacity(0.3),
                   ),
                   trailing:
                       atividade.encerrada ? const Text('Encerrada') : null,

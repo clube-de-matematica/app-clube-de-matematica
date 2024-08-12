@@ -4,13 +4,13 @@ import '../../modules/quiz/shared/utils/ui_strings.dart';
 
 /// Barra contendo os botões para avançar e voltar na lista de itens.
 class BarraIferiorAteriorProximo extends StatelessWidget {
-  BarraIferiorAteriorProximo({
-    Key? key,
+  const BarraIferiorAteriorProximo({
+    super.key,
     required this.ativarVoltar,
     required this.ativarProximo,
     required this.acionarVoltar,
     required this.acionarProximo,
-  }) : super(key: key);
+  });
 
   final bool ativarVoltar;
   final bool ativarProximo;
@@ -19,12 +19,12 @@ class BarraIferiorAteriorProximo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final altura = 48.0;
-    final duracao = const Duration(milliseconds: 300);
+    const altura = 48.0;
+    const duracao = Duration(milliseconds: 300);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Divider(
+        const Divider(
           height: 0,
           thickness: 1,
         ),
@@ -40,11 +40,11 @@ class BarraIferiorAteriorProximo extends StatelessWidget {
                   height: altura,
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   onPressed: ativarVoltar ? acionarVoltar : null,
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      const Icon(Icons.chevron_left),
-                      const SizedBox(width: 4),
+                      Icon(Icons.chevron_left),
+                      SizedBox(width: 4),
                       Text(UIStrings.QUIZ_TEXTO_BOTAO_VOLTAR),
                     ],
                   ),
@@ -61,12 +61,12 @@ class BarraIferiorAteriorProximo extends StatelessWidget {
                   height: altura,
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   onPressed: ativarProximo ? acionarProximo : null,
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      const Text(UIStrings.QUIZ_TEXTO_BOTAO_AVANCAR),
-                      const SizedBox(width: 4),
-                      const Icon(Icons.chevron_right),
+                      Text(UIStrings.QUIZ_TEXTO_BOTAO_AVANCAR),
+                      SizedBox(width: 4),
+                      Icon(Icons.chevron_right),
                     ],
                   ),
                 ),

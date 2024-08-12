@@ -12,7 +12,7 @@ import 'usuario_clube_botao_opcoes.dart';
 
 /// A subpágina exibida na aba "Pessoas" da página do [clube].
 class PessoasPage extends StatelessWidget {
-  PessoasPage({Key? key}) : super(key: key);
+  const PessoasPage({super.key});
 
   TemaClube get temaClube => Modular.get<TemaClube>();
 
@@ -57,33 +57,29 @@ class PessoasPage extends StatelessWidget {
 
 /// O widget para exibir uma categoria de usuários do clube.
 class _CategoriaUsuariosClube extends Categoria {
-  final String categoria;
   final List<UsuarioClube> usuarios;
   final Clube clube;
 
   _CategoriaUsuariosClube({
-    Key? key,
-    required this.categoria,
+    required super.categoria,
     required this.clube,
     this.usuarios = const [],
   }) : super(
-          key: key,
-          categoria: categoria,
           itens: List.generate(
             usuarios.length,
             (index) {
               return Observer(builder: (context) {
                 final usuario = usuarios[index];
                 return ListTile(
-                  contentPadding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
+                  contentPadding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
                   title: _titulo(usuario, clube),
                   subtitle: _subtitulo(usuario, clube),
                   leading: CircleAvatar(
+                    backgroundColor: _tema.primaria.withOpacity(0.3),
                     child: Icon(
                       Icons.person,
                       color: _tema.enfaseSobreSuperficie,
                     ),
-                    backgroundColor: _tema.primaria.withOpacity(0.3),
                   ),
                   trailing: usuario.proprietario
                       ? null

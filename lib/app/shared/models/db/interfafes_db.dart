@@ -140,12 +140,9 @@ abstract class ILinTbClubes extends _LinTbComColunaExcluir {
     required this.privado,
     required this.codigo,
     required this.capa,
-    required bool excluir,
-    required Object dataModificacao,
-  }) : super(
-          excluir: excluir,
-          dataModificacao: dataModificacao,
-        );
+    required super.excluir,
+    required super.dataModificacao,
+  });
 
   DateTime decodificarDataCriacao();
 
@@ -173,12 +170,9 @@ abstract class ILinTbClubeUsuario extends _LinTbComColunaExcluir {
     required this.idUsuario,
     required this.idPermissao,
     required this.dataAdmissao,
-    required bool excluir,
-    required Object dataModificacao,
-  }) : super(
-          excluir: excluir,
-          dataModificacao: dataModificacao,
-        );
+    required super.excluir,
+    required super.dataModificacao,
+  });
 
   DateTime decodificarDataAdmissao();
 }
@@ -201,12 +195,9 @@ abstract class ILinTbAtividades extends _LinTbComColunaExcluir {
     required this.dataCriacao,
     required this.dataLiberacao,
     required this.dataEncerramento,
-    required bool excluir,
-    required Object dataModificacao,
-  }) : super(
-          excluir: excluir,
-          dataModificacao: dataModificacao,
-        );
+    required super.excluir,
+    required super.dataModificacao,
+  });
 
   DateTime decodificarDataCriacao();
   DateTime? decodificarDataLiberacao();
@@ -221,12 +212,9 @@ abstract class ILinTbQuestaoAtividade extends _LinTbComColunaExcluir {
     required this.id,
     required this.idQuestaoCaderno,
     required this.idAtividade,
-    required bool excluir,
-    required Object dataModificacao,
-  }) : super(
-          excluir: excluir,
-          dataModificacao: dataModificacao,
-        );
+    required super.excluir,
+    required super.dataModificacao,
+  });
 }
 
 abstract class ILinTbRespostaQuestaoAtividade extends _LinTbComColunaExcluir {
@@ -237,12 +225,9 @@ abstract class ILinTbRespostaQuestaoAtividade extends _LinTbComColunaExcluir {
     required this.idQuestaoAtividade,
     required this.idUsuario,
     required this.resposta,
-    required bool excluir,
-    required Object dataModificacao,
-  }) : super(
-          excluir: excluir,
-          dataModificacao: dataModificacao,
-        );
+    required super.excluir,
+    required super.dataModificacao,
+  });
 }
 
 abstract class ILinTbRespostaQuestao extends _LinTbComColunaExcluir {
@@ -253,10 +238,7 @@ abstract class ILinTbRespostaQuestao extends _LinTbComColunaExcluir {
     required this.idQuestao,
     required this.idUsuario,
     required this.resposta,
-    required bool excluir,
-    required Object dataModificacao,
-  }) : super(
-          excluir: excluir,
-          dataModificacao: dataModificacao,
-        );
+    required super.excluir,
+    required super.dataModificacao,
+  });
 }

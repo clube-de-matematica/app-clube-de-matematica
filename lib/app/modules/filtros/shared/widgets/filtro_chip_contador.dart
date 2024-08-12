@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 ///Contador utilizado no componente que apresenta os [Chip] dos filtros selecionados.
 class FiltroChipContador extends StatelessWidget {
-  FiltroChipContador(
+  const FiltroChipContador(
     this.valor, {
-    Key? key,
+    super.key,
     this.primaryColor,
     this.secondaryColor,
-  }) : super(key: key);
+  });
 
   ///Valor mostrado no chip.
   final String valor;
@@ -59,8 +59,8 @@ class FiltroChipContador extends StatelessWidget {
 class FiltroChipContadorTrailingListTile extends StatelessWidget {
   const FiltroChipContadorTrailingListTile(
     this.valor, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String valor;
 

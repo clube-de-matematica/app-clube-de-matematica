@@ -77,4 +77,5 @@ class DefaultFirebaseOptions {
     iosClientId: '760657363926-t0b9rt7cemhplk6b3geasr8m31klbou4.apps.googleusercontent.com',
     iosBundleId: 'com.sslourenco.clubedematematica',
   );
+
 }

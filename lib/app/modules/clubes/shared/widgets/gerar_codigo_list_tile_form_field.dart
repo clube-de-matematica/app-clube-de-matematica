@@ -6,18 +6,17 @@ import '../../../../shared/repositories/id_base62.dart';
 /// Usado para gerar um novo código de acesso para o clube.
 class GerarCodigoListTileFormField extends FormField<String> {
   GerarCodigoListTileFormField({
-    Key? key,
+    super.key,
     required String codigo,
-    void Function(String?)? onSaved,
+    super.onSaved,
   }) : super(
-          key: key,
           initialValue: codigo,
           builder: (field) {
             final state = field as _GerarCodigoListTileFormFieldState;
             return UnmanagedRestorationScope(
               bucket: state.bucket,
               child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                 title: const Text('Código'),
                 subtitle: state.subtitulo,
                 trailing: state.trailing,
@@ -25,7 +24,6 @@ class GerarCodigoListTileFormField extends FormField<String> {
               ),
             );
           },
-          onSaved: onSaved,
         );
 
   @override
@@ -43,12 +41,12 @@ class _GerarCodigoListTileFormFieldState extends FormFieldState<String> {
     return salvo
         ? SelectableText(
             widget.initialValue ?? '',
-            style: TextStyle(fontSize: 20.0),
+            style: const TextStyle(fontSize: 20.0),
           )
         : Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.close,
                 size: 36.0,
               ),

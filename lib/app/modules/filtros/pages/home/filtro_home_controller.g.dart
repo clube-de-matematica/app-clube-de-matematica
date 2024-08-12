@@ -8,20 +8,20 @@ part of 'filtro_home_controller.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$FiltroHomeController on _FiltroHomeControllerBase, Store {
+mixin _$FiltroHomeController on FiltroHomeControllerBase, Store {
   Computed<int>? _$totalSelecinadoComputed;
 
   @override
   int get totalSelecinado =>
       (_$totalSelecinadoComputed ??= Computed<int>(() => super.totalSelecinado,
-              name: '_FiltroHomeControllerBase.totalSelecinado'))
+              name: 'FiltroHomeControllerBase.totalSelecinado'))
           .value;
   Computed<bool>? _$ativarLimparComputed;
 
   @override
   bool get ativarLimpar =>
       (_$ativarLimparComputed ??= Computed<bool>(() => super.ativarLimpar,
-              name: '_FiltroHomeControllerBase.ativarLimpar'))
+              name: 'FiltroHomeControllerBase.ativarLimpar'))
           .value;
 
   @override

@@ -8,11 +8,11 @@ import '../../quiz/shared/models/assunto_model.dart';
 
 part 'selecionar_assuntos_controller.g.dart';
 
-class SelecionarAssuntosController = _SelecionarAssuntosControllerBase
+class SelecionarAssuntosController = SelecionarAssuntosControllerBase
     with _$SelecionarAssuntosController;
 
-abstract class _SelecionarAssuntosControllerBase with Store {
-  _SelecionarAssuntosControllerBase(Iterable<ArvoreAssuntos> selecionados)
+abstract class SelecionarAssuntosControllerBase with Store {
+  SelecionarAssuntosControllerBase(Iterable<ArvoreAssuntos> selecionados)
       : selecionados = ObservableSet.of(selecionados);
 
   IDbServicos get _dbService => Modular.get<IDbServicos>();

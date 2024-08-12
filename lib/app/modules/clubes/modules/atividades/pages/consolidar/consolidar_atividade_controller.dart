@@ -8,12 +8,12 @@ import '../../shared/models/interface_atividade_controller.dart';
 
 part 'consolidar_atividade_controller.g.dart';
 
-class ConsolidarAtividadeController = _ConsolidarAtividadeControllerBase
+class ConsolidarAtividadeController = ConsolidarAtividadeControllerBase
     with _$ConsolidarAtividadeController;
 
-abstract class _ConsolidarAtividadeControllerBase extends IAtividadeController
+abstract class ConsolidarAtividadeControllerBase extends IAtividadeController
     with IAtividadeControllerMixinShowPageEditar, Store {
-  _ConsolidarAtividadeControllerBase({
+  ConsolidarAtividadeControllerBase({
     required Clube clube,
     required this.atividade,
   }) : super(clube) {

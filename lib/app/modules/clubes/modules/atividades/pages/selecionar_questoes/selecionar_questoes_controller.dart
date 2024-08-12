@@ -9,14 +9,14 @@ import '../../../../../quiz/shared/models/questao_model.dart';
 
 part 'selecionar_questoes_controller.g.dart';
 
-class SelecionarQuestoesController = _SelecionarQuestoesControllerBase
+class SelecionarQuestoesController = SelecionarQuestoesControllerBase
     with _$SelecionarQuestoesController;
 
-abstract class _SelecionarQuestoesControllerBase
+abstract class SelecionarQuestoesControllerBase
     extends ExibirQuestaoComFiltroController with Store {
-  _SelecionarQuestoesControllerBase(Iterable<Questao> questoesSelecionadas)
-      : this._selecaoInicial = questoesSelecionadas.toList(growable: false),
-        this.questoesSelecionadas = ObservableList.of(questoesSelecionadas),
+  SelecionarQuestoesControllerBase(Iterable<Questao> questoesSelecionadas)
+      : _selecaoInicial = questoesSelecionadas.toList(growable: false),
+        questoesSelecionadas = ObservableList.of(questoesSelecionadas),
         super(
           filtros: Filtros(),
           repositorio: Modular.get<QuestoesRepository>(),

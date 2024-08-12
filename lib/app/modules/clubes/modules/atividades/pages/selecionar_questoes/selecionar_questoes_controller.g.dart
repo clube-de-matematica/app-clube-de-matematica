@@ -9,40 +9,39 @@ part of 'selecionar_questoes_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$SelecionarQuestoesController
-    on _SelecionarQuestoesControllerBase, Store {
+    on SelecionarQuestoesControllerBase, Store {
   Computed<bool>? _$alteradaComputed;
 
   @override
   bool get alterada =>
       (_$alteradaComputed ??= Computed<bool>(() => super.alterada,
-              name: '_SelecionarQuestoesControllerBase.alterada'))
+              name: 'SelecionarQuestoesControllerBase.alterada'))
           .value;
   Computed<int>? _$numQuestoesComputed;
 
   @override
   int get numQuestoes =>
       (_$numQuestoesComputed ??= Computed<int>(() => super.numQuestoes,
-              name: '_SelecionarQuestoesControllerBase.numQuestoes'))
+              name: 'SelecionarQuestoesControllerBase.numQuestoes'))
           .value;
   Computed<int>? _$numQuestoesSelecionadasComputed;
 
   @override
   int get numQuestoesSelecionadas => (_$numQuestoesSelecionadasComputed ??=
           Computed<int>(() => super.numQuestoesSelecionadas,
-              name:
-                  '_SelecionarQuestoesControllerBase.numQuestoesSelecionadas'))
+              name: 'SelecionarQuestoesControllerBase.numQuestoesSelecionadas'))
       .value;
   Computed<bool>? _$selecionadaComputed;
 
   @override
   bool get selecionada =>
       (_$selecionadaComputed ??= Computed<bool>(() => super.selecionada,
-              name: '_SelecionarQuestoesControllerBase.selecionada'))
+              name: 'SelecionarQuestoesControllerBase.selecionada'))
           .value;
 
   late final _$mostrarSomenteQuestoesSelecionadasAtom = Atom(
       name:
-          '_SelecionarQuestoesControllerBase.mostrarSomenteQuestoesSelecionadas',
+          'SelecionarQuestoesControllerBase.mostrarSomenteQuestoesSelecionadas',
       context: context);
 
   @override

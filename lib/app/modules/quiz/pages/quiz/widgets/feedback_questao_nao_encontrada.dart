@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FeedbackQuestaoNaoEncontrada extends StatelessWidget {
-  const FeedbackQuestaoNaoEncontrada({Key? key}) : super(key: key);
+  const FeedbackQuestaoNaoEncontrada({super.key});
   @override
   Widget build(BuildContext context) {
     return Padding(

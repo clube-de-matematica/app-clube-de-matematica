@@ -68,6 +68,7 @@ class DbServicos extends IDbServicos {
   /// Se verdadeiro, indica que uma chamada de [_sincronizar] está em andamento;
   bool _sincronizando = false;
 
+  @override
   void close() {
     dbLocal.close();
     _authStateSubscription.cancel();
@@ -251,12 +252,12 @@ class DbServicos extends IDbServicos {
   /// [forcar] é usado para obter todos os registros, independentemente da data de modificação.
   Future<void> _sincronizarTbUsuarios({bool forcar = false}) async {
     if (idUsuarioApp == null) return;
-    final _id = idUsuarioApp!;
+    final id = idUsuarioApp!;
 
     if (!await _verificarConectividade()) return;
 
     final consultaLocal = dbLocal.select(dbLocal.tbUsuarios)
-      ..where((tb) => tb.sincronizar.equals(true) & tb.id.equals(_id))
+      ..where((tb) => tb.sincronizar.equals(true) & tb.id.equals(id))
       ..limit(1);
 
     final dadosLocal = await consultaLocal.map((linha) {
@@ -605,6 +606,7 @@ class DbServicos extends IDbServicos {
   /// Sincroniza os registros dos dados relacionados aos clubes entre os bancos de dados
   /// local e remoto.
   /// {@endtemplate}
+  @override
   Future<void> sincronizarClubes() async {
     if (!logado) return;
 
@@ -624,6 +626,7 @@ class DbServicos extends IDbServicos {
     await _sincronizarTbRespostaQuestaoAtividade();
   }
 
+  @override
   Future<List<int>> filtrarAnos({
     Iterable<int> niveis = const [],
     Iterable<int> assuntos = const [],
@@ -631,6 +634,7 @@ class DbServicos extends IDbServicos {
     return dbLocal.filtrarAnos(niveis: niveis, assuntos: assuntos).get();
   }
 
+  @override
   Future<List<int>> filtrarNiveis({
     Iterable<int> anos = const [],
     Iterable<int> assuntos = const [],
@@ -638,6 +642,7 @@ class DbServicos extends IDbServicos {
     return dbLocal.filtrarNiveis(anos: anos, assuntos: assuntos).get();
   }
 
+  @override
   Future<List<Assunto>> filtrarAssuntos({
     Iterable<int> anos = const [],
     Iterable<int> niveis = const [],
@@ -648,11 +653,11 @@ class DbServicos extends IDbServicos {
         .get()
       ..catchError((e) {
         debugger();
-        print(e);
         return <Assunto>[];
       });
   }
 
+  @override
   Future<Assunto?> assunto(int id) async {
     final consulta = dbLocal.selectAssuntos(ids: [id])..limit(1);
     final assunto =
@@ -666,8 +671,10 @@ class DbServicos extends IDbServicos {
           return;
         });
 
+  @override
   Stream<List<Assunto>> obterAssuntos() => _streamAssuntos;
 
+  @override
   Future<bool> inserirAssunto(RawAssunto dados) async {
     if (!await _verificarConectividade()) return false;
     final sucesso = await dbRemoto.insertAssunto(dados);
@@ -676,6 +683,7 @@ class DbServicos extends IDbServicos {
   }
 
   /// {@macro app.DriftDb.contarQuestoes}
+  @override
   Future<int> contarQuestoes({
     Iterable<int> anos = const [],
     Iterable<int> niveis = const [],
@@ -690,6 +698,7 @@ class DbServicos extends IDbServicos {
     );
   }
 
+  @override
   Future<Questao?> obterQuestao(String id) async {
     List<LinViewQuestoes> lista;
     try {
@@ -703,6 +712,7 @@ class DbServicos extends IDbServicos {
     return lista.isEmpty ? null : lista[0].toQuestao();
   }
 
+  @override
   Future<List<Questao>> obterQuestoes({
     Iterable<String> ids = const [],
     Iterable<int> anos = const [],
@@ -734,6 +744,7 @@ class DbServicos extends IDbServicos {
     return dbRemoto.checkPermissionInsertQuestao();
   }
 
+  @override
   Future<bool> inserirQuestao(Questao data) async {
     if (!await _verificarConectividade()) return false;
     final sucesso = await dbRemoto.insertQuestao(data);
@@ -741,6 +752,7 @@ class DbServicos extends IDbServicos {
     return sucesso;
   }
 
+  @override
   Future<bool> inserirReferenciaQuestao(Questao data, int idReferencia) async {
     if (!await _verificarConectividade()) return false;
     final sucesso = await dbRemoto.insertReferenceQuestao(data, idReferencia);
@@ -748,6 +760,7 @@ class DbServicos extends IDbServicos {
     return sucesso;
   }
 
+  @override
   Stream<List<Clube>> obterClubes() {
     final id = idUsuarioApp;
     if (id == null) return Stream.value([]);
@@ -759,6 +772,7 @@ class DbServicos extends IDbServicos {
     return retorno;
   }
 
+  @override
   Future<Clube?> inserirClube(RawClube data) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
@@ -767,6 +781,7 @@ class DbServicos extends IDbServicos {
     return clube;
   }
 
+  @override
   Future<Clube?> atualizarClube(RawClube data) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
@@ -775,6 +790,7 @@ class DbServicos extends IDbServicos {
     return clube;
   }
 
+  @override
   Future<Clube?> entrarClube(String accessCode) async {
     final id = idUsuarioApp;
     if (id == null) return null;
@@ -787,6 +803,7 @@ class DbServicos extends IDbServicos {
     return null;
   }
 
+  @override
   Future<bool> removerUsuarioClube(int idClube, int idUser) async {
     if (idUsuarioApp == null) return false;
     if (!await _verificarConectividade()) return false;
@@ -802,6 +819,7 @@ class DbServicos extends IDbServicos {
     return sucesso;
   }
 
+  @override
   Future<bool> atualizarPermissaoUsuarioClube(
       int idClube, int idUser, int idPermission) async {
     if (idUsuarioApp == null) return false;
@@ -812,6 +830,7 @@ class DbServicos extends IDbServicos {
     return sucesso;
   }
 
+  @override
   Future<bool> excluirClube(Clube clube) async {
     if (idUsuarioApp == null) return false;
     if (!await _verificarConectividade()) return false;
@@ -820,6 +839,7 @@ class DbServicos extends IDbServicos {
     return sucesso;
   }
 
+  @override
   Stream<List<Atividade>> obterAtividades(Clube clube) {
     if (idUsuarioApp == null) return Stream.value([]);
     final retorno = dbLocal
@@ -832,6 +852,7 @@ class DbServicos extends IDbServicos {
     return retorno;
   }
 
+  @override
   Future<Atividade?> inserirAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
@@ -840,6 +861,7 @@ class DbServicos extends IDbServicos {
     return atividade;
   }
 
+  @override
   Future<Atividade?> atualizarAtividade(RawAtividade dados) async {
     if (idUsuarioApp == null) return null;
     if (!await _verificarConectividade()) return null;
@@ -848,6 +870,7 @@ class DbServicos extends IDbServicos {
     return atividade;
   }
 
+  @override
   Future<bool> excluirAtividade(Atividade atividade) async {
     if (idUsuarioApp == null) return false;
     if (!await _verificarConectividade()) return false;
@@ -856,6 +879,7 @@ class DbServicos extends IDbServicos {
     return sucesso;
   }
 
+  @override
   Future<List<QuestaoAtividade>> obterQuestoesAtividade(
       Atividade atividade) async {
     try {
@@ -901,6 +925,7 @@ class DbServicos extends IDbServicos {
     }
   }
 
+  @override
   Future<bool> salvarRespostasAtividade(
       Iterable<RawRespostaQuestaoAtividade> dados) async {
     if (idUsuarioApp == null) return false;
@@ -945,6 +970,7 @@ class DbServicos extends IDbServicos {
   /// {@template app.IDbServicos.obterRespostaQuestao}
   /// Se houver uma resposta salva para [questao], retorna o [RespostaQuestao] correspondente.
   /// {@endtemplate}
+  @override
   Future<RespostaQuestao?> obterRespostaQuestao(Questao questao) {
     final retorno = dbLocal
         .selectRespostaQuestao(questao.id)
@@ -953,6 +979,7 @@ class DbServicos extends IDbServicos {
     return retorno;
   }
 
+  @override
   Future<bool> salvarRespostaQuestao(RawRespostaQuestao resposta) async {
     final dbResposta = await dbLocal.upsert(dbLocal.tbRespostaQuestao, [
       LinTbRespostaQuestao(
@@ -968,23 +995,24 @@ class DbServicos extends IDbServicos {
     return sucesso;
   }
 
+  @override
   Future<bool> atualizarUsuario(RawUserApp dados) async {
     if (idUsuarioApp == null || dados.id == null || dados.id != idUsuarioApp) {
       return false;
     }
 
-    final _dados = TbUsuariosCompanion(
+    final modelo = TbUsuariosCompanion(
       id: Value(dados.id!),
       nome: Value(dados.name),
-      sincronizar: Value(true),
+      sincronizar: const Value(true),
     );
 
     // Falhará se a tabela de usuários não tiver o registro a ser atualizado
-    final sucesso = await dbLocal.updateUsuario(_dados);
+    final sucesso = await dbLocal.updateUsuario(modelo);
     await _sincronizarTbUsuarios();
     // Caso a primeira tentativa de atualização tenha falhado.
     if (!sucesso) {
-      if (await dbLocal.updateUsuario(_dados)) {
+      if (await dbLocal.updateUsuario(modelo)) {
         await _sincronizarTbUsuarios();
         return true;
       }
@@ -995,12 +1023,12 @@ class DbServicos extends IDbServicos {
 
 extension _LinTbQuestoesDbRemoto on LinTbQuestoesDbRemoto {
   LinTbQuestoes toDbLocal() {
-    final imagens = this.decodificarImagensEnunciado();
+    final imagens = decodificarImagensEnunciado();
     final retorno = LinTbQuestoes(
       id: id,
-      enunciado: DbLocal.codificarEnunciado(this.decodificarEnunciado()),
+      enunciado: DbLocal.codificarEnunciado(decodificarEnunciado()),
       gabarito: gabarito,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
       imagensEnunciado:
           imagens == null ? null : DbLocal.codificarImagensEnunciado(imagens),
     );
@@ -1010,13 +1038,13 @@ extension _LinTbQuestoesDbRemoto on LinTbQuestoesDbRemoto {
 
 extension _LinTbAssuntosDbRemoto on LinTbAssuntosDbRemoto {
   LinTbAssuntos toDbLocal() {
-    final _hierarquia = this.decodificarHierarquia();
+    final hierarquia = decodificarHierarquia();
     final retorno = LinTbAssuntos(
-      id: this.id,
-      assunto: this.assunto,
+      id: id,
+      assunto: assunto,
       hierarquia:
-          _hierarquia == null ? null : DbLocal.codificarHierarquia(_hierarquia),
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+          hierarquia == null ? null : DbLocal.codificarHierarquia(hierarquia),
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1025,9 +1053,9 @@ extension _LinTbAssuntosDbRemoto on LinTbAssuntosDbRemoto {
 extension _LinTbQuestaoAssuntoDbRemoto on LinTbQuestaoAssuntoDbRemoto {
   LinTbQuestaoAssunto toDbLocal() {
     final retorno = LinTbQuestaoAssunto(
-      idQuestao: this.idQuestao,
-      idAssunto: this.idAssunto,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      idQuestao: idQuestao,
+      idAssunto: idAssunto,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1036,9 +1064,9 @@ extension _LinTbQuestaoAssuntoDbRemoto on LinTbQuestaoAssuntoDbRemoto {
 extension _LinTbTiposAlternativaDbRemoto on LinTbTiposAlternativaDbRemoto {
   LinTbTiposAlternativa toDbLocal() {
     final retorno = LinTbTiposAlternativa(
-      id: this.id,
-      tipo: this.tipo,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      id: id,
+      tipo: tipo,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1047,11 +1075,11 @@ extension _LinTbTiposAlternativaDbRemoto on LinTbTiposAlternativaDbRemoto {
 extension _LinTbAlternativasDbRemoto on LinTbAlternativasDbRemoto {
   LinTbAlternativas toDbLocal() {
     final retorno = LinTbAlternativas(
-      idQuestao: this.idQuestao,
-      sequencial: this.sequencial,
-      idTipo: this.idTipo,
-      conteudo: this.conteudo,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      idQuestao: idQuestao,
+      sequencial: sequencial,
+      idTipo: idTipo,
+      conteudo: conteudo,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1060,12 +1088,12 @@ extension _LinTbAlternativasDbRemoto on LinTbAlternativasDbRemoto {
 extension _LinTbQuestoesCadernoDbRemoto on LinTbQuestoesCadernoDbRemoto {
   LinTbQuestoesCaderno toDbLocal() {
     final retorno = LinTbQuestoesCaderno(
-      id: this.id,
-      ano: this.ano,
-      nivel: this.nivel,
-      indice: this.indice,
-      idQuestao: this.idQuestao,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      id: id,
+      ano: ano,
+      nivel: nivel,
+      indice: indice,
+      idQuestao: idQuestao,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1074,12 +1102,12 @@ extension _LinTbQuestoesCadernoDbRemoto on LinTbQuestoesCadernoDbRemoto {
 extension _LinTbUsuariosDbRemoto on LinTbUsuariosDbRemoto {
   LinTbUsuarios toDbLocal() {
     final retorno = LinTbUsuarios(
-      id: this.id,
-      email: this.email,
-      nome: this.nome,
-      foto: this.foto,
-      softDelete: this.softDelete,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      id: id,
+      email: email,
+      nome: nome,
+      foto: foto,
+      softDelete: softDelete,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
       sincronizar: false,
     );
     return retorno;
@@ -1089,14 +1117,14 @@ extension _LinTbUsuariosDbRemoto on LinTbUsuariosDbRemoto {
 extension _LinTbClubesDbRemoto on LinTbClubesDbRemoto {
   LinTbClubes toDbLocal() {
     final retorno = LinTbClubes(
-      id: this.id,
-      nome: this.nome,
-      descricao: this.descricao,
-      dataCriacao: DbLocal.codificarData(this.decodificarDataCriacao()),
-      privado: this.privado,
-      codigo: this.codigo,
-      capa: this.capa,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      id: id,
+      nome: nome,
+      descricao: descricao,
+      dataCriacao: DbLocal.codificarData(decodificarDataCriacao()),
+      privado: privado,
+      codigo: codigo,
+      capa: capa,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1105,9 +1133,9 @@ extension _LinTbClubesDbRemoto on LinTbClubesDbRemoto {
 extension _LinTbTiposPermissaoDbRemoto on LinTbTiposPermissaoDbRemoto {
   LinTbTiposPermissao toDbLocal() {
     final retorno = LinTbTiposPermissao(
-      id: this.id,
-      permissao: this.permissao,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      id: id,
+      permissao: permissao,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1116,11 +1144,11 @@ extension _LinTbTiposPermissaoDbRemoto on LinTbTiposPermissaoDbRemoto {
 extension _LinTbClubeUsuarioDbRemoto on LinTbClubeUsuarioDbRemoto {
   LinTbClubeUsuario toDbLocal() {
     final retorno = LinTbClubeUsuario(
-      idClube: this.idClube,
-      idUsuario: this.idUsuario,
-      idPermissao: this.idPermissao,
-      dataAdmissao: DbLocal.codificarData(this.decodificarDataAdmissao()),
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      idClube: idClube,
+      idUsuario: idUsuario,
+      idPermissao: idPermissao,
+      dataAdmissao: DbLocal.codificarData(decodificarDataAdmissao()),
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1129,19 +1157,19 @@ extension _LinTbClubeUsuarioDbRemoto on LinTbClubeUsuarioDbRemoto {
 extension _LinTbAtividadesDbRemoto on LinTbAtividadesDbRemoto {
   LinTbAtividades toDbLocal() {
     final retorno = LinTbAtividades(
-      id: this.id,
-      idClube: this.idClube,
-      titulo: this.titulo,
-      descricao: this.descricao,
-      idAutor: this.idAutor,
-      dataCriacao: DbLocal.codificarData(this.decodificarDataCriacao()),
-      dataLiberacao: this.dataLiberacao == null
+      id: id,
+      idClube: idClube,
+      titulo: titulo,
+      descricao: descricao,
+      idAutor: idAutor,
+      dataCriacao: DbLocal.codificarData(decodificarDataCriacao()),
+      dataLiberacao: dataLiberacao == null
           ? null
-          : DbLocal.codificarData(this.decodificarDataLiberacao()!),
-      dataEncerramento: this.dataEncerramento == null
+          : DbLocal.codificarData(decodificarDataLiberacao()!),
+      dataEncerramento: dataEncerramento == null
           ? null
-          : DbLocal.codificarData(this.decodificarDataEncerramento()!),
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+          : DbLocal.codificarData(decodificarDataEncerramento()!),
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1150,10 +1178,10 @@ extension _LinTbAtividadesDbRemoto on LinTbAtividadesDbRemoto {
 extension _LinTbQuestaoAtividadeDbRemoto on LinTbQuestaoAtividadeDbRemoto {
   LinTbQuestaoAtividade toDbLocal() {
     final retorno = LinTbQuestaoAtividade(
-      id: this.id,
-      idQuestaoCaderno: this.idQuestaoCaderno,
-      idAtividade: this.idAtividade,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      id: id,
+      idQuestaoCaderno: idQuestaoCaderno,
+      idAtividade: idAtividade,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1163,10 +1191,10 @@ extension _LinTbRespostaQuestaoAtividadeDbRemoto
     on LinTbRespostaQuestaoAtividadeDbRemoto {
   LinTbRespostaQuestaoAtividade toDbLocal() {
     final retorno = LinTbRespostaQuestaoAtividade(
-      idQuestaoAtividade: this.idQuestaoAtividade,
-      idUsuario: this.idUsuario,
-      resposta: this.resposta,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      idQuestaoAtividade: idQuestaoAtividade,
+      idUsuario: idUsuario,
+      resposta: resposta,
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
       sincronizar: false,
     );
     return retorno;
@@ -1176,11 +1204,11 @@ extension _LinTbRespostaQuestaoAtividadeDbRemoto
 extension _LinTbRespostaQuestaoDbRemoto on LinTbRespostaQuestaoDbRemoto {
   LinTbRespostaQuestao toDbLocal() {
     final retorno = LinTbRespostaQuestao(
-      idQuestao: this.idQuestao,
-      idUsuario: this.idUsuario,
-      resposta: this.resposta,
+      idQuestao: idQuestao,
+      idUsuario: idUsuario,
+      resposta: resposta,
       sincronizar: false,
-      dataModificacao: DbLocal.codificarData(this.decodificarDataModificacao()),
+      dataModificacao: DbLocal.codificarData(decodificarDataModificacao()),
     );
     return retorno;
   }
@@ -1250,7 +1278,7 @@ extension _LinTbRespostaQuestao on LinTbRespostaQuestao {
 
 extension _LinViewQuestoes on LinViewQuestoes {
   Questao toQuestao() {
-    _imagensEnunciado() {
+    listaImagensEnunciado() {
       final List<ImagemQuestao> imagens = [];
       if (imagensEnunciado != null) {
         final listaDados =
@@ -1275,7 +1303,7 @@ extension _LinViewQuestoes on LinViewQuestoes {
       enunciado: DbLocal.decodificarEnunciado(enunciado) ?? [],
       alternativas: alternativas.map((e) => e.toAlternativa()).toList(),
       gabarito: gabarito,
-      imagensEnunciado: _imagensEnunciado(),
+      imagensEnunciado: listaImagensEnunciado(),
     );
   }
 }

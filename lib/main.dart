@@ -17,7 +17,7 @@ void main() async {
   ClubeError.runApp(
     ModularApp(
       module: ClubeDeMatematicaModule(),
-      child: ClubeDeMatematicaWidget(),
+      child: const ClubeDeMatematicaWidget(),
     ),
     init: _init,
   );

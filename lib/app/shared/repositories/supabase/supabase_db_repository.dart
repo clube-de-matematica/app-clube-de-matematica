@@ -347,12 +347,12 @@ class SupabaseDbRepository
   /// Decodifica a string da data de modificação em [dados] para o número de milissegundos
   /// (no fuso horário UTC) após a época Unix.
   DataDocument _decodeDataModificacao(Map<String, dynamic> dados) {
-    final keyDataModificacao = DbConst.kDbDataDocumentKeyDataModificacao;
+    const keyDataModificacao = DbConst.kDbDataDocumentKeyDataModificacao;
     final stringData = dados[keyDataModificacao] as String;
-    final _dados = DataAssunto.from(dados)
+    final decodificado = DataAssunto.from(dados)
       ..[keyDataModificacao] =
           DbRemoto.decodificarData(stringData)!.toUtc().millisecondsSinceEpoch;
-    return _dados;
+    return decodificado;
   }
 
   /// [data] tem a estrutura {"assunto": [String], "id_assunto_pai": [int?]}.
@@ -1160,12 +1160,12 @@ class SupabaseDbRepository
     assert(Debug.print(
         '[INFO] Chamando SupabaseDbRepository.upsertRespostas()...'));
     _checkAuthentication('upsertRespostas()');
-    final _dados = _prepareUpsertRespostas(dados);
-    if (_dados.isEmpty) return false;
+    final data = _prepareUpsertRespostas(dados);
+    if (data.isEmpty) return false;
     final table = Sql.tbRespostaQuestao.tbNome;
     try {
       assert(Debug.print('[INFO] Inserindo os dados na tabela "$table"...'));
-      final response = await _client.from(table).upsert(_dados).select();
+      final response = await _client.from(table).upsert(data).select();
 
       return response != null;
     } catch (erro, stack) {
@@ -1205,7 +1205,7 @@ class SupabaseDbRepository
       return false;
     }
 
-    final tb = Sql.tbUsuarios;
+    const tb = Sql.tbUsuarios;
     final tbNome = tb.tbNome;
     try {
       assert(Debug.print('[INFO] Atualizando os dados na tabela "$tbNome"...'));

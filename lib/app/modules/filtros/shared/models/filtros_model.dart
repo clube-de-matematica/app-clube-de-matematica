@@ -8,27 +8,27 @@ part 'filtros_model.g.dart';
 enum TiposFiltro { ano, nivel, assunto }
 
 /// Contém os filtros.
-class Filtros = _FiltrosBase with _$Filtros;
+class Filtros = FiltrosBase with _$Filtros;
 
-abstract class _FiltrosBase with Store {
-  _FiltrosBase();
+abstract class FiltrosBase with Store {
+  FiltrosBase();
 
   /// Cria uma nova instância com base em [other].
   // ignore: unused_element
-  _FiltrosBase.from(Filtros other) {
+  FiltrosBase.from(Filtros other) {
     assuntos.addAll(other.assuntos);
     anos.addAll(other.anos);
     niveis.addAll(other.niveis);
   }
 
   /// Ids dos assuntos filtrados.
-  final ObservableSet<int> assuntos = Set<int>().asObservable();
+  final ObservableSet<int> assuntos = <int>{}.asObservable();
 
   /// Anos filtrados.
-  final ObservableSet<int> anos = Set<int>().asObservable();
+  final ObservableSet<int> anos = <int>{}.asObservable();
 
   /// Níveis filtrados.
-  final ObservableSet<int> niveis = Set<int>().asObservable();
+  final ObservableSet<int> niveis = <int>{}.asObservable();
 
   /// Retorna a quantidade total de opções de filtro selecionadas.
   @computed
@@ -60,14 +60,14 @@ abstract class _FiltrosBase with Store {
 
   String toJson() {
     return jsonEncode({
-      'assuntos': this.assuntos.toList(),
-      'anos': this.anos.toList(),
-      'niveis': this.niveis.toList(),
+      'assuntos': assuntos.toList(),
+      'anos': anos.toList(),
+      'niveis': niveis.toList(),
     });
   }
 
   // ignore: unused_element
-  _FiltrosBase.fromJson(String json) {
+  FiltrosBase.fromJson(String json) {
     final dados = (jsonDecode(json) as Map).cast<String, List>();
     assuntos.addAll((dados['assuntos'])?.cast() ?? []);
     anos.addAll((dados['anos'])?.cast() ?? []);

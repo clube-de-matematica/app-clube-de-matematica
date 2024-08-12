@@ -11,13 +11,13 @@ import '../widgets/avatar.dart';
 import 'perfil_controller.dart';
 
 class PerfilPage extends StatefulWidget {
-  const PerfilPage({Key? key}) : super(key: key);
+  const PerfilPage({super.key});
 
   @override
-  _PerfilPageState createState() => _PerfilPageState();
+  PerfilPageState createState() => PerfilPageState();
 }
 
-class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
+class PerfilPageState extends ModularState<PerfilPage, PerfilController> {
   double get escala => AppTheme.escala;
 
   ThemeData get tema => Theme.of(context);
@@ -32,7 +32,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
         onPressed: () {
           final formState = _formKey.currentState;
           if (formState != null) {
@@ -95,17 +95,23 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                             const Expanded(child: SizedBox(height: 48.0)),
                             InkWell(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(16.0)),
+                                  const BorderRadius.all(Radius.circular(16.0)),
                               onTap: () async {
                                 final confirm = await _confirmationBottomSheet(
                                     context,
                                     UIStrings.kAccountChangeConfirmationMsg);
                                 if (confirm) {
-                                  if (!await controller.conectadoInternete) {
-                                    BottomSheetErroConexao().showModal(context);
-                                    return;
+                                  final conectado =
+                                      await controller.conectadoInternete;
+                                  if (context.mounted) {
+                                    if (!conectado) {
+                                      const BottomSheetErroConexao()
+                                          .showModal(context);
+                                      return;
+                                    }
+                                    controller
+                                        .signInWithAnotherAccount(context);
                                   }
-                                  controller.signInWithAnotherAccount(context);
                                 }
                               },
                               child: const Padding(
@@ -121,13 +127,17 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                             ),
                             InkWell(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(16.0)),
+                                  const BorderRadius.all(Radius.circular(16.0)),
                               onTap: () async {
                                 final confirm = await _confirmationBottomSheet(
                                     context, UIStrings.kExitConfirmationMsg);
-                                if (confirm) controller.exit(context);
+                                if (confirm) {
+                                  if (context.mounted) {
+                                    controller.exit(context);
+                                  }
+                                }
                               },
-                              child: Padding(
+                              child: const Padding(
                                 padding: EdgeInsets.symmetric(
                                   vertical: 8.0,
                                   horizontal: 16.0,
@@ -162,8 +172,8 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
         border: const OutlineInputBorder(),
         hintText: UIStrings.kNameHintText,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
-        contentPadding: EdgeInsets.all(0),
-        prefixIcon: Icon(Icons.person),
+        contentPadding: const EdgeInsets.all(0),
+        prefixIcon: const Icon(Icons.person),
       ),
       initialValue: controller.name ?? "",
       validator: (valor) => controller.nameValidator(valor),
@@ -172,7 +182,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
   }
 
   Widget _avatar() {
-    final radius = 48.0;
+    const radius = 48.0;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 18.0),
       child: Stack(
@@ -186,13 +196,13 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                 builder: (_, __) {
                   return Hero(
                     tag: 'hero-avatar',
+                    transitionOnUserGestures: true,
                     child: Avatar(
                       controller.user,
                       backgroundColor: Colors.black12,
                       backgroundImage: controller.image.value,
                       radius: radius,
                     ),
-                    transitionOnUserGestures: true,
                   );
                 },
               );
@@ -206,8 +216,8 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
 
   Widget _alterarFoto() {
     final iconTheme = tema.iconTheme;
-    final icon = Icons.camera_alt;
-    final iconSize = 24.0;
+    const icon = Icons.camera_alt;
+    const iconSize = 24.0;
     return Positioned(
       bottom: -(iconSize / 2 + 2),
       right: -(iconSize / 2 + 2),
@@ -225,7 +235,7 @@ class _PerfilPageState extends ModularState<PerfilPage, PerfilController> {
                   size: (iconTheme.size ?? 0) + 6,
                 ),
               ),
-              Center(child: Icon(icon)),
+              const Center(child: Icon(icon)),
             ],
           ),
         ),

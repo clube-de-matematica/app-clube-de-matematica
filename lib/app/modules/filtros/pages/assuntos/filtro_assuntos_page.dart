@@ -16,14 +16,13 @@ import 'filtro_assuntos_controller.dart';
 /// Página onde são listados os assuntos disponíveis para filtragem.
 class FiltroAssuntosPage extends StatelessWidget {
   FiltroAssuntosPage({
-    Key? key,
+    super.key,
     required Filtros filtrosSalvos,
     required Filtros filtrosTemp,
   })  : controle = FiltroAssuntosController(
           filtrosSalvos: filtrosSalvos,
           filtrosTemp: filtrosTemp,
-        ),
-        super(key: key);
+        );
 
   final FiltroAssuntosController controle;
 
@@ -36,6 +35,9 @@ class FiltroAssuntosPage extends StatelessWidget {
   /// Exibe um [InputChip] para cada filtro selecionado.
   FiltrosSelecionados _construirCaixaFiltrosSelecionados() {
     return FiltrosSelecionados(
+      trailing: Observer(builder: (_) {
+        return FiltroChipContador(controle.totalSelecinado.toString());
+      }),
       child: Observer(builder: (_) {
         final chips = controle.selecionados.map((id) {
           return InputChip(
@@ -43,10 +45,7 @@ class FiltroAssuntosPage extends StatelessWidget {
             onDeleted: () => controle.remover(id),
           );
         }).toList();
-        return Wrap(children: chips, spacing: 8);
-      }),
-      trailing: Observer(builder: (_) {
-        return FiltroChipContador(controle.totalSelecinado.toString());
+        return Wrap(spacing: 8, children: chips);
       }),
     );
   }
@@ -80,14 +79,14 @@ class FiltroAssuntosPage extends StatelessWidget {
                 final unidade = unidades[indice];
                 return _construirOpcaoUnidade(unidade);
               },
-              separatorBuilder: (_, __) => Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: const Divider(height: double.minPositive),
+              separatorBuilder: (_, __) => const Padding(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                child: Divider(height: double.minPositive),
               ),
             ),
           );
         }
-        return Center(child: const CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
@@ -103,7 +102,7 @@ class FiltroAssuntosPage extends StatelessWidget {
     // Título para o componente da unidade.
     final titulo = Text(
       '${unidade.titulo} '
-      '${subItens.isEmpty ? "" : "(" + subItens.length.toString() + ")"}',
+      '${subItens.isEmpty ? "" : "(${subItens.length})"}',
     );
 
     // O ícone à esquerda.
@@ -129,7 +128,7 @@ class FiltroAssuntosPage extends StatelessWidget {
           : controle.adicionarUnidade(unidade),
     );
 
-    final padding = null; // const EdgeInsets.fromLTRB(16, 0, 10, 0);
+    const padding = null; // const EdgeInsets.fromLTRB(16, 0, 10, 0);
 
     if (subItens.isEmpty) {
       return ListTile(
@@ -148,12 +147,12 @@ class FiltroAssuntosPage extends StatelessWidget {
         leading: leading,
         trailing: trailing,
         title: titulo,
-        children: subItens,
         //textColor: textColor,
         collapsedTextColor: textColor,
         //iconColor: textColor,
         collapsedIconColor: textColor,
         backgroundColor: backgroundColor,
+        children: subItens,
       );
     }
   }

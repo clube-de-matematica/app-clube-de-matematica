@@ -6,8 +6,7 @@ import 'expansion_tile_personalizado.dart';
 
 ///Contém um [InputChip] para cada filtro selecionado.
 class FiltrosSelecionados extends StatelessWidget {
-  FiltrosSelecionados({Key? key, required this.child, this.trailing})
-      : super(key: key);
+  const FiltrosSelecionados({super.key, required this.child, this.trailing});
   final Widget? trailing;
   final Widget child;
 
@@ -30,10 +29,12 @@ class FiltrosSelecionados extends StatelessWidget {
       collapsedTextColor: textColor,
       backgroundColor: backgroundColor,
       collapsedBackgroundColor: backgroundColor,
-      title: Text(
+      title: const Text(
         UIStrings.FILTRO_TEXTO_SECAO_FILROS_SELECINADO,
         //style: textStyle,
       ),
+      trailing: trailing,
+      maintainState: true,
       children: [
         AnimatedContainer(
           duration: kExpand,
@@ -42,8 +43,6 @@ class FiltrosSelecionados extends StatelessWidget {
           child: SingleChildScrollView(child: child),
         )
       ],
-      trailing: trailing,
-      maintainState: true,
     );
   }
 }

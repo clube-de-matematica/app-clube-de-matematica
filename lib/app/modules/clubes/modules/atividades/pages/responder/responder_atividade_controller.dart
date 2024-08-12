@@ -12,13 +12,13 @@ import '../../models/resposta_questao_atividade.dart';
 
 part 'responder_atividade_controller.g.dart';
 
-class ResponderAtividadeController = _ResponderAtividadeControllerBase
+class ResponderAtividadeController = ResponderAtividadeControllerBase
     with _$ResponderAtividadeController;
 
-abstract class _ResponderAtividadeControllerBase extends ExibirQuestaoController
+abstract class ResponderAtividadeControllerBase extends ExibirQuestaoController
     with Store
     implements Disposable {
-  _ResponderAtividadeControllerBase(this.atividade) {
+  ResponderAtividadeControllerBase(this.atividade) {
     _inicializar();
   }
 

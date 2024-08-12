@@ -9,17 +9,14 @@ import '../../shared/utils/ui_strings.dart';
 
 part 'filtro_home_controller.g.dart';
 
-class FiltroHomeController = _FiltroHomeControllerBase
+class FiltroHomeController = FiltroHomeControllerBase
     with _$FiltroHomeController;
 
-abstract class _FiltroHomeControllerBase extends FiltroController with Store {
-  _FiltroHomeControllerBase({
-    required Filtros filtrosSalvos,
-    required Filtros filtrosTemp,
-  }) : super(
-          filtrosSalvos: filtrosSalvos,
-          filtrosTemp: filtrosTemp,
-        );
+abstract class FiltroHomeControllerBase extends FiltroController with Store {
+  FiltroHomeControllerBase({
+    required super.filtrosSalvos,
+    required super.filtrosTemp,
+  });
 
   /// Retorna o título usado na `AppBar` da página de tipos de filtro.
   @override

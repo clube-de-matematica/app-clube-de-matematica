@@ -45,9 +45,9 @@ class ClubesModule extends Module {
   @override
   //Lista de rotas.
   List<ModularRoute> get routes => [
-        ChildRoute(kRelativeRouteHomePage, child: (_, __) => HomeClubesPage()),
+        ChildRoute(kRelativeRouteHomePage, child: (_, __) => const HomeClubesPage()),
         ChildRoute(kRelativeRouteCriarPage,
-            child: (_, __) => CriarClubePage()),
+            child: (_, __) => const CriarClubePage()),
         ChildRoute(kRelativeRouteEditarPage,
             child: (_, args) => EditarClubePage(args.data)),
         ChildRoute(

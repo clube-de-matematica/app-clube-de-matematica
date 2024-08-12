@@ -8,24 +8,24 @@ part of 'quiz_controller.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$QuizController on _QuizControllerBase, Store {
+mixin _$QuizController on QuizControllerBase, Store {
   Computed<ObservableFuture<Questao?>>? _$questaoAtualComputed;
 
   @override
   ObservableFuture<Questao?> get questaoAtual => (_$questaoAtualComputed ??=
           Computed<ObservableFuture<Questao?>>(() => super.questaoAtual,
-              name: '_QuizControllerBase.questaoAtual'))
+              name: 'QuizControllerBase.questaoAtual'))
       .value;
   Computed<int?>? _$alternativaSelecionadaComputed;
 
   @override
   int? get alternativaSelecionada => (_$alternativaSelecionadaComputed ??=
           Computed<int?>(() => super.alternativaSelecionada,
-              name: '_QuizControllerBase.alternativaSelecionada'))
+              name: 'QuizControllerBase.alternativaSelecionada'))
       .value;
 
   late final _$_respostaAtom =
-      Atom(name: '_QuizControllerBase._resposta', context: context);
+      Atom(name: 'QuizControllerBase._resposta', context: context);
 
   RespostaQuestao? get resposta {
     _$_respostaAtom.reportRead();
@@ -42,17 +42,17 @@ mixin _$QuizController on _QuizControllerBase, Store {
     });
   }
 
-  late final _$_QuizControllerBaseActionController =
-      ActionController(name: '_QuizControllerBase', context: context);
+  late final _$QuizControllerBaseActionController =
+      ActionController(name: 'QuizControllerBase', context: context);
 
   @override
   void _definirResposta(RespostaQuestao? valor) {
-    final _$actionInfo = _$_QuizControllerBaseActionController.startAction(
-        name: '_QuizControllerBase._definirResposta');
+    final _$actionInfo = _$QuizControllerBaseActionController.startAction(
+        name: 'QuizControllerBase._definirResposta');
     try {
       return super._definirResposta(valor);
     } finally {
-      _$_QuizControllerBaseActionController.endAction(_$actionInfo);
+      _$QuizControllerBaseActionController.endAction(_$actionInfo);
     }
   }
 

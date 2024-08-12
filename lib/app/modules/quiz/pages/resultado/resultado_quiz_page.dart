@@ -10,10 +10,10 @@ import 'resultado_quiz_controller.dart';
 
 /// Página destinada a responder às questões de uma atividade.
 class ResultadoQuizPage extends StatefulWidget {
-  ResultadoQuizPage({
-    Key? key,
+  const ResultadoQuizPage({
+    super.key,
     required this.repositorio,
-  }) : super(key: key);
+  });
 
   final QuestoesRepository repositorio;
 
@@ -87,7 +87,7 @@ class _ResultadoQuizPageState extends State<ResultadoQuizPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
+        preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
           title: Observer(
             builder: (_) {
@@ -111,7 +111,7 @@ class _ResultadoQuizPageState extends State<ResultadoQuizPage> {
       body: Observer(
           builder: (_) {
             if (controle.carregando) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             if (estados.length != controle.total) {
               estados = List.filled(controle.total, false);
@@ -131,7 +131,9 @@ class _ResultadoQuizPageState extends State<ResultadoQuizPage> {
                     ),
                   ),
                   expansionCallback: (indice, expandido) {
-                    for (var i = 0; i < estados.length; i++) estados[i] = false;
+                    for (var i = 0; i < estados.length; i++) {
+                      estados[i] = false;
+                    }
                     setState(() {
                       estados[indice] = expandido;
                     });

@@ -8,17 +8,14 @@ import '../../shared/utils/ui_strings.dart';
 
 part 'filtro_niveis_controller.g.dart';
 
-class FiltroNiveisController = _FiltroNiveisControllerBase
+class FiltroNiveisController = FiltroNiveisControllerBase
     with _$FiltroNiveisController;
 
-abstract class _FiltroNiveisControllerBase extends FiltroController with Store {
-  _FiltroNiveisControllerBase({
-    required Filtros filtrosSalvos,
-    required Filtros filtrosTemp,
-  }) : super(
-          filtrosSalvos: filtrosSalvos,
-          filtrosTemp: filtrosTemp,
-        );
+abstract class FiltroNiveisControllerBase extends FiltroController with Store {
+  FiltroNiveisControllerBase({
+    required super.filtrosSalvos,
+    required super.filtrosTemp,
+  });
 
   @override
   String get tituloAppBar => UIStrings.FILTRO_TEXTO_TIPO_NIVEL;

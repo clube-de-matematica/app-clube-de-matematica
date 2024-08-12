@@ -7,16 +7,14 @@ import '../clube_controller.dart';
 
 /// O botão para o menu de opções do usuário do clube.
 class UsuarioClubeBotaoOpcoes extends StatelessWidget {
-  UsuarioClubeBotaoOpcoes({
-    Key? key,
+  const UsuarioClubeBotaoOpcoes({
+    super.key,
     required this.usuario,
-  }) : super(key: key);
+  });
   final UsuarioClube usuario;
-  late final BuildContext context;
 
   @override
   Widget build(BuildContext context) {
-    this.context = context;
     final controller = Modular.get<ClubeController>();
     final usuarioApp = controller.usuarioApp;
     assert(usuarioApp.idClube == usuario.idClube);
@@ -25,13 +23,13 @@ class UsuarioClubeBotaoOpcoes extends StatelessWidget {
     if (usuario.proprietario) return const SizedBox();
 
     final nome = usuario.nome ?? usuario.email ?? '';
-    final textoSair = 'Sair do clube';
+    const textoSair = 'Sair do clube';
     final textoRemoverAdmin =
         'Remover $nome da lista de admins'.replaceAll('  ', ' ');
     final textoPromoverAdmin =
         'Promover $nome a admin do clube'.replaceAll('  ', ' ');
     final textoRemover = 'Remover $nome'.trim();
-    final textoSairAdmin = 'Sair da lista de admins';
+    const textoSairAdmin = 'Sair da lista de admins';
 
     final itens = () {
       final itens = <PopupMenuEntry<OpcoesUsuarioClube>>[];
@@ -60,9 +58,29 @@ class UsuarioClubeBotaoOpcoes extends StatelessWidget {
       return itens;
     }();
 
+    Future<void> onSelected(
+      String mensagem,
+      Future<bool> Function() acao,
+    ) async {
+      final confirmar = await BottomSheetCancelarConfirmar(
+        message: mensagem,
+      ).showModal<bool>(context);
+      if (confirmar ?? false) {
+        final futuro = acao();
+        if (context.mounted) {
+          await BottomSheetCarregando(future: futuro).showModal(context);
+          if (!(await futuro)) {
+            if (context.mounted) {
+              const BottomSheetErro('').showModal(context);
+            }
+          }
+        }
+      }
+    }
+
     construirBotao() {
       return PopupMenuButton<OpcoesUsuarioClube>(
-        child: Icon(Icons.more_vert),
+        child: const Icon(Icons.more_vert),
         itemBuilder: (_) => itens,
         onSelected: (opcao) async {
           switch (opcao) {
@@ -92,7 +110,11 @@ class UsuarioClubeBotaoOpcoes extends StatelessWidget {
                 '$textoSair?',
                 () async {
                   final sair = await controller.sair();
-                  if (sair) Navigator.pop(context);
+                  if (sair) {
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
                   return sair;
                 },
               );
@@ -103,20 +125,6 @@ class UsuarioClubeBotaoOpcoes extends StatelessWidget {
     }
 
     return itens.isEmpty ? const SizedBox() : construirBotao();
-  }
-
-  Future<void> onSelected(
-    String mensagem,
-    Future<bool> Function() acao,
-  ) async {
-    final confirmar = await BottomSheetCancelarConfirmar(
-      message: mensagem,
-    ).showModal<bool>(context);
-    if (confirmar ?? false) {
-      final futuro = acao();
-      await BottomSheetCarregando(future: futuro).showModal(context);
-      if (!(await futuro)) BottomSheetErro('').showModal(context);
-    }
   }
 
   PopupMenuItem<OpcoesUsuarioClube> _buildItem(

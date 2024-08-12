@@ -27,7 +27,7 @@ class Alternativa {
   final int idQuestao;
   final int sequencial;
   final TypeAlternativa tipo;
-  final conteudo;
+  final dynamic conteudo;
 
   Alternativa({
     required this.idQuestao,
@@ -40,11 +40,11 @@ class Alternativa {
   factory Alternativa.fromJson(DataAlternativa json) {
     final idQuestao = json[DbConst.kDbDataAlternativaKeyIdQuestao] as int;
     final sequencial = json[DbConst.kDbDataAlternativaKeySequencial] as int;
-    final conteudo;
+    final dynamic conteudo;
     if (json[DbConst.kDbDataAlternativaKeyTipo] as int ==
-        DbConst.kDbDataAlternativaKeyTipoValTexto)
+        DbConst.kDbDataAlternativaKeyTipoValTexto) {
       conteudo = json[DbConst.kDbDataAlternativaKeyConteudo];
-    else {
+    } else {
       final dataImagem =
           jsonDecode(json[DbConst.kDbDataAlternativaKeyConteudo]) as DataImagem;
       dataImagem[ImagemQuestao.kKeyName] =
@@ -66,10 +66,12 @@ class Alternativa {
 
   /// Retorna um [TypeAlternativa] com base em [tipo].
   static TypeAlternativa parseTypeAlternativa(int tipo) {
-    if (tipo == DbConst.kDbDataAlternativaKeyTipoValTexto)
+    if (tipo == DbConst.kDbDataAlternativaKeyTipoValTexto) {
       return TypeAlternativa.texto;
-    if (tipo == DbConst.kDbDataAlternativaKeyTipoValImagem)
+    }
+    if (tipo == DbConst.kDbDataAlternativaKeyTipoValImagem) {
       return TypeAlternativa.imagem;
+    }
     throw MyException(
       "Tipo inválido!",
       originClass: "Alternativa",
@@ -90,12 +92,12 @@ class Alternativa {
   /// Retorna um json com os dados da alternativa.
   Map<String, dynamic> toJson() {
     final DataAlternativa data = DataAlternativa();
-    data[DbConst.kDbDataAlternativaKeyIdQuestao] = this.idQuestao;
-    data[DbConst.kDbDataAlternativaKeySequencial] = this.sequencial;
-    data[DbConst.kDbDataAlternativaKeyTipo] = this.tipo.id;
+    data[DbConst.kDbDataAlternativaKeyIdQuestao] = idQuestao;
+    data[DbConst.kDbDataAlternativaKeySequencial] = sequencial;
+    data[DbConst.kDbDataAlternativaKeyTipo] = tipo.id;
     data[DbConst.kDbDataAlternativaKeyConteudo] = isTipoTexto
-        ? this.conteudo
-        : jsonEncode((this.conteudo as ImagemQuestao).toMap());
+        ? conteudo
+        : jsonEncode((conteudo as ImagemQuestao).toMap());
     return data;
   }
 }

@@ -13,7 +13,7 @@ import 'katex_flutter.dart';
 /// serão ignorados.
 class QuestaoWidget extends StatelessWidget {
   const QuestaoWidget({
-    Key? key,
+    super.key,
     required this.questao,
     this.selecionavel = true,
     this.alternativaSelecionada,
@@ -23,8 +23,7 @@ class QuestaoWidget extends StatelessWidget {
     this.rolavel = true,
     this.padding = const EdgeInsets.symmetric(vertical: 8.0),
   })  : assert(selecionavel || alterandoAlternativa == null),
-        assert(!(verificar && selecionavel)),
-        super(key: key);
+        assert(!(verificar && selecionavel));
 
   final Questao questao;
 
@@ -55,7 +54,7 @@ class QuestaoWidget extends StatelessWidget {
     return Column(
       children: [
         if (barraOpcoes != null) barraOpcoes!,
-        if (barraOpcoes != null) Divider(height: 4.0),
+        if (barraOpcoes != null) const Divider(height: 4.0),
         Container(
           padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
           child: Column(children: [
@@ -92,9 +91,7 @@ class QuestaoWidget extends StatelessWidget {
 /// Enunciado da questão formatado com imágem e texto Latex, quando houver.
 class _Enunciado extends StatelessWidget {
   const _Enunciado(
-    this.questao, {
-    Key? key,
-  }) : super(key: key);
+    this.questao);
 
   final Questao questao;
 
@@ -117,7 +114,7 @@ class _Enunciado extends StatelessWidget {
     TextAlign textAlign = TextAlign.justify;
 
     // Percorre as partes do enunciado do item.
-    questao.enunciado.forEach((texto) {
+    for (var texto in questao.enunciado) {
       // Verificar se `texto` corresponde ao identificador de imágem em nova linha.
       if (texto == DbConst.kDbStringImagemDestacada) {
         if (blocosDeTexto.isNotEmpty) {
@@ -148,11 +145,7 @@ class _Enunciado extends StatelessWidget {
           // Estrutura que conterá a imagem.
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
-            child: Container(
-              //height: 24,
-              //margin: const EdgeInsets.only(top: 4, bottom: 4),
-              child: ImagemQuestaoWidget(questao.imagensEnunciado[contador]),
-            ),
+            child: ImagemQuestaoWidget(questao.imagensEnunciado[contador]),
           ),
         );
         contador++;
@@ -166,14 +159,15 @@ class _Enunciado extends StatelessWidget {
         if (tex.temLaTex == true) textAlign = TextAlign.start;
         blocosDeTexto.addAll(tex.blocosDoTexto);
       }
-    });
+    }
 
     // Fazer a montagem do restante das partes do texto que não foram montadas.
-    if (blocosDeTexto.isNotEmpty)
+    if (blocosDeTexto.isNotEmpty) {
       lista.add(_Text(
         blocosDeTexto: blocosDeTexto,
         alinhamento: textAlign,
       ));
+    }
 
     // Retornar o enunciado completo.
     return Column(
@@ -186,15 +180,14 @@ class _Enunciado extends StatelessWidget {
 /// Alternativas de resposta da questão.
 /// Se [selecionavel] for falso, [alterando] e [alternativaSelecionada] serão ignorados.
 class _Alternativas extends StatefulWidget {
-  _Alternativas({
-    Key? key,
+  const _Alternativas({
     required this.alternativas,
     this.alterando,
     this.alternativaSelecionada,
     this.selecionavel = true,
     this.verificar = false,
     required this.gabarito,
-  }) : super(key: key);
+  });
 
   final List<Alternativa> alternativas;
 
@@ -260,21 +253,21 @@ class _AlternativasState extends State<_Alternativas> {
   @override
   Widget build(_) {
     final List<Widget> lista = <Widget>[];
-    widget.alternativas.forEach((alternativa) {
+    for (var alternativa in widget.alternativas) {
       lista.add(_construirAlternativa(alternativa));
-    });
+    }
     return Column(children: lista);
   }
 
   /// Retorna o componente para uma alternativa de resposta.
   Widget _construirAlternativa(Alternativa alternativa) {
-    final margin = const EdgeInsets.only(bottom: 8);
-    final padding = const EdgeInsets.all(8);
+    const margin = EdgeInsets.only(bottom: 8);
+    const padding = EdgeInsets.all(8);
     final decoration = BoxDecoration(
-      borderRadius: const BorderRadius.all(const Radius.circular(4)),
+      borderRadius: const BorderRadius.all(Radius.circular(4)),
       color: () {
         final selecionada = _selecionada(alternativa);
-    
+
         if (widget.verificar) {
           if (alternativa.verificar(widget.gabarito)) return AppTheme.corAcerto;
           return selecionada ? AppTheme.corErro : corNaoSelecionada;
@@ -343,8 +336,9 @@ class _AlternativasState extends State<_Alternativas> {
                   else if (alternativa.isTipoImagem) {
                     return ImagemQuestaoWidget(
                         alternativa.conteudo as ImagemQuestao);
-                  } else
+                  } else {
                     return const SizedBox();
+                  }
                 }))
           ],
         )),
@@ -376,7 +370,7 @@ class _Text extends Text {
 
 /// Estrutura que conterá uma imagem do enunciado ou da alternativa.
 class ImagemQuestaoWidget extends StatelessWidget {
-  const ImagemQuestaoWidget(this.imagem, {Key? key}) : super(key: key);
+  const ImagemQuestaoWidget(this.imagem, {super.key});
 
   final ImagemQuestao imagem;
 

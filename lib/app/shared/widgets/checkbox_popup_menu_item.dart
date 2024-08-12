@@ -3,28 +3,19 @@ import 'package:flutter/material.dart';
 /// Um [PopupMenuItem] com um [Checkbox] à direita.
 class CheckboxPopupMenuItem<T> extends PopupMenuItem<T> {
   const CheckboxPopupMenuItem({
-    Key? key,
-    T? value,
+    super.key,
+    super.value,
     this.checked = false,
     required this.onChanged,
-    bool enabled = true,
-    EdgeInsets? padding,
-    double height = kMinInteractiveDimension,
-    Widget? child,
-  }) : super(
-          key: key,
-          value: value,
-          enabled: enabled,
-          padding: padding,
-          height: height,
-          child: child,
-        );
+    super.enabled,
+    super.padding,
+    super.height,
+    super.child,
+  });
 
   final bool checked;
   final void Function(bool?)? onChanged;
 
-  @override
-  Widget? get child => super.child;
 
   @override
   PopupMenuItemState<T, CheckboxPopupMenuItem<T>> createState() =>

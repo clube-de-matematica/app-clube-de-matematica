@@ -7,9 +7,9 @@ import 'clube.dart';
 part 'usuario_clube.g.dart';
 
 /// Modelo para um usuário de clube.
-class UsuarioClube = _UsuarioClubeBase with _$UsuarioClube;
+class UsuarioClube = UsuarioClubeBase with _$UsuarioClube;
 
-abstract class _UsuarioClubeBase with Store {
+abstract class UsuarioClubeBase with Store {
   final int id;
   @observable
   String? email;
@@ -21,10 +21,13 @@ abstract class _UsuarioClubeBase with Store {
   @observable
   PermissoesClube permissao;
 
-  _UsuarioClubeBase({
+  UsuarioClubeBase({
     required this.id,
+    // ignore: unused_element
     this.email,
+    // ignore: unused_element
     this.nome,
+    // ignore: unused_element
     this.foto,
     required this.idClube,
     required this.permissao,
@@ -56,7 +59,7 @@ abstract class _UsuarioClubeBase with Store {
   }
 
   // ignore: unused_element
-  _UsuarioClubeBase.fromDataUsuarioClube(DataUsuarioClube dados)
+  UsuarioClubeBase.fromDataUsuarioClube(DataUsuarioClube dados)
       : id = dados[DbConst.kDbDataUserClubeKeyIdUsuario],
         email = dados[DbConst.kDbDataUserClubeKeyEmail],
         nome = dados[DbConst.kDbDataUserClubeKeyNome],

@@ -43,7 +43,7 @@ class AppTheme {
 
   ///Esquema de cores do App.
   final _colors = ColorScheme.fromSeed(
-    seedColor: Color(0xFF009688), // Colors.teal[500]
+    seedColor: const Color(0xFF009688), // Colors.teal[500]
   );
 /*   final _colors = ColorScheme.fromSwatch(
     primarySwatch: primarySwatch,
@@ -55,14 +55,14 @@ class AppTheme {
   ); */
 
   ThemeData get light {
-    ThemeData _temp = ThemeData.light(useMaterial3: true).copyWith(
+    ThemeData temp = ThemeData.light(useMaterial3: true).copyWith(
       colorScheme: _colors,
       textTheme: _textTheme(),
       appBarTheme: appBarTheme(colors: _colors, isPrimary: true),
       drawerTheme: DrawerThemeData(
         backgroundColor: _colors.surface,
       ),
-      scaffoldBackgroundColor: _colors.background,
+      scaffoldBackgroundColor: _colors.surface,
       iconTheme: IconThemeData(
         color: _colors.onSurface,
         opacity: 1.0,
@@ -79,7 +79,7 @@ class AppTheme {
       //tabBarTheme: tabBarTheme(_colors),
     );
 
-    return _temp;
+    return temp;
 
 /*     return _temp.copyWith(
             iconTheme: IconThemeData(

@@ -9,15 +9,13 @@ import '../modules/perfil/models/userapp.dart';
 import '../modules/quiz/shared/models/assunto_model.dart';
 import '../modules/quiz/shared/models/questao_model.dart';
 import '../modules/quiz/shared/models/resposta_questao.dart';
-import '../shared/repositories/interface_auth_repository.dart';
-import '../shared/repositories/supabase/supabase_db_repository.dart';
 import 'db_servicos_interface.dart';
 
 class DbServicos extends IDbServicos {
   DbServicos(
-    SupabaseDbRepository dbRemoto,
-    IAuthRepository auth,
-  ) : super(dbRemoto, auth);
+    super.dbRemoto,
+    super.auth,
+  );
 
   @override
   void close() {}

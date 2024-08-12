@@ -8,30 +8,30 @@ part of 'usuario_clube.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$UsuarioClube on _UsuarioClubeBase, Store {
+mixin _$UsuarioClube on UsuarioClubeBase, Store {
   Computed<bool>? _$proprietarioComputed;
 
   @override
   bool get proprietario =>
       (_$proprietarioComputed ??= Computed<bool>(() => super.proprietario,
-              name: '_UsuarioClubeBase.proprietario'))
+              name: 'UsuarioClubeBase.proprietario'))
           .value;
   Computed<bool>? _$administradorComputed;
 
   @override
   bool get administrador =>
       (_$administradorComputed ??= Computed<bool>(() => super.administrador,
-              name: '_UsuarioClubeBase.administrador'))
+              name: 'UsuarioClubeBase.administrador'))
           .value;
   Computed<bool>? _$membroComputed;
 
   @override
   bool get membro => (_$membroComputed ??=
-          Computed<bool>(() => super.membro, name: '_UsuarioClubeBase.membro'))
+          Computed<bool>(() => super.membro, name: 'UsuarioClubeBase.membro'))
       .value;
 
   late final _$emailAtom =
-      Atom(name: '_UsuarioClubeBase.email', context: context);
+      Atom(name: 'UsuarioClubeBase.email', context: context);
 
   @override
   String? get email {
@@ -46,8 +46,7 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
     });
   }
 
-  late final _$nomeAtom =
-      Atom(name: '_UsuarioClubeBase.nome', context: context);
+  late final _$nomeAtom = Atom(name: 'UsuarioClubeBase.nome', context: context);
 
   @override
   String? get nome {
@@ -62,8 +61,7 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
     });
   }
 
-  late final _$fotoAtom =
-      Atom(name: '_UsuarioClubeBase.foto', context: context);
+  late final _$fotoAtom = Atom(name: 'UsuarioClubeBase.foto', context: context);
 
   @override
   String? get foto {
@@ -79,7 +77,7 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
   }
 
   late final _$permissaoAtom =
-      Atom(name: '_UsuarioClubeBase.permissao', context: context);
+      Atom(name: 'UsuarioClubeBase.permissao', context: context);
 
   @override
   PermissoesClube get permissao {
@@ -94,17 +92,17 @@ mixin _$UsuarioClube on _UsuarioClubeBase, Store {
     });
   }
 
-  late final _$_UsuarioClubeBaseActionController =
-      ActionController(name: '_UsuarioClubeBase', context: context);
+  late final _$UsuarioClubeBaseActionController =
+      ActionController(name: 'UsuarioClubeBase', context: context);
 
   @override
   void mesclar(UsuarioClube outro) {
-    final _$actionInfo = _$_UsuarioClubeBaseActionController.startAction(
-        name: '_UsuarioClubeBase.mesclar');
+    final _$actionInfo = _$UsuarioClubeBaseActionController.startAction(
+        name: 'UsuarioClubeBase.mesclar');
     try {
       return super.mesclar(outro);
     } finally {
-      _$_UsuarioClubeBaseActionController.endAction(_$actionInfo);
+      _$UsuarioClubeBaseActionController.endAction(_$actionInfo);
     }
   }
 

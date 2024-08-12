@@ -39,11 +39,7 @@ abstract class Debug {
       call(() {
         core.String text = object.toString();
         if (afixo.isNotEmpty) {
-          text = line(afixo, 5) +
-              " " +
-              text +
-              " " +
-              line(afixo, length - 7 - text.length);
+          text = "${line(afixo, 5)} $text ${line(afixo, length - 7 - text.length)}";
         }
         core.print(text);
       }),
@@ -57,7 +53,9 @@ abstract class Debug {
     assert(
       call(() {
         //if (length <= 0) return;
-        for (var i = 0; i < length; i++) text += caracter;
+        for (var i = 0; i < length; i++) {
+          text += caracter;
+        }
       }),
     );
     return text;

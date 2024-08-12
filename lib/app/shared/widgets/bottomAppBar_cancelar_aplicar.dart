@@ -4,8 +4,7 @@ import 'botoes.dart';
 
 /// Uma barra inferior com um botão para cancelar uma ação e outro para aplicar.
 class BottomAppBarCancelarAplicar extends BottomAppBar {
-  BottomAppBarCancelarAplicar({
-    Key? key,
+  BottomAppBarCancelarAplicar({super.key,
     required void Function()? onCancelar,
     required void Function()? onAplicar,
   }) : super(
@@ -16,8 +15,8 @@ class BottomAppBarCancelarAplicar extends BottomAppBar {
               children: <Widget>[
                 Expanded(
                   child: OutlinedButton(
-                    child: const Text('CANCELAR'),
                     onPressed: onCancelar,
+                    child: const Text('CANCELAR'),
                   ),
                 ),
                 const SizedBox(width: 10),

@@ -69,14 +69,14 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
   SignInChangeState _currenteSignInState = SignInChangeState.none;
 
   /// Controle para o stream de alterações durante o processo de autenticação.
-  late StreamController<SignInChangeState> _signInStateController =
+  late final StreamController<SignInChangeState> _signInStateController =
       StreamController<SignInChangeState>.broadcast()
         ..stream.listen((state) => _currenteSignInState = state);
 
   AuthChangeState? _currenteAuthState;
 
   /// Controle para o stream de alterações no estado de autenticação.
-  late StreamController<AuthChangeState> _authStateController =
+  late final StreamController<AuthChangeState> _authStateController =
       StreamController<AuthChangeState>.broadcast()
         ..stream.listen((state) => _currenteAuthState = state);
 
@@ -89,8 +89,9 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     } catch (_) {
       reportar = true;
     }
-    if (reportar && !_signInStateController.isClosed)
+    if (reportar && !_signInStateController.isClosed) {
       _signInStateController.add(estado);
+    }
     return estado;
   }
 
@@ -103,8 +104,9 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     } catch (_) {
       reportar = true;
     }
-    if (reportar && !_authStateController.isClosed)
+    if (reportar && !_authStateController.isClosed) {
       _authStateController.add(estado);
+    }
     return estado;
   }
 

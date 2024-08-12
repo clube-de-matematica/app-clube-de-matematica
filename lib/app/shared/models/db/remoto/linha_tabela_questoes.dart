@@ -5,21 +5,15 @@ import 'mixin.dart';
 
 class LinTbQuestoesDbRemoto extends ILinTbQuestoes with LinTbMixin {
   LinTbQuestoesDbRemoto({
-    required int id,
-    required List<String> enunciado,
-    required int gabarito,
-    List<Map<String, dynamic>>? imagensEnunciado,
-    required String dataModificacao,
-  }) : super(
-          id: id,
-          enunciado: enunciado,
-          gabarito: gabarito,
-          imagensEnunciado: imagensEnunciado,
-          dataModificacao: dataModificacao,
-        );
+    required super.id,
+    required List<String> super.enunciado,
+    required super.gabarito,
+    List<Map<String, dynamic>>? super.imagensEnunciado,
+    required String super.dataModificacao,
+  });
 
   factory LinTbQuestoesDbRemoto.fromMap(Map map) {
-    final tb = Sql.tbQuestoes;
+    const tb = Sql.tbQuestoes;
     return LinTbQuestoesDbRemoto(
       id: map[tb.id],
       enunciado: (map[tb.enunciado] as List).cast(),

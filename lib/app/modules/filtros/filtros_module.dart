@@ -9,14 +9,14 @@ class FiltrosModule extends Module {
   static const kRelativeRouteModule = "/filtros";
 
   /// Rota absoluta.
-  static final kAbsoluteRouteModule =
+  static const kAbsoluteRouteModule =
       QuizModule.kAbsoluteRouteModule + kRelativeRouteModule;
 
   /// Rota relativa.
   static const kRelativeRouteFiltroHomePage = "";
 
   /// Rota absoluta.
-  static final kAbsoluteRouteFiltroHomePage =
+  static const kAbsoluteRouteFiltroHomePage =
       kAbsoluteRouteModule + kRelativeRouteFiltroHomePage;
 
   @override

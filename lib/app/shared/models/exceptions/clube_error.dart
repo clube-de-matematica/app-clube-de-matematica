@@ -84,8 +84,9 @@ class ClubeError {
     ///para fazer upload de relatórios existentes, mesmo quando a coleta automática de dados
     ///está desativada. Use [FirebaseCrashlytics.deleteUnsentReports] para excluir quaisquer
     ///relatórios armazenados no dispositivo sem enviá-los ao Crashlytics.
-    if (_useErrorReport)
+    if (_useErrorReport) {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    }
   }
 
   /// Lógica executada antes da inicialização do [FirebaseCrashlytics] ser concluída.

@@ -4,7 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../services/preferencias_servicos.dart';
 import '../../../../shared/theme/appTheme.dart';
-import '../../../../shared/utils/ui_strings.dart' as uiStringsApp;
+import '../../../../shared/utils/ui_strings.dart' as ui_strings_app;
 import '../../../../shared/widgets/appBottomSheet.dart';
 import '../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../shared/widgets/questao_widget.dart';
@@ -19,15 +19,17 @@ import 'widgets/quiz_bar_opcoes_item.dart';
 
 /// Esta é a página de exibição de cada item a ser resolvido.
 class QuizPage extends StatefulWidget {
+  const QuizPage({super.key});
+
   @override
-  _QuizPageState createState() => _QuizPageState();
+  QuizPageState createState() => QuizPageState();
 }
 
 /// [ModularState] irá criar um [controller] a partir de um [Bind] do tipo [QuizController]
 /// disponível em um dos módulos da hierarquia (quando houver mais de um). A vantagem de usar
 /// [ModularState] é que automáticamente será feito o `dispose` de [controller] junto com o
-/// de [_QuizPageState].
-class _QuizPageState extends ModularState<QuizPage, QuizController> {
+/// de [QuizPageState].
+class QuizPageState extends ModularState<QuizPage, QuizController> {
   ThemeData get tema => AppTheme.instance.light;
   TextStyle? get textStyle => tema.textTheme.bodyLarge;
 
@@ -40,9 +42,13 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
           int contador = 0;
           while (!mounted) {
             if (++contador > 30) return;
-            await Future.delayed(Duration(seconds: 1));
+            await Future.delayed(const Duration(seconds: 1));
           }
-          BottomSheetAvisoConsentimento().showModal(context);
+          if (mounted) {
+            if (context.mounted) {
+              BottomSheetAvisoConsentimento().showModal(context);
+            }
+          }
         }();
       });
     }
@@ -70,7 +76,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                       padding: EdgeInsets.only(
                         top: .35 * MediaQuery.of(context).size.height,
                       ),
-                      child: Center(child: const CircularProgressIndicator()),
+                      child: const Center(child: CircularProgressIndicator()),
                     );
                   }
                   // Quando o futuro for concluído com erro.
@@ -78,7 +84,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                     return Expanded(
                       child: Center(
                         child: Text(
-                          uiStringsApp.UIStrings.APP_MSG_ERRO_INESPERADO,
+                          ui_strings_app.UIStrings.APP_MSG_ERRO_INESPERADO,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -98,7 +104,7 @@ class _QuizPageState extends ModularState<QuizPage, QuizController> {
                               controller.abrirPaginaFiltros(context));
                     }
                     if (controller.questaoAtual.value == null) {
-                      return FeedbackQuestaoNaoEncontrada();
+                      return const FeedbackQuestaoNaoEncontrada();
                     }
                     return _questaoWidget(controller.questaoAtual.value!);
                   });

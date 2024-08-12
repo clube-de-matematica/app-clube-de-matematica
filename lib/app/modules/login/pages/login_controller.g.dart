@@ -8,9 +8,9 @@ part of 'login_controller.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$LoginController on _LoginControllerBase, Store {
+mixin _$LoginController on LoginControllerBase, Store {
   late final _$selectedMethodAtom =
-      Atom(name: '_LoginControllerBase.selectedMethod', context: context);
+      Atom(name: 'LoginControllerBase.selectedMethod', context: context);
 
   @override
   Login get selectedMethod {
@@ -26,7 +26,7 @@ mixin _$LoginController on _LoginControllerBase, Store {
   }
 
   late final _$isLoadingAtom =
-      Atom(name: '_LoginControllerBase.isLoading', context: context);
+      Atom(name: 'LoginControllerBase.isLoading', context: context);
 
   @override
   bool get isLoading {
@@ -41,28 +41,28 @@ mixin _$LoginController on _LoginControllerBase, Store {
     });
   }
 
-  late final _$_LoginControllerBaseActionController =
-      ActionController(name: '_LoginControllerBase', context: context);
+  late final _$LoginControllerBaseActionController =
+      ActionController(name: 'LoginControllerBase', context: context);
 
   @override
   void _setSelectedMethod(Login metodo) {
-    final _$actionInfo = _$_LoginControllerBaseActionController.startAction(
-        name: '_LoginControllerBase._setSelectedMethod');
+    final _$actionInfo = _$LoginControllerBaseActionController.startAction(
+        name: 'LoginControllerBase._setSelectedMethod');
     try {
       return super._setSelectedMethod(metodo);
     } finally {
-      _$_LoginControllerBaseActionController.endAction(_$actionInfo);
+      _$LoginControllerBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void _setIsLoading(bool valor) {
-    final _$actionInfo = _$_LoginControllerBaseActionController.startAction(
-        name: '_LoginControllerBase._setIsLoading');
+    final _$actionInfo = _$LoginControllerBaseActionController.startAction(
+        name: 'LoginControllerBase._setIsLoading');
     try {
       return super._setIsLoading(valor);
     } finally {
-      _$_LoginControllerBaseActionController.endAction(_$actionInfo);
+      _$LoginControllerBaseActionController.endAction(_$actionInfo);
     }
   }
 

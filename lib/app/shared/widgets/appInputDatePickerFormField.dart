@@ -40,7 +40,7 @@ class AppInputDatePickerFormField extends StatefulWidget {
   /// [firstDate], [lastDate], and [autofocus] must be non-null.
   ///
   AppInputDatePickerFormField({
-    Key? key,
+    super.key,
     DateTime? initialDate,
     required DateTime firstDate,
     required DateTime lastDate,
@@ -58,25 +58,24 @@ class AppInputDatePickerFormField extends StatefulWidget {
   })  : dataInicial =
             initialDate != null ? DateUtils.dateOnly(initialDate) : null,
         firstDate = DateUtils.dateOnly(firstDate),
-        lastDate = DateUtils.dateOnly(lastDate),
-        super(key: key) {
+        lastDate = DateUtils.dateOnly(lastDate) {
     assert(
       !this.lastDate.isBefore(this.firstDate),
       'lastDate ${this.lastDate} must be on or after firstDate ${this.firstDate}.',
     );
     assert(
-      initialDate == null || !this.dataInicial!.isBefore(this.firstDate),
-      'initialDate ${this.dataInicial} must be on or after firstDate ${this.firstDate}.',
+      initialDate == null || !dataInicial!.isBefore(this.firstDate),
+      'initialDate $dataInicial must be on or after firstDate ${this.firstDate}.',
     );
     assert(
-      initialDate == null || !this.dataInicial!.isAfter(this.lastDate),
-      'initialDate ${this.dataInicial} must be on or before lastDate ${this.lastDate}.',
+      initialDate == null || !dataInicial!.isAfter(this.lastDate),
+      'initialDate $dataInicial must be on or before lastDate ${this.lastDate}.',
     );
     assert(
       selectableDayPredicate == null ||
           initialDate == null ||
-          selectableDayPredicate!(this.dataInicial!),
-      'Provided initialDate ${this.dataInicial} must satisfy provided selectableDayPredicate.',
+          selectableDayPredicate!(dataInicial!),
+      'Provided initialDate $dataInicial must satisfy provided selectableDayPredicate.',
     );
   }
 
@@ -263,7 +262,7 @@ class _AppInputDatePickerFormFieldState
         hintText: widget.fieldHintText ?? localizations.dateHelpText,
         labelText: widget.fieldLabelText ?? localizations.dateInputLabel,
         suffixIcon: IconButton(
-          icon: Icon(Icons.date_range_outlined),
+          icon: const Icon(Icons.date_range_outlined),
           onPressed: () async {
             final date = await showDatePicker(
               context: context,
@@ -279,7 +278,9 @@ class _AppInputDatePickerFormFieldState
               if (mounted) _updateValueForSelectedDate();
             }
             if (widget.focusNode != null) {
-              FocusScope.of(context).requestFocus(widget.focusNode);
+              if (context.mounted) {
+                FocusScope.of(context).requestFocus(widget.focusNode);
+              }
             }
           },
         ),
@@ -299,7 +300,7 @@ class _AppInputDatePickerFormFieldState
 
 /// O [TextEditingController] para o campo de data.
 class _DateEditingController extends TextEditingController {
-  _DateEditingController({String? text}) : super(text: text);
+  _DateEditingController();
 
   @override
   set value(TextEditingValue newValue) {
@@ -337,10 +338,10 @@ class _DateEditingController extends TextEditingController {
         ? replaced.substring(4, min<int>(8, replaced.length))
         : '';
     String formated = '';
-    [day, month, year].forEach((part) {
+    for (var part in [day, month, year]) {
       formated += part;
       if (formated.length == 2 || formated.length == 5) formated += '/';
-    });
+    }
     return formated;
   }
 }

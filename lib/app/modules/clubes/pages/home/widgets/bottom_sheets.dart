@@ -7,9 +7,8 @@ import '../../../shared/models/clube.dart';
 /// Uma página inferior para confirmar a saída de um clube.
 /// Ao ser fechada, retorna `true` se o usuário confirmar que deseja sair do clube.
 class BottomSheetSairClube extends BottomSheetCancelarConfirmar {
-  BottomSheetSairClube(Clube clube, {Key? key})
+  BottomSheetSairClube(Clube clube, {super.key})
       : super(
-          key: key,
           message: 'Deseja realmente sair do clube "${clube.nome}"?',
         );
 }
@@ -17,16 +16,15 @@ class BottomSheetSairClube extends BottomSheetCancelarConfirmar {
 /// Uma página inferior para confirmar a exclusão de um clube.
 /// Ao ser fechada, retorna `true` se o usuário confirmar que deseja excluir do clube.
 class BottomSheetExcluirClube extends BottomSheetCancelarConfirmar {
-  BottomSheetExcluirClube(Clube clube, {Key? key})
+  BottomSheetExcluirClube(Clube clube, {super.key})
       : super(
-          key: key,
           message: 'Deseja realmente excluir o clube "${clube.nome}"?',
         );
 }
 
 /// Uma página inferior para exibir o código de um clube.
 class BottomSheetCodigoClube extends AppBottomSheet {
-  const BottomSheetCodigoClube(this.clube, {Key? key}) : super(key: key);
+  const BottomSheetCodigoClube(this.clube, {super.key});
 
   final Clube clube;
 
@@ -35,7 +33,7 @@ class BottomSheetCodigoClube extends AppBottomSheet {
     return AppBottomSheet(
       title: Center(
         // Permitir a seleção do texto.
-        child: SelectableText('${clube.codigo}'),
+        child: SelectableText(clube.codigo),
       ),
       actions: [
         AppTextButton(

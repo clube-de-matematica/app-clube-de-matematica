@@ -10,12 +10,12 @@ part 'exibir_questao_controller.g.dart';
 
 /// Base do controle de páginas ques exibem questões.
 /// * Para páginas com a opção de filtrar, veja [ExibirQuestaoComFiltroController].
-abstract class ExibirQuestaoController = _ExibirQuestaoControllerBase
+abstract class ExibirQuestaoController = ExibirQuestaoControllerBase
     with _$ExibirQuestaoController;
 
-abstract class _ExibirQuestaoControllerBase with Store implements Disposable {
+abstract class ExibirQuestaoControllerBase with Store implements Disposable {
   final _disposers = <ReactionDisposer>[];
-  _ExibirQuestaoControllerBase() {
+  ExibirQuestaoControllerBase() {
     _disposers.addAll([
       reaction(
         (_) => numQuestoes,

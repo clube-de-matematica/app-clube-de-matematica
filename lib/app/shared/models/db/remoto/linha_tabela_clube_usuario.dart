@@ -5,23 +5,16 @@ import 'mixin.dart';
 
 class LinTbClubeUsuarioDbRemoto extends ILinTbClubeUsuario with LinTbMixin {
   LinTbClubeUsuarioDbRemoto({
-    required int idClube,
-    required int idUsuario,
-    required int idPermissao,
-    required String dataAdmissao,
-    required bool excluir,
-    required String dataModificacao,
-  }) : super(
-          idClube: idClube,
-          idUsuario: idUsuario,
-          idPermissao: idPermissao,
-          dataAdmissao: dataAdmissao,
-          excluir: excluir,
-          dataModificacao: dataModificacao,
-        );
+    required super.idClube,
+    required super.idUsuario,
+    required super.idPermissao,
+    required String super.dataAdmissao,
+    required super.excluir,
+    required String super.dataModificacao,
+  });
 
   factory LinTbClubeUsuarioDbRemoto.fromMap(Map map) {
-    final tb = Sql.tbClubeUsuario;
+    const tb = Sql.tbClubeUsuario;
     return LinTbClubeUsuarioDbRemoto(
       idClube: map[tb.idClube],
       idUsuario: map[tb.idUsuario],

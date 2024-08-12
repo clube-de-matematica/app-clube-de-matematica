@@ -12,12 +12,12 @@ part 'login_controller.g.dart';
 /// Usado para indicar o método de login selecionado pelo usuário.
 enum Login { google, anonymous, none }
 
-class LoginController = _LoginControllerBase with _$LoginController;
+class LoginController = LoginControllerBase with _$LoginController;
 
-abstract class _LoginControllerBase with Store {
+abstract class LoginControllerBase with Store {
   final IAuthRepository auth;
 
-  _LoginControllerBase(this.auth);
+  LoginControllerBase(this.auth);
 
   /// Indica o método de login escolhido pelo usuário.
   @observable
@@ -82,7 +82,9 @@ abstract class _LoginControllerBase with Store {
     }
     if (result) {
       //Modular.to.pushReplacementNamed(QuizModule.kAbsoluteRouteQuizPage);
-      Navegacao.abrirPagina(context, RotaPagina.quiz);
+      if (context.mounted) {
+        Navegacao.abrirPagina(context, RotaPagina.quiz);
+      }
     }
     _setIsLoading(false);
     _setSelectedMethod(Login.none);

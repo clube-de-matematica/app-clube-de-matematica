@@ -23,10 +23,9 @@ class ArgumentosEditarAtividadePage {
 class EditarAtividadePage extends StatefulWidget {
   EditarAtividadePage(
     ArgumentosEditarAtividadePage argumentos, {
-    Key? key,
+    super.key,
   })  : clube = argumentos.clube,
-        atividade = argumentos.atividade,
-        super(key: key);
+        atividade = argumentos.atividade;
 
   final Clube clube;
   final Atividade atividade;
@@ -78,10 +77,15 @@ class _EditarAtividadePageState extends State<EditarAtividadePage> {
               final sucesso = await future;
               if (mounted) {
                 if (sucesso) {
-                  Navigator.of(context).pop(true);
+                  if (context.mounted) {
+                    Navigator.of(context).pop(true);
+                  }
                 } else {
-                  await BottomSheetErro('As alterações não foram salvas')
-                      .showModal(context);
+                  if (context.mounted) {
+                    await const BottomSheetErro(
+                            'As alterações não foram salvas')
+                        .showModal(context);
+                  }
                 }
               }
             }

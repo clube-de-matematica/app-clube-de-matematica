@@ -4,21 +4,15 @@ import 'mixin.dart';
 
 class LinTbAlternativasDbRemoto extends ILinTbAlternativas with LinTbMixin {
   LinTbAlternativasDbRemoto({
-    required int idQuestao,
-    required int sequencial,
-    required int idTipo,
-    required String conteudo,
-    required String dataModificacao,
-  }) : super(
-          idQuestao: idQuestao,
-          sequencial: sequencial,
-          idTipo: idTipo,
-          conteudo: conteudo,
-          dataModificacao: dataModificacao,
-        );
+    required super.idQuestao,
+    required super.sequencial,
+    required super.idTipo,
+    required super.conteudo,
+    required String super.dataModificacao,
+  });
 
   factory LinTbAlternativasDbRemoto.fromMap(Map map) {
-    final tb = Sql.tbAlternativas;
+    const tb = Sql.tbAlternativas;
     return LinTbAlternativasDbRemoto(
       idQuestao: map[tb.idQuestao],
       sequencial: map[tb.sequencial],

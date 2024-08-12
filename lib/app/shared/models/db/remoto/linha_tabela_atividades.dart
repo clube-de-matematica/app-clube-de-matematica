@@ -5,31 +5,20 @@ import 'mixin.dart';
 
 class LinTbAtividadesDbRemoto extends ILinTbAtividades with LinTbMixin {
   LinTbAtividadesDbRemoto({
-    required int id,
-    required int idClube,
-    required String titulo,
-    required String? descricao,
-    required int idAutor,
-    required String dataCriacao,
-    required String? dataLiberacao,
-    required String? dataEncerramento,
-    required bool excluir,
-    required String dataModificacao,
-  }) : super(
-          id: id,
-          idClube: idClube,
-          titulo: titulo,
-          descricao: descricao,
-          idAutor: idAutor,
-          dataCriacao: dataCriacao,
-          dataLiberacao: dataLiberacao,
-          dataEncerramento: dataEncerramento,
-          excluir: excluir,
-          dataModificacao: dataModificacao,
-        );
+    required super.id,
+    required super.idClube,
+    required super.titulo,
+    required super.descricao,
+    required super.idAutor,
+    required String super.dataCriacao,
+    required String? super.dataLiberacao,
+    required String? super.dataEncerramento,
+    required super.excluir,
+    required String super.dataModificacao,
+  });
 
   factory LinTbAtividadesDbRemoto.fromMap(Map map) {
-    final tb = Sql.tbAtividades;
+    const tb = Sql.tbAtividades;
     return LinTbAtividadesDbRemoto(
       id: map[tb.id],
       idClube: map[tb.idClube],

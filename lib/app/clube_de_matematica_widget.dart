@@ -11,6 +11,8 @@ import 'shared/utils/constantes.dart';
 
 /// O [Widget] principal do aplicativo.
 class ClubeDeMatematicaWidget extends StatefulWidget {
+  const ClubeDeMatematicaWidget({super.key});
+
   @override
   State<ClubeDeMatematicaWidget> createState() =>
       _ClubeDeMatematicaWidgetState();
@@ -36,9 +38,9 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
       title: APP_NOME,
       theme: AppTheme.instance.light,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      supportedLocales: [
-        const Locale('pt', 'BR'),
-        const Locale('pt', ''),
+      supportedLocales: const [
+        Locale('pt', 'BR'),
+        Locale('pt', ''),
       ],
       initialRoute: Modular.get<IAuthRepository>().logged ||
               Preferencias.instancia.primeiroAcesso != null

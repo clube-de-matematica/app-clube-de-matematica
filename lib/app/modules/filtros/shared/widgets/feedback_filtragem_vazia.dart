@@ -6,9 +6,9 @@ import '../../../../shared/widgets/botoes.dart';
 /// e um botão para acessar as opções de filtro.
 class FeedbackFiltragemVazia extends StatelessWidget {
   const FeedbackFiltragemVazia({
-    Key? key,
+    super.key,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   final VoidCallback onPressed;
 
@@ -32,8 +32,8 @@ class FeedbackFiltragemVazia extends StatelessWidget {
             child: Center(
               child: AppTextButton(
                 primary: true,
-                child: const Text('ALTERAR FILTRO'),
                 onPressed: onPressed,
+                child: const Text('ALTERAR FILTRO'),
               ),
             ),
           ),

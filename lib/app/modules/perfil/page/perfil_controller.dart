@@ -60,10 +60,11 @@ class PerfilController {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _pathImageTemp = pickedFile.path;
-      if (kIsWeb)
+      if (kIsWeb) {
         image.value = NetworkImage(_pathImageTemp!);
-      else
+      } else {
         image.value = FileImage(File(_pathImageTemp!));
+      }
       return image.value;
     }
     return null;
@@ -75,14 +76,19 @@ class PerfilController {
 
   Future<void> exit(BuildContext context) async {
     await auth.signOut();
-    Navegacao.abrirPagina(context, RotaPagina.login);
+    if (context.mounted) {
+      Navegacao.abrirPagina(context, RotaPagina.login);
+    }
   }
 
   /// Entrar com outra conta do Google.
-  Future<SignInChangeState> signInWithAnotherAccount(BuildContext context) async {
+  Future<SignInChangeState> signInWithAnotherAccount(
+      BuildContext context) async {
     final result = await auth.signInWithGoogle(true);
     if (result != SignInChangeState.success) {
-      Navegacao.abrirPagina(context, RotaPagina.login);
+      if (context.mounted) {
+        Navegacao.abrirPagina(context, RotaPagina.login);
+      }
     }
     return result;
   }

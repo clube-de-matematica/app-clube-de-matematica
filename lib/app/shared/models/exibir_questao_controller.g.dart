@@ -8,24 +8,24 @@ part of 'exibir_questao_controller.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
+mixin _$ExibirQuestaoController on ExibirQuestaoControllerBase, Store {
   Computed<bool>? _$podeAvancarComputed;
 
   @override
   bool get podeAvancar =>
       (_$podeAvancarComputed ??= Computed<bool>(() => super.podeAvancar,
-              name: '_ExibirQuestaoControllerBase.podeAvancar'))
+              name: 'ExibirQuestaoControllerBase.podeAvancar'))
           .value;
   Computed<bool>? _$podeVoltarComputed;
 
   @override
   bool get podeVoltar =>
       (_$podeVoltarComputed ??= Computed<bool>(() => super.podeVoltar,
-              name: '_ExibirQuestaoControllerBase.podeVoltar'))
+              name: 'ExibirQuestaoControllerBase.podeVoltar'))
           .value;
 
   late final _$_indiceAtom =
-      Atom(name: '_ExibirQuestaoControllerBase._indice', context: context);
+      Atom(name: 'ExibirQuestaoControllerBase._indice', context: context);
 
   int get indice {
     _$_indiceAtom.reportRead();
@@ -47,7 +47,7 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
   }
 
   late final _$numQuestoesAtom =
-      Atom(name: '_ExibirQuestaoControllerBase.numQuestoes', context: context);
+      Atom(name: 'ExibirQuestaoControllerBase.numQuestoes', context: context);
 
   @override
   int get numQuestoes {
@@ -62,8 +62,8 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
     });
   }
 
-  late final _$_questaoAtualAtom = Atom(
-      name: '_ExibirQuestaoControllerBase._questaoAtual', context: context);
+  late final _$_questaoAtualAtom =
+      Atom(name: 'ExibirQuestaoControllerBase._questaoAtual', context: context);
 
   ObservableFuture<Questao?> get questaoAtual {
     _$_questaoAtualAtom.reportRead();
@@ -80,18 +80,18 @@ mixin _$ExibirQuestaoController on _ExibirQuestaoControllerBase, Store {
     });
   }
 
-  late final _$_ExibirQuestaoControllerBaseActionController =
-      ActionController(name: '_ExibirQuestaoControllerBase', context: context);
+  late final _$ExibirQuestaoControllerBaseActionController =
+      ActionController(name: 'ExibirQuestaoControllerBase', context: context);
 
   @override
   @protected
   void definirIndice(int valor, {bool forcar = false}) {
-    final _$actionInfo = _$_ExibirQuestaoControllerBaseActionController
-        .startAction(name: '_ExibirQuestaoControllerBase.definirIndice');
+    final _$actionInfo = _$ExibirQuestaoControllerBaseActionController
+        .startAction(name: 'ExibirQuestaoControllerBase.definirIndice');
     try {
       return super.definirIndice(valor, forcar: forcar);
     } finally {
-      _$_ExibirQuestaoControllerBaseActionController.endAction(_$actionInfo);
+      _$ExibirQuestaoControllerBaseActionController.endAction(_$actionInfo);
     }
   }
 

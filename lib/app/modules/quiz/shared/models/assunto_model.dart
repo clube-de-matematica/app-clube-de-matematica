@@ -9,16 +9,19 @@ import '../../../../shared/utils/strings_db.dart';
 /// com o mesmo [id].
 class Assunto extends RawAssunto {
   /// Conjunto de todas as instâncias criadas.
-  static ObservableSet<Assunto> _instancias = ObservableSet<Assunto>();
+  static final ObservableSet<Assunto> _instancias = ObservableSet<Assunto>();
 
   /// ID do assunto no banco de dados.
-  final int id;
+  @override
+  int get id => super.id!; // A garantia de que não será nulo ocorre no construtor interno.
 
   /// Hierarquia de assuntos acima do assunto [titulo]. Isto é uma lista de ID's de assuntos.
-  final DataHierarquia hierarquia;
+  @override
+  DataHierarquia get hierarquia => super.hierarquia!; // A garantia de que não será nulo ocorre no construtor interno.
 
   /// O título do assunto.
-  final String titulo;
+  @override
+  String get titulo => super.titulo!; // A garantia de que não será nulo ocorre no construtor interno.
 
   /// Posição (iniciando em zero) do assunto em uma hierarquia completa ([hierarquia] mais
   /// [titulo]). O índice zero indica que o assunto é uma unidade.
@@ -32,10 +35,14 @@ class Assunto extends RawAssunto {
   }
 
   Assunto._interno({
-    required this.id,
-    required this.hierarquia,
-    required this.titulo,
-  }) {
+    required int id, //Qualquer alteração deve levar em conta a garantia de não nulidade no geters de mesmo nome
+    required DataHierarquia hierarquia, //Qualquer alteração deve levar em conta a garantia de não nulidade no geters de mesmo nome
+    required String titulo, //Qualquer alteração deve levar em conta a garantia de não nulidade no geters de mesmo nome
+  }) : super(
+          id: id, //Qualquer alteração deve levar em conta a garantia de não nulidade no geters de mesmo nome
+          hierarquia: hierarquia, //Qualquer alteração deve levar em conta a garantia de não nulidade no geters de mesmo nome
+          titulo: titulo, //Qualquer alteração deve levar em conta a garantia de não nulidade no geters de mesmo nome
+        ) {
     _instancias.add(this);
   }
 
@@ -126,11 +133,11 @@ class RawAssunto {
   DataAssunto toDataAssunto() {
     final data = DataAssunto();
     if (hierarquia?.isNotEmpty ?? false) {
-      data[DbConst.kDbDataAssuntoKeyHierarquia] = this.hierarquia;
+      data[DbConst.kDbDataAssuntoKeyHierarquia] = hierarquia;
     }
     data
-      ..[DbConst.kDbDataAssuntoKeyTitulo] = this.titulo
-      ..[DbConst.kDbDataAssuntoKeyId] = this.id;
+      ..[DbConst.kDbDataAssuntoKeyTitulo] = titulo
+      ..[DbConst.kDbDataAssuntoKeyId] = id;
 
     return data;
   }

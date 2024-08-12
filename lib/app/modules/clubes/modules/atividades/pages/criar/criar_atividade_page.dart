@@ -9,7 +9,7 @@ import '../../shared/widgets/form_criar_editar_atividade.dart';
 import 'criar_atividade_controller.dart';
 
 class CriarAtividadePage extends StatefulWidget {
-  const CriarAtividadePage(this.clube, {Key? key}) : super(key: key);
+  const CriarAtividadePage(this.clube, {super.key});
 
   final Clube clube;
 
@@ -53,10 +53,14 @@ class _CriarAtividadePageState extends State<CriarAtividadePage> {
               final sucesso = await future;
               if (mounted) {
                 if (sucesso) {
-                  Navigator.of(context).pop();
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
                 } else {
-                  await BottomSheetErro('A atividade não foi criada')
-                      .showModal(context);
+                  if (context.mounted) {
+                    await const BottomSheetErro('A atividade não foi criada')
+                        .showModal(context);
+                  }
                 }
               }
             }

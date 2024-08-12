@@ -1,12 +1,14 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:async';
 import 'dart:io';
 
-import 'package:file_utils/file_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../extensions.dart';
 import '../models/exceptions/my_exception.dart';
+import '../utils/file_utils/file_utils.dart';
 
 ///Gerencia as operações com o armazenamento local.
 ///Não disponível para a versão web.
@@ -17,47 +19,50 @@ abstract class LocalStorageRepository {
   static const DIR_LOG = "Log";
 
   ///O path do diretório de logs relativo a [appDocDir].
-  static const DIR_LOG_RELATIVE_PATH = DIR_LOG + "/";
+  static const DIR_LOG_RELATIVE_PATH = "$DIR_LOG/";
 
   ///O nome do diretório de mídias.
   static const DIR_MEDIA = "Media";
 
   ///O path do diretório de mídias relativo a [appDocDir].
-  static const DIR_MEDIA_RELATIVE_PATH = DIR_MEDIA + "/";
+  static const DIR_MEDIA_RELATIVE_PATH = "$DIR_MEDIA/";
 
   ///O nome do diretório de fotos de perfil.
   static const DIR_PROFILE_PHOTOS = "Profile Photos";
 
   ///O path do diretório de fotos de perfil relativo a [appDocDir].
   static const DIR_PROFILE_PHOTOS_RELATIVE_PATH =
-      DIR_MEDIA + "/" + DIR_PROFILE_PHOTOS + "/";
+      "$DIR_MEDIA/$DIR_PROFILE_PHOTOS/";
 
   ///No Android: Retorna assincronamente o diretório reservado aos arquivos do aplicativo no armazenamento local.
   ///Se não for possível, fáz o mesmo que para o IOS.
   ///No IOS: Retorna assincronamente o diretório onde o aplicativo pode colocar dados gerados pelo usuário ou que não
   ///podem ser recriados pelo aplicativo.
   static Future<Directory> get appDocDir async {
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "get appDocDir",
       );
+    }
 
     if (Platform.isAndroid) {
       final a = (await getExternalStorageDirectory());
       final b=    await getApplicationDocumentsDirectory();
       return a??b;
-    } else
+    } else {
       return getApplicationDocumentsDirectory();
+    }
   }
 
   ///Retorna assincronamente o path do diretório reservado ao aplicativo.
   static Future<String> get appDocDirPath async {
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "get appDocDirPath",
       );
+    }
 
     return (await appDocDir).path;
   }
@@ -67,43 +72,48 @@ abstract class LocalStorageRepository {
       {FutureOr<String>? parent}) async {
     assert(relativePath.isNotEmpty);
 
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "getFullPath()",
       );
+    }
 
-    if (relativePath.isEmpty)
+    if (relativePath.isEmpty) {
       throw MyException(
         "Path relativo não especificado.",
         originClass: _className,
         originField: "getFullPath()",
         causeError: "[relativePath] não pode ser uma String vazia.",
       );
+    }
 
     parent ??= appDocDirPath;
     final pathParent = await parent;
-    if (pathParent.isEmpty)
+    if (pathParent.isEmpty) {
       throw MyException(
         "O diretório pai não pode ser determinado.",
         originClass: _className,
         originField: "getFullPath()",
         causeError: "[parent] não pode completar com uma String vazia.",
       );
+    }
 
     //Caso exista, remover "/" do início de `relativePath`.
-    if (relativePath.substring(0, 0) == "/")
+    if (relativePath.substring(0, 0) == "/") {
       relativePath = relativePath.substring(1);
+    }
     return "$pathParent/$relativePath";
   }
 
   ///Retorna assincronamente o diretório de fotos de perfil do aplicativo.
   static Future<Directory> get profilePhotos async {
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "get profilePhotos",
       );
+    }
 
     return Directory(await getFullPath(DIR_PROFILE_PHOTOS_RELATIVE_PATH));
   }
@@ -111,12 +121,13 @@ abstract class LocalStorageRepository {
   ///Retorna assincronamente uma instância de [File] em [relativePath] relativo a [appDocDir].
   static Future<File> getFile(String relativePath) async {
     assert(relativePath.isNotEmpty);
-    if (relativePath.isEmpty)
+    if (relativePath.isEmpty) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "getFile()",
         causeError: "[relativePath] não pode ser uma String vazia.",
       );
+    }
 
     return File(await getFullPath(relativePath));
   }
@@ -136,48 +147,51 @@ abstract class LocalStorageRepository {
     String? newRelativePath,
     bool replace = true,
   }) async {
-    String? _path = await path;
-    String? _newPath = await newPath;
+    String? pathSync = await path;
+    String? newPathSync = await newPath;
 
-    if (_path != null && _path.isEmpty) _path = null;
+    if (pathSync != null && pathSync.isEmpty) pathSync = null;
     if (relativePath != null && relativePath.isEmpty) relativePath = null;
-    if (_newPath != null && _newPath.isEmpty) _newPath = null;
-    if (newRelativePath != null && newRelativePath.isEmpty)
+    if (newPathSync != null && newPathSync.isEmpty) newPathSync = null;
+    if (newRelativePath != null && newRelativePath.isEmpty) {
       newRelativePath = null;
+    }
 
-    final validation1 = (_path == null) != /* significa um XOR */
+    final validation1 = (pathSync == null) != /* significa um XOR */
         (relativePath == null);
-    final validation2 = (_newPath == null) != /* significa um XOR */
+    final validation2 = (newPathSync == null) != /* significa um XOR */
         (newRelativePath == null);
 
     assert(validation1);
     assert(validation2);
 
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "copyFile()",
       );
+    }
 
     if (validation1 && validation2) {
-      _path ??= await getFullPath(relativePath!);
-      _newPath ??= await getFullPath(newRelativePath!);
-      final file = File(_path);
+      pathSync ??= await getFullPath(relativePath!);
+      newPathSync ??= await getFullPath(newRelativePath!);
+      final file = File(pathSync);
 
       if (file.existsSync() && !replace) return null;
 
       try {
-        await File(_newPath).create(recursive: true);
-        final newFile = file.copy(_newPath);
+        await File(newPathSync).create(recursive: true);
+        final newFile = file.copy(newPathSync);
         return newFile;
       } catch (_) {
         return null;
       }
-    } else
+    } else {
       return null;
+    }
   }
 
-  ///Localiza arquivos e diretórios com base em [path] ou [relativePth].
+  ///Localiza arquivos e diretórios com base em [path] ou [relativePath].
   ///[path] é o path absoluto para a busca.
   ///[relativePath] é o path relativo a [appDocDir] para a busca.
   ///Há suporte para padrões com os caracteres curingas "*" e "?" que representam, respectivamente, uma sequência de
@@ -186,34 +200,36 @@ abstract class LocalStorageRepository {
     FutureOr<String>? path,
     String? relativePath,
   }) async {
-    String? _path = await path;
+    String? pathSync = await path;
 
-    if (_path != null && _path.isEmpty) _path = null;
+    if (pathSync != null && pathSync.isEmpty) pathSync = null;
     if (relativePath != null && relativePath.isEmpty) relativePath = null;
 
     final validation =
-        (_path == null) != /* significa um XOR */ (relativePath == null);
+        (pathSync == null) != /* significa um XOR */ (relativePath == null);
 
     assert(validation);
 
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "find()",
       );
+    }
 
     if (validation) {
-      _path ??= await getFullPath(relativePath!);
-      return FileUtils.glob(_path) as FutureOr<FileList>;
-    } else
+      pathSync ??= await getFullPath(relativePath!);
+      return FileUtils.glob(pathSync) as FutureOr<FileList>;
+    } else {
       throw MyException(
         "Não foi possível determinar o path.",
         originClass: _className,
         originField: "find()",
         fieldDetails:
-            "(await path) retorna ${_path.toString()}, relativePath retorna ${relativePath.toString()}",
+            "(await path) retorna ${pathSync.toString()}, relativePath retorna ${relativePath.toString()}",
         causeError: "A condição para os parâmetros foi violada.",
       );
+    }
   }
 
   ///Remove o(s) arquivo(s) e diretório(s) especificado(s) em [path], [relativePth] ou [fileList] e retorna `true`
@@ -234,28 +250,30 @@ abstract class LocalStorageRepository {
     bool force = false,
     bool recursive = false,
   }) async {
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "delete()",
       );
+    }
 
-    String? _path = await path;
+    String? pathSync = await path;
     if (fileList != null && fileList.isEmpty) fileList = null;
-    if (_path != null && _path.isEmpty) _path = null;
+    if (pathSync != null && pathSync.isEmpty) pathSync = null;
     if (relativePath != null && relativePath.isEmpty) relativePath = null;
-    final validation = (_path != null)
+    final validation = (pathSync != null)
         .xor(others: [(relativePath != null), (fileList != null)]);
 
     if (validation) {
       fileList ??= <String>[];
-      if (_path != null) fileList.add(_path);
+      if (pathSync != null) fileList.add(pathSync);
       if (relativePath != null) fileList.add(await getFullPath(relativePath));
       final result = _rm(fileList,
           directory: directory, force: force, recursive: recursive);
       return result;
-    } else
+    } else {
       return false;
+    }
   }
 
   ///Remove o(s) arquivo(s) e diretório(s) especificado(s) em [paths] e retorna `true` se a operação for bem-sucedida;
@@ -271,11 +289,12 @@ abstract class LocalStorageRepository {
     bool force = false,
     bool recursive = false,
   }) {
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyExceptionNoWebSupport(
         originClass: _className,
         originField: "_rm()",
       );
+    }
 
     if (paths.isEmpty) {
       return false;

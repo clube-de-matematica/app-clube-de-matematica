@@ -4,17 +4,16 @@ import 'package:flutter/material.dart';
 /// Usado para definir o nível de privacidade do clube.
 class SwitchListTileFormField extends FormField<bool> {
   SwitchListTileFormField({
-    Key? key,
+    super.key,
     bool valorInicial = true,
-    void Function(bool?)? onSaved,
+    super.onSaved,
   }) : super(
-          key: key,
           initialValue: valorInicial,
           builder: (field) {
             return UnmanagedRestorationScope(
               bucket: field.bucket,
               child: SwitchListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                 title: const Text('Grupo aberto'),
                 subtitle: const Text(
                     'Qualquer pessoa com o código de acesso pode participar?'),
@@ -23,6 +22,5 @@ class SwitchListTileFormField extends FormField<bool> {
               ),
             );
           },
-          onSaved: onSaved,
         );
 }

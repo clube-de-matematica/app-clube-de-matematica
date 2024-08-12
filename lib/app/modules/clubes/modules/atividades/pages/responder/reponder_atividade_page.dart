@@ -13,9 +13,8 @@ import 'responder_atividade_controller.dart';
 
 /// Página destinada a responder às questões de uma atividade.
 class ResponderAtividadePage extends StatefulWidget {
-  ResponderAtividadePage(ArgumentosAtividadePage args, {Key? key})
-      : atividade = args.atividade,
-        super(key: key);
+  ResponderAtividadePage(ArgumentosAtividadePage args, {super.key})
+      : atividade = args.atividade;
 
   final Atividade atividade;
 
@@ -44,7 +43,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
               if (!controle.atividadeEncerrada &&
                   controle.questaoAtual.value != null) {
                 return IconButton(
-                  icon: Icon(Icons.task),
+                  icon: const Icon(Icons.task),
                   onPressed: _concluir,
                 );
               }
@@ -77,7 +76,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
         bottomNavigationBar: _barraInferior(),
         floatingActionButton: Observer(builder: (_) {
           final ativo =
-              controle.questoesEmBranco.length == 0 && controle.podeConcluir;
+              controle.questoesEmBranco.isEmpty && controle.podeConcluir;
           return !ativo
               ? const SizedBox()
               : FloatingActionButton.extended(
@@ -93,6 +92,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
   /// Retorna verdadeiro, assincronamente, se o fechamento da página não implicar a perda de dados não salvos, caso contrário, exibe um [BottomSheetSalvarSairCancelar] e retorna um [bool] correspondente a escolha do usuário.
   Future<bool> _willPop(BuildContext context) async {
     if (controle.isEmpty) return true;
+
     /// Retorná:
     /// * 0 se o usuário escolher cancelar;
     /// * 1 se o usuário escolher sair; e
@@ -125,7 +125,7 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
         if (entregue) {
           Navigator.of(context).pop();
         } else {
-          BottomSheetErro(
+          const BottomSheetErro(
             'Não foi possível entregar a atividade. Tente novamente.',
           ).showModal(context);
         }

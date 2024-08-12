@@ -23,10 +23,10 @@ enum AppDrawerPage { quiz, clubes }
 /// Um [Scaffold] com o [Drawer] e o [PopScope] do aplicativo.
 class ScaffoldWithDrawer extends Scaffold {
   ScaffoldWithDrawer({
-    Key? key,
-    PreferredSizeWidget? appBar,
+    super.key,
+    super.appBar,
     Widget? body,
-    Widget? floatingActionButton,
+    super.floatingActionButton,
     //FloatingActionButtonLocation? floatingActionButtonLocation,
     //FloatingActionButtonAnimator? floatingActionButtonAnimator,
     //List<Widget>? persistentFooterButtons,
@@ -34,7 +34,7 @@ class ScaffoldWithDrawer extends Scaffold {
     //void Function(bool)? onDrawerChanged,
     //Widget? endDrawer,
     //void Function(bool)? onEndDrawerChanged,
-    Widget? bottomNavigationBar,
+    super.bottomNavigationBar,
     //Widget? bottomSheet,
     //Color? backgroundColor,
     //bool? resizeToAvoidBottomInset,
@@ -49,26 +49,21 @@ class ScaffoldWithDrawer extends Scaffold {
     //String? restorationId,
     AppDrawerPage page = AppDrawerPage.quiz,
   }) : super(
-          key: key,
-          appBar: appBar,
-          body: AppWillPopScope(child: body ?? SizedBox()),
-          floatingActionButton: floatingActionButton,
+          body: AppWillPopScope(child: body ?? const SizedBox()),
           drawer: Builder(builder: (context) {
             return Padding(
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: _AppDrawer(page: page),
             );
           }),
-          bottomNavigationBar: bottomNavigationBar,
         );
 }
 
 /// O [Drawer] do aplicativo.
 class _AppDrawer extends StatefulWidget {
   const _AppDrawer({
-    Key? key,
     this.page = AppDrawerPage.quiz,
-  }) : super(key: key);
+  });
 
   final AppDrawerPage page;
 
@@ -104,14 +99,18 @@ class _AppDrawerState extends State<_AppDrawer> {
     bool result = true;
     if (widget.user.isAnonymous) {
       if (!await Conectividade.instancia.verificar()) {
-        BottomSheetErroConexao().showModal(context);
+        if (context.mounted) {
+          const BottomSheetErroConexao().showModal(context);
+        }
         return;
       }
       result = (await Modular.get<IAuthRepository>().signInWithGoogle()) ==
           SignInChangeState.success;
     }
     if (result) {
-      showPage(context, RotaPagina.perfil);
+      if (context.mounted) {
+        showPage(context, RotaPagina.perfil);
+      }
     }
   }
 
@@ -131,8 +130,8 @@ class _AppDrawerState extends State<_AppDrawer> {
           onTap: () => _loadProfile(context),
           child: Hero(
             tag: 'hero-avatar',
-            child: Avatar(widget.user),
             transitionOnUserGestures: true,
+            child: Avatar(widget.user),
           ),
         );
 
@@ -156,7 +155,7 @@ class _AppDrawerState extends State<_AppDrawer> {
             );
       icone(IconData icon) {
         return AnimatedContainer(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxWidth: 2 * kRadialReactionRadius,
             maxHeight: 2 * kRadialReactionRadius,
           ),
@@ -171,7 +170,7 @@ class _AppDrawerState extends State<_AppDrawer> {
           drawerHeader,
           if (!widget.user.isAnonymous)
             ListTile(
-              title: Text('Clubes'),
+              title: const Text('Clubes'),
               leading: icone(Icons.groups),
               onTap: () => showPage(context, RotaPagina.homeClubes),
             ),
@@ -179,7 +178,7 @@ class _AppDrawerState extends State<_AppDrawer> {
           if (clubes.isNotEmpty) const Divider(thickness: 1.5),
           //if (widget.page == AppDrawerPage.clubes)
           ListTile(
-            title: Text('Questões'),
+            title: const Text('Questões'),
             leading: icone(Icons.quiz_outlined),
             onTap: () => showPage(context, RotaPagina.quiz),
           ),
@@ -190,14 +189,14 @@ class _AppDrawerState extends State<_AppDrawer> {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.data ?? false) {
                   return ListTile(
-                    title: Text('Inserir questão'),
+                    title: const Text('Inserir questão'),
                     leading: icone(Icons.add),
                     onTap: () => Navigator.of(context).pushNamed(
                         InserirQuestaoModule.kAbsoluteRouteInserirQuestaoPage),
                   );
                 }
               }
-              return SizedBox();
+              return const SizedBox();
             },
           ),
           /* 
@@ -227,23 +226,25 @@ class _AppDrawerState extends State<_AppDrawer> {
           ),
           */
           ListTile(
-            title: Text('Sobre'),
+            title: const Text('Sobre'),
             leading: icone(Icons.info_outlined),
             onTap: () async {
               // TODO: Navigator.push(context, MaterialPageRoute(builder: (_) => DbInspecaoPage()));
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => SobrePage()),
+                MaterialPageRoute(builder: (_) => const SobrePage()),
               );
-              Navigator.pop(context);
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
             },
           ),
           const Divider(thickness: 1.5),
-          Column(
+          const Column(
             children: [
               Align(
                 alignment: Alignment.bottomLeft,
-                child: const ListTile(
+                child: ListTile(
                   title: Text('Versão: $APP_VERSION'),
                   dense: true,
                 ),
@@ -265,12 +266,13 @@ class _AppDrawerState extends State<_AppDrawer> {
       String subtitle = '';
 
       if (usuario != null) {
-        if (usuario.proprietario)
+        if (usuario.proprietario) {
           subtitle = 'Proprietário';
-        else if (usuario.administrador)
+        } else if (usuario.administrador) {
           subtitle = 'Administrador';
-        else
+        } else {
           subtitle = 'Membro';
+        }
       }
 
       return ListTile(

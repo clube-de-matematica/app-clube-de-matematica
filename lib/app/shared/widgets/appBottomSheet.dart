@@ -10,7 +10,7 @@ import 'botoes.dart';
 /// A estrutura desse [Widget] é baseada na estrutura do [AlertDialog].
 class AppBottomSheet extends StatelessWidget {
   const AppBottomSheet({
-    Key? key,
+    super.key,
     this.title,
     this.titlePadding,
     this.titleTextStyle,
@@ -37,7 +37,7 @@ class AppBottomSheet extends StatelessWidget {
     this.isScrollControlled = false,
     this.maximize = false,
     this.builder,
-  }) : super(key: key);
+  });
 
   final Widget? title;
   final EdgeInsetsGeometry? titlePadding;
@@ -95,13 +95,14 @@ class AppBottomSheet extends StatelessWidget {
   }
 
   Widget _buildDraggableScrollable(Widget child) {
-    return LayoutBuilder(builder: (context,constraints) {
+    return LayoutBuilder(builder: (context, constraints) {
       final media = MediaQueryData.fromView(View.of(context));
       final altura = media.size.height;
       final maxChildSize =
           (altura - media.padding.top - kBottomNavigationBarHeight) / altura;
 
-      return DraggableScrollableSheet( //TODO: Pode-se usar Offstage para renderizar o Widget filho antes de exibi-lo. Assim dápara usar seu context.size para determinar o tamanho inicial de DraggableScrollableSheet 
+      return DraggableScrollableSheet(
+        //TODO: Pode-se usar Offstage para renderizar o Widget filho antes de exibi-lo. Assim dápara usar seu context.size para determinar o tamanho inicial de DraggableScrollableSheet
         initialChildSize: maximize ? maxChildSize : 0.4,
         minChildSize: 0.2,
         maxChildSize: maxChildSize,
@@ -169,7 +170,7 @@ class AppBottomSheet extends StatelessWidget {
       children: columnChildren,
     ); //,);
 
-    if (label != null)
+    if (label != null) {
       dialogChild = Semantics(
         scopesRoute: true,
         explicitChildNodes: true,
@@ -177,6 +178,7 @@ class AppBottomSheet extends StatelessWidget {
         label: label,
         child: dialogChild,
       );
+    }
 
     return dialogChild;
   }
@@ -224,7 +226,7 @@ class AppBottomSheet extends StatelessWidget {
           style: titleTextStyle ??
               dialogTheme.titleTextStyle ??
               theme.textTheme.titleLarge ??
-              TextStyle(),
+              const TextStyle(),
           child: Semantics(
             namesRoute: label == null,
             container: true,
@@ -258,19 +260,19 @@ class AppBottomSheet extends StatelessWidget {
       );
     }
 
-    final divider = () => const Divider(height: 1.0);
+    divider() => const Divider(height: 1.0);
 
     if (actions != null) {
       final double spacing = (buttonPadding?.horizontal ?? 0) / 2;
-      final _children = <Widget>[];
+      final children = <Widget>[];
       for (var i = 0; i < actions!.length; i++) {
-        _children.add(SizedBox(
+        children.add(SizedBox(
           height: 56.0,
           width: double.maxFinite,
           child: actions![i],
         ));
         //if (i < actions!.length - 1)
-        _children.add(divider());
+        children.add(divider());
       }
       actionsWidget = Padding(
         padding: actionsPadding,
@@ -279,7 +281,7 @@ class AppBottomSheet extends StatelessWidget {
           padding: EdgeInsets.all(spacing),
           child: IntrinsicHeight(
             child: Column(
-              children: _children,
+              children: children,
             ),
             /* IntrinsicHeight(
               child: OverflowBar(
@@ -326,7 +328,7 @@ class AppBottomSheet extends StatelessWidget {
 
 /// Uma página inferior para exibir uma mensagem de erro [mensagem].
 class BottomSheetErro extends AppBottomSheet {
-  const BottomSheetErro(this.mensagem, {Key? key}) : super(key: key);
+  const BottomSheetErro(this.mensagem, {super.key});
   final String mensagem;
 
   @override
@@ -348,10 +350,10 @@ class BottomSheetErro extends AppBottomSheet {
 /// Uma página inferior para exibir quando o dispositivo estiver sem acesso a internete.
 class BottomSheetErroConexao extends AppBottomSheet {
   const BottomSheetErroConexao({
-    Key? key,
+    super.key,
     this.rotuloAcao = 'FECHAR',
     this.acao,
-  }) : super(key: key);
+  });
 
   final String rotuloAcao;
   final VoidCallback? acao;
@@ -382,22 +384,24 @@ class BottomSheetErroConexao extends AppBottomSheet {
 /// * `null` nos demais casos.
 class BottomSheetAcoes<T extends Object?> extends AppBottomSheet {
   const BottomSheetAcoes({
-    Key? key,
-    this.title,
-    this.content,
+    super.key,
+    super.title,
+    super.content,
     this.labelActionFirst = 'CONFIRMAR',
     this.labelActionLast = 'CANCELAR',
     this.actionFirstIsPrimary = true,
     this.actionLastIsPrimary = false,
     required this.resultActionFirst,
     required this.resultActionLast,
-  }) : super(key: key);
+  });
 
   /// O título desta página inferior.
-  final Widget? title;
+  @override
+  Widget? get title => super.title;
 
   /// O conteúdo desta página inferior.
-  final Widget? content;
+  @override
+  Widget? get content => super.content;
 
   /// Texto do primeiro botão.
   final String labelActionFirst;
@@ -442,14 +446,12 @@ class BottomSheetAcoes<T extends Object?> extends AppBottomSheet {
 /// Ao ser fechada, retorna `true` se o usuário confirmar a ação.
 class BottomSheetCancelarConfirmar extends BottomSheetAcoes<bool> {
   BottomSheetCancelarConfirmar({
-    Key? key,
-    Widget? title,
+    super.key,
+    super.title,
     Widget? content,
     String? message,
   })  : assert(!(content != null && message != null)),
         super(
-          key: key,
-          title: title,
           content: content ??
               (message == null
                   ? null
@@ -470,14 +472,12 @@ class BottomSheetCancelarConfirmar extends BottomSheetAcoes<bool> {
 /// Ao ser fechada, retorna `true` se o usuário confirmar a ação.
 class BottomSheetCancelarSair extends BottomSheetAcoes<bool> {
   BottomSheetCancelarSair({
-    Key? key,
-    Widget? title,
+    super.key,
+    super.title,
     Widget? content,
     String? message,
   })  : assert(!(content != null && message != null)),
         super(
-          key: key,
-          title: title,
           content: content ??
               (message == null
                   ? null
@@ -502,14 +502,12 @@ class BottomSheetCancelarSair extends BottomSheetAcoes<bool> {
 /// * 2 se o usuário escolher salvar.
 class BottomSheetSalvarSairCancelar extends AppBottomSheet {
   BottomSheetSalvarSairCancelar({
-    Key? key,
-    Widget? title,
+    super.key,
+    super.title,
     Widget? content,
     String? message,
   })  : assert(!(content != null && message != null)),
         super(
-          key: key,
-          title: title,
           content: content ??
               (message == null
                   ? null
@@ -547,12 +545,11 @@ class BottomSheetSalvarSairCancelar extends AppBottomSheet {
 /// Retorna o resultado de [future].
 class BottomSheetCarregando extends AppBottomSheet {
   const BottomSheetCarregando({
-    Key? key,
-    this.title,
+    super.key,
+    super.title,
     required this.future,
-  }) : super(key: key);
+  });
 
-  final Widget? title;
   final Future future;
 
   @override
@@ -566,10 +563,9 @@ class BottomSheetCarregando extends AppBottomSheet {
 
 class _ChildBottomSheetCarregando extends StatefulWidget {
   const _ChildBottomSheetCarregando({
-    Key? key,
     this.title,
     required this.future,
-  }) : super(key: key);
+  });
 
   final Widget? title;
   final Future future;
@@ -588,17 +584,18 @@ class __ChildBottomSheetCarregandoState
       content: FutureBuilder(
         future: widget.future,
         builder: (context, snapshot) {
-          final size = 56.0;
+          const size = 56.0;
           if (snapshot.connectionState == ConnectionState.done) {
-            Future.delayed(Duration(seconds: 1)).then((_) {
-              if (mounted && Navigator.canPop(context))
+            Future.delayed(const Duration(seconds: 1)).then((_) {
+              if (mounted && Navigator.canPop(context)) {
                 Navigator.pop(context, snapshot.data);
+              }
             });
           }
           return Container(
             alignment: Alignment.center,
             height: size,
-            child: SizedBox(
+            child: const SizedBox(
               height: size,
               width: size,
               child: CircularProgressIndicator(
@@ -614,7 +611,7 @@ class __ChildBottomSheetCarregandoState
 }
 
 class BottomSheetAvisoConsentimento extends AppBottomSheet {
-  BottomSheetAvisoConsentimento({Key? key})
+  BottomSheetAvisoConsentimento({super.key})
       : super(
           isScrollControlled: true,
           maximize: true,
@@ -635,12 +632,12 @@ class BottomSheetAvisoConsentimento extends AppBottomSheet {
                       .bodyLarge
                       ?.copyWith(fontSize: 18),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 StatefulBuilder(builder: ((_, setState) {
                   return CheckboxListTile(
                     value: naoReexibir,
-                    contentPadding: EdgeInsets.all(0),
-                    title: Text('Não exibir esta mensagem novamente'),
+                    contentPadding: const EdgeInsets.all(0),
+                    title: const Text('Não exibir esta mensagem novamente'),
                     onChanged: (valor) {
                       setState(() => naoReexibir = valor ?? false);
                       try {

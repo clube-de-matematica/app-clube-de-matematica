@@ -31,7 +31,7 @@ class ExpansionTilePersonalizado extends StatefulWidget {
   /// the tile to reveal or hide the [children]. The [initiallyExpanded] property must
   /// be non-null.
   const ExpansionTilePersonalizado({
-    Key? key,
+    super.key,
     this.leading,
     required this.title,
     this.subtitle,
@@ -54,8 +54,7 @@ class ExpansionTilePersonalizado extends StatefulWidget {
        expandedCrossAxisAlignment != CrossAxisAlignment.baseline,
        'CrossAxisAlignment.baseline is not supported since the expanded children '
            'are aligned in a column, not a row. Try to use another constant.',
-       ),
-       super(key: key);
+       );
 
   /// A widget to display before the title.
   ///
@@ -173,10 +172,10 @@ class ExpansionTilePersonalizado extends StatefulWidget {
   final Color? collapsedTextColor;
 
   @override
-  _ExpansionTilePersonalizadoState createState() => _ExpansionTilePersonalizadoState();
+  ExpansionTilePersonalizadoState createState() => ExpansionTilePersonalizadoState();
 }
 
-class _ExpansionTilePersonalizadoState extends State<ExpansionTilePersonalizado> with SingleTickerProviderStateMixin {
+class ExpansionTilePersonalizadoState extends State<ExpansionTilePersonalizado> with SingleTickerProviderStateMixin {
   static final Animatable<double> _easeOutTween = CurveTween(curve: Curves.easeOut);
   static final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
   static final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.5);
@@ -208,8 +207,9 @@ class _ExpansionTilePersonalizadoState extends State<ExpansionTilePersonalizado>
     _backgroundColor = _controller.drive(_backgroundColorTween.chain(_easeOutTween));
 
     _isExpanded = PageStorage.of(context).readState(context) as bool? ?? widget.initiallyExpanded;
-    if (_isExpanded)
+    if (_isExpanded) {
       _controller.value = 1.0;
+    }
   }
 
   @override
@@ -225,8 +225,9 @@ class _ExpansionTilePersonalizadoState extends State<ExpansionTilePersonalizado>
         _controller.forward();
       } else {
         _controller.reverse().then<void>((void value) {
-          if (!mounted)
+          if (!mounted) {
             return;
+          }
           setState(() {
             // Rebuild without widget.children.
           });
@@ -305,7 +306,9 @@ class _ExpansionTilePersonalizadoState extends State<ExpansionTilePersonalizado>
     final bool shouldRemoveChildren = closed && !widget.maintainState;
 
     final Widget result = Offstage(
+      offstage: closed,
       child: TickerMode(
+        enabled: !closed,
         child: Padding(
           padding: widget.childrenPadding ?? EdgeInsets.zero,
           child: Column(
@@ -313,9 +316,7 @@ class _ExpansionTilePersonalizadoState extends State<ExpansionTilePersonalizado>
             children: widget.children,
           ),
         ),
-        enabled: !closed,
       ),
-      offstage: closed,
     );
 
     return AnimatedBuilder(

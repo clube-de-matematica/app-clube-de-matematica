@@ -8,17 +8,14 @@ import '../../shared/utils/ui_strings.dart';
 
 part 'filtro_anos_controller.g.dart';
 
-class FiltroAnosController = _FiltroAnosControllerBase
+class FiltroAnosController = FiltroAnosControllerBase
     with _$FiltroAnosController;
 
-abstract class _FiltroAnosControllerBase extends FiltroController with Store {
-  _FiltroAnosControllerBase({
-    required Filtros filtrosSalvos,
-    required Filtros filtrosTemp,
-  }) : super(
-          filtrosSalvos: filtrosSalvos,
-          filtrosTemp: filtrosTemp,
-        );
+abstract class FiltroAnosControllerBase extends FiltroController with Store {
+  FiltroAnosControllerBase({
+    required super.filtrosSalvos,
+    required super.filtrosTemp,
+  });
 
   @override
   String get tituloAppBar => UIStrings.FILTRO_TEXTO_TIPO_ANO;

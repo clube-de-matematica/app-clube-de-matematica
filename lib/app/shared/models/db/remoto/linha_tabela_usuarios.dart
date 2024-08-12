@@ -5,23 +5,16 @@ import 'mixin.dart';
 class LinTbUsuariosDbRemoto extends ILinTbUsuarios
     with LinTbMixin {
   LinTbUsuariosDbRemoto({
-    required int id,
-    required String? email,
-    required String? nome,
-    required String? foto,
-    required bool softDelete,
-    required String dataModificacao,
-  }) : super(
-          id: id,
-          email: email,
-          nome: nome,
-          foto: foto,
-          softDelete: softDelete,
-          dataModificacao: dataModificacao,
-        );
+    required super.id,
+    required super.email,
+    required super.nome,
+    required super.foto,
+    required super.softDelete,
+    required String super.dataModificacao,
+  });
 
   factory LinTbUsuariosDbRemoto.fromMap(Map map) {
-    final tb = Sql.tbUsuarios;
+    const tb = Sql.tbUsuarios;
     return LinTbUsuariosDbRemoto(
       id: map[tb.id],
       email: map[tb.email],

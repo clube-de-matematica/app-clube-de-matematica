@@ -11,10 +11,9 @@ import '../quiz_controller.dart';
 class QuizAppBar extends PreferredSize {
   QuizAppBar(
     this.controller, {
-    Key? key,
+    super.key,
   }) : super(
-          key: key,
-          preferredSize: Size.fromHeight(kToolbarHeight),
+          preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Observer(builder: (_) {
             final cacheQuiz = Preferencias.instancia.cacheQuiz;
             return AppBar(
@@ -28,7 +27,7 @@ class QuizAppBar extends PreferredSize {
                       ),
                       onPressed: () async {
                         if (controller.numQuestoes > cacheQuiz.length) {
-                          final resposta = await BottomSheetAcoes(
+                          final resposta = await const BottomSheetAcoes(
                             title: Text(
                                 'Algumas questões ainda estão sem resposta'),
                             labelActionFirst: 'CONTINUAR RESPONDENDO',

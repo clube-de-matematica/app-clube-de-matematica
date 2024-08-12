@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 /// Strings para as páginas de filtro.
 abstract class UIStrings {
   ///Texto da seção dos filtros selecionados.

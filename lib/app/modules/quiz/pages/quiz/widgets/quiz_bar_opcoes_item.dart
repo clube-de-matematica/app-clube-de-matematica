@@ -9,9 +9,9 @@ import '../quiz_controller.dart';
 class QuizBarOpcoesQuestao extends StatelessWidget {
   const QuizBarOpcoesQuestao(
     this.controller, {
-    Key? key,
+    super.key,
     this.padding = const EdgeInsets.symmetric(vertical: 4.0),
-  }) : super(key: key);
+  });
 
   final QuizController controller;
   final EdgeInsetsGeometry padding;

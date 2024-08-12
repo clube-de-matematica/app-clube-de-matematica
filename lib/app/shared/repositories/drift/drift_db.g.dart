@@ -184,6 +184,20 @@ class LinTbQuestoes extends DataClass implements Insertable<LinTbQuestoes> {
             ? imagensEnunciado.value
             : this.imagensEnunciado,
       );
+  LinTbQuestoes copyWithCompanion(TbQuestoesCompanion data) {
+    return LinTbQuestoes(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      enunciado: data.enunciado.present ? data.enunciado.value : this.enunciado,
+      gabarito: data.gabarito.present ? data.gabarito.value : this.gabarito,
+      imagensEnunciado: data.imagensEnunciado.present
+          ? data.imagensEnunciado.value
+          : this.imagensEnunciado,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbQuestoes(')
@@ -454,6 +468,18 @@ class LinTbAssuntos extends DataClass implements Insertable<LinTbAssuntos> {
         assunto: assunto ?? this.assunto,
         hierarquia: hierarquia.present ? hierarquia.value : this.hierarquia,
       );
+  LinTbAssuntos copyWithCompanion(TbAssuntosCompanion data) {
+    return LinTbAssuntos(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      assunto: data.assunto.present ? data.assunto.value : this.assunto,
+      hierarquia:
+          data.hierarquia.present ? data.hierarquia.value : this.hierarquia,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbAssuntos(')
@@ -686,6 +712,16 @@ class LinTbQuestaoAssunto extends DataClass
         idQuestao: idQuestao ?? this.idQuestao,
         idAssunto: idAssunto ?? this.idAssunto,
       );
+  LinTbQuestaoAssunto copyWithCompanion(TbQuestaoAssuntoCompanion data) {
+    return LinTbQuestaoAssunto(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      idQuestao: data.idQuestao.present ? data.idQuestao.value : this.idQuestao,
+      idAssunto: data.idAssunto.present ? data.idAssunto.value : this.idAssunto,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbQuestaoAssunto(')
@@ -912,6 +948,16 @@ class LinTbTiposAlternativa extends DataClass
         id: id ?? this.id,
         tipo: tipo ?? this.tipo,
       );
+  LinTbTiposAlternativa copyWithCompanion(TbTiposAlternativaCompanion data) {
+    return LinTbTiposAlternativa(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      tipo: data.tipo.present ? data.tipo.value : this.tipo,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbTiposAlternativa(')
@@ -1177,6 +1223,19 @@ class LinTbAlternativas extends DataClass
         idTipo: idTipo ?? this.idTipo,
         conteudo: conteudo ?? this.conteudo,
       );
+  LinTbAlternativas copyWithCompanion(TbAlternativasCompanion data) {
+    return LinTbAlternativas(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      idQuestao: data.idQuestao.present ? data.idQuestao.value : this.idQuestao,
+      sequencial:
+          data.sequencial.present ? data.sequencial.value : this.sequencial,
+      idTipo: data.idTipo.present ? data.idTipo.value : this.idTipo,
+      conteudo: data.conteudo.present ? data.conteudo.value : this.conteudo,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbAlternativas(')
@@ -1501,6 +1560,19 @@ class LinTbQuestoesCaderno extends DataClass
         indice: indice ?? this.indice,
         idQuestao: idQuestao ?? this.idQuestao,
       );
+  LinTbQuestoesCaderno copyWithCompanion(TbQuestoesCadernoCompanion data) {
+    return LinTbQuestoesCaderno(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      ano: data.ano.present ? data.ano.value : this.ano,
+      nivel: data.nivel.present ? data.nivel.value : this.nivel,
+      indice: data.indice.present ? data.indice.value : this.indice,
+      idQuestao: data.idQuestao.present ? data.idQuestao.value : this.idQuestao,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbQuestoesCaderno(')
@@ -1682,7 +1754,7 @@ class $TbUsuariosTable extends TbUsuarios
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("soft_delete" IN (0, 1))'),
-      defaultValue: Constant(false));
+      defaultValue: const Constant(false));
   static const VerificationMeta _sincronizarMeta =
       const VerificationMeta('sincronizar');
   @override
@@ -1692,7 +1764,7 @@ class $TbUsuariosTable extends TbUsuarios
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("sincronizar" IN (0, 1))'),
-      defaultValue: Constant(false));
+      defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, id, email, nome, foto, softDelete, sincronizar];
@@ -1866,6 +1938,22 @@ class LinTbUsuarios extends DataClass implements Insertable<LinTbUsuarios> {
         softDelete: softDelete ?? this.softDelete,
         sincronizar: sincronizar ?? this.sincronizar,
       );
+  LinTbUsuarios copyWithCompanion(TbUsuariosCompanion data) {
+    return LinTbUsuarios(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      email: data.email.present ? data.email.value : this.email,
+      nome: data.nome.present ? data.nome.value : this.nome,
+      foto: data.foto.present ? data.foto.value : this.foto,
+      softDelete:
+          data.softDelete.present ? data.softDelete.value : this.softDelete,
+      sincronizar:
+          data.sincronizar.present ? data.sincronizar.value : this.sincronizar,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbUsuarios(')
@@ -2048,7 +2136,7 @@ class $TbClubesTable extends TbClubes
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("privado" IN (0, 1))'),
-      defaultValue: Constant(false));
+      defaultValue: const Constant(false));
   static const VerificationMeta _codigoMeta = const VerificationMeta('codigo');
   @override
   late final GeneratedColumn<String> codigo = GeneratedColumn<String>(
@@ -2259,6 +2347,22 @@ class LinTbClubes extends DataClass implements Insertable<LinTbClubes> {
         codigo: codigo ?? this.codigo,
         capa: capa.present ? capa.value : this.capa,
       );
+  LinTbClubes copyWithCompanion(TbClubesCompanion data) {
+    return LinTbClubes(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      nome: data.nome.present ? data.nome.value : this.nome,
+      descricao: data.descricao.present ? data.descricao.value : this.descricao,
+      dataCriacao:
+          data.dataCriacao.present ? data.dataCriacao.value : this.dataCriacao,
+      privado: data.privado.present ? data.privado.value : this.privado,
+      codigo: data.codigo.present ? data.codigo.value : this.codigo,
+      capa: data.capa.present ? data.capa.value : this.capa,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbClubes(')
@@ -2544,6 +2648,16 @@ class LinTbTiposPermissao extends DataClass
         id: id ?? this.id,
         permissao: permissao ?? this.permissao,
       );
+  LinTbTiposPermissao copyWithCompanion(TbTiposPermissaoCompanion data) {
+    return LinTbTiposPermissao(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      permissao: data.permissao.present ? data.permissao.value : this.permissao,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbTiposPermissao(')
@@ -2811,6 +2925,21 @@ class LinTbClubeUsuario extends DataClass
         idPermissao: idPermissao ?? this.idPermissao,
         dataAdmissao: dataAdmissao ?? this.dataAdmissao,
       );
+  LinTbClubeUsuario copyWithCompanion(TbClubeUsuarioCompanion data) {
+    return LinTbClubeUsuario(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      idClube: data.idClube.present ? data.idClube.value : this.idClube,
+      idUsuario: data.idUsuario.present ? data.idUsuario.value : this.idUsuario,
+      idPermissao:
+          data.idPermissao.present ? data.idPermissao.value : this.idPermissao,
+      dataAdmissao: data.dataAdmissao.present
+          ? data.dataAdmissao.value
+          : this.dataAdmissao,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbClubeUsuario(')
@@ -3223,6 +3352,27 @@ class LinTbAtividades extends DataClass implements Insertable<LinTbAtividades> {
             ? dataEncerramento.value
             : this.dataEncerramento,
       );
+  LinTbAtividades copyWithCompanion(TbAtividadesCompanion data) {
+    return LinTbAtividades(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      idClube: data.idClube.present ? data.idClube.value : this.idClube,
+      titulo: data.titulo.present ? data.titulo.value : this.titulo,
+      descricao: data.descricao.present ? data.descricao.value : this.descricao,
+      idAutor: data.idAutor.present ? data.idAutor.value : this.idAutor,
+      dataCriacao:
+          data.dataCriacao.present ? data.dataCriacao.value : this.dataCriacao,
+      dataLiberacao: data.dataLiberacao.present
+          ? data.dataLiberacao.value
+          : this.dataLiberacao,
+      dataEncerramento: data.dataEncerramento.present
+          ? data.dataEncerramento.value
+          : this.dataEncerramento,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbAtividades(')
@@ -3549,6 +3699,20 @@ class LinTbQuestaoAtividade extends DataClass
         idQuestaoCaderno: idQuestaoCaderno ?? this.idQuestaoCaderno,
         idAtividade: idAtividade ?? this.idAtividade,
       );
+  LinTbQuestaoAtividade copyWithCompanion(TbQuestaoAtividadeCompanion data) {
+    return LinTbQuestaoAtividade(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      id: data.id.present ? data.id.value : this.id,
+      idQuestaoCaderno: data.idQuestaoCaderno.present
+          ? data.idQuestaoCaderno.value
+          : this.idQuestaoCaderno,
+      idAtividade:
+          data.idAtividade.present ? data.idAtividade.value : this.idAtividade,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbQuestaoAtividade(')
@@ -3691,7 +3855,7 @@ class $TbRespostaQuestaoAtividadeTable extends TbRespostaQuestaoAtividade
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("sincronizar" IN (0, 1))'),
-      defaultValue: Constant(false));
+      defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, idQuestaoAtividade, idUsuario, resposta, sincronizar];
@@ -3842,6 +4006,22 @@ class LinTbRespostaQuestaoAtividade extends DataClass
         resposta: resposta.present ? resposta.value : this.resposta,
         sincronizar: sincronizar ?? this.sincronizar,
       );
+  LinTbRespostaQuestaoAtividade copyWithCompanion(
+      TbRespostaQuestaoAtividadeCompanion data) {
+    return LinTbRespostaQuestaoAtividade(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      idQuestaoAtividade: data.idQuestaoAtividade.present
+          ? data.idQuestaoAtividade.value
+          : this.idQuestaoAtividade,
+      idUsuario: data.idUsuario.present ? data.idUsuario.value : this.idUsuario,
+      resposta: data.resposta.present ? data.resposta.value : this.resposta,
+      sincronizar:
+          data.sincronizar.present ? data.sincronizar.value : this.sincronizar,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbRespostaQuestaoAtividade(')
@@ -4007,7 +4187,7 @@ class $TbRespostaQuestaoTable extends TbRespostaQuestao
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("sincronizar" IN (0, 1))'),
-      defaultValue: Constant(false));
+      defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
       [dataModificacao, idQuestao, idUsuario, resposta, sincronizar];
@@ -4155,6 +4335,19 @@ class LinTbRespostaQuestao extends DataClass
         resposta: resposta.present ? resposta.value : this.resposta,
         sincronizar: sincronizar ?? this.sincronizar,
       );
+  LinTbRespostaQuestao copyWithCompanion(TbRespostaQuestaoCompanion data) {
+    return LinTbRespostaQuestao(
+      dataModificacao: data.dataModificacao.present
+          ? data.dataModificacao.value
+          : this.dataModificacao,
+      idQuestao: data.idQuestao.present ? data.idQuestao.value : this.idQuestao,
+      idUsuario: data.idUsuario.present ? data.idUsuario.value : this.idUsuario,
+      resposta: data.resposta.present ? data.resposta.value : this.resposta,
+      sincronizar:
+          data.sincronizar.present ? data.sincronizar.value : this.sincronizar,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('LinTbRespostaQuestao(')
@@ -4268,6 +4461,7 @@ class TbRespostaQuestaoCompanion extends UpdateCompanion<LinTbRespostaQuestao> {
 
 abstract class _$DriftDb extends GeneratedDatabase {
   _$DriftDb(QueryExecutor e) : super(e);
+  $DriftDbManager get managers => $DriftDbManager(this);
   late final $TbQuestoesTable tbQuestoes = $TbQuestoesTable(this);
   late final $TbAssuntosTable tbAssuntos = $TbAssuntosTable(this);
   late final $TbQuestaoAssuntoTable tbQuestaoAssunto =
@@ -4309,4 +4503,1808 @@ abstract class _$DriftDb extends GeneratedDatabase {
         tbRespostaQuestaoAtividade,
         tbRespostaQuestao
       ];
+}
+
+typedef $$TbQuestoesTableCreateCompanionBuilder = TbQuestoesCompanion Function({
+  required int dataModificacao,
+  Value<int> id,
+  required String enunciado,
+  required int gabarito,
+  Value<String?> imagensEnunciado,
+});
+typedef $$TbQuestoesTableUpdateCompanionBuilder = TbQuestoesCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> id,
+  Value<String> enunciado,
+  Value<int> gabarito,
+  Value<String?> imagensEnunciado,
+});
+
+class $$TbQuestoesTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbQuestoesTable,
+    LinTbQuestoes,
+    $$TbQuestoesTableFilterComposer,
+    $$TbQuestoesTableOrderingComposer,
+    $$TbQuestoesTableCreateCompanionBuilder,
+    $$TbQuestoesTableUpdateCompanionBuilder> {
+  $$TbQuestoesTableTableManager(_$DriftDb db, $TbQuestoesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbQuestoesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbQuestoesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<String> enunciado = const Value.absent(),
+            Value<int> gabarito = const Value.absent(),
+            Value<String?> imagensEnunciado = const Value.absent(),
+          }) =>
+              TbQuestoesCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            enunciado: enunciado,
+            gabarito: gabarito,
+            imagensEnunciado: imagensEnunciado,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> id = const Value.absent(),
+            required String enunciado,
+            required int gabarito,
+            Value<String?> imagensEnunciado = const Value.absent(),
+          }) =>
+              TbQuestoesCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            enunciado: enunciado,
+            gabarito: gabarito,
+            imagensEnunciado: imagensEnunciado,
+          ),
+        ));
+}
+
+class $$TbQuestoesTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbQuestoesTable> {
+  $$TbQuestoesTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get enunciado => $state.composableBuilder(
+      column: $state.table.enunciado,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get gabarito => $state.composableBuilder(
+      column: $state.table.gabarito,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get imagensEnunciado => $state.composableBuilder(
+      column: $state.table.imagensEnunciado,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbQuestoesTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbQuestoesTable> {
+  $$TbQuestoesTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get enunciado => $state.composableBuilder(
+      column: $state.table.enunciado,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get gabarito => $state.composableBuilder(
+      column: $state.table.gabarito,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get imagensEnunciado => $state.composableBuilder(
+      column: $state.table.imagensEnunciado,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbAssuntosTableCreateCompanionBuilder = TbAssuntosCompanion Function({
+  required int dataModificacao,
+  Value<int> id,
+  required String assunto,
+  Value<String?> hierarquia,
+});
+typedef $$TbAssuntosTableUpdateCompanionBuilder = TbAssuntosCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> id,
+  Value<String> assunto,
+  Value<String?> hierarquia,
+});
+
+class $$TbAssuntosTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbAssuntosTable,
+    LinTbAssuntos,
+    $$TbAssuntosTableFilterComposer,
+    $$TbAssuntosTableOrderingComposer,
+    $$TbAssuntosTableCreateCompanionBuilder,
+    $$TbAssuntosTableUpdateCompanionBuilder> {
+  $$TbAssuntosTableTableManager(_$DriftDb db, $TbAssuntosTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbAssuntosTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbAssuntosTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<String> assunto = const Value.absent(),
+            Value<String?> hierarquia = const Value.absent(),
+          }) =>
+              TbAssuntosCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            assunto: assunto,
+            hierarquia: hierarquia,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> id = const Value.absent(),
+            required String assunto,
+            Value<String?> hierarquia = const Value.absent(),
+          }) =>
+              TbAssuntosCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            assunto: assunto,
+            hierarquia: hierarquia,
+          ),
+        ));
+}
+
+class $$TbAssuntosTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbAssuntosTable> {
+  $$TbAssuntosTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get assunto => $state.composableBuilder(
+      column: $state.table.assunto,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get hierarquia => $state.composableBuilder(
+      column: $state.table.hierarquia,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbAssuntosTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbAssuntosTable> {
+  $$TbAssuntosTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get assunto => $state.composableBuilder(
+      column: $state.table.assunto,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get hierarquia => $state.composableBuilder(
+      column: $state.table.hierarquia,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbQuestaoAssuntoTableCreateCompanionBuilder
+    = TbQuestaoAssuntoCompanion Function({
+  required int dataModificacao,
+  required int idQuestao,
+  required int idAssunto,
+  Value<int> rowid,
+});
+typedef $$TbQuestaoAssuntoTableUpdateCompanionBuilder
+    = TbQuestaoAssuntoCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> idQuestao,
+  Value<int> idAssunto,
+  Value<int> rowid,
+});
+
+class $$TbQuestaoAssuntoTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbQuestaoAssuntoTable,
+    LinTbQuestaoAssunto,
+    $$TbQuestaoAssuntoTableFilterComposer,
+    $$TbQuestaoAssuntoTableOrderingComposer,
+    $$TbQuestaoAssuntoTableCreateCompanionBuilder,
+    $$TbQuestaoAssuntoTableUpdateCompanionBuilder> {
+  $$TbQuestaoAssuntoTableTableManager(
+      _$DriftDb db, $TbQuestaoAssuntoTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbQuestaoAssuntoTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbQuestaoAssuntoTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> idQuestao = const Value.absent(),
+            Value<int> idAssunto = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbQuestaoAssuntoCompanion(
+            dataModificacao: dataModificacao,
+            idQuestao: idQuestao,
+            idAssunto: idAssunto,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            required int idQuestao,
+            required int idAssunto,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbQuestaoAssuntoCompanion.insert(
+            dataModificacao: dataModificacao,
+            idQuestao: idQuestao,
+            idAssunto: idAssunto,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TbQuestaoAssuntoTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbQuestaoAssuntoTable> {
+  $$TbQuestaoAssuntoTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idQuestao => $state.composableBuilder(
+      column: $state.table.idQuestao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idAssunto => $state.composableBuilder(
+      column: $state.table.idAssunto,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbQuestaoAssuntoTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbQuestaoAssuntoTable> {
+  $$TbQuestaoAssuntoTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idQuestao => $state.composableBuilder(
+      column: $state.table.idQuestao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idAssunto => $state.composableBuilder(
+      column: $state.table.idAssunto,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbTiposAlternativaTableCreateCompanionBuilder
+    = TbTiposAlternativaCompanion Function({
+  required int dataModificacao,
+  Value<int> id,
+  required String tipo,
+});
+typedef $$TbTiposAlternativaTableUpdateCompanionBuilder
+    = TbTiposAlternativaCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> id,
+  Value<String> tipo,
+});
+
+class $$TbTiposAlternativaTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbTiposAlternativaTable,
+    LinTbTiposAlternativa,
+    $$TbTiposAlternativaTableFilterComposer,
+    $$TbTiposAlternativaTableOrderingComposer,
+    $$TbTiposAlternativaTableCreateCompanionBuilder,
+    $$TbTiposAlternativaTableUpdateCompanionBuilder> {
+  $$TbTiposAlternativaTableTableManager(
+      _$DriftDb db, $TbTiposAlternativaTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbTiposAlternativaTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$TbTiposAlternativaTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<String> tipo = const Value.absent(),
+          }) =>
+              TbTiposAlternativaCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            tipo: tipo,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> id = const Value.absent(),
+            required String tipo,
+          }) =>
+              TbTiposAlternativaCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            tipo: tipo,
+          ),
+        ));
+}
+
+class $$TbTiposAlternativaTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbTiposAlternativaTable> {
+  $$TbTiposAlternativaTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tipo => $state.composableBuilder(
+      column: $state.table.tipo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbTiposAlternativaTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbTiposAlternativaTable> {
+  $$TbTiposAlternativaTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tipo => $state.composableBuilder(
+      column: $state.table.tipo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbAlternativasTableCreateCompanionBuilder = TbAlternativasCompanion
+    Function({
+  required int dataModificacao,
+  required int idQuestao,
+  required int sequencial,
+  required int idTipo,
+  required String conteudo,
+  Value<int> rowid,
+});
+typedef $$TbAlternativasTableUpdateCompanionBuilder = TbAlternativasCompanion
+    Function({
+  Value<int> dataModificacao,
+  Value<int> idQuestao,
+  Value<int> sequencial,
+  Value<int> idTipo,
+  Value<String> conteudo,
+  Value<int> rowid,
+});
+
+class $$TbAlternativasTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbAlternativasTable,
+    LinTbAlternativas,
+    $$TbAlternativasTableFilterComposer,
+    $$TbAlternativasTableOrderingComposer,
+    $$TbAlternativasTableCreateCompanionBuilder,
+    $$TbAlternativasTableUpdateCompanionBuilder> {
+  $$TbAlternativasTableTableManager(_$DriftDb db, $TbAlternativasTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbAlternativasTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbAlternativasTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> idQuestao = const Value.absent(),
+            Value<int> sequencial = const Value.absent(),
+            Value<int> idTipo = const Value.absent(),
+            Value<String> conteudo = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbAlternativasCompanion(
+            dataModificacao: dataModificacao,
+            idQuestao: idQuestao,
+            sequencial: sequencial,
+            idTipo: idTipo,
+            conteudo: conteudo,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            required int idQuestao,
+            required int sequencial,
+            required int idTipo,
+            required String conteudo,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbAlternativasCompanion.insert(
+            dataModificacao: dataModificacao,
+            idQuestao: idQuestao,
+            sequencial: sequencial,
+            idTipo: idTipo,
+            conteudo: conteudo,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TbAlternativasTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbAlternativasTable> {
+  $$TbAlternativasTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idQuestao => $state.composableBuilder(
+      column: $state.table.idQuestao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get sequencial => $state.composableBuilder(
+      column: $state.table.sequencial,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idTipo => $state.composableBuilder(
+      column: $state.table.idTipo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get conteudo => $state.composableBuilder(
+      column: $state.table.conteudo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbAlternativasTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbAlternativasTable> {
+  $$TbAlternativasTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idQuestao => $state.composableBuilder(
+      column: $state.table.idQuestao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get sequencial => $state.composableBuilder(
+      column: $state.table.sequencial,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idTipo => $state.composableBuilder(
+      column: $state.table.idTipo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get conteudo => $state.composableBuilder(
+      column: $state.table.conteudo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbQuestoesCadernoTableCreateCompanionBuilder
+    = TbQuestoesCadernoCompanion Function({
+  required int dataModificacao,
+  required String id,
+  required int ano,
+  required int nivel,
+  required int indice,
+  required int idQuestao,
+  Value<int> rowid,
+});
+typedef $$TbQuestoesCadernoTableUpdateCompanionBuilder
+    = TbQuestoesCadernoCompanion Function({
+  Value<int> dataModificacao,
+  Value<String> id,
+  Value<int> ano,
+  Value<int> nivel,
+  Value<int> indice,
+  Value<int> idQuestao,
+  Value<int> rowid,
+});
+
+class $$TbQuestoesCadernoTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbQuestoesCadernoTable,
+    LinTbQuestoesCaderno,
+    $$TbQuestoesCadernoTableFilterComposer,
+    $$TbQuestoesCadernoTableOrderingComposer,
+    $$TbQuestoesCadernoTableCreateCompanionBuilder,
+    $$TbQuestoesCadernoTableUpdateCompanionBuilder> {
+  $$TbQuestoesCadernoTableTableManager(
+      _$DriftDb db, $TbQuestoesCadernoTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbQuestoesCadernoTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$TbQuestoesCadernoTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<String> id = const Value.absent(),
+            Value<int> ano = const Value.absent(),
+            Value<int> nivel = const Value.absent(),
+            Value<int> indice = const Value.absent(),
+            Value<int> idQuestao = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbQuestoesCadernoCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            ano: ano,
+            nivel: nivel,
+            indice: indice,
+            idQuestao: idQuestao,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            required String id,
+            required int ano,
+            required int nivel,
+            required int indice,
+            required int idQuestao,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbQuestoesCadernoCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            ano: ano,
+            nivel: nivel,
+            indice: indice,
+            idQuestao: idQuestao,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TbQuestoesCadernoTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbQuestoesCadernoTable> {
+  $$TbQuestoesCadernoTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get ano => $state.composableBuilder(
+      column: $state.table.ano,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get nivel => $state.composableBuilder(
+      column: $state.table.nivel,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get indice => $state.composableBuilder(
+      column: $state.table.indice,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idQuestao => $state.composableBuilder(
+      column: $state.table.idQuestao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbQuestoesCadernoTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbQuestoesCadernoTable> {
+  $$TbQuestoesCadernoTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get ano => $state.composableBuilder(
+      column: $state.table.ano,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get nivel => $state.composableBuilder(
+      column: $state.table.nivel,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get indice => $state.composableBuilder(
+      column: $state.table.indice,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idQuestao => $state.composableBuilder(
+      column: $state.table.idQuestao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbUsuariosTableCreateCompanionBuilder = TbUsuariosCompanion Function({
+  required int dataModificacao,
+  Value<int> id,
+  Value<String?> email,
+  Value<String?> nome,
+  Value<String?> foto,
+  Value<bool> softDelete,
+  Value<bool> sincronizar,
+});
+typedef $$TbUsuariosTableUpdateCompanionBuilder = TbUsuariosCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> id,
+  Value<String?> email,
+  Value<String?> nome,
+  Value<String?> foto,
+  Value<bool> softDelete,
+  Value<bool> sincronizar,
+});
+
+class $$TbUsuariosTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbUsuariosTable,
+    LinTbUsuarios,
+    $$TbUsuariosTableFilterComposer,
+    $$TbUsuariosTableOrderingComposer,
+    $$TbUsuariosTableCreateCompanionBuilder,
+    $$TbUsuariosTableUpdateCompanionBuilder> {
+  $$TbUsuariosTableTableManager(_$DriftDb db, $TbUsuariosTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbUsuariosTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbUsuariosTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<String?> email = const Value.absent(),
+            Value<String?> nome = const Value.absent(),
+            Value<String?> foto = const Value.absent(),
+            Value<bool> softDelete = const Value.absent(),
+            Value<bool> sincronizar = const Value.absent(),
+          }) =>
+              TbUsuariosCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            email: email,
+            nome: nome,
+            foto: foto,
+            softDelete: softDelete,
+            sincronizar: sincronizar,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> id = const Value.absent(),
+            Value<String?> email = const Value.absent(),
+            Value<String?> nome = const Value.absent(),
+            Value<String?> foto = const Value.absent(),
+            Value<bool> softDelete = const Value.absent(),
+            Value<bool> sincronizar = const Value.absent(),
+          }) =>
+              TbUsuariosCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            email: email,
+            nome: nome,
+            foto: foto,
+            softDelete: softDelete,
+            sincronizar: sincronizar,
+          ),
+        ));
+}
+
+class $$TbUsuariosTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbUsuariosTable> {
+  $$TbUsuariosTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get email => $state.composableBuilder(
+      column: $state.table.email,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get nome => $state.composableBuilder(
+      column: $state.table.nome,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get foto => $state.composableBuilder(
+      column: $state.table.foto,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get softDelete => $state.composableBuilder(
+      column: $state.table.softDelete,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get sincronizar => $state.composableBuilder(
+      column: $state.table.sincronizar,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbUsuariosTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbUsuariosTable> {
+  $$TbUsuariosTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get email => $state.composableBuilder(
+      column: $state.table.email,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get nome => $state.composableBuilder(
+      column: $state.table.nome,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get foto => $state.composableBuilder(
+      column: $state.table.foto,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get softDelete => $state.composableBuilder(
+      column: $state.table.softDelete,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get sincronizar => $state.composableBuilder(
+      column: $state.table.sincronizar,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbClubesTableCreateCompanionBuilder = TbClubesCompanion Function({
+  required int dataModificacao,
+  Value<int> id,
+  required String nome,
+  Value<String?> descricao,
+  required int dataCriacao,
+  Value<bool> privado,
+  required String codigo,
+  Value<String?> capa,
+});
+typedef $$TbClubesTableUpdateCompanionBuilder = TbClubesCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> id,
+  Value<String> nome,
+  Value<String?> descricao,
+  Value<int> dataCriacao,
+  Value<bool> privado,
+  Value<String> codigo,
+  Value<String?> capa,
+});
+
+class $$TbClubesTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbClubesTable,
+    LinTbClubes,
+    $$TbClubesTableFilterComposer,
+    $$TbClubesTableOrderingComposer,
+    $$TbClubesTableCreateCompanionBuilder,
+    $$TbClubesTableUpdateCompanionBuilder> {
+  $$TbClubesTableTableManager(_$DriftDb db, $TbClubesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbClubesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbClubesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<String> nome = const Value.absent(),
+            Value<String?> descricao = const Value.absent(),
+            Value<int> dataCriacao = const Value.absent(),
+            Value<bool> privado = const Value.absent(),
+            Value<String> codigo = const Value.absent(),
+            Value<String?> capa = const Value.absent(),
+          }) =>
+              TbClubesCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            nome: nome,
+            descricao: descricao,
+            dataCriacao: dataCriacao,
+            privado: privado,
+            codigo: codigo,
+            capa: capa,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> id = const Value.absent(),
+            required String nome,
+            Value<String?> descricao = const Value.absent(),
+            required int dataCriacao,
+            Value<bool> privado = const Value.absent(),
+            required String codigo,
+            Value<String?> capa = const Value.absent(),
+          }) =>
+              TbClubesCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            nome: nome,
+            descricao: descricao,
+            dataCriacao: dataCriacao,
+            privado: privado,
+            codigo: codigo,
+            capa: capa,
+          ),
+        ));
+}
+
+class $$TbClubesTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbClubesTable> {
+  $$TbClubesTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get nome => $state.composableBuilder(
+      column: $state.table.nome,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get descricao => $state.composableBuilder(
+      column: $state.table.descricao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get dataCriacao => $state.composableBuilder(
+      column: $state.table.dataCriacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get privado => $state.composableBuilder(
+      column: $state.table.privado,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get codigo => $state.composableBuilder(
+      column: $state.table.codigo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get capa => $state.composableBuilder(
+      column: $state.table.capa,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbClubesTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbClubesTable> {
+  $$TbClubesTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get nome => $state.composableBuilder(
+      column: $state.table.nome,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get descricao => $state.composableBuilder(
+      column: $state.table.descricao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get dataCriacao => $state.composableBuilder(
+      column: $state.table.dataCriacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get privado => $state.composableBuilder(
+      column: $state.table.privado,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get codigo => $state.composableBuilder(
+      column: $state.table.codigo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get capa => $state.composableBuilder(
+      column: $state.table.capa,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbTiposPermissaoTableCreateCompanionBuilder
+    = TbTiposPermissaoCompanion Function({
+  required int dataModificacao,
+  Value<int> id,
+  required String permissao,
+});
+typedef $$TbTiposPermissaoTableUpdateCompanionBuilder
+    = TbTiposPermissaoCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> id,
+  Value<String> permissao,
+});
+
+class $$TbTiposPermissaoTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbTiposPermissaoTable,
+    LinTbTiposPermissao,
+    $$TbTiposPermissaoTableFilterComposer,
+    $$TbTiposPermissaoTableOrderingComposer,
+    $$TbTiposPermissaoTableCreateCompanionBuilder,
+    $$TbTiposPermissaoTableUpdateCompanionBuilder> {
+  $$TbTiposPermissaoTableTableManager(
+      _$DriftDb db, $TbTiposPermissaoTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbTiposPermissaoTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbTiposPermissaoTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<String> permissao = const Value.absent(),
+          }) =>
+              TbTiposPermissaoCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            permissao: permissao,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> id = const Value.absent(),
+            required String permissao,
+          }) =>
+              TbTiposPermissaoCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            permissao: permissao,
+          ),
+        ));
+}
+
+class $$TbTiposPermissaoTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbTiposPermissaoTable> {
+  $$TbTiposPermissaoTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get permissao => $state.composableBuilder(
+      column: $state.table.permissao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbTiposPermissaoTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbTiposPermissaoTable> {
+  $$TbTiposPermissaoTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get permissao => $state.composableBuilder(
+      column: $state.table.permissao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbClubeUsuarioTableCreateCompanionBuilder = TbClubeUsuarioCompanion
+    Function({
+  required int dataModificacao,
+  required int idClube,
+  required int idUsuario,
+  required int idPermissao,
+  required int dataAdmissao,
+  Value<int> rowid,
+});
+typedef $$TbClubeUsuarioTableUpdateCompanionBuilder = TbClubeUsuarioCompanion
+    Function({
+  Value<int> dataModificacao,
+  Value<int> idClube,
+  Value<int> idUsuario,
+  Value<int> idPermissao,
+  Value<int> dataAdmissao,
+  Value<int> rowid,
+});
+
+class $$TbClubeUsuarioTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbClubeUsuarioTable,
+    LinTbClubeUsuario,
+    $$TbClubeUsuarioTableFilterComposer,
+    $$TbClubeUsuarioTableOrderingComposer,
+    $$TbClubeUsuarioTableCreateCompanionBuilder,
+    $$TbClubeUsuarioTableUpdateCompanionBuilder> {
+  $$TbClubeUsuarioTableTableManager(_$DriftDb db, $TbClubeUsuarioTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbClubeUsuarioTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbClubeUsuarioTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> idClube = const Value.absent(),
+            Value<int> idUsuario = const Value.absent(),
+            Value<int> idPermissao = const Value.absent(),
+            Value<int> dataAdmissao = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbClubeUsuarioCompanion(
+            dataModificacao: dataModificacao,
+            idClube: idClube,
+            idUsuario: idUsuario,
+            idPermissao: idPermissao,
+            dataAdmissao: dataAdmissao,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            required int idClube,
+            required int idUsuario,
+            required int idPermissao,
+            required int dataAdmissao,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbClubeUsuarioCompanion.insert(
+            dataModificacao: dataModificacao,
+            idClube: idClube,
+            idUsuario: idUsuario,
+            idPermissao: idPermissao,
+            dataAdmissao: dataAdmissao,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TbClubeUsuarioTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbClubeUsuarioTable> {
+  $$TbClubeUsuarioTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idClube => $state.composableBuilder(
+      column: $state.table.idClube,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idUsuario => $state.composableBuilder(
+      column: $state.table.idUsuario,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idPermissao => $state.composableBuilder(
+      column: $state.table.idPermissao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get dataAdmissao => $state.composableBuilder(
+      column: $state.table.dataAdmissao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbClubeUsuarioTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbClubeUsuarioTable> {
+  $$TbClubeUsuarioTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idClube => $state.composableBuilder(
+      column: $state.table.idClube,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idUsuario => $state.composableBuilder(
+      column: $state.table.idUsuario,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idPermissao => $state.composableBuilder(
+      column: $state.table.idPermissao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get dataAdmissao => $state.composableBuilder(
+      column: $state.table.dataAdmissao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbAtividadesTableCreateCompanionBuilder = TbAtividadesCompanion
+    Function({
+  required int dataModificacao,
+  Value<int> id,
+  required int idClube,
+  required String titulo,
+  Value<String?> descricao,
+  required int idAutor,
+  required int dataCriacao,
+  Value<int?> dataLiberacao,
+  Value<int?> dataEncerramento,
+});
+typedef $$TbAtividadesTableUpdateCompanionBuilder = TbAtividadesCompanion
+    Function({
+  Value<int> dataModificacao,
+  Value<int> id,
+  Value<int> idClube,
+  Value<String> titulo,
+  Value<String?> descricao,
+  Value<int> idAutor,
+  Value<int> dataCriacao,
+  Value<int?> dataLiberacao,
+  Value<int?> dataEncerramento,
+});
+
+class $$TbAtividadesTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbAtividadesTable,
+    LinTbAtividades,
+    $$TbAtividadesTableFilterComposer,
+    $$TbAtividadesTableOrderingComposer,
+    $$TbAtividadesTableCreateCompanionBuilder,
+    $$TbAtividadesTableUpdateCompanionBuilder> {
+  $$TbAtividadesTableTableManager(_$DriftDb db, $TbAtividadesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbAtividadesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TbAtividadesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<int> idClube = const Value.absent(),
+            Value<String> titulo = const Value.absent(),
+            Value<String?> descricao = const Value.absent(),
+            Value<int> idAutor = const Value.absent(),
+            Value<int> dataCriacao = const Value.absent(),
+            Value<int?> dataLiberacao = const Value.absent(),
+            Value<int?> dataEncerramento = const Value.absent(),
+          }) =>
+              TbAtividadesCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            idClube: idClube,
+            titulo: titulo,
+            descricao: descricao,
+            idAutor: idAutor,
+            dataCriacao: dataCriacao,
+            dataLiberacao: dataLiberacao,
+            dataEncerramento: dataEncerramento,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> id = const Value.absent(),
+            required int idClube,
+            required String titulo,
+            Value<String?> descricao = const Value.absent(),
+            required int idAutor,
+            required int dataCriacao,
+            Value<int?> dataLiberacao = const Value.absent(),
+            Value<int?> dataEncerramento = const Value.absent(),
+          }) =>
+              TbAtividadesCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            idClube: idClube,
+            titulo: titulo,
+            descricao: descricao,
+            idAutor: idAutor,
+            dataCriacao: dataCriacao,
+            dataLiberacao: dataLiberacao,
+            dataEncerramento: dataEncerramento,
+          ),
+        ));
+}
+
+class $$TbAtividadesTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbAtividadesTable> {
+  $$TbAtividadesTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idClube => $state.composableBuilder(
+      column: $state.table.idClube,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get titulo => $state.composableBuilder(
+      column: $state.table.titulo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get descricao => $state.composableBuilder(
+      column: $state.table.descricao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idAutor => $state.composableBuilder(
+      column: $state.table.idAutor,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get dataCriacao => $state.composableBuilder(
+      column: $state.table.dataCriacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get dataLiberacao => $state.composableBuilder(
+      column: $state.table.dataLiberacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get dataEncerramento => $state.composableBuilder(
+      column: $state.table.dataEncerramento,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbAtividadesTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbAtividadesTable> {
+  $$TbAtividadesTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idClube => $state.composableBuilder(
+      column: $state.table.idClube,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get titulo => $state.composableBuilder(
+      column: $state.table.titulo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get descricao => $state.composableBuilder(
+      column: $state.table.descricao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idAutor => $state.composableBuilder(
+      column: $state.table.idAutor,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get dataCriacao => $state.composableBuilder(
+      column: $state.table.dataCriacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get dataLiberacao => $state.composableBuilder(
+      column: $state.table.dataLiberacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get dataEncerramento => $state.composableBuilder(
+      column: $state.table.dataEncerramento,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbQuestaoAtividadeTableCreateCompanionBuilder
+    = TbQuestaoAtividadeCompanion Function({
+  required int dataModificacao,
+  Value<int> id,
+  required String idQuestaoCaderno,
+  required int idAtividade,
+});
+typedef $$TbQuestaoAtividadeTableUpdateCompanionBuilder
+    = TbQuestaoAtividadeCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> id,
+  Value<String> idQuestaoCaderno,
+  Value<int> idAtividade,
+});
+
+class $$TbQuestaoAtividadeTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbQuestaoAtividadeTable,
+    LinTbQuestaoAtividade,
+    $$TbQuestaoAtividadeTableFilterComposer,
+    $$TbQuestaoAtividadeTableOrderingComposer,
+    $$TbQuestaoAtividadeTableCreateCompanionBuilder,
+    $$TbQuestaoAtividadeTableUpdateCompanionBuilder> {
+  $$TbQuestaoAtividadeTableTableManager(
+      _$DriftDb db, $TbQuestaoAtividadeTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbQuestaoAtividadeTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$TbQuestaoAtividadeTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> id = const Value.absent(),
+            Value<String> idQuestaoCaderno = const Value.absent(),
+            Value<int> idAtividade = const Value.absent(),
+          }) =>
+              TbQuestaoAtividadeCompanion(
+            dataModificacao: dataModificacao,
+            id: id,
+            idQuestaoCaderno: idQuestaoCaderno,
+            idAtividade: idAtividade,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> id = const Value.absent(),
+            required String idQuestaoCaderno,
+            required int idAtividade,
+          }) =>
+              TbQuestaoAtividadeCompanion.insert(
+            dataModificacao: dataModificacao,
+            id: id,
+            idQuestaoCaderno: idQuestaoCaderno,
+            idAtividade: idAtividade,
+          ),
+        ));
+}
+
+class $$TbQuestaoAtividadeTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbQuestaoAtividadeTable> {
+  $$TbQuestaoAtividadeTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get idQuestaoCaderno => $state.composableBuilder(
+      column: $state.table.idQuestaoCaderno,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idAtividade => $state.composableBuilder(
+      column: $state.table.idAtividade,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbQuestaoAtividadeTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbQuestaoAtividadeTable> {
+  $$TbQuestaoAtividadeTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get idQuestaoCaderno => $state.composableBuilder(
+      column: $state.table.idQuestaoCaderno,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idAtividade => $state.composableBuilder(
+      column: $state.table.idAtividade,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbRespostaQuestaoAtividadeTableCreateCompanionBuilder
+    = TbRespostaQuestaoAtividadeCompanion Function({
+  required int dataModificacao,
+  required int idQuestaoAtividade,
+  required int idUsuario,
+  Value<int?> resposta,
+  Value<bool> sincronizar,
+  Value<int> rowid,
+});
+typedef $$TbRespostaQuestaoAtividadeTableUpdateCompanionBuilder
+    = TbRespostaQuestaoAtividadeCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> idQuestaoAtividade,
+  Value<int> idUsuario,
+  Value<int?> resposta,
+  Value<bool> sincronizar,
+  Value<int> rowid,
+});
+
+class $$TbRespostaQuestaoAtividadeTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbRespostaQuestaoAtividadeTable,
+    LinTbRespostaQuestaoAtividade,
+    $$TbRespostaQuestaoAtividadeTableFilterComposer,
+    $$TbRespostaQuestaoAtividadeTableOrderingComposer,
+    $$TbRespostaQuestaoAtividadeTableCreateCompanionBuilder,
+    $$TbRespostaQuestaoAtividadeTableUpdateCompanionBuilder> {
+  $$TbRespostaQuestaoAtividadeTableTableManager(
+      _$DriftDb db, $TbRespostaQuestaoAtividadeTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $$TbRespostaQuestaoAtividadeTableFilterComposer(
+              ComposerState(db, table)),
+          orderingComposer: $$TbRespostaQuestaoAtividadeTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> idQuestaoAtividade = const Value.absent(),
+            Value<int> idUsuario = const Value.absent(),
+            Value<int?> resposta = const Value.absent(),
+            Value<bool> sincronizar = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbRespostaQuestaoAtividadeCompanion(
+            dataModificacao: dataModificacao,
+            idQuestaoAtividade: idQuestaoAtividade,
+            idUsuario: idUsuario,
+            resposta: resposta,
+            sincronizar: sincronizar,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            required int idQuestaoAtividade,
+            required int idUsuario,
+            Value<int?> resposta = const Value.absent(),
+            Value<bool> sincronizar = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TbRespostaQuestaoAtividadeCompanion.insert(
+            dataModificacao: dataModificacao,
+            idQuestaoAtividade: idQuestaoAtividade,
+            idUsuario: idUsuario,
+            resposta: resposta,
+            sincronizar: sincronizar,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TbRespostaQuestaoAtividadeTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbRespostaQuestaoAtividadeTable> {
+  $$TbRespostaQuestaoAtividadeTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idQuestaoAtividade => $state.composableBuilder(
+      column: $state.table.idQuestaoAtividade,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idUsuario => $state.composableBuilder(
+      column: $state.table.idUsuario,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get resposta => $state.composableBuilder(
+      column: $state.table.resposta,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get sincronizar => $state.composableBuilder(
+      column: $state.table.sincronizar,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbRespostaQuestaoAtividadeTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbRespostaQuestaoAtividadeTable> {
+  $$TbRespostaQuestaoAtividadeTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idQuestaoAtividade => $state.composableBuilder(
+      column: $state.table.idQuestaoAtividade,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idUsuario => $state.composableBuilder(
+      column: $state.table.idUsuario,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get resposta => $state.composableBuilder(
+      column: $state.table.resposta,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get sincronizar => $state.composableBuilder(
+      column: $state.table.sincronizar,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TbRespostaQuestaoTableCreateCompanionBuilder
+    = TbRespostaQuestaoCompanion Function({
+  required int dataModificacao,
+  Value<int> idQuestao,
+  Value<int?> idUsuario,
+  Value<int?> resposta,
+  Value<bool> sincronizar,
+});
+typedef $$TbRespostaQuestaoTableUpdateCompanionBuilder
+    = TbRespostaQuestaoCompanion Function({
+  Value<int> dataModificacao,
+  Value<int> idQuestao,
+  Value<int?> idUsuario,
+  Value<int?> resposta,
+  Value<bool> sincronizar,
+});
+
+class $$TbRespostaQuestaoTableTableManager extends RootTableManager<
+    _$DriftDb,
+    $TbRespostaQuestaoTable,
+    LinTbRespostaQuestao,
+    $$TbRespostaQuestaoTableFilterComposer,
+    $$TbRespostaQuestaoTableOrderingComposer,
+    $$TbRespostaQuestaoTableCreateCompanionBuilder,
+    $$TbRespostaQuestaoTableUpdateCompanionBuilder> {
+  $$TbRespostaQuestaoTableTableManager(
+      _$DriftDb db, $TbRespostaQuestaoTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TbRespostaQuestaoTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$TbRespostaQuestaoTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> dataModificacao = const Value.absent(),
+            Value<int> idQuestao = const Value.absent(),
+            Value<int?> idUsuario = const Value.absent(),
+            Value<int?> resposta = const Value.absent(),
+            Value<bool> sincronizar = const Value.absent(),
+          }) =>
+              TbRespostaQuestaoCompanion(
+            dataModificacao: dataModificacao,
+            idQuestao: idQuestao,
+            idUsuario: idUsuario,
+            resposta: resposta,
+            sincronizar: sincronizar,
+          ),
+          createCompanionCallback: ({
+            required int dataModificacao,
+            Value<int> idQuestao = const Value.absent(),
+            Value<int?> idUsuario = const Value.absent(),
+            Value<int?> resposta = const Value.absent(),
+            Value<bool> sincronizar = const Value.absent(),
+          }) =>
+              TbRespostaQuestaoCompanion.insert(
+            dataModificacao: dataModificacao,
+            idQuestao: idQuestao,
+            idUsuario: idUsuario,
+            resposta: resposta,
+            sincronizar: sincronizar,
+          ),
+        ));
+}
+
+class $$TbRespostaQuestaoTableFilterComposer
+    extends FilterComposer<_$DriftDb, $TbRespostaQuestaoTable> {
+  $$TbRespostaQuestaoTableFilterComposer(super.$state);
+  ColumnFilters<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idQuestao => $state.composableBuilder(
+      column: $state.table.idQuestao,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get idUsuario => $state.composableBuilder(
+      column: $state.table.idUsuario,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get resposta => $state.composableBuilder(
+      column: $state.table.resposta,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get sincronizar => $state.composableBuilder(
+      column: $state.table.sincronizar,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TbRespostaQuestaoTableOrderingComposer
+    extends OrderingComposer<_$DriftDb, $TbRespostaQuestaoTable> {
+  $$TbRespostaQuestaoTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get dataModificacao => $state.composableBuilder(
+      column: $state.table.dataModificacao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idQuestao => $state.composableBuilder(
+      column: $state.table.idQuestao,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get idUsuario => $state.composableBuilder(
+      column: $state.table.idUsuario,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get resposta => $state.composableBuilder(
+      column: $state.table.resposta,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get sincronizar => $state.composableBuilder(
+      column: $state.table.sincronizar,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class $DriftDbManager {
+  final _$DriftDb _db;
+  $DriftDbManager(this._db);
+  $$TbQuestoesTableTableManager get tbQuestoes =>
+      $$TbQuestoesTableTableManager(_db, _db.tbQuestoes);
+  $$TbAssuntosTableTableManager get tbAssuntos =>
+      $$TbAssuntosTableTableManager(_db, _db.tbAssuntos);
+  $$TbQuestaoAssuntoTableTableManager get tbQuestaoAssunto =>
+      $$TbQuestaoAssuntoTableTableManager(_db, _db.tbQuestaoAssunto);
+  $$TbTiposAlternativaTableTableManager get tbTiposAlternativa =>
+      $$TbTiposAlternativaTableTableManager(_db, _db.tbTiposAlternativa);
+  $$TbAlternativasTableTableManager get tbAlternativas =>
+      $$TbAlternativasTableTableManager(_db, _db.tbAlternativas);
+  $$TbQuestoesCadernoTableTableManager get tbQuestoesCaderno =>
+      $$TbQuestoesCadernoTableTableManager(_db, _db.tbQuestoesCaderno);
+  $$TbUsuariosTableTableManager get tbUsuarios =>
+      $$TbUsuariosTableTableManager(_db, _db.tbUsuarios);
+  $$TbClubesTableTableManager get tbClubes =>
+      $$TbClubesTableTableManager(_db, _db.tbClubes);
+  $$TbTiposPermissaoTableTableManager get tbTiposPermissao =>
+      $$TbTiposPermissaoTableTableManager(_db, _db.tbTiposPermissao);
+  $$TbClubeUsuarioTableTableManager get tbClubeUsuario =>
+      $$TbClubeUsuarioTableTableManager(_db, _db.tbClubeUsuario);
+  $$TbAtividadesTableTableManager get tbAtividades =>
+      $$TbAtividadesTableTableManager(_db, _db.tbAtividades);
+  $$TbQuestaoAtividadeTableTableManager get tbQuestaoAtividade =>
+      $$TbQuestaoAtividadeTableTableManager(_db, _db.tbQuestaoAtividade);
+  $$TbRespostaQuestaoAtividadeTableTableManager
+      get tbRespostaQuestaoAtividade =>
+          $$TbRespostaQuestaoAtividadeTableTableManager(
+              _db, _db.tbRespostaQuestaoAtividade);
+  $$TbRespostaQuestaoTableTableManager get tbRespostaQuestao =>
+      $$TbRespostaQuestaoTableTableManager(_db, _db.tbRespostaQuestao);
 }

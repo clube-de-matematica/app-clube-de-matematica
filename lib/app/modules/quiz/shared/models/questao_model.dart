@@ -28,7 +28,7 @@ class Questao {
   /// {@template app.Questao.instancias}
   /// Conjunto de todas as instâncias criadas.
   /// {@endtemplate}
-  static ObservableSet<Questao> _instancias = ObservableSet<Questao>();
+  static final ObservableSet<Questao> _instancias = ObservableSet<Questao>();
 
   /// {@macro app.Questao.instancias}
   static ObservableSet<Questao> get instancias => _instancias;
@@ -98,21 +98,21 @@ class Questao {
 
   static Future<Questao> fromDataQuestao(Map<String, dynamic> dados) async {
     final idAlfa = dados[DbConst.kDbDataQuestaoKeyIdAlfanumerico] as String;
-    final List<Assunto> _assuntos;
-    final _alternativas = <Alternativa>[];
+    final List<Assunto> assuntos;
+    final alternativas = <Alternativa>[];
 
     final idsAssuntos =
         (dados[DbConst.kDbDataQuestaoKeyAssuntos] as List).cast<int>();
     final futuros = idsAssuntos
         .map((idAssunto) => Modular.get<AssuntosRepository>().get(idAssunto));
-    _assuntos =
+    assuntos =
         (await Future.wait(futuros)).where((e) => e != null).toList().cast();
 
     final dadosAlternativas =
         dados[DbConst.kDbDataQuestaoKeyAlternativas] as List;
-    dadosAlternativas.forEach((dataAlternativa) {
-      _alternativas.add(Alternativa.fromJson(dataAlternativa));
-    });
+    for (var dataAlternativa in dadosAlternativas) {
+      alternativas.add(Alternativa.fromJson(dataAlternativa));
+    }
 
     return Questao(
       id: dados[DbConst.kDbDataQuestaoKeyId] as int,
@@ -120,10 +120,10 @@ class Questao {
       ano: dados[DbConst.kDbDataQuestaoKeyAno] as int,
       nivel: dados[DbConst.kDbDataQuestaoKeyNivel] as int,
       indice: dados[DbConst.kDbDataQuestaoKeyIndice] as int,
-      assuntos: _assuntos,
+      assuntos: assuntos,
       enunciado:
           (dados[DbConst.kDbDataQuestaoKeyEnunciado] as List).cast<String>(),
-      alternativas: _alternativas,
+      alternativas: alternativas,
       gabarito: dados[DbConst.kDbDataQuestaoKeyGabarito] as int,
       imagensEnunciado: _getImagensEnunciado(dados),
     );
@@ -133,7 +133,7 @@ class Questao {
   /// Retorna uma lista vazia se o enunciado não tiver imágem.
   /// [jsonQuestao] é o json retornado do banco de dados.
   static List<ImagemQuestao> _getImagensEnunciado(DataQuestao jsonQuestao) {
-    final _imagensEnunciado = <ImagemQuestao>[];
+    final imagensEnunciado = <ImagemQuestao>[];
     final dataImagensEnunciado =
         ((jsonQuestao[DbConst.kDbDataQuestaoKeyImagensEnunciado] ?? []) as List)
             .cast<DataImagem>();
@@ -141,30 +141,30 @@ class Questao {
       final imagemInfo = dataImagensEnunciado[i];
       imagemInfo[ImagemQuestao.kKeyName] =
           '${jsonQuestao[DbConst.kDbDataQuestaoKeyIdAlfanumerico] as String}_enunciado_$i.png';
-      _imagensEnunciado.add(ImagemQuestao.fromMap(imagemInfo));
+      imagensEnunciado.add(ImagemQuestao.fromMap(imagemInfo));
     }
-    return _imagensEnunciado;
+    return imagensEnunciado;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data[DbConst.kDbDataQuestaoKeyIdAlfanumerico] = this.idAlfanumerico;
-    data[DbConst.kDbDataQuestaoKeyNivel] = this.nivel;
-    data[DbConst.kDbDataQuestaoKeyIndice] = this.indice;
-    data[DbConst.kDbDataQuestaoKeyAno] = this.ano;
-    if (this.assuntos.isNotEmpty) {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data[DbConst.kDbDataQuestaoKeyIdAlfanumerico] = idAlfanumerico;
+    data[DbConst.kDbDataQuestaoKeyNivel] = nivel;
+    data[DbConst.kDbDataQuestaoKeyIndice] = indice;
+    data[DbConst.kDbDataQuestaoKeyAno] = ano;
+    if (assuntos.isNotEmpty) {
       data[DbConst.kDbDataQuestaoKeyAssuntos] =
-          this.assuntos.map((v) => v.id).toList();
+          assuntos.map((v) => v.id).toList();
     }
-    data[DbConst.kDbDataQuestaoKeyEnunciado] = this.enunciado;
-    if (this.alternativas.isNotEmpty) {
+    data[DbConst.kDbDataQuestaoKeyEnunciado] = enunciado;
+    if (alternativas.isNotEmpty) {
       data[DbConst.kDbDataQuestaoKeyAlternativas] =
-          this.alternativas.map((v) => v.toJson()).toList();
+          alternativas.map((v) => v.toJson()).toList();
     }
-    data[DbConst.kDbDataQuestaoKeyGabarito] = this.gabarito;
-    if (this.imagensEnunciado.isNotEmpty) {
+    data[DbConst.kDbDataQuestaoKeyGabarito] = gabarito;
+    if (imagensEnunciado.isNotEmpty) {
       data[DbConst.kDbDataQuestaoKeyImagensEnunciado] =
-          this.imagensEnunciado.map((v) => v.toMap()).toList();
+          imagensEnunciado.map((v) => v.toMap()).toList();
     }
     return data;
   }

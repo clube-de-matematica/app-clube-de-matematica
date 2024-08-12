@@ -45,8 +45,9 @@ Future<Supabase> initializeSupabase() async {
   )
     // Durante Supabase.initialize, se houver uma sessão de usuário persistente ela é retomada.
     ..then((supabase) {
-      if (supabase.client.auth.currentUser != null)
+      if (supabase.client.auth.currentUser != null) {
         AuthSupabaseRepository.setUserApp();
+      }
     });
 }
 

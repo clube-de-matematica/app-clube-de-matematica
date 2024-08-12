@@ -14,17 +14,17 @@ import 'selecionar_questoes_controller.dart';
 /// lista de questões selecionadas.
 class SelecionarQuestoesPage extends StatefulWidget {
   const SelecionarQuestoesPage({
-    Key? key,
+    super.key,
     this.questoes,
-  }) : super(key: key);
+  });
 
   final List<Questao>? questoes;
 
   @override
-  _SelecionarQuestoesPageState createState() => _SelecionarQuestoesPageState();
+  SelecionarQuestoesPageState createState() => SelecionarQuestoesPageState();
 }
 
-class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
+class SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
   late final SelecionarQuestoesController controle =
       SelecionarQuestoesController(widget.questoes ?? []);
   ThemeData get tema => Theme.of(context);
@@ -54,8 +54,9 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
     } else if (retorno == 1) {
       controle.cancelar();
       return true;
-    } else
+    } else {
       return false;
+    }
   }
 
   @override
@@ -76,7 +77,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
           },
           child: Scaffold(
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(kBottomNavigationBarHeight),
+              preferredSize: const Size.fromHeight(kBottomNavigationBarHeight),
               child: Observer(builder: (_) {
                 return AppBar(
                   title: const Text('Questões'),
@@ -93,7 +94,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     // Carregando...
-                    return Center(child: const CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else {
                     return Observer(builder: (_) {
                       if (controle.numQuestoes == 0) {
@@ -120,7 +121,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
       child: Column(
         children: [
           _construirCabecalho(),
-          Divider(
+          const Divider(
             height: 0,
             indent: 16.0,
             endIndent: 16.0,
@@ -179,6 +180,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
           Tooltip(
             message: 'Toque para alternar a seleção dessa questão',
             child: MaterialButton(
+              onPressed: controle.alterarSelecao,
               child: Observer(builder: (_) {
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
@@ -193,7 +195,6 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
                   ),
                 );
               }),
-              onPressed: controle.alterarSelecao,
             ),
           ),
         ],
@@ -203,7 +204,7 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
 
   IconButton _construirBotaoAplicar() {
     return IconButton(
-      icon: Icon(Icons.save),
+      icon: const Icon(Icons.save),
       onPressed: () {
         Navigator.of(context).pop(controle.aplicar());
       },
@@ -212,17 +213,17 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
 
   Widget _construirBotaoMenuFiltro() {
     return PopupMenuButton(
-      icon: Icon(Icons.filter_alt),
+      icon: const Icon(Icons.filter_alt),
       itemBuilder: (_) => [
         CheckboxPopupMenuItem(
           value: 1,
-          child: const Text('Mostrar somente selecionadas'),
           checked: controle.mostrarSomenteQuestoesSelecionadas,
           onChanged: (checked) {
             if (checked != null) {
               controle.mostrarSomenteQuestoesSelecionadas = checked;
             }
           },
+          child: const Text('Mostrar somente selecionadas'),
         ),
         _PopupMenuItemFiltrar(
           controle: controle,
@@ -265,11 +266,10 @@ class _SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
 }
 
 class _PopupMenuItemFiltrar extends PopupMenuEntry<int> {
-  _PopupMenuItemFiltrar({
-    Key? key,
+  const _PopupMenuItemFiltrar({
     required this.controle,
     required this.valor,
-  }) : super(key: key);
+  });
 
   final SelecionarQuestoesController controle;
   final int valor;
@@ -278,7 +278,7 @@ class _PopupMenuItemFiltrar extends PopupMenuEntry<int> {
   double get height => kMinInteractiveDimension;
 
   @override
-  bool represents(value) => value == this.valor;
+  bool represents(value) => value == valor;
 
   @override
   State<StatefulWidget> createState() => _PopupMenuItemFiltrarState();
@@ -290,8 +290,8 @@ class _PopupMenuItemFiltrarState extends State<_PopupMenuItemFiltrar> {
     return Observer(builder: (_) {
       return PopupMenuItem(
         value: widget.valor,
-        child: const Text('Filtrar'),
         enabled: !widget.controle.mostrarSomenteQuestoesSelecionadas,
+        child: const Text('Filtrar'),
       );
     });
   }

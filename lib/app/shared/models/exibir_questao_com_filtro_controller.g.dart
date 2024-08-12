@@ -9,38 +9,38 @@ part of 'exibir_questao_com_filtro_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ExibirQuestaoComFiltroController
-    on _ExibirQuestaoComFiltroControllerBase, Store {
+    on ExibirQuestaoComFiltroControllerBase, Store {
   Computed<ObservableFuture<int>>? _$_numQuestoesAssincComputed;
 
   @override
   ObservableFuture<int> get _numQuestoesAssinc =>
       (_$_numQuestoesAssincComputed ??= Computed<ObservableFuture<int>>(
               () => super._numQuestoesAssinc,
-              name: '_ExibirQuestaoComFiltroControllerBase._numQuestoesAssinc'))
+              name: 'ExibirQuestaoComFiltroControllerBase._numQuestoesAssinc'))
           .value;
   Computed<int>? _$numQuestoesComputed;
 
   @override
   int get numQuestoes =>
       (_$numQuestoesComputed ??= Computed<int>(() => super.numQuestoes,
-              name: '_ExibirQuestaoComFiltroControllerBase.numQuestoes'))
+              name: 'ExibirQuestaoComFiltroControllerBase.numQuestoes'))
           .value;
   Computed<ObservableFuture<Questao?>>? _$questaoAtualComputed;
 
   @override
   ObservableFuture<Questao?> get questaoAtual => (_$questaoAtualComputed ??=
           Computed<ObservableFuture<Questao?>>(() => super.questaoAtual,
-              name: '_ExibirQuestaoComFiltroControllerBase.questaoAtual'))
+              name: 'ExibirQuestaoComFiltroControllerBase.questaoAtual'))
       .value;
   Computed<int>? _$indiceComputed;
 
   @override
   int get indice => (_$indiceComputed ??= Computed<int>(() => super.indice,
-          name: '_ExibirQuestaoComFiltroControllerBase.indice'))
+          name: 'ExibirQuestaoComFiltroControllerBase.indice'))
       .value;
 
   late final _$_carregadoAtom = Atom(
-      name: '_ExibirQuestaoComFiltroControllerBase._carregado',
+      name: 'ExibirQuestaoComFiltroControllerBase._carregado',
       context: context);
 
   @override
@@ -57,7 +57,7 @@ mixin _$ExibirQuestaoComFiltroController
   }
 
   late final _$_questaoAtualAtom = Atom(
-      name: '_ExibirQuestaoComFiltroControllerBase._questaoAtual',
+      name: 'ExibirQuestaoComFiltroControllerBase._questaoAtual',
       context: context);
 
   @override
@@ -78,7 +78,7 @@ mixin _$ExibirQuestaoComFiltroController
   }
 
   late final _$abrirPaginaFiltrosAsyncAction = AsyncAction(
-      '_ExibirQuestaoComFiltroControllerBase.abrirPaginaFiltros',
+      'ExibirQuestaoComFiltroControllerBase.abrirPaginaFiltros',
       context: context);
 
   @override
@@ -87,42 +87,42 @@ mixin _$ExibirQuestaoComFiltroController
         .run(() => super.abrirPaginaFiltros(context));
   }
 
-  late final _$_ExibirQuestaoComFiltroControllerBaseActionController =
+  late final _$ExibirQuestaoComFiltroControllerBaseActionController =
       ActionController(
-          name: '_ExibirQuestaoComFiltroControllerBase', context: context);
+          name: 'ExibirQuestaoComFiltroControllerBase', context: context);
 
   @override
   Future<bool> recarregar() {
-    final _$actionInfo = _$_ExibirQuestaoComFiltroControllerBaseActionController
-        .startAction(name: '_ExibirQuestaoComFiltroControllerBase.recarregar');
+    final _$actionInfo = _$ExibirQuestaoComFiltroControllerBaseActionController
+        .startAction(name: 'ExibirQuestaoComFiltroControllerBase.recarregar');
     try {
       return super.recarregar();
     } finally {
-      _$_ExibirQuestaoComFiltroControllerBaseActionController
+      _$ExibirQuestaoComFiltroControllerBaseActionController
           .endAction(_$actionInfo);
     }
   }
 
   @override
   void voltar() {
-    final _$actionInfo = _$_ExibirQuestaoComFiltroControllerBaseActionController
-        .startAction(name: '_ExibirQuestaoComFiltroControllerBase.voltar');
+    final _$actionInfo = _$ExibirQuestaoComFiltroControllerBaseActionController
+        .startAction(name: 'ExibirQuestaoComFiltroControllerBase.voltar');
     try {
       return super.voltar();
     } finally {
-      _$_ExibirQuestaoComFiltroControllerBaseActionController
+      _$ExibirQuestaoComFiltroControllerBaseActionController
           .endAction(_$actionInfo);
     }
   }
 
   @override
   void avancar() {
-    final _$actionInfo = _$_ExibirQuestaoComFiltroControllerBaseActionController
-        .startAction(name: '_ExibirQuestaoComFiltroControllerBase.avancar');
+    final _$actionInfo = _$ExibirQuestaoComFiltroControllerBaseActionController
+        .startAction(name: 'ExibirQuestaoComFiltroControllerBase.avancar');
     try {
       return super.avancar();
     } finally {
-      _$_ExibirQuestaoComFiltroControllerBaseActionController
+      _$ExibirQuestaoComFiltroControllerBaseActionController
           .endAction(_$actionInfo);
     }
   }
@@ -130,12 +130,12 @@ mixin _$ExibirQuestaoComFiltroController
   @override
   void definirIndice(int valor, {bool forcar = false}) {
     final _$actionInfo =
-        _$_ExibirQuestaoComFiltroControllerBaseActionController.startAction(
-            name: '_ExibirQuestaoComFiltroControllerBase.definirIndice');
+        _$ExibirQuestaoComFiltroControllerBaseActionController.startAction(
+            name: 'ExibirQuestaoComFiltroControllerBase.definirIndice');
     try {
       return super.definirIndice(valor, forcar: forcar);
     } finally {
-      _$_ExibirQuestaoComFiltroControllerBaseActionController
+      _$ExibirQuestaoComFiltroControllerBaseActionController
           .endAction(_$actionInfo);
     }
   }

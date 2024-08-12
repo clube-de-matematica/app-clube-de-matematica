@@ -137,69 +137,69 @@ class DriftDb extends _$DriftDb {
 
   /// Retorna a data da última modificação de [tabela].
   Future<DateTime?> ultimaModificacao(Tabelas tabela) async {
-    final TableInfo _tabela;
+    final TableInfo tableInfo;
     final GeneratedColumn<int> coluna;
     switch (tabela) {
       case Tabelas.questoes:
-        _tabela = tbQuestoes;
+        tableInfo = tbQuestoes;
         coluna = tbQuestoes.dataModificacao;
         break;
       case Tabelas.assuntos:
-        _tabela = tbAssuntos;
+        tableInfo = tbAssuntos;
         coluna = tbAssuntos.dataModificacao;
         break;
       case Tabelas.questaoAssunto:
-        _tabela = tbQuestaoAssunto;
+        tableInfo = tbQuestaoAssunto;
         coluna = tbQuestaoAssunto.dataModificacao;
         break;
       case Tabelas.tiposAlternativa:
-        _tabela = tbTiposAlternativa;
+        tableInfo = tbTiposAlternativa;
         coluna = tbTiposAlternativa.dataModificacao;
         break;
       case Tabelas.alternativas:
-        _tabela = tbAlternativas;
+        tableInfo = tbAlternativas;
         coluna = tbAlternativas.dataModificacao;
         break;
       case Tabelas.questoesCaderno:
-        _tabela = tbQuestoesCaderno;
+        tableInfo = tbQuestoesCaderno;
         coluna = tbQuestoesCaderno.dataModificacao;
         break;
       case Tabelas.usuarios:
-        _tabela = tbUsuarios;
+        tableInfo = tbUsuarios;
         coluna = tbUsuarios.dataModificacao;
         break;
       case Tabelas.clubes:
-        _tabela = tbClubes;
+        tableInfo = tbClubes;
         coluna = tbClubes.dataModificacao;
         break;
       case Tabelas.tiposPermissao:
-        _tabela = tbTiposPermissao;
+        tableInfo = tbTiposPermissao;
         coluna = tbTiposPermissao.dataModificacao;
         break;
       case Tabelas.clubeUsuario:
-        _tabela = tbClubeUsuario;
+        tableInfo = tbClubeUsuario;
         coluna = tbClubeUsuario.dataModificacao;
         break;
       case Tabelas.atividades:
-        _tabela = tbAtividades;
+        tableInfo = tbAtividades;
         coluna = tbAtividades.dataModificacao;
         break;
       case Tabelas.questaoAtividade:
-        _tabela = tbQuestaoAtividade;
+        tableInfo = tbQuestaoAtividade;
         coluna = tbQuestaoAtividade.dataModificacao;
         break;
       case Tabelas.respostaQuestaoAtividade:
-        _tabela = tbRespostaQuestaoAtividade;
+        tableInfo = tbRespostaQuestaoAtividade;
         coluna = tbRespostaQuestaoAtividade.dataModificacao;
         break;
       case Tabelas.respostaQuestao:
-        _tabela = tbRespostaQuestao;
+        tableInfo = tbRespostaQuestao;
         coluna = tbRespostaQuestao.dataModificacao;
         break;
       /* default:
         return null; */
     }
-    final query = selectOnly(_tabela)..addColumns([coluna.max()]);
+    final query = selectOnly(tableInfo)..addColumns([coluna.max()]);
     final int? milissegundos;
     try {
       milissegundos = (await query.getSingleOrNull())?.read(coluna.max());
@@ -236,7 +236,7 @@ class DriftDb extends _$DriftDb {
         cleanUp: (linha) => naoInseridos.remove(linha),
       );
     } catch (erro, stack) {
-      _reportar() => _reportarErro(erro, stack, 'linhas: $naoInseridos');
+      report() => _reportarErro(erro, stack, 'linhas: $naoInseridos');
 
       if (erro is SqliteException) {
         // SQLITE_CONSTRAINT_FOREIGNKEY
@@ -247,12 +247,12 @@ class DriftDb extends _$DriftDb {
             tbAtividades,
             tbQuestaoAtividade,
             tbRespostaQuestaoAtividade,
-          ].contains(tabela);
-          if (reportar) _reportar();
+          ].contains(tabela.asDslTable);
+          if (reportar) report();
           return DriftDbResposta(erro: DriftDbErro.sqliteConstraintForeignKey);
         }
       }
-      _reportar();
+      report();
     }
     return DriftDbResposta(dados: contador);
   }
@@ -578,7 +578,7 @@ WHERE
     final privado = Sql.tbClubes.privado;
     final codigo = Sql.tbClubes.codigo;
     final capa = Sql.tbClubes.capa;
-    final usuarios = 'usuarios';
+    const usuarios = 'usuarios';
     final query = customSelect(
       r'SELECT '
       '  clubes.$id, '

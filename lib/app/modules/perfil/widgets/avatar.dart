@@ -9,11 +9,11 @@ import '../models/userapp.dart';
 class Avatar extends StatelessWidget {
   const Avatar(
     this.user, {
-    Key? key,
+    super.key,
     this.backgroundColor, // = Colors.white,//.transparent,
     this.radius,
     this.backgroundImage,
-  }) : super(key: key);
+  });
 
   final UserApp user;
   final Color? backgroundColor;
@@ -28,21 +28,23 @@ class Avatar extends StatelessWidget {
     if (backgroundImage != null) return backgroundImage;
     ImageProvider? image;
     if (user.pathAvatar != null) {
-      if (kIsWeb)
+      if (kIsWeb) {
         image = NetworkImage(user.pathAvatar!);
-      else {
+      } else {
         try {
-          if (File(user.pathAvatar!).existsSync())
+          if (File(user.pathAvatar!).existsSync()) {
             image = MemoryImage(File(user.pathAvatar!)
                 .readAsBytesSync()); //FileImage(File(user.pathAvatar));
+          }
         } catch (_) {
           image = null;
         }
       }
     }
 
-    if (image == null && user.urlAvatar != null)
+    if (image == null && user.urlAvatar != null) {
       image = NetworkImage(user.urlAvatar!);
+    }
 
     return image;
   }

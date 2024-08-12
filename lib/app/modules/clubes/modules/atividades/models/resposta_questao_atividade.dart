@@ -10,14 +10,10 @@ part 'resposta_questao_atividade.g.dart';
 class RespostaQuestaoAtividade extends _RespostaQuestaoAtividadeBase
     with _$RespostaQuestaoAtividade {
   RespostaQuestaoAtividade({
-    required int idQuestaoAtividade,
-    required int idUsuario,
-    required int? sequencial,
-  }) : super(
-          idQuestaoAtividade: idQuestaoAtividade,
-          idUsuario: idUsuario,
-          sequencial: sequencial,
-        );
+    required super.idQuestaoAtividade,
+    required super.idUsuario,
+    required super.sequencial,
+  });
 
   factory RespostaQuestaoAtividade.fromDataRespostaQuestaoAtividade(
       DataRespostaQuestaoAtividade map) {

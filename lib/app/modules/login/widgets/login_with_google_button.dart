@@ -11,15 +11,15 @@ class LoginWithGoogleButton extends StatefulWidget {
   final EdgeInsetsGeometry? margin;
 
   const LoginWithGoogleButton({
-    Key? key,
+    super.key,
     this.margin,
     required this.onPressed,
-  }) : super(key: key);
+  });
   @override
-  _LoginWithGoogleButtonState createState() => _LoginWithGoogleButtonState();
+  LoginWithGoogleButtonState createState() => LoginWithGoogleButtonState();
 }
 
-class _LoginWithGoogleButtonState extends State<LoginWithGoogleButton> {
+class LoginWithGoogleButtonState extends State<LoginWithGoogleButton> {
   ThemeData get tema => Theme.of(context);
 
   ///Tom mais escuro. Usado no "bem cindo" e no texto do botão de login com o Google.
@@ -38,7 +38,7 @@ class _LoginWithGoogleButtonState extends State<LoginWithGoogleButton> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 12.0,
             backgroundImage: AssetImage(LoginAssets.kGoogleLogo),
             backgroundColor: Colors.transparent,

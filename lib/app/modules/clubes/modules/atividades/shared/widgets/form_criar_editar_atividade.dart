@@ -15,7 +15,7 @@ typedef ValorSelecionarQuestoesFormField = List<Questao>;
 /// Formulário para a criação ou edição de uma atividade.
 class FormCriarEditarAtividade extends StatefulWidget {
   const FormCriarEditarAtividade({
-    Key? key,
+    super.key,
     this.titulo,
     this.descricao,
     this.liberacao,
@@ -23,7 +23,7 @@ class FormCriarEditarAtividade extends StatefulWidget {
     this.questoes,
     this.validarTitulo,
     this.salvar,
-  }) : super(key: key);
+  });
 
   final String? titulo;
   final String? descricao;
@@ -152,7 +152,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
       onChanged: onChanged,
       child: Builder(builder: (context) {
         final tema = Modular.get<TemaClube>();
-        final sizedBox = () => const SizedBox(height: 8.0);
+        sizedBox() => const SizedBox(height: 8.0);
         return Scaffold(
           floatingActionButton: FloatingActionButton(
             backgroundColor: tema.primaria,
@@ -245,47 +245,34 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
 /// Um [TextFormField] para inserir o título da atividade.
 class TituloAtividadeTextFormField extends AppTextFormField {
   TituloAtividadeTextFormField({
-    Key? key,
-    String? initialValue,
-    TextInputAction? textInputAction = TextInputAction.next,
-    FocusNode? focusNode,
-    void Function(String?)? onSaved,
-    String? Function(String?)? validator,
-    void Function(String)? onFieldSubmitted,
+    super.key,
+    super.initialValue,
+    super.textInputAction = TextInputAction.next,
+    super.focusNode,
+    super.onSaved,
+    super.validator,
+    super.onFieldSubmitted,
   }) : super(
-          key: key,
-          initialValue: initialValue,
-          textInputAction: textInputAction,
-          focusNode: focusNode,
           maxLength: 50,
           labelText: 'Título',
           hintText: 'Título da atividade',
-          onSaved: onSaved,
-          validator: validator,
-          onFieldSubmitted: onFieldSubmitted,
         );
 }
 
 /// Um [TextFormField] para inserir a descrição da atividade.
 class DescricaoAtividadeTextFormField extends AppTextFormField {
   DescricaoAtividadeTextFormField({
-    Key? key,
-    String? initialValue,
-    TextInputAction? textInputAction = TextInputAction.next,
-    FocusNode? focusNode,
-    void Function(String?)? onSaved,
-    void Function(String)? onFieldSubmitted,
+    super.key,
+    super.initialValue,
+    super.textInputAction = TextInputAction.next,
+    super.focusNode,
+    super.onSaved,
+    super.onFieldSubmitted,
   }) : super(
-          key: key,
-          initialValue: initialValue,
-          textInputAction: textInputAction,
-          focusNode: focusNode,
           maxLength: 200,
           maxLines: 5,
           labelText: 'Descrição',
           hintText: 'Descrição da atividade',
-          onSaved: onSaved,
-          onFieldSubmitted: onFieldSubmitted,
         );
 }
 
@@ -309,10 +296,11 @@ DateTime _efetivoLimiteSuperior({
     limiteInferior: limiteInferior,
     dataInicial: dataInicial,
   );
-  limiteSuperior ??= efetivoLimiteInferior.add(Duration(days: 364));
+  limiteSuperior ??= efetivoLimiteInferior.add(const Duration(days: 364));
   if (dataInicial != null) {
-    if (dataInicial.isAfter(limiteSuperior))
-      return dataInicial.add(Duration(days: 364));
+    if (dataInicial.isAfter(limiteSuperior)) {
+      return dataInicial.add(const Duration(days: 364));
+    }
   }
   return limiteSuperior;
 }
@@ -320,18 +308,16 @@ DateTime _efetivoLimiteSuperior({
 /// Um [TextFormField] para inserir a data de liberação da atividade.
 class DataLiberacaoAtividadeTextFormField extends AppInputDatePickerFormField {
   DataLiberacaoAtividadeTextFormField({
-    Key? key,
-    DateTime? initialDate,
+    super.key,
+    super.initialDate,
     DateTime? firstDate,
     DateTime? lastDate,
-    TextInputAction? textInputAction,
-    FocusNode? focusNode,
+    super.textInputAction,
+    super.focusNode,
     void Function(DateTime?)? onSaved,
     void Function(DateTime?)? onFieldSubmitted,
-    bool Function(DateTime)? selectableDayPredicate,
+    super.selectableDayPredicate,
   }) : super(
-          key: key,
-          initialDate: initialDate,
           firstDate: _efetivoLimiteInferior(
             limiteInferior: firstDate,
             dataInicial: initialDate,
@@ -341,13 +327,10 @@ class DataLiberacaoAtividadeTextFormField extends AppInputDatePickerFormField {
             dataInicial: initialDate,
             limiteSuperior: lastDate,
           ),
-          textInputAction: textInputAction,
           fieldLabelText: 'Data de liberação',
           errorInvalidText: 'Fora do intervalo',
-          focusNode: focusNode,
           onDateSaved: onSaved,
           onDateSubmitted: onFieldSubmitted,
-          selectableDayPredicate: selectableDayPredicate,
         );
 }
 
@@ -355,18 +338,16 @@ class DataLiberacaoAtividadeTextFormField extends AppInputDatePickerFormField {
 class DataEncerramentoAtividadeTextFormField
     extends AppInputDatePickerFormField {
   DataEncerramentoAtividadeTextFormField({
-    Key? key,
-    DateTime? initialDate,
+    super.key,
+    super.initialDate,
     DateTime? firstDate,
     DateTime? lastDate,
-    TextInputAction? textInputAction,
-    FocusNode? focusNode,
+    super.textInputAction,
+    super.focusNode,
     void Function(DateTime?)? onSaved,
     void Function(DateTime?)? onFieldSubmitted,
-    bool Function(DateTime)? selectableDayPredicate,
+    super.selectableDayPredicate,
   }) : super(
-          key: key,
-          initialDate: initialDate,
           firstDate: _efetivoLimiteInferior(
             limiteInferior: firstDate,
             dataInicial: initialDate,
@@ -376,14 +357,11 @@ class DataEncerramentoAtividadeTextFormField
             dataInicial: initialDate,
             limiteSuperior: lastDate,
           ),
-          textInputAction: textInputAction,
           fieldLabelText: 'Data de encerramento',
           errorInvalidText: 'Fora do intervalo',
-          focusNode: focusNode,
           nullable: true,
           onDateSaved: onSaved,
           onDateSubmitted: onFieldSubmitted,
-          selectableDayPredicate: selectableDayPredicate,
         );
 }
 
@@ -391,13 +369,11 @@ class DataEncerramentoAtividadeTextFormField
 class SelecionarQuestoesFormField
     extends FormField<ValorSelecionarQuestoesFormField> {
   SelecionarQuestoesFormField({
-    Key? key,
+    super.key,
     ValorSelecionarQuestoesFormField? questoes,
     FocusNode? focusNode,
-    void Function(ValorSelecionarQuestoesFormField?)? onSaved,
+    super.onSaved,
   }) : super(
-          key: key,
-          onSaved: onSaved,
           initialValue: questoes,
           builder: (field) {
             return Builder(builder: (context) {
@@ -410,7 +386,7 @@ class SelecionarQuestoesFormField
                   filled: inputTheme.filled,
                   labelText: 'Questões',
                   suffixIcon: IconButton(
-                    icon: Icon(Icons.chevron_right),
+                    icon: const Icon(Icons.chevron_right),
                     onPressed: () async {
                       FocusScope.of(context).unfocus();
                       // Se retornar `null`, a página foi fechada sem confimar a seleção.

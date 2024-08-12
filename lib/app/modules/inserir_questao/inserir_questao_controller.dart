@@ -17,10 +17,10 @@ import 'assuntos/selecionar_assuntos_controller.dart';
 
 part 'inserir_questao_controller.g.dart';
 
-class InserirQuestaoController = _InserirQuestaoControllerBase
+class InserirQuestaoController = InserirQuestaoControllerBase
     with _$InserirQuestaoController;
 
-abstract class _InserirQuestaoControllerBase with Store {
+abstract class InserirQuestaoControllerBase with Store {
   int? ano;
   @observable
   int? nivel;
@@ -73,22 +73,30 @@ abstract class _InserirQuestaoControllerBase with Store {
 
   Future<Questao?> _questaoReferencia() async {
     if (!referencia) return null;
-    _indice() {
+    indice() {
       final texto = indiceReferencia.toString();
       return texto.length == 1 ? '0$texto' : texto;
     }
 
     final lista = await _dbServicos.obterQuestoes(
-      ids: ['${ano}PF1N${nivelReferencia}Q${_indice()}'],
+      ids: ['${ano}PF1N${nivelReferencia}Q${indice()}'],
       limit: 1,
     );
     return lista.isEmpty ? null : lista.single;
   }
 
   Future<Questao?> questao() async {
-    _indice() {
-      final texto = indice.toString();
-      return texto.length == 1 ? '0$texto' : texto;
+    idAlfanumerico() {
+      var idParts = [
+        '${ano!}', //Ano
+        'PF1', //Fase
+        'N${nivel!}', //Nível
+        'Q${() {
+          final texto = indice.toString();
+          return texto.length == 1 ? '0$texto' : texto;
+        }()}', // Questão
+      ];
+      return idParts.join("");
     }
 
     final ref = await _questaoReferencia();
@@ -96,7 +104,7 @@ abstract class _InserirQuestaoControllerBase with Store {
     try {
       return Questao.noSingleton(
         id: -1,
-        idAlfanumerico: '${ano!}PF1N${nivel!}Q${_indice()}',
+        idAlfanumerico: idAlfanumerico(),
         ano: ano!,
         nivel: nivel!,
         indice: indice!,
@@ -132,7 +140,7 @@ abstract class _InserirQuestaoControllerBase with Store {
   }
 
   Future<ImagemQuestao?> getImagemAlternativa(int sequencial) async {
-    final keyConteudo = DbConst.kDbDataAlternativaKeyConteudo;
+    const keyConteudo = DbConst.kDbDataAlternativaKeyConteudo;
     /* final conteudo = alternativas[sequencial][keyConteudo] as String?;
     if (conteudo != null) {
       final dados = jsonDecode(conteudo) as Map;
@@ -162,7 +170,7 @@ abstract class _InserirQuestaoControllerBase with Store {
     //print('------------------- ${bytes.lengthInBytes / 1024}');
 
     final completador = Completer<ui.Image>();
-    MemoryImage(bytes).resolve(ImageConfiguration()).addListener(
+    MemoryImage(bytes).resolve(const ImageConfiguration()).addListener(
       ImageStreamListener((info, _) {
         if (!completador.isCompleted) completador.complete(info.image);
       }),
@@ -218,10 +226,10 @@ abstract class _InserirQuestaoControllerBase with Store {
     indice = null;
     assuntos.clear();
     enunciado.clear();
-    alternativas.forEach((element) {
+    for (var element in alternativas) {
       element.remove(DbConst.kDbDataAlternativaKeyConteudo);
       element.remove(DbConst.kDbDataAlternativaKeyTipo);
-    });
+    }
     gabarito = null;
     imagensEnunciado.clear();
     referencia = false;

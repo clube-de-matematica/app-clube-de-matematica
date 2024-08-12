@@ -29,7 +29,7 @@ class KaTeX extends StatelessWidget {
   ////////////////ALTERADO/////////////////
 
   KaTeX({
-    Key? key,
+    super.key,
     required this.laTeXCode,
     this.delimiter = r'$',
     this.displayDelimiter = r'$$',
@@ -52,30 +52,32 @@ class KaTeX extends StatelessWidget {
 
     int lastTextEnd = 0;
 
-    matches.forEach((laTeXMatch) {
+    for (var laTeXMatch in matches) {
       // If there is an offset between the lat match (beginning of the [String] in first case), first adding the found [Text]
       // Se houver um deslocamento entre a última correspondência (início de [String] no primeiro caso), primeiro adicionando o [Texto] encontrado
-      if (laTeXMatch.start > lastTextEnd)
+      if (laTeXMatch.start > lastTextEnd) {
         _blocosDoTexto.add(
             TextSpan(text: laTeXCode.substring(lastTextEnd, laTeXMatch.start)));
+      }
       // Adding the [CaTeX] widget to the children
-      if (laTeXMatch.group(3) != null)
+      if (laTeXMatch.group(3) != null) {
         _blocosDoTexto.add(WidgetSpan(
             alignment: PlaceholderAlignment.middle,
             child: Math.tex(laTeXMatch.group(3)!.trim())));
-      else if (laTeXMatch.group(6) != null)
+      } else if (laTeXMatch.group(6) != null) {
         _blocosDoTexto.addAll([
-          TextSpan(text: '\n'),
+          const TextSpan(text: '\n'),
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
             child: DefaultTextStyle.merge(
                 child: Math.tex(laTeXMatch.group(6)!.trim())),
             style: style,
           ),
-          TextSpan(text: '\n')
+          const TextSpan(text: '\n')
         ]);
+      }
       lastTextEnd = laTeXMatch.end;
-    });
+    }
 
     // If there is any text left after the end of the last match, adding it to children
     if (lastTextEnd < laTeXCode.length) {

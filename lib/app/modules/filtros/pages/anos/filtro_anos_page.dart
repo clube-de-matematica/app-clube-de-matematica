@@ -13,20 +13,22 @@ import 'filtro_anos_controller.dart';
 /// Página onde são listados os anos disponíveis para filtragem.
 class FiltroAnosPage extends StatelessWidget {
   FiltroAnosPage({
-    Key? key,
+    super.key,
     required Filtros filtrosSalvos,
     required Filtros filtrosTemp,
   })  : controle = FiltroAnosController(
           filtrosSalvos: filtrosSalvos,
           filtrosTemp: filtrosTemp,
-        ),
-        super(key: key);
+        );
 
   final FiltroAnosController controle;
 
   /// Exibe um [InputChip] para cada filtro selecionado.
   FiltrosSelecionados _construirCaixaFiltrosSelecionados() {
     return FiltrosSelecionados(
+      trailing: Observer(builder: (_) {
+        return FiltroChipContador(controle.totalSelecinado.toString());
+      }),
       child: Observer(builder: (_) {
         final chips = controle.selecionados.map((opcao) {
           return InputChip(
@@ -34,10 +36,7 @@ class FiltroAnosPage extends StatelessWidget {
             onDeleted: () => controle.remover(opcao),
           );
         }).toList();
-        return Wrap(children: chips, spacing: 8);
-      }),
-      trailing: Observer(builder: (_) {
-        return FiltroChipContador(controle.totalSelecinado.toString());
+        return Wrap(spacing: 8, children: chips);
       }),
     );
   }
@@ -78,14 +77,14 @@ class FiltroAnosPage extends StatelessWidget {
                   );
                 });
               },
-              separatorBuilder: (_, __) => Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: const Divider(height: double.minPositive),
+              separatorBuilder: (_, __) => const Padding(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                child: Divider(height: double.minPositive),
               ),
             ),
           );
         }
-        return Center(child: const CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

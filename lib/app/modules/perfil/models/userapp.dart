@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:async';
 import 'dart:io';
 
@@ -89,12 +91,12 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     String? pathAvatar,
     String? urlAvatar,
   }) {
-    this._id = id;
+    _id = id;
     FirebaseCrashlytics.instance.setUserIdentifier('$id');
-    this._name = name;
-    this._email = email;
-    this._pathAvatar = pathAvatar;
-    this._urlAvatar = urlAvatar;
+    _name = name;
+    _email = email;
+    _pathAvatar = pathAvatar;
+    _urlAvatar = urlAvatar;
   }
 
   @action
@@ -179,15 +181,16 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
     final condition = pathAvatar?.isNotEmpty ?? true;
     assert(condition);
     if (condition) {
-      if (kIsWeb)
+      if (kIsWeb) {
         _pathAvatar = pathAvatar;
-      else {
+      } else {
         if (pathAvatar != null) {
           _saveImageAvatar(pathAvatar).then((file) {
-            if (file != null)
+            if (file != null) {
               _pathAvatar = file.path;
-            else
+            } else {
               _pathAvatar = pathAvatar;
+            }
             notifyListeners();
           });
         }
@@ -218,10 +221,10 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   /// [path] é o path da origem do arquivo.
   /// Retorna `null` se o arquivo em [path] não for salvo com sucesso.
   Future<File?> _saveImageAvatar(String path) async {
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyException(
           "Salvar localmente a imagem do usúário não está disponível na verção web.");
-    else {
+    } else {
       final newRelativePath =
           _DIR_AVATAR + _AVATAR_IMAGE_NAME + File(path).extension();
       _deleteImageAvatar();
@@ -236,12 +239,12 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   /// Se existir, exclui o arquivo com a imágem usada no avatar.
   /// Retorna, assincronamente, `false` se o arquivo não for encontrado ou se ocorrer um erro.
   Future<bool> _deleteImageAvatar() async {
-    if (kIsWeb)
+    if (kIsWeb) {
       throw MyException(
           "Deletar localmente a imagem do usúário não está disponível na verção web.");
-    else {
+    } else {
       final images = await LocalStorageRepository.find(
-          relativePath: _DIR_AVATAR + _AVATAR_IMAGE_NAME + ".*");
+          relativePath: "$_DIR_AVATAR$_AVATAR_IMAGE_NAME.*");
       return LocalStorageRepository.delete(fileList: images);
     }
   }
@@ -256,12 +259,12 @@ abstract class _UserAppBase extends ChangeNotifier with Store {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data[ID] = this._id ?? "";
-    data[NOME] = this._name ?? "";
-    data[EMAIL] = this._email ?? "";
-    data[PATH_AVATAR] = this._pathAvatar ?? "";
-    data[URL_AVATAR] = this._urlAvatar ?? "";
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data[ID] = _id ?? "";
+    data[NOME] = _name ?? "";
+    data[EMAIL] = _email ?? "";
+    data[PATH_AVATAR] = _pathAvatar ?? "";
+    data[URL_AVATAR] = _urlAvatar ?? "";
     return data;
   }
 

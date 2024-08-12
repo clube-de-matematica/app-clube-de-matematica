@@ -7,14 +7,10 @@ part 'resposta_questao.g.dart';
 /// Modelo para as respostas dos usuários às questões.
 class RespostaQuestao extends _RespostaQuestaoBase with _$RespostaQuestao {
   RespostaQuestao({
-    required int idQuestao,
-    required int? idUsuario,
-    required int? sequencial,
-  }) : super(
-          idQuestao: idQuestao,
-          idUsuario: idUsuario,
-          sequencial: sequencial,
-        );
+    required super.idQuestao,
+    required super.idUsuario,
+    required super.sequencial,
+  });
 
   factory RespostaQuestao.fromDataRespostaQuestao(DataRespostaQuestao map) {
     return RespostaQuestao(

@@ -10,11 +10,11 @@ import '../home_clubes_controller.dart';
 
 class ClubeCard extends StatelessWidget {
   const ClubeCard({
-    Key? key,
+    super.key,
     required this.clube,
     required this.onTap,
     required this.controller,
-  }) : super(key: key);
+  });
   final Clube clube;
   final VoidCallback onTap;
   final HomeClubesController controller;
@@ -40,8 +40,9 @@ class ClubeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: onTap,
       child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: 160.0),
+        constraints: const BoxConstraints(minHeight: 160.0),
         child: Observer(builder: (_) {
           return Card(
             color: clube.capa,
@@ -72,7 +73,6 @@ class ClubeCard extends StatelessWidget {
           );
         }),
       ),
-      onTap: onTap,
     );
   }
 

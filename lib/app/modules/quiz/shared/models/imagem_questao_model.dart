@@ -14,17 +14,12 @@ part 'imagem_questao_model.g.dart';
 ///Modelo para as imágens usadas no enunciado e nas alternativas das questões.
 class ImagemQuestao extends _ImagemQuestaoBase with _$ImagemQuestao {
   ImagemQuestao({
-    required String name,
-    required String base64,
-    required double width,
-    required double height,
-  }) : super(
-          name: name,
-          base64: base64,
-          width: width,
-          height: height,
-        );
-  ImagemQuestao.fromMap(Map<String, dynamic> map) : super.fromMap(map);
+    required super.name,
+    required super.base64,
+    required super.width,
+    required super.height,
+  });
+  ImagemQuestao.fromMap(super.map) : super.fromMap();
 
   /// Chave para [name] em objetos json.
   static const kKeyName = 'name';
@@ -48,11 +43,11 @@ abstract class _ImagemQuestaoBase with Store {
         height = map[DbConst.kDbDataImagemKeyAltura] * 1.0;
 
   Map<String, dynamic> toMap({bool includeName = false}) {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (includeName) data[ImagemQuestao.kKeyName] = this.name;
-    data[DbConst.kDbDataImagemKeyBase64] = this.base64;
-    data[DbConst.kDbDataImagemKeyLargura] = this.width;
-    data[DbConst.kDbDataImagemKeyAltura] = this.height;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (includeName) data[ImagemQuestao.kKeyName] = name;
+    data[DbConst.kDbDataImagemKeyBase64] = base64;
+    data[DbConst.kDbDataImagemKeyLargura] = width;
+    data[DbConst.kDbDataImagemKeyAltura] = height;
     return data;
   }
 
@@ -99,9 +94,9 @@ abstract class _ImagemQuestaoBase with Store {
 
   /// Atribui o valor da propriedade [provider].
   Future<void> _definirProvedorImagem() async {
-    if (kIsWeb)
+    if (kIsWeb) {
       provider = MemoryImage(uint8List, scale: 0.99);
-    else {
+    } else {
       final file = await _getImagemFile();
       provider = file != null
           ? FileImage(file, scale: 0.99)

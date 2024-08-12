@@ -13,7 +13,7 @@ import 'widgets/aba_pessoas_page.dart';
 
 /// Página para exibir o [clube].
 class ClubePage extends WidgetModule {
-  ClubePage(this.clube, {Key? key});
+  ClubePage(this.clube, {super.key});
 
   final Clube clube;
 
@@ -24,12 +24,12 @@ class ClubePage extends WidgetModule {
       ];
 
   @override
-  Widget get view => _ClubePage();
+  Widget get view => const _ClubePage();
 }
 
 /// Página para exibir o [clube].
 class _ClubePage extends StatefulWidget {
-  const _ClubePage({Key? key}) : super(key: key);
+  const _ClubePage();
 
   @override
   _ClubePageState createState() => _ClubePageState();
@@ -50,7 +50,7 @@ class _ClubePageState extends State<_ClubePage> {
           child: ScaffoldWithDrawer(
             page: AppDrawerPage.clubes,
             appBar: _buildAppBar(),
-            body: TabBarView(
+            body: const TabBarView(
               children: [
                 AtividadesPage(),
                 PessoasPage(),
@@ -75,13 +75,21 @@ class _ClubePageState extends State<_ClubePage> {
               final sair = controller.sair();
               await BottomSheetCarregando(future: sair)
                   .showModal<bool>(context);
-              if (await sair) Navigator.pop(context);
+              if (await sair) {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              }
             },
             onExcluir: () async {
               final excluir = controller.excluir();
               await BottomSheetCarregando(future: excluir)
                   .showModal<bool>(context);
-              if (await excluir) Navigator.pop(context);
+              if (await excluir) {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              }
             },
             onEditar: () => controller.abrirPaginaEditarClube(context),
             onCompartilharCodigo: () {},

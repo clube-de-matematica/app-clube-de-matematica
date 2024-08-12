@@ -38,7 +38,7 @@ class QuizModule extends Module {
   // Lista de rotas.
   List<ModularRoute> get routes => [
         //ChildRoute(Modular.initialRoute, child: (_, __) => QuizPage()),
-        ChildRoute(kRelativeRouteQuizPage, child: (_, __) => QuizPage()),
+        ChildRoute(kRelativeRouteQuizPage, child: (_, __) => const QuizPage()),
         ModuleRoute(FiltrosModule.kRelativeRouteModule,
             module: FiltrosModule()),
       ];

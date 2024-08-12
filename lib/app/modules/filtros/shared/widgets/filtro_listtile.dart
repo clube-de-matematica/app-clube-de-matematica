@@ -6,13 +6,12 @@ class FiltroListTile extends ListTile {
   /// [selecionado] define o estado do indicador de seleção do elemento.
   /// [onTap] é a ação a ser executada quando o elemento for clicado.
   FiltroListTile({
-    Key? key,
+    super.key,
     required String titulo,
     required bool selecionado,
-    required VoidCallback onTap,
+    required VoidCallback super.onTap,
     EdgeInsetsGeometry? contentPadding,
   }) : super(
-          key: key,
           contentPadding:
               contentPadding ?? const EdgeInsets.fromLTRB(24, 0, 24, 0),
           title: Builder(
@@ -31,6 +30,5 @@ class FiltroListTile extends ListTile {
                       : Colors.transparent);
             },
           ),
-          onTap: onTap,
         );
 }

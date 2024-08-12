@@ -9,12 +9,13 @@ import '../../shared/widgets/botoes.dart';
 import '../../shared/widgets/katex_flutter.dart';
 import '../../shared/widgets/questao_widget.dart';
 import '../quiz/shared/models/imagem_questao_model.dart';
+import '../quiz/shared/models/questao_model.dart';
 import 'assuntos/selecionar_assuntos_controller.dart';
 import 'assuntos/selecionar_assuntos_page.dart';
 import 'inserir_questao_controller.dart';
 
 class InserirQuestaoPage extends StatefulWidget {
-  InserirQuestaoPage({Key? key}) : super(key: key);
+  const InserirQuestaoPage({super.key});
 
   @override
   State<InserirQuestaoPage> createState() => _InserirQuestaoPageState();
@@ -36,7 +37,65 @@ class _InserirQuestaoPageState extends State<InserirQuestaoPage> {
 
   @override
   Widget build(BuildContext context) {
-    diviver() => Divider();
+    diviver() => const Divider();
+
+    onPressedInsert(Questao questao) async {
+      if (inserindo) return;
+      inserindo = true;
+      final futuro = controle.inserirQuestao(questao);
+      await BottomSheetCarregando(future: futuro).showModal(context);
+      final questaoInserida = await futuro;
+      if (questaoInserida != null) {
+        if (context.mounted) {
+          await AppBottomSheet(
+            isScrollControlled: true,
+            maximize: true,
+            content: QuestaoWidget(
+              questao: questaoInserida,
+              selecionavel: false,
+              rolavel: false,
+              verificar: true,
+            ),
+          ).showModal(context);
+        }
+        controleAno.text = '';
+        if (context.mounted) {
+          setState(() {});
+        }
+      }
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+      inserindo = false;
+    }
+
+    onPressedView() async {
+      final questao = await controle.questao();
+      if (questao != null) {
+        if (context.mounted) {
+          AppBottomSheet(
+            isScrollControlled: true,
+            maximize: true,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                QuestaoWidget(
+                  questao: questao,
+                  selecionavel: false,
+                  rolavel: false,
+                  verificar: true,
+                ),
+                BotaoPrimario(
+                  label: 'Inserir',
+                  onPressed: () => onPressedInsert(questao),
+                )
+              ],
+            ),
+          ).showModal(context);
+        }
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
@@ -45,7 +104,7 @@ class _InserirQuestaoPageState extends State<InserirQuestaoPage> {
           TextField(
             keyboardType: TextInputType.number,
             controller: controleAno,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Ano',
               hintText: 'Ano de aplicação da questão',
               floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -79,53 +138,7 @@ class _InserirQuestaoPageState extends State<InserirQuestaoPage> {
           diviver(),
           BotaoPrimario(
             label: 'Visualizar',
-            onPressed: () async {
-              final questao = await controle.questao();
-              if (questao != null) {
-                AppBottomSheet(
-                  isScrollControlled: true,
-                  maximize: true,
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      QuestaoWidget(
-                        questao: questao,
-                        selecionavel: false,
-                        rolavel: false,
-                        verificar: true,
-                      ),
-                      BotaoPrimario(
-                        label: 'Inserir',
-                        onPressed: () async {
-                          if (inserindo) return;
-                          inserindo = true;
-                          final futuro = controle.inserirQuestao(questao);
-                          await BottomSheetCarregando(future: futuro)
-                              .showModal(context);
-                          final _questao = await futuro;
-                          if (_questao != null) {
-                            await AppBottomSheet(
-                              isScrollControlled: true,
-                              maximize: true,
-                              content: QuestaoWidget(
-                                questao: _questao,
-                                selecionavel: false,
-                                rolavel: false,
-                                verificar: true,
-                              ),
-                            ).showModal(context);
-                            controleAno.text = '';
-                            setState(() {});
-                          }
-                          Navigator.of(context).pop();
-                          inserindo = false;
-                        },
-                      )
-                    ],
-                  ),
-                ).showModal(context);
-              }
-            },
+            onPressed: onPressedView,
           )
         ],
       ),
@@ -135,10 +148,9 @@ class _InserirQuestaoPageState extends State<InserirQuestaoPage> {
 
 class _NivelIndice extends StatefulWidget {
   const _NivelIndice({
-    Key? key,
     required this.controle,
     this.referencia = false,
-  }) : super(key: key);
+  });
 
   final InserirQuestaoController controle;
   final bool referencia;
@@ -150,10 +162,10 @@ class _NivelIndice extends StatefulWidget {
 class _NivelIndiceState extends State<_NivelIndice> {
   final controleIndice = TextEditingController();
   String? _textoIndice() {
-    final _indice = widget.referencia
+    final indice = widget.referencia
         ? widget.controle.indiceReferencia
         : widget.controle.indice;
-    return _indice == null ? null : '$_indice';
+    return indice == null ? null : '$indice';
   }
 
   @override
@@ -165,7 +177,7 @@ class _NivelIndiceState extends State<_NivelIndice> {
   @override
   Widget build(BuildContext context) {
     controleIndice.text = _textoIndice() ?? '';
-    diviver() => Divider();
+    diviver() => const Divider();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -225,15 +237,14 @@ class _NivelIndiceState extends State<_NivelIndice> {
 
 class _AssuntosEnunciadoAlternativas extends StatelessWidget {
   const _AssuntosEnunciadoAlternativas({
-    Key? key,
     required this.controle,
-  }) : super(key: key);
+  });
 
   final InserirQuestaoController controle;
 
   @override
   Widget build(BuildContext context) {
-    diviver() => Divider();
+    diviver() => const Divider();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -244,8 +255,8 @@ class _AssuntosEnunciadoAlternativas extends StatelessWidget {
         diviver(),
         _Alternativas(controle: controle),
         diviver(),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 8.0),
           child: Text('Gabarito:'),
         ),
         Row(
@@ -271,9 +282,8 @@ class _AssuntosEnunciadoAlternativas extends StatelessWidget {
 
 class _Alternativas extends StatefulWidget {
   const _Alternativas({
-    Key? key,
     required this.controle,
-  }) : super(key: key);
+  });
 
   final InserirQuestaoController controle;
 
@@ -282,7 +292,7 @@ class _Alternativas extends StatefulWidget {
 }
 
 class _AlternativasState extends State<_Alternativas> {
-  final controlesTexto = Map<int, TextEditingController>();
+  final controlesTexto = <int, TextEditingController>{};
 
   @override
   void dispose() {
@@ -293,10 +303,10 @@ class _AlternativasState extends State<_Alternativas> {
   @override
   Widget build(BuildContext context) {
     alternativa(int sequencial) {
-      final keyConteudo = DbConst.kDbDataAlternativaKeyConteudo;
-      final keyTipo = DbConst.kDbDataAlternativaKeyTipo;
-      final idTexto = DbConst.kDbDataAlternativaKeyTipoValTexto;
-      final idImagem = DbConst.kDbDataAlternativaKeyTipoValImagem;
+      const keyConteudo = DbConst.kDbDataAlternativaKeyConteudo;
+      const keyTipo = DbConst.kDbDataAlternativaKeyTipo;
+      const idTexto = DbConst.kDbDataAlternativaKeyTipoValTexto;
+      const idImagem = DbConst.kDbDataAlternativaKeyTipoValImagem;
 
       idTipo() => widget.controle.alternativas[sequencial][keyTipo] as int?;
 
@@ -325,7 +335,7 @@ class _AlternativasState extends State<_Alternativas> {
           return TextField(
             controller: textControle,
             maxLines: null,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: r'Use "$" ou "$$" para delimitar LaTex',
             ),
             onChanged: (valor) {
@@ -360,7 +370,7 @@ class _AlternativasState extends State<_Alternativas> {
       }
 
       return ListTile(
-        contentPadding: EdgeInsets.all(.0),
+        contentPadding: const EdgeInsets.all(.0),
         leading: CircleAvatar(
           child: Text('ABCDE'.substring(sequencial, sequencial + 1)),
         ),
@@ -390,9 +400,8 @@ class _AlternativasState extends State<_Alternativas> {
 
 class _Assuntos extends StatelessWidget {
   const _Assuntos({
-    Key? key,
     required this.controle,
-  }) : super(key: key);
+  });
 
   final InserirQuestaoController controle;
 
@@ -406,10 +415,10 @@ class _Assuntos extends StatelessWidget {
           const Text('Assunto(s):'),
           ...controle.assuntos.toList().map((e) {
             return ListTile(
-              contentPadding: EdgeInsets.all(.0),
+              contentPadding: const EdgeInsets.all(.0),
               title: Text(e.assunto.titulo),
               trailing: IconButton(
-                icon: Icon(Icons.close),
+                icon: const Icon(Icons.close),
                 onPressed: () {
                   controle.assuntos.remove(e);
                 },
@@ -434,9 +443,8 @@ class _Assuntos extends StatelessWidget {
 
 class _Enunciado extends StatefulWidget {
   const _Enunciado({
-    Key? key,
     required this.controle,
-  }) : super(key: key);
+  });
 
   final InserirQuestaoController controle;
 
@@ -445,7 +453,7 @@ class _Enunciado extends StatefulWidget {
 }
 
 class _EnunciadoState extends State<_Enunciado> {
-  final controlesTexto = Map<int, TextEditingController>();
+  final controlesTexto = <int, TextEditingController>{};
 
   @override
   void dispose() {
@@ -459,9 +467,9 @@ class _EnunciadoState extends State<_Enunciado> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: const Text('Enunciado:'),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 8.0),
+          child: Text('Enunciado:'),
         ),
         ..._construirPartes(),
         IconButton(
@@ -512,10 +520,10 @@ class _EnunciadoState extends State<_Enunciado> {
         indiceImaggem++;
         final imagem = widget.controle.imagensEnunciado[indiceImaggem];
         return ListTile(
-          contentPadding: EdgeInsets.all(.0),
+          contentPadding: const EdgeInsets.all(.0),
           title: ImagemQuestaoWidget(imagem),
           trailing: IconButton(
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             onPressed: () {
               widget.controle.enunciado.removeAt(indice);
               widget.controle.imagensEnunciado.remove(imagem);
@@ -527,41 +535,39 @@ class _EnunciadoState extends State<_Enunciado> {
         final textControle =
             controlesTexto[indice] ?? TextEditingController(text: texto);
         final valorTexto = ValueNotifier<String?>(textControle.text);
-        return Container(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: textControle,
-                maxLines: null,
-                decoration: InputDecoration(
-                  hintText: r'Use "$" ou "$$" para delimitar LaTex',
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () {
-                      widget.controle.enunciado.removeAt(indice);
-                      setState(() {});
-                    },
-                  ),
-                ),
-                onChanged: (valor) {
-                  valorTexto.value = valor;
-                  widget.controle.enunciado[indice] = valor;
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: ValueListenableBuilder(
-                  valueListenable: valorTexto,
-                  builder: (_, String? valor, __) {
-                    return KaTeX(laTeXCode: valor ?? '');
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: textControle,
+              maxLines: null,
+              decoration: InputDecoration(
+                hintText: r'Use "$" ou "$$" para delimitar LaTex',
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    widget.controle.enunciado.removeAt(indice);
+                    setState(() {});
                   },
                 ),
               ),
-            ],
-          ),
+              onChanged: (valor) {
+                valorTexto.value = valor;
+                widget.controle.enunciado[indice] = valor;
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: ValueListenableBuilder(
+                valueListenable: valorTexto,
+                builder: (_, String? valor, __) {
+                  return KaTeX(laTeXCode: valor ?? '');
+                },
+              ),
+            ),
+          ],
         );
       }
     }
