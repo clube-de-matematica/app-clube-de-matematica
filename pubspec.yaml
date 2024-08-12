@@ -38,12 +38,12 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  firebase_core: ^2.32.0 #2.25.5 #Recursos básicos
+  firebase_core: ^3.3.0 #2.32.0 #Recursos básicos
   #firebase_storage: ^9.0.0 #Armazenamento de arquivos
   #cloud_firestore: ^2.1.0 #Banco de dados
   #firebase_auth: ^2.0.0 #Autenticação
   google_sign_in: ^6.2.1 #6.1.4 #Login com uma conta Google
-  firebase_crashlytics: ^3.5.7 #3.4.16 #Relatório de erros
+  firebase_crashlytics: ^4.0.4 #3.5.7 #Relatório de erros
   #catex: ^0.0.1+8 #^0.0.1+6
   flutter_math_fork: ^0.7.2 #0.6.3+1 #Renderização de equações matemáticas em puro Dart & Flutter.
   #progressive_image: ^2.0.0 #Um widget de vibração que carrega progressivamente imagens grandes usando espaços reservados para imagens de baixa qualidade.
