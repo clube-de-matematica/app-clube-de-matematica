@@ -18,6 +18,8 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       (data) {
         final AuthChangeEvent event = data.event;
         switch (event) {
+          case AuthChangeEvent.initialSession:
+            _authStateReport(AuthChangeState.initialSession);
           case AuthChangeEvent.passwordRecovery:
             _authStateReport(AuthChangeState.passwordRecovery);
             break;
@@ -142,8 +144,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
   @override
   bool get logged => _currentUser != null;
 
-  /// TODO: O [Supabase] ainda não oferece suporte ao registro de usuário anônimo, em vez
-  /// disso ele disponibiliza a `anon key`.
+  /// TODO: O [Supabase] já oferece suporte a usuário anônimo, esse código pode ser atualizado para não disponibilizar mais a `anon key`.
   @override
   Future<bool> signInAnonymously() async {
     if (isAnonymous) return true;
@@ -217,13 +218,10 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
         //'760657363926-7t0el18h5keqemvr76eju8mtkbhnki3t.apps.googleusercontent.com';
         '760657363926-1gt52lcdk9n2jp4heo7aj2evs9srldgp.apps.googleusercontent.com';
 
-    /// TODO: update the iOS client ID with your own.
-    ///
     /// iOS Client ID that you registered with Google Cloud.
-    //const iosClientId = 'my-ios.apps.googleusercontent.com';
+    //const iosClientId = '';
 
-    // Google sign in on Android will work without providing the Android
-    // Client ID registered on Google Cloud.
+    // O login do Google no Android funcionará sem fornecer o ID do cliente Android registrado no Google Cloud
 
     final GoogleSignIn googleSignIn = GoogleSignIn(
       clientId: androidClientId,
@@ -231,9 +229,9 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
       //scopes: scopes,
     );
     final googleUser = await googleSignIn.signIn();
-    final googleAuth = await googleUser!.authentication;
-    final accessToken = googleAuth.accessToken;
-    final idToken = googleAuth.idToken;
+    final googleAuth = await googleUser?.authentication;
+    final accessToken = googleAuth?.accessToken;
+    final idToken = googleAuth?.idToken;
 
     if (accessToken == null) {
       throw 'No Access Token found.';
@@ -243,7 +241,7 @@ class AuthSupabaseRepository extends IAuthRepository with MixinAuthRepository {
     }
 
     return _auth.signInWithIdToken(
-      provider: Provider.google,
+      provider: OAuthProvider.google,
       idToken: idToken,
       accessToken: accessToken,
     );

@@ -368,7 +368,7 @@ class SupabaseDbRepository
       final response =
           await _client.from('assunto_x_assunto_pai').insert(data).select();
 
-      return response != null;
+      return response.isNotEmpty;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir o assunto $data.'));
 
@@ -711,7 +711,7 @@ class SupabaseDbRepository
           .eq(tbClubeXUsuarioColIdClube, idClube)
           .select();
 
-      return response != null;
+      return response.isNotEmpty;
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao excluir o usuário cujo "idUser = $idUser" do clube cujo '
@@ -853,7 +853,7 @@ class SupabaseDbRepository
           .eq(tbClubeXUsuarioColIdClube, idClube)
           .select();
 
-      return response != null;
+      return response.isNotEmpty;
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao atualizar a permissão de acesso do usuário ao clube'));
@@ -884,7 +884,7 @@ class SupabaseDbRepository
           .eq(Sql.tbClubes.id, id)
           .select();
 
-      return response != null;
+      return response.isNotEmpty;
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao marcar como excluído o clube cujo ID é "$id". '
@@ -1066,7 +1066,7 @@ class SupabaseDbRepository
           .eq(Sql.tbAtividades.id, id)
           .select();
 
-      return resposta != null;
+      return resposta.isNotEmpty;
     } catch (erro, stack) {
       assert(Debug.print(
           '[ERROR] Erro ao marcar como excluída a atividade cujo ID é "$id". '
@@ -1132,7 +1132,7 @@ class SupabaseDbRepository
       assert(Debug.print('[INFO] Inserindo os dados na tabela "$table"...'));
       final response = await _client.from(table).upsert(dados).select();
 
-      return response != null;
+      return response.isNotEmpty;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'));
 
@@ -1167,7 +1167,7 @@ class SupabaseDbRepository
       assert(Debug.print('[INFO] Inserindo os dados na tabela "$table"...'));
       final response = await _client.from(table).upsert(data).select();
 
-      return response != null;
+      return response.isNotEmpty;
     } catch (erro, stack) {
       assert(Debug.print('[ERROR] Erro ao inserir os dados na tabela $table.'));
 
@@ -1200,8 +1200,9 @@ class SupabaseDbRepository
   Future<bool> updateUser(RawUserApp dados) async {
     assert(Debug.print('[INFO] Chamando SupabaseDbRepository.updateUser()...'));
     _checkAuthentication('updateUser()');
+    final int? id = dados.id;
 
-    if (dados.id == null || dados.name == null || dados.name!.isEmpty) {
+    if (id == null || dados.name == null || dados.name!.isEmpty) {
       return false;
     }
 
@@ -1212,10 +1213,10 @@ class SupabaseDbRepository
       final response = await _client
           .from(tbNome)
           .update({tb.nome: dados.name})
-          .eq(tb.id, dados.id)
+          .eq(tb.id, id)
           .select();
 
-      return response != null;
+      return response.isNotEmpty;
     } catch (erro, stack) {
       assert(
           Debug.print('[ERROR] Erro ao atualizar os dados na tabela $tbNome.'));

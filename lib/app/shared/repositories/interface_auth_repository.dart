@@ -29,6 +29,7 @@ enum SignInChangeState {
 
 /// Estado de login.
 enum AuthChangeState {
+  initialSession,
   passwordRecovery,
   signedIn,
   signedOut,

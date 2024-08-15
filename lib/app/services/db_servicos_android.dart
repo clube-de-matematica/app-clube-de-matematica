@@ -49,7 +49,8 @@ class DbServicos extends IDbServicos {
     }
     bool sincronizar = true;
     _authStateSubscription = auth.authState.listen((evento) {
-      if (evento == AuthChangeState.signedIn) {
+      if (evento == AuthChangeState.signedIn ||
+          evento == AuthChangeState.initialSession) {
         if (sincronizar) _sincronizar();
         sincronizar = false;
       }
