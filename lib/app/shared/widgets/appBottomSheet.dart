@@ -587,7 +587,7 @@ class __ChildBottomSheetCarregandoState
           const size = 56.0;
           if (snapshot.connectionState == ConnectionState.done) {
             Future.delayed(const Duration(seconds: 1)).then((_) {
-              if (mounted && Navigator.canPop(context)) {
+              if (context.mounted && Navigator.canPop(context)) {
                 Navigator.pop(context, snapshot.data);
               }
             });

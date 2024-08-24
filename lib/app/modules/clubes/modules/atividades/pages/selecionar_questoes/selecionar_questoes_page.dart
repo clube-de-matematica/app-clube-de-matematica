@@ -65,7 +65,7 @@ class SelecionarQuestoesPageState extends State<SelecionarQuestoesPage> {
       builder: (context) {
         return PopScope(
           canPop: !controle.alterada,
-          onPopInvoked: (canPop) async {
+          onPopInvokedWithResult: (canPop, _) async {
             if (!canPop) {
               final newCanPop = await _willPop(context);
               if (newCanPop) {

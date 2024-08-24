@@ -61,8 +61,8 @@ class AppWillPopScopeState extends State<AppWillPopScope> {
     bool podeFechar = _willPop(context);
     return PopScope(
       canPop: podeFechar,
-      onPopInvoked: (_) {
-        // _ é o valor de _podeFechar quando onPopInvoked é chamado.
+      onPopInvokedWithResult: (_,__) {
+        // _ é o valor de canPop quando onPopInvokedWithResult é chamado.
         _setBackCounter(_backCounter + 1);
         if (_showSnackBar) {
           _showSnackBar = false;

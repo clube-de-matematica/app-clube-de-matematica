@@ -112,7 +112,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
 
   @override
   Widget build(BuildContext context) {
-    void onPopInvoked(canPop) async {
+    void onPopInvokedWithResult(canPop, result) async {
       if (!canPop) {
         final retorno = await BottomSheetSalvarSairCancelar(
           title: const Text('Pode haver dados não salvos'),
@@ -128,7 +128,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
           }
           if (_podeFechar) {
             if (context.mounted) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(result);
             }
           }
         }
@@ -148,7 +148,7 @@ class _FormCriarEditarAtividadeState extends State<FormCriarEditarAtividade> {
     return Form(
       key: formKey,
       canPop: _podeFechar,
-      onPopInvoked: onPopInvoked,
+      onPopInvokedWithResult: onPopInvokedWithResult,
       onChanged: onChanged,
       child: Builder(builder: (context) {
         final tema = Modular.get<TemaClube>();

@@ -55,12 +55,12 @@ class _ResponderAtividadePageState extends State<ResponderAtividadePage> {
           builder: (context) {
             return PopScope(
               canPop: controle.isEmpty,
-              onPopInvoked: (canPop) async {
+              onPopInvokedWithResult: (canPop, result) async {
                 if (!canPop) {
                   final newCanPop = await _willPop(context);
                   if (newCanPop) {
                     if (context.mounted) {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(result);
                     }
                   }
                 }
