@@ -17,7 +17,9 @@ class PerfilPage extends StatefulWidget {
   PerfilPageState createState() => PerfilPageState();
 }
 
-class PerfilPageState extends ModularState<PerfilPage, PerfilController> {
+class PerfilPageState extends State<PerfilPage> {
+  final controller = Modular.get<PerfilController>();
+
   double get escala => AppTheme.escala;
 
   ThemeData get tema => Theme.of(context);
@@ -267,5 +269,11 @@ class PerfilPageState extends ModularState<PerfilPage, PerfilController> {
     );
     final confirm = await bottomSheet.showModal<bool>(context);
     return confirm ?? false;
+  }
+
+  @override
+  void dispose() {
+    Modular.dispose<PerfilController>();    
+    super.dispose();
   }
 }

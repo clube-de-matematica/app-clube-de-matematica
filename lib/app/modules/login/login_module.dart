@@ -12,7 +12,7 @@ class LoginModule extends Module {
   static const kAbsoluteRouteModule = kRelativeRouteModule;
 
   ///Rota relativa.
-  static const kRelativeRouteLoginPage = "";
+  static const kRelativeRouteLoginPage = "/";
 
   ///Rota absoluta.
   static const kAbsoluteRouteLoginPage =
@@ -26,7 +26,9 @@ class LoginModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        //ChildRoute(Modular.initialRoute, child: (_, __) => LoginPage()),
-        ChildRoute(kRelativeRouteLoginPage, child: (_, __) => const LoginPage()),
+        if (Modular.initialRoute != kRelativeRouteLoginPage)
+          RedirectRoute(Modular.initialRoute, to: kRelativeRouteLoginPage),
+        ChildRoute(kRelativeRouteLoginPage,
+            child: (_, __) => const LoginPage()),
       ];
 }

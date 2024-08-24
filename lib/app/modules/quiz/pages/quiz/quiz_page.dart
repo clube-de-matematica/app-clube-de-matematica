@@ -25,11 +25,9 @@ class QuizPage extends StatefulWidget {
   QuizPageState createState() => QuizPageState();
 }
 
-/// [ModularState] irá criar um [controller] a partir de um [Bind] do tipo [QuizController]
-/// disponível em um dos módulos da hierarquia (quando houver mais de um). A vantagem de usar
-/// [ModularState] é que automáticamente será feito o `dispose` de [controller] junto com o
-/// de [QuizPageState].
-class QuizPageState extends ModularState<QuizPage, QuizController> {
+class QuizPageState extends State<QuizPage> {
+  final controller = Modular.get<QuizController>();
+
   ThemeData get tema => AppTheme.instance.light;
   TextStyle? get textStyle => tema.textTheme.bodyLarge;
 
@@ -162,5 +160,11 @@ class QuizPageState extends ModularState<QuizPage, QuizController> {
         barraOpcoes: QuizBarOpcoesQuestao(controller),
       );
     });
+  }
+
+  @override
+  void dispose() {
+    Modular.dispose<QuizController>();    
+    super.dispose();
   }
 }

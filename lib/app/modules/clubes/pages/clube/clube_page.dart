@@ -12,30 +12,16 @@ import 'widgets/aba_atividades_page.dart';
 import 'widgets/aba_pessoas_page.dart';
 
 /// Página para exibir o [clube].
-class ClubePage extends WidgetModule {
-  ClubePage(this.clube, {super.key});
+class ClubePage extends StatefulWidget {
+  const ClubePage(this.clube, {super.key});
 
   final Clube clube;
 
   @override
-  List<Bind<Object>> get binds => [
-        Bind.singleton((i) => TemaClube(clube)),
-        Bind.singleton((i) => ClubeController(clube)),
-      ];
-
-  @override
-  Widget get view => const _ClubePage();
+  ClubePageState createState() => ClubePageState();
 }
 
-/// Página para exibir o [clube].
-class _ClubePage extends StatefulWidget {
-  const _ClubePage();
-
-  @override
-  _ClubePageState createState() => _ClubePageState();
-}
-
-class _ClubePageState extends State<_ClubePage> {
+class ClubePageState extends State<ClubePage> {
   ClubeController get controller => Modular.get<ClubeController>();
   TemaClube get temaClube => Modular.get<TemaClube>();
   Color get enfaseSobreSuperficie => temaClube.enfaseSobreSuperficie;

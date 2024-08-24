@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'navigation.dart';
 import 'services/db_servicos_interface.dart';
-import 'services/preferencias_servicos.dart';
-import 'shared/repositories/interface_auth_repository.dart';
 import 'shared/theme/appTheme.dart';
 import 'shared/utils/constantes.dart';
 
@@ -27,13 +24,7 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    /* Modular.setInitialRoute(
-      Modular.get<IAuthRepository>().logged ||
-              Preferencias.instancia.primeiroAcesso != null
-          ? RotaPagina.quiz.nome
-          : RotaPagina.login.nome,
-    ); */
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: APP_NOME,
       theme: AppTheme.instance.light,
@@ -42,12 +33,9 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
         Locale('pt', 'BR'),
         Locale('pt', ''),
       ],
-      initialRoute: Modular.get<IAuthRepository>().logged ||
-              Preferencias.instancia.primeiroAcesso != null
-          ? RotaPagina.quiz.nome
-          : RotaPagina.login.nome,
-      /* routeInformationParser: Modular.routeInformationParser,
-      routerDelegate: Modular.routerDelegate, */
+      //routerConfig: Modular.routerConfig,
+      routeInformationParser: Modular.routeInformationParser,
+      routerDelegate: Modular.routerDelegate,
       /* builder: (context, child) {
         return child ?? SizedBox();
         /* /// Isso criará um [Scaffold] abaixo do [Navigator], mas acima de todas as rotas.
@@ -57,22 +45,6 @@ class _ClubeDeMatematicaWidgetState extends State<ClubeDeMatematicaWidget> {
           body: child,
         ); */
       }, */
-    ).modular();
+    );
   }
 }
-/* 
-openRootDrawer(BuildContext context) {
-  // Esta é uma operação que deve ser evitada em uma arvore de widgets muito extensa.
-  // Alternativamente, pode-se usar uma [GlobalKey] no [Scaffold] desejado e expô-la.
-  // context.findRootAncestorStateOfType<ScaffoldState>()?.openDrawer();
-  rootScaffoldKey.currentState?.openDrawer();
-}
-
-bool get isRootDrawerOpen =>
-    rootScaffoldKey.currentState?.isDrawerOpen ?? false;
-
-/// Alternativa ao uso de [BuildContext.findRootAncestorStateOfType] em [openRootDrawer].
-final GlobalKey<ScaffoldState> rootScaffoldKey = GlobalKey<ScaffoldState>();
-
-final GlobalKey<State<AppDrawer>> rootDrawerKey = GlobalKey<State<AppDrawer>>();
- */

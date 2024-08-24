@@ -22,8 +22,9 @@ class HomeClubesPage extends StatefulWidget {
   HomeClubesPageState createState() => HomeClubesPageState();
 }
 
-class HomeClubesPageState
-    extends ModularState<HomeClubesPage, HomeClubesController> {
+class HomeClubesPageState extends State<HomeClubesPage> {
+  final controller = Modular.get<HomeClubesController>();
+
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = TextStyle(
@@ -138,5 +139,11 @@ class HomeClubesPageState
         }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    Modular.dispose<HomeClubesController>();    
+    super.dispose();
   }
 }

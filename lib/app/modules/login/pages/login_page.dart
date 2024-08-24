@@ -21,7 +21,9 @@ class LoginPage extends StatefulWidget {
   LoginPageState createState() => LoginPageState();
 }
 
-class LoginPageState extends ModularState<LoginPage, LoginController> {
+class LoginPageState extends State<LoginPage> {
+  final controller = Modular.get<LoginController>();
+
   double get escala => AppTheme.escala;
 
   ThemeData get tema => Theme.of(context);
@@ -281,5 +283,11 @@ class LoginPageState extends ModularState<LoginPage, LoginController> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    Modular.dispose<LoginController>();    
+    super.dispose();
   }
 }

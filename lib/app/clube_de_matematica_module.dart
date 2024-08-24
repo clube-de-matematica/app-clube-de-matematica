@@ -34,12 +34,12 @@ class ClubeDeMatematicaModule extends Module {
   static const kAbsoluteRouteModule = kRelativeRouteModule;
 
   @override
-  //Um Bind é uma injeção de dependência.
-  //Como este é o módulo plincipal (MainModule), ela estará disponível para todo o app.
+
+  /// Um Bind é uma injeção de dependência.
+  /// Como este é o módulo plincipal (MainModule), ela estará disponível para todo o app.
+  /// Classes Singleton não podem ser adcionadas usando addSingleton.
   List<Bind> get binds => [
-        //Bind((_) => AppTheme()),
         Bind<UserApp>((i) => i.get<IAuthRepository>().user),
-        //Bind.singleton((_) => DeepAndAppLinks()),
 
         //Controles
         Bind((_) => ClubeDeMatematicaController()),
@@ -53,18 +53,12 @@ class ClubeDeMatematicaModule extends Module {
         Bind((_) => Preferencias.instancia),
 
         //Repositórios
-        //Bind<IAuthRepository>((i) => AuthFirebaseRepository(i.get<FirebaseAuth>())),
         Bind<IAuthRepository>((i) => AuthSupabaseRepository(i.get<Supabase>())),
         Bind<IRemoteDbRepository>((i) => SupabaseDbRepository(
               i.get<Supabase>(),
               i.get<IAuthRepository>(),
             )),
         Bind.lazySingleton((i) => ClubesRepository(i.get<IDbServicos>())),
-        /* Bind<IDbRepository>((i) => MockDbRepository()),
-        Bind.lazySingleton((i) => ClubesRepository(
-              i.get<MockDbRepository>(),
-              i.get<UserApp>(),
-            )), */
         Bind.lazySingleton((i) => QuestoesRepository(i.get<IDbServicos>())),
         Bind.lazySingleton((i) => AssuntosRepository(i.get<IDbServicos>())),
 
@@ -75,9 +69,16 @@ class ClubeDeMatematicaModule extends Module {
       ];
 
   @override
-  //Lista de rotas.
   List<ModularRoute> get routes => [
-        //ModuleRoute(Modular.initialRoute, module: LoginModule()),
+        if (Modular.initialRoute != kRelativeRouteModule)
+          RedirectRoute(Modular.initialRoute, to: kRelativeRouteModule),
+        RedirectRoute(
+          kRelativeRouteModule,
+          to: Modular.get<IAuthRepository>().logged ||
+                  Preferencias.instancia.primeiroAcesso != null
+              ? RotaPagina.quiz.nome
+              : RotaPagina.login.nome,
+        ),
         ModuleRoute(RotaModulo.login.nome, module: LoginModule()),
         ModuleRoute(RotaModulo.perfil.nome, module: PerfilModule()),
         ModuleRoute(RotaModulo.quiz.nome, module: QuizModule()),
@@ -86,11 +87,5 @@ class ClubeDeMatematicaModule extends Module {
           InserirQuestaoModule.kAbsoluteRouteModule,
           module: InserirQuestaoModule(),
         ),
-
-        /* WildcardRoute(child: (_, args) {
-          return Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }), */
       ];
 }

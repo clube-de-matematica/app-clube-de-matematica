@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path/path.dart' as path;
 
 import 'clube_de_matematica_module.dart';
 import 'modules/clubes/clubes_module.dart';
@@ -135,23 +136,7 @@ extension ExtensaoRotaPagina on RotaPagina {
   }
 
   /// Verdadeiro para os valores de [RotaPagina] que representam rotas dinamicas.
-  bool get dinamica {
-    switch (this) {
-      case RotaPagina.quiz:
-      case RotaPagina.filtros:
-      case RotaPagina.login:
-      case RotaPagina.perfil:
-      case RotaPagina.homeClubes:
-      case RotaPagina.criarClube:
-      case RotaPagina.editarClube:
-      case RotaPagina.atividade:
-      case RotaPagina.criarAtividade:
-      case RotaPagina.editarAtividade:
-        return false;
-      case RotaPagina.clube:
-        return true;
-    }
-  }
+  bool get dinamica => this == RotaPagina.clube;
 
   /// Falso para os valores de [RotaPagina] que representam páginas que devem ser fechadas
   /// sempre que uma nova página for aberta.
@@ -175,7 +160,7 @@ extension ExtensaoRotaPagina on RotaPagina {
 }
 
 abstract class Navegacao {
-  /// Lista com os nomes das páginas empilhadas.
+  /// Lista com os nomes das rotas das páginas empilhadas.
   static List<String?> paginas(BuildContext context) {
     return Navigator.of(context).widget.pages.map((pagina) {
       String? nome;
@@ -183,7 +168,7 @@ abstract class Navegacao {
       final list = pagina.name?.split('@');
       if (list != null) {
         final nomeTemp = list[0];
-        nome = nomeTemp.replaceFirst('/', '', nomeTemp.length - 1);
+        nome = nomeTemp;
       }
       return nome;
     }).toList();
@@ -208,6 +193,35 @@ abstract class Navegacao {
     };
   }
 
+  /// Normaliza [rota], simplificando-o ao manipular .., e ., e removendo separadores de caminho redundantes sempre que possível.
+  ///
+  /// Se [rota] terminar com /, o caractere será mantido.
+  static String _normalizar(String rota) {
+    if (rota.isEmpty) {
+      return rota;
+    } else {
+      String terminacao = rota[rota.length - 1];
+      if (terminacao != '/') {
+        terminacao = '';
+      }
+      final normal = "${path.normalize(rota)}$terminacao";
+      return normal;
+    }
+  }
+
+  /// Retorna verdadeiro se [rota] é o nome da rota para a página de algum clube.
+  static bool _ePaginaClube(String rota) {
+    if (rota.isEmpty) {
+      return false;
+    } else {
+      final exp = RegExp(r'^' + RotaPagina.homeClubes.nome + r'\d+');
+
+      /// Verificar se [rota] inicia com o nome da rota da página inicial dos clubes seguido de uma sequência de dígitos (pelo menos um).
+      final ePaginaClube = exp.hasMatch(rota);
+      return ePaginaClube;
+    }
+  }
+
   /// Abre a página correspondente aos parâmetros dados.
   static Future<T?> abrirPagina<T extends Object?>(
     BuildContext context,
@@ -217,15 +231,15 @@ abstract class Navegacao {
     T? retorno,
   }) async {
     assert(!(rota.dinamica && nomeRota == null));
+    assert(nomeRota == null || nomeRota.isNotEmpty);
 
     if (!rota.dinamica) nomeRota = rota.nome;
     final navegador = Navigator.of(context);
     final paginas = Navegacao.paginas(context);
     final paginaAnterior = Navegacao.paginaAnterior(context);
     final paginaAtual = Navegacao.paginaAtual(context);
-    final novaPagina = nomeRota!;
-    final paginaAtualEClube =
-        paginaAtual?.startsWith('${RotaPagina.homeClubes.nome}/') ?? false;
+    final novaPagina = _normalizar(nomeRota!);
+    final paginaAtualEClube = _ePaginaClube(paginaAtual ?? '');
 
     if (novaPagina != paginaAtual) {
       if (novaPagina == RotaPagina.login.nome) {
@@ -258,6 +272,12 @@ abstract class Navegacao {
       //
       else {
         switch (rota) {
+          case RotaPagina.login:
+            return navegador.pushNamedAndRemoveUntil<T>(
+              novaPagina,
+              (_) => false,
+              arguments: argumentos,
+            );
           case RotaPagina.quiz:
             // Se a nova página é a de questões (página do quiz) e não está na pilha.
             return navegador.pushNamedAndRemoveUntil<T>(
@@ -284,8 +304,14 @@ abstract class Navegacao {
           case RotaPagina.clube:
             if (paginaAtualEClube) {
               // Se a página atual for de um clube.
-              return navegador.pushReplacementNamed<T, dynamic>(novaPagina,
-                  arguments: argumentos, result: retorno);
+              /* navegador.pop(retorno);
+              navegador.pushNamed(novaPagina, arguments: argumentos);
+              return retorno; */
+              return navegador.pushReplacementNamed<T, dynamic>(
+                novaPagina,
+                arguments: argumentos,
+                result: retorno,
+              );
             }
             return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.criarClube:
@@ -298,9 +324,6 @@ abstract class Navegacao {
             return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
           case RotaPagina.editarAtividade:
             return navegador.pushNamed<T>(novaPagina, arguments: argumentos);
-          default:
-            throw UnimplementedError(
-                'A rota $novaPagina não foi implementada.');
         }
       }
     }
@@ -314,10 +337,10 @@ abstract class Navegacao {
       return RotaPagina.values.where((e) => !e.dinamica).firstWhere(
         (e) => e.nome == nome,
         orElse: () {
-          if (nome.startsWith('${RotaPagina.homeClubes.nome}/')) {
+          if (_ePaginaClube(nome)) {
             return RotaPagina.clube;
           }
-          throw 'Não foi encontrado um RoutePage correspondente à rota "$nome".';
+          throw 'Não foi encontrada uma Rota de página correspondente à "$nome".';
         },
       );
     } catch (e) {

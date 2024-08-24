@@ -16,7 +16,7 @@ class QuizModule extends Module {
   static const kAbsoluteRouteModule = kRelativeRouteModule;
 
   /// Rota relativa.
-  static const kRelativeRouteQuizPage = "";
+  static const kRelativeRouteQuizPage = "/";
 
   /// Rota absoluta.
   static const kAbsoluteRouteQuizPage =
@@ -37,7 +37,8 @@ class QuizModule extends Module {
   @override
   // Lista de rotas.
   List<ModularRoute> get routes => [
-        //ChildRoute(Modular.initialRoute, child: (_, __) => QuizPage()),
+        if (Modular.initialRoute != kRelativeRouteQuizPage)
+          RedirectRoute(Modular.initialRoute, to: kRelativeRouteQuizPage),
         ChildRoute(kRelativeRouteQuizPage, child: (_, __) => const QuizPage()),
         ModuleRoute(FiltrosModule.kRelativeRouteModule,
             module: FiltrosModule()),

@@ -10,7 +10,7 @@ class InserirQuestaoModule extends Module {
   static const kAbsoluteRouteModule = kRelativeRouteModule;
 
   ///Rota relativa.
-  static const kRelativeRouteInserirQuestaoPage = "";
+  static const kRelativeRouteInserirQuestaoPage = "/";
 
   ///Rota absoluta.
   static const kAbsoluteRouteInserirQuestaoPage =
@@ -21,7 +21,10 @@ class InserirQuestaoModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        //ChildRoute(Modular.initialRoute, child: (_, __) => InserirQuestaoPage()),
-        ChildRoute(kRelativeRouteInserirQuestaoPage, child: (_, __) => const InserirQuestaoPage()),
+        if (Modular.initialRoute != kRelativeRouteInserirQuestaoPage)
+          RedirectRoute(Modular.initialRoute,
+              to: kRelativeRouteInserirQuestaoPage),
+        ChildRoute(kRelativeRouteInserirQuestaoPage,
+            child: (_, __) => const InserirQuestaoPage()),
       ];
 }

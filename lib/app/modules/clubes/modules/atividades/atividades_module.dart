@@ -19,7 +19,7 @@ class AtividadesModule extends Module {
       ClubesModule.kAbsoluteRouteModule + kRelativeRouteModule;
 
   ///Rota relativa.
-  static const kRelativeRouteAtividadePage = '';
+  static const kRelativeRouteAtividadePage = '/';
 
   ///Rota absoluta.
   static const kAbsoluteRouteAtividadePage =
@@ -40,7 +40,6 @@ class AtividadesModule extends Module {
       kAbsoluteRouteModule + kRelativeRouteEditarPage;
 
   @override
-  //Um Bind é uma injeção de dependência.
   List<Bind> get binds => [
         //Controles
         //Bind((i) => HomeClubesController()),
@@ -49,17 +48,20 @@ class AtividadesModule extends Module {
   @override
   //Lista de rotas.
   List<ModularRoute> get routes => [
+        if (Modular.initialRoute != kRelativeRouteAtividadePage)
+          RedirectRoute(Modular.initialRoute, to: kRelativeRouteAtividadePage),
         ChildRoute(kRelativeRouteAtividadePage, child: (context, args) {
           final argumentos = args.data as ArgumentosAtividadePage;
           final permissao = argumentos.clube.permissao(UserApp.instance.id!);
           switch (permissao) {
             case PermissoesClube.proprietario:
-            case PermissoesClube.administrador: 
+            case PermissoesClube.administrador:
               return ConsolidarAtividadePage(argumentos);
             case PermissoesClube.membro:
               return ResponderAtividadePage(argumentos);
             default:
-              return const Scaffold(body: Center(child: Text('Permissão negada.')));
+              return const Scaffold(
+                  body: Center(child: Text('Permissão negada.')));
           }
         }),
         ChildRoute(kRelativeRouteCriarPage,

@@ -57,7 +57,7 @@ dependencies:
   #image_cropper: ^1.5.0 #Cortar e girar imagem.
   #file_utils: ^1.0.1 #DESCONTINUADO #Coleção de classes auxiliares para o sistema de arquivos: FileList, FilePath e FileUtils.
   glob: ^2.1.2 #Usado para localizar arquivos e diretórios.
-  flutter_modular: ^3.4.1+1 #provedor de dependencias (widgets acessiveis em toda a sua sub-arvore) e rotas.
+  flutter_modular: ^5.0.3 #3.4.1+1 #provedor de dependencias (widgets acessiveis em toda a sua sub-arvore) e rotas.
   mobx: ^2.0.1 
   flutter_mobx: ^2.0.0 
   collection: ^1.18.0

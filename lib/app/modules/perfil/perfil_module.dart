@@ -12,7 +12,7 @@ class PerfilModule extends Module {
   static const kAbsoluteRouteModule = kRelativeRouteModule;
 
   /// Rota relativa.
-  static const kRelativeRoutePerfilPage = "";
+  static const kRelativeRoutePerfilPage = "/";
 
   /// Rota absoluta.
   static const kAbsoluteRoutePerfilPage =
@@ -26,7 +26,9 @@ class PerfilModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        //ChildRoute(Modular.initialRoute, child: (_, __) => PerfilPage()),
-        ChildRoute(kRelativeRoutePerfilPage, child: (_, __) => const PerfilPage()),
+        if (Modular.initialRoute != kRelativeRoutePerfilPage)
+          RedirectRoute(Modular.initialRoute, to: kRelativeRoutePerfilPage),
+        ChildRoute(kRelativeRoutePerfilPage,
+            child: (_, __) => const PerfilPage()),
       ];
 }
