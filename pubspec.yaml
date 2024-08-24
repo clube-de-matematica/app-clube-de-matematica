@@ -39,46 +39,29 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   firebase_core: ^3.3.0 #2.32.0 #Recursos básicos
-  #firebase_storage: ^9.0.0 #Armazenamento de arquivos
-  #cloud_firestore: ^2.1.0 #Banco de dados
-  #firebase_auth: ^2.0.0 #Autenticação
   google_sign_in: ^6.2.1 #6.1.4 #Login com uma conta Google
   firebase_crashlytics: ^4.0.4 #3.5.7 #Relatório de erros
-  #catex: ^0.0.1+8 #^0.0.1+6
   flutter_math_fork: ^0.7.2 #0.6.3+1 #Renderização de equações matemáticas em puro Dart & Flutter.
-  #progressive_image: ^2.0.0 #Um widget de vibração que carrega progressivamente imagens grandes usando espaços reservados para imagens de baixa qualidade.
   path: ^1.9.0 #1.8.2 #Fornece operações comuns para manipulação de caminhos: junção, divisão, normalização, etc.
   path_provider: ^2.1.1 #Um plugin Flutter para encontrar locais comumente usados ​​no sistema de arquivos. Suporta iOS, Android, Linux e MacOS. Nem todos os métodos são suportados em todas as plataformas.
-  #dio: ^4.0.0 #Um cliente Http poderoso para Dart, que suporta interceptores, configuração global, FormData, cancelamento de solicitação, download de arquivo, tempo limite etc.
   #transparent_image: ^2.0.0 #Uma imagem transparente simples. Representado como um Uint8List. Este pacote exporta uma constante: kTransparentImage.
-  #image_size_getter: ^1.0.0 #Usado para obter a largura e a altura dos arquivos de imágem.
   diacritic: ^0.1.3 #Remove acentos comuns e sinais diacríticos de uma string, substituindo-os por um caractere equivalente.
   image_picker: ^1.1.2 #Seletor de imagens.
   #image_cropper: ^1.5.0 #Cortar e girar imagem.
-  #file_utils: ^1.0.1 #DESCONTINUADO #Coleção de classes auxiliares para o sistema de arquivos: FileList, FilePath e FileUtils.
   glob: ^2.1.2 #Usado para localizar arquivos e diretórios.
   flutter_modular: ^5.0.3 #3.4.1+1 #provedor de dependencias (widgets acessiveis em toda a sua sub-arvore) e rotas.
   mobx: ^2.0.1 
   flutter_mobx: ^2.0.0 
   collection: ^1.18.0
   shimmer: ^3.0.0 #Fornece uma maneira fácil de adicionar efeito de brilho.
-  #logging: ^1.0.1 #Manipulador de logs.
   hive_flutter: ^1.1.0
-  flutter_secure_storage: ^6.1.0
-  #crypto: ^3.0.1
+  flutter_secure_storage: ^9.2.2 #6.1.0
   supabase_flutter: ^2.3.4 #1.10.25
   flutter_inappwebview: ^6.0.0 #5.8.0
   flutter_custom_tabs: ^2.0.0+1 #1.0.4
-  #flutter_web_auth: ^0.4.1
-  #webview_flutter: ^3.0.0
   flutter_material_color_picker: ^1.1.0+2
-  #url_launcher: ^6.0.17
-  #fk_user_agent: ^2.1.0 # UserAgent
-  drift: ^2.15.0 #2.8.0 # Banco de dados.
+  drift: ^2.19.1+1 #2.15.0 # Banco de dados.
   sqlite3_flutter_libs: ^0.5.0 # Inclui o sqlite mais recente no Android. Necessário para algumas funcionalidades do drift.
-  #firebase_analytics: ^10.8.7
-  #drift_db_viewer: ^1.0.0 #Permite visualizar o banco de dados no aplicativo de desenvolvimento sem a necessidade de exportar seu arquivo de banco de dados.
-  #flutter_native_splash: ^2.0.3+1
   
 
 dev_dependencies:
