@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'services/db_servicos_interface.dart';
-import 'shared/theme/appTheme.dart';
+import 'shared/theme/app_theme.dart';
 import 'shared/utils/constantes.dart';
 
 /// O [Widget] principal do aplicativo.

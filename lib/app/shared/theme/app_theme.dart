@@ -8,18 +8,18 @@ class AppTheme {
   static AppTheme get instance => _instance;
 
   static MaterialColor obterAmostra(Color cor) => MaterialColor(
-        cor.value,
+        cor.toARGB32(),
         {
-          50: Color.fromRGBO(cor.red, cor.green, cor.blue, .1),
-          100: Color.fromRGBO(cor.red, cor.green, cor.blue, .2),
-          200: Color.fromRGBO(cor.red, cor.green, cor.blue, .3),
-          300: Color.fromRGBO(cor.red, cor.green, cor.blue, .4),
-          400: Color.fromRGBO(cor.red, cor.green, cor.blue, .5),
-          500: Color.fromRGBO(cor.red, cor.green, cor.blue, .6),
-          600: Color.fromRGBO(cor.red, cor.green, cor.blue, .7),
-          700: Color.fromRGBO(cor.red, cor.green, cor.blue, .8),
-          800: Color.fromRGBO(cor.red, cor.green, cor.blue, .9),
-          900: Color.fromRGBO(cor.red, cor.green, cor.blue, 1),
+          50: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .1),
+          100: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .2),
+          200: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .3),
+          300: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .4),
+          400: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .5),
+          500: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .6),
+          600: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .7),
+          700: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .8),
+          800: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: .9),
+          900: Color.from(red: cor.r, green: cor.g, blue: cor.b, alpha: 1.0),
         },
       );
 
@@ -184,7 +184,7 @@ class AppTheme {
         fontStyle: FontStyle.normal,
       ),
       labelLarge: _temp.textTheme.labelLarge?.copyWith(
-        color: color?.withOpacity(0.45),
+        color: color?.withValues(alpha: 0.45),
         fontSize: _escala * 14,
         //fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,

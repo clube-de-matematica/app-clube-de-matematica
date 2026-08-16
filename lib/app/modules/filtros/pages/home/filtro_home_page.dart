@@ -74,7 +74,7 @@ class FiltroHomePage extends StatelessWidget {
               return FiltroChipContador(
                 opcoes.length.toString(),
                 primaryColor:
-                    Theme.of(context).colorScheme.onSurface.withOpacity(0.15),
+                    Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.15),
               );
             }),
             title: Text(

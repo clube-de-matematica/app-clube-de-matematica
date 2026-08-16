@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../../quiz/shared/models/questao_model.dart';
 import '../../../../shared/models/clube.dart';
 import '../../../../shared/utils/tema_clube.dart';

@@ -23,13 +23,13 @@ class FiltroChipContador extends StatelessWidget {
     final tema = Theme.of(context);
 
     final backgroundColor = valor == "0"
-        ? primaryColor ?? tema.colorScheme.onPrimary.withOpacity(0.8)
+        ? primaryColor ?? tema.colorScheme.onPrimary.withValues(alpha: 0.8)
         : secondaryColor ?? tema.colorScheme.onSurface;
 
     final textStyle = valor == "0"
         ? tema.textTheme.bodyMedium
         : tema.textTheme.bodyMedium
-            ?.copyWith(color: tema.colorScheme.onPrimary.withOpacity(0.8));
+            ?.copyWith(color: tema.colorScheme.onPrimary.withValues(alpha: 0.8));
 
     return Container(
       constraints: const BoxConstraints(minWidth: 32),

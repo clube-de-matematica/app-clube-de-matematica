@@ -4,11 +4,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../services/preferencias_servicos.dart';
 import '../../../shared/repositories/interface_auth_repository.dart';
-import '../../../shared/theme/appTheme.dart';
-import '../../../shared/widgets/appBottomSheet.dart';
-import '../../../shared/widgets/appWillPopScope.dart';
+import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/app_bottom_sheet.dart';
+import '../../../shared/widgets/app_will_pop_scope.dart';
 import '../../../shared/widgets/botoes.dart';
-import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
+import '../../../shared/widgets/scroll_view_with_child_expandable.dart';
 import '../utils/ui_strings.dart';
 import '../widgets/login_with_google_button.dart';
 import 'login_controller.dart';
@@ -29,10 +29,10 @@ class LoginPageState extends State<LoginPage> {
   ThemeData get tema => Theme.of(context);
 
   /// Tom mais escuro. Usado no "bem cindo" e no texto do botão de login com o Google.
-  Color get textColor1 => tema.colorScheme.onSurface.withOpacity(0.6);
+  Color get textColor1 => tema.colorScheme.onSurface.withValues(alpha: 0.6);
 
   /// Tom mais claro. Usado na mensagem e no texto do botão de login anônimo.
-  Color get textColor2 => textColor1.withOpacity(0.5);
+  Color get textColor2 => textColor1.withValues(alpha: 0.5);
 
   /// Estilo do texto do "bem vindo".
   TextStyle? get textStyleH1 => tema.textTheme.bodyLarge?.copyWith(

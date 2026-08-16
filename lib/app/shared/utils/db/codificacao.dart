@@ -42,7 +42,7 @@ abstract class DbRemoto {
   }) =>
       imagensEnunciado;
 
-  static String codificarCapaClube(Color capa) => capa.value.toString();
+  static String codificarCapaClube(Color capa) => capa.toARGB32().toString();
 
   static Color? decodificarCapaClube(String capa) {
     try {
@@ -106,7 +106,7 @@ abstract class DbLocal {
 
   static bool decodificarBooleano(int valor) => valor == 1;
 
-  static String codificarCapaClube(Color capa) => capa.value.toString();
+  static String codificarCapaClube(Color capa) => capa.toARGB32().toString();
 
   static Color? decodificarCapaClube(String capa) {
     try {

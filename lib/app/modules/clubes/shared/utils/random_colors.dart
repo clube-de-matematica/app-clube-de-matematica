@@ -2,13 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../../../shared/theme/appTheme.dart';
+import '../../../../shared/theme/app_theme.dart';
 
 
 /// Uma cor aleatória a partir de [Colors.primaries], excluindo-se a cor base do tema e aquelas 
 /// que não são recomendadas para textos na cor branca.
 class RandomColor extends Color {
-  RandomColor() : super(getColor().value);
+  RandomColor() : super(getColor().toARGB32());
 
   /// Retorna uma cor aleatória a partir de [Colors.primaries].
   static Color getColor() {

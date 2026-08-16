@@ -3,12 +3,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../services/preferencias_servicos.dart';
-import '../../../../shared/theme/appTheme.dart';
+import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/utils/ui_strings.dart' as ui_strings_app;
-import '../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../shared/widgets/questao_widget.dart';
-import '../../../../shared/widgets/scaffoldWithDrawer.dart';
+import '../../../../shared/widgets/scaffold_with_drawer.dart';
 import '../../../filtros/shared/widgets/feedback_filtragem_vazia.dart';
 import '../../shared/models/questao_model.dart';
 import '../../shared/utils/ui_strings.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../../../shared/repositories/questoes/questoes_repository.dart';
-import '../../../../shared/theme/appTheme.dart';
+import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/utils/strings_db.dart';
 import '../../../../shared/widgets/questao_widget.dart';
 import '../../shared/models/questao_model.dart';

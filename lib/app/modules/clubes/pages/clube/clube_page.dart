@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../shared/widgets/appBottomSheet.dart';
-import '../../../../shared/widgets/scaffoldWithDrawer.dart';
+import '../../../../shared/widgets/app_bottom_sheet.dart';
+import '../../../../shared/widgets/scaffold_with_drawer.dart';
 import '../../shared/models/clube.dart';
 import '../../shared/utils/tema_clube.dart';
 import '../../shared/widgets/clube_options_button.dart';
@@ -91,7 +91,7 @@ class ClubePageState extends State<ClubePage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Divider(
-          color: enfaseSobreSuperficie.withOpacity(0.3),
+          color: enfaseSobreSuperficie.withValues(alpha: 0.3),
           height: 0.0,
         ),
         TabBar(

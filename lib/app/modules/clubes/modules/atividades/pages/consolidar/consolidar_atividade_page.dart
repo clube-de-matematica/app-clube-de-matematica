@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../../shared/theme/appTheme.dart';
+import '../../../../../../shared/theme/app_theme.dart';
 import '../../../../../../shared/utils/strings_db.dart';
-import '../../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../../../shared/widgets/questao_widget.dart';
 import '../../../../shared/models/clube.dart';
 import '../../../../shared/models/usuario_clube.dart';
@@ -198,7 +198,7 @@ class _MembrosState extends State<_Membros> {
             title:
                 Text(membro.nome ?? membro.email ?? 'Membro não identificado'),
             leading: CircleAvatar(
-              backgroundColor: temaClube.primaria.withOpacity(0.3),
+              backgroundColor: temaClube.primaria.withValues(alpha: 0.3),
               child: Icon(
                 Icons.person,
                 color: temaClube.enfaseSobreSuperficie,

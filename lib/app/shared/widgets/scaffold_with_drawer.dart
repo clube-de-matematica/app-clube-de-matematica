@@ -12,10 +12,10 @@ import '../../navigation.dart';
 import '../../services/conectividade.dart';
 import '../../services/db_servicos_interface.dart';
 import '../repositories/interface_auth_repository.dart';
-import '../theme/appTheme.dart';
+import '../theme/app_theme.dart';
 import '../utils/constantes.dart';
-import 'appBottomSheet.dart';
-import 'appWillPopScope.dart';
+import 'app_bottom_sheet.dart';
+import 'app_will_pop_scope.dart';
 
 /// Indica a página em que [ScaffoldWithDrawer] está sendo exibido.
 enum AppDrawerPage { quiz, clubes }
@@ -119,6 +119,7 @@ class _AppDrawerState extends State<_AppDrawer> {
     final drawerHeader = AnimatedBuilder(
       animation: widget.user,
       builder: (_, __) {
+        //widget.user.id={'usuariodetesteapp@gmail.com':739,'aluno1app@gmail.com':5572}[widget.user.email];//TODO: ID fixado para teste
         final accountName = widget.user.isAnonymous
             ? GestureDetector(
                 child: const Text('Entre com sua conta'),

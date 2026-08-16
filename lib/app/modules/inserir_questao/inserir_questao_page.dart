@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../shared/utils/strings_db.dart';
-import '../../shared/widgets/appBottomSheet.dart';
+import '../../shared/widgets/app_bottom_sheet.dart';
 import '../../shared/widgets/botoes.dart';
 import '../../shared/widgets/katex_flutter.dart';
 import '../../shared/widgets/questao_widget.dart';

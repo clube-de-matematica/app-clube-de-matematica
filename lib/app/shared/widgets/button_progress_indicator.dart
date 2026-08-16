@@ -66,7 +66,7 @@ class ButtonProgressIndicatorState extends State<ButtonProgressIndicator>
 
   ThemeData get tema => Theme.of(context);
 
-  Color get textColor1 => tema.colorScheme.onSurface.withOpacity(0.6);
+  Color get textColor1 => tema.colorScheme.onSurface.withValues(alpha: 0.6);
 
   @override
   void initState() {

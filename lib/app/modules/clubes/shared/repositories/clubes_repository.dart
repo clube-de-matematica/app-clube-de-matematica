@@ -104,7 +104,7 @@ abstract class ClubesRepositoryBase with Store implements Disposable {
     if (descricao?.isEmpty ?? false) descricao = null;
 
     final atualizarDescricao = clube.descricao != descricao;
-    final atualizarCapa = clube.capa.value != capa.value;
+    final atualizarCapa = clube.capa.toARGB32() != capa.toARGB32();
     final atualizarNome = clube.nome != nome;
     final atualizarCodigo = clube.codigo != codigo;
     final atualizarPrivado = clube.privado != privado;

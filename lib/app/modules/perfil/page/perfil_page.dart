@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../shared/theme/appTheme.dart';
-import '../../../shared/widgets/appBottomSheet.dart';
-import '../../../shared/widgets/appWillPopScope.dart';
+import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/app_bottom_sheet.dart';
+import '../../../shared/widgets/app_will_pop_scope.dart';
 import '../../../shared/widgets/botoes.dart';
-import '../../../shared/widgets/scrollViewWithChildExpandable.dart';
+import '../../../shared/widgets/scroll_view_with_child_expandable.dart';
 import '../utils/ui_strings.dart';
 import '../widgets/avatar.dart';
 import 'perfil_controller.dart';
@@ -48,7 +48,7 @@ class PerfilPageState extends State<PerfilPage> {
       body: AppWillPopScope(
         child: Container(
           //padding: EdgeInsetsDirectional.only(bottom: MediaQuery.of(context).size.height * 0.2),
-          color: tema.colorScheme.primary.withOpacity(0.02),
+          color: tema.colorScheme.primary.withValues(alpha: 0.02),
           child: Column(
             children: [
               ///`Container` com a altura da barra de status.

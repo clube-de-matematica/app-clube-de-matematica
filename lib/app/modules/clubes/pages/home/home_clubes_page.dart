@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../shared/theme/appTheme.dart';
-import '../../../../shared/widgets/appBottomSheet.dart';
-import '../../../../shared/widgets/scaffoldWithDrawer.dart';
+import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/widgets/app_bottom_sheet.dart';
+import '../../../../shared/widgets/scaffold_with_drawer.dart';
 import '../../shared/models/clube.dart';
 import '../../shared/widgets/bottom_sheet_erro.dart';
 import '../../shared/widgets/form_codigo_clube.dart';

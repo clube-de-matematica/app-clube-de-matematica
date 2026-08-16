@@ -204,7 +204,7 @@ class AppBottomSheet extends StatelessWidget {
     // The paddingScaleFactor is used to adjust the padding of Dialog's
     // children.
     final double paddingScaleFactor =
-        _paddingScaleFactor(MediaQuery.textScalerOf(context).textScaleFactor);
+        _paddingScaleFactor(MediaQuery.textScalerOf(context).scale(1));
     final TextDirection? textDirection = Directionality.maybeOf(context);
 
     Widget? titleWidget;

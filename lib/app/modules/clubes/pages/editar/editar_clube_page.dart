@@ -1,9 +1,9 @@
-import 'package:clubedematematica/app/shared/widgets/appBottomSheet.dart';
+import 'package:clubedematematica/app/shared/widgets/app_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../modules/clubes/pages/editar/editar_clube_controller.dart';
-import '../../../../shared/widgets/bottomAppBar_cancelar_aplicar.dart';
+import '../../../../shared/widgets/bottom_app_bar_cancelar_aplicar.dart';
 import '../../shared/models/clube.dart';
 import '../../shared/utils/tema_clube.dart';
 import '../../shared/widgets/bottom_sheet_erro.dart';

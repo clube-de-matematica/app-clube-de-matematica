@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/appTheme.dart';
+import '../theme/app_theme.dart';
 
 /// Botão com a cor primária do tema.
 class BotaoPrimario extends FilledButton {

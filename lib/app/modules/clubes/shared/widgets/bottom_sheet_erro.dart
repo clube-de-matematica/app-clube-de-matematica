@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../shared/widgets/app_bottom_sheet.dart';
 
 /// Uma página inferior para exibir uma mensagem de erro quando o ingresso em um clube não for
 /// bem sucedido.

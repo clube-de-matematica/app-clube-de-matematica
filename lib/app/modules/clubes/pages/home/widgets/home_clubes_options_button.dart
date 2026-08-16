@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../shared/theme/appTheme.dart';
-import '../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/app_bottom_sheet.dart';
 import '../home_clubes_controller.dart';
 
 /// O botão para o menu de opções do clube.

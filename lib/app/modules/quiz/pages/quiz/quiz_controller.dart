@@ -9,7 +9,7 @@ import '../../../../shared/models/exibir_questao_com_filtro_controller.dart';
 import '../../../filtros/shared/models/filtros_model.dart';
 import '../../../perfil/models/userapp.dart';
 import '../../shared/models/alternativa_questao_model.dart';
-import '../../shared/models/opcoesQuestao.dart';
+import '../../shared/models/opcoes_questao.dart';
 import '../../shared/models/questao_model.dart';
 import '../../shared/models/resposta_questao.dart';
 import '../resultado/resultado_quiz_page.dart';

@@ -1,4 +1,4 @@
-library file_manager;
+library;
 
 import 'dart:io';
 

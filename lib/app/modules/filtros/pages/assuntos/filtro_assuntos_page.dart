@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../../shared/theme/appTheme.dart';
+import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/utils/ui_strings.dart';
 import '../../../quiz/shared/models/assunto_model.dart';
 import '../../shared/models/filtros_model.dart';
@@ -28,9 +28,9 @@ class FiltroAssuntosPage extends StatelessWidget {
 
   ThemeData get tema => AppTheme.instance.light;
 
-  Color get backgroundColor => tema.primaryColor.withOpacity(0.07);
+  Color get backgroundColor => tema.primaryColor.withValues(alpha: 0.07);
 
-  Color get textColor => Colors.black.withOpacity(0.8);
+  Color get textColor => Colors.black.withValues(alpha: 0.8);
 
   /// Exibe um [InputChip] para cada filtro selecionado.
   FiltrosSelecionados _construirCaixaFiltrosSelecionados() {

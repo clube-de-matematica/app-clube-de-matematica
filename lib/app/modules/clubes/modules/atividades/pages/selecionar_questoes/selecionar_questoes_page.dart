@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../../../../../modules/quiz/shared/models/questao_model.dart';
-import '../../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../../../shared/widgets/checkbox_popup_menu_item.dart';
 import '../../../../../../shared/widgets/questao_widget.dart';

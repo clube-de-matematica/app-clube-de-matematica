@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/appTheme.dart';
+import '../theme/app_theme.dart';
 
 /// O [TextFormField] padrão do aplicativo.
 class AppTextFormField extends TextFormField {

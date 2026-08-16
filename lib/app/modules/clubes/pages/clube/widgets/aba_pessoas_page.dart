@@ -75,7 +75,7 @@ class _CategoriaUsuariosClube extends Categoria {
                   title: _titulo(usuario, clube),
                   subtitle: _subtitulo(usuario, clube),
                   leading: CircleAvatar(
-                    backgroundColor: _tema.primaria.withOpacity(0.3),
+                    backgroundColor: _tema.primaria.withValues(alpha: 0.3),
                     child: Icon(
                       Icons.person,
                       color: _tema.enfaseSobreSuperficie,

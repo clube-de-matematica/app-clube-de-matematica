@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../../shared/theme/appTheme.dart';
-import '../../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../../../shared/theme/app_theme.dart';
+import '../../../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../../../shared/widgets/barra_inferior_anterior_proximo.dart';
 import '../../../../../../shared/widgets/questao_widget.dart';
 import '../../../../shared/utils/tema_clube.dart';

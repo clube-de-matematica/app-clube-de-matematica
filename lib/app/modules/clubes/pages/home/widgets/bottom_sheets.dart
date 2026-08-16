@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../../shared/widgets/botoes.dart';
 import '../../../shared/models/clube.dart';
 

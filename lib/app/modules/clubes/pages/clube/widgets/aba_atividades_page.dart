@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../shared/theme/appTheme.dart';
+import '../../../../../shared/theme/app_theme.dart';
 import '../../../modules/atividades/models/atividade.dart';
 import '../../../shared/utils/tema_clube.dart';
 import '../clube_controller.dart';
@@ -82,7 +82,7 @@ class _CategoriaAtividade extends Categoria {
                   ),
                   subtitle: Text(atividade.descricao ?? ''),
                   leading: CircleAvatar(
-                    backgroundColor: temaClube.primaria.withOpacity(0.3),
+                    backgroundColor: temaClube.primaria.withValues(alpha: 0.3),
                     child: Icon(
                       Icons.task_outlined,
                       color: temaClube.enfaseSobreSuperficie,

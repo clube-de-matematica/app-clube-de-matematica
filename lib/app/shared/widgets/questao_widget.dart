@@ -4,9 +4,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import '../../modules/quiz/shared/models/alternativa_questao_model.dart';
 import '../../modules/quiz/shared/models/imagem_questao_model.dart';
 import '../../modules/quiz/shared/models/questao_model.dart';
-import '../theme/appTheme.dart';
+import '../theme/app_theme.dart';
 import '../utils/strings_db.dart';
-import 'appShimmer.dart';
+import 'app_shimmer.dart';
 import 'katex_flutter.dart';
 
 /// Se [selecionavel] for `false`, [alterandoAlternativa] e [alternativaSelecionada]
@@ -211,8 +211,8 @@ class _Alternativas extends StatefulWidget {
 
 class _AlternativasState extends State<_Alternativas> {
   int? alternativaSelecionada;
-  late final corSelecionada = tema.colorScheme.primary.withOpacity(0.5);
-  late final corNaoSelecionada = tema.colorScheme.onSurface.withOpacity(0.07);
+  late final corSelecionada = tema.colorScheme.primary.withValues(alpha: 0.5);
+  late final corNaoSelecionada = tema.colorScheme.onSurface.withValues(alpha: 0.07);
 
   ThemeData get tema => Theme.of(context);
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../../../shared/theme/appTheme.dart';
+import '../../../../../shared/theme/app_theme.dart';
 import '../quiz_controller.dart';
 
 /// Cria uma barra contendo, à esquerda, um indicador de andamento na lista de questões,

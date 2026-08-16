@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../shared/theme/appTheme.dart';
-import '../../../shared/widgets/appBottomSheet.dart';
+import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/app_bottom_sheet.dart';
 import '../../filtros/shared/widgets/expansion_tile_personalizado.dart';
 import '../../quiz/shared/models/assunto_model.dart';
 import 'selecionar_assuntos_controller.dart';
@@ -18,9 +18,9 @@ class SelecionarAssuntosPage extends StatelessWidget {
 
   ThemeData get tema => AppTheme.instance.light;
 
-  Color get backgroundColor => tema.primaryColor.withOpacity(0.07);
+  Color get backgroundColor => tema.primaryColor.withValues(alpha: 0.07);
 
-  Color get textColor => Colors.black.withOpacity(0.8);
+  Color get textColor => Colors.black.withValues(alpha: 0.8);
 
   Widget _construirCorpo() {
     return Observer(

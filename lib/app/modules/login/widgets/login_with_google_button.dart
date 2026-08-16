@@ -23,7 +23,7 @@ class LoginWithGoogleButtonState extends State<LoginWithGoogleButton> {
   ThemeData get tema => Theme.of(context);
 
   ///Tom mais escuro. Usado no "bem cindo" e no texto do botão de login com o Google.
-  Color get textColor1 => tema.colorScheme.onSurface.withOpacity(0.6);
+  Color get textColor1 => tema.colorScheme.onSurface.withValues(alpha: 0.6);
 
   @override
   Widget build(BuildContext context) {

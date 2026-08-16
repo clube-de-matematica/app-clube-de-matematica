@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../../../shared/theme/appTheme.dart';
-import '../../../../../shared/widgets/appBottomSheet.dart';
+import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../perfil/models/userapp.dart';
 import '../../../shared/models/clube.dart';
 import '../../../shared/widgets/clube_options_button.dart';
