@@ -377,7 +377,7 @@ class SelecionarQuestoesFormField
           initialValue: questoes,
           builder: (field) {
             return Builder(builder: (context) {
-              final InputDecorationTheme inputTheme =
+              final InputDecorationThemeData inputTheme =
                   Theme.of(context).inputDecorationTheme;
               final numQuestoes = field.value?.length ?? 0;
               return InputDecorator(

@@ -253,7 +253,7 @@ class _AppInputDatePickerFormFieldState
   Widget build(BuildContext context) {
     final MaterialLocalizations localizations =
         MaterialLocalizations.of(context);
-    final InputDecorationTheme inputTheme =
+    final InputDecorationThemeData inputTheme =
         Theme.of(context).inputDecorationTheme;
     return TextFormField(
       decoration: InputDecoration(

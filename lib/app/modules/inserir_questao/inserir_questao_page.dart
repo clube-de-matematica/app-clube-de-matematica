@@ -88,7 +88,7 @@ class _InserirQuestaoPageState extends State<InserirQuestaoPage> {
                 BotaoPrimario(
                   label: 'Inserir',
                   onPressed: () => onPressedInsert(questao),
-                )
+                ),
               ],
             ),
           ).showModal(context);
@@ -112,34 +112,29 @@ class _InserirQuestaoPageState extends State<InserirQuestaoPage> {
             onChanged: (valor) => controle.ano = int.tryParse(valor),
           ),
           diviver(),
-          _NivelIndice(
-            controle: controle,
-            referencia: false,
+          _NivelIndice(controle: controle, referencia: false),
+          diviver(),
+          Observer(
+            builder: (_) {
+              return SwitchListTile(
+                contentPadding: const EdgeInsets.all(0),
+                title: const Text('Faz referência a outra questão?'),
+                value: controle.referencia,
+                onChanged: (valor) => controle.referencia = valor,
+              );
+            },
           ),
           diviver(),
-          Observer(builder: (_) {
-            return SwitchListTile(
-              contentPadding: const EdgeInsets.all(0),
-              title: const Text('Faz referência a outra questão?'),
-              value: controle.referencia,
-              onChanged: (valor) => controle.referencia = valor,
-            );
-          }),
+          Observer(
+            builder: (_) {
+              if (controle.referencia) {
+                return _NivelIndice(controle: controle, referencia: true);
+              }
+              return _AssuntosEnunciadoAlternativas(controle: controle);
+            },
+          ),
           diviver(),
-          Observer(builder: (_) {
-            if (controle.referencia) {
-              return _NivelIndice(
-                controle: controle,
-                referencia: true,
-              );
-            }
-            return _AssuntosEnunciadoAlternativas(controle: controle);
-          }),
-          diviver(),
-          BotaoPrimario(
-            label: 'Visualizar',
-            onPressed: onPressedView,
-          )
+          BotaoPrimario(label: 'Visualizar', onPressed: onPressedView),
         ],
       ),
     );
@@ -147,10 +142,7 @@ class _InserirQuestaoPageState extends State<InserirQuestaoPage> {
 }
 
 class _NivelIndice extends StatefulWidget {
-  const _NivelIndice({
-    required this.controle,
-    this.referencia = false,
-  });
+  const _NivelIndice({required this.controle, this.referencia = false});
 
   final InserirQuestaoController controle;
   final bool referencia;
@@ -162,9 +154,10 @@ class _NivelIndice extends StatefulWidget {
 class _NivelIndiceState extends State<_NivelIndice> {
   final controleIndice = TextEditingController();
   String? _textoIndice() {
-    final indice = widget.referencia
-        ? widget.controle.indiceReferencia
-        : widget.controle.indice;
+    final indice =
+        widget.referencia
+            ? widget.controle.indiceReferencia
+            : widget.controle.indice;
     return indice == null ? null : '$indice';
   }
 
@@ -186,37 +179,37 @@ class _NivelIndiceState extends State<_NivelIndice> {
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Text(widget.referencia ? 'Nível da referência:' : 'Nível:'),
         ),
-        Observer(builder: (_) {
-          return Row(
-            children: () {
+        Observer(
+          builder: (_) {
+            radioGroup() {
               final niveis = [1, 2, 3];
               if (widget.referencia) niveis.remove(widget.controle.nivel);
               return niveis.map((nivel) {
-                return Column(
-                  children: [
-                    Text('$nivel'),
-                    Radio<int>(
-                      value: nivel,
-                      groupValue: widget.referencia
+                return RadioGroup(
+                  groupValue:
+                      widget.referencia
                           ? widget.controle.nivelReferencia
                           : widget.controle.nivel,
-                      onChanged: (valor) {
-                        if (widget.referencia) {
-                          widget.controle.nivelReferencia = valor;
-                        } else {
-                          widget.controle.nivel = valor;
-                          if (widget.controle.nivelReferencia == valor) {
-                            widget.controle.nivelReferencia = null;
-                          }
-                        }
-                      },
-                    ),
-                  ],
+                  onChanged: (valor) {
+                    if (widget.referencia) {
+                      widget.controle.nivelReferencia = valor;
+                    } else {
+                      widget.controle.nivel = valor;
+                      if (widget.controle.nivelReferencia == valor) {
+                        widget.controle.nivelReferencia = null;
+                      }
+                    }
+                  },
+                  child: Column(
+                    children: [Text('$nivel'), Radio<int>(value: nivel)],
+                  ),
                 );
               }).toList();
-            }(),
-          );
-        }),
+            }
+
+            return Row(children: radioGroup());
+          },
+        ),
         diviver(),
         TextField(
           keyboardType: TextInputType.number,
@@ -226,9 +219,11 @@ class _NivelIndiceState extends State<_NivelIndice> {
             hintText: 'De 1 a 20',
             floatingLabelBehavior: FloatingLabelBehavior.auto,
           ),
-          onChanged: (valor) => widget.referencia
-              ? widget.controle.indiceReferencia = int.tryParse(valor)
-              : widget.controle.indice = int.tryParse(valor),
+          onChanged:
+              (valor) =>
+                  widget.referencia
+                      ? widget.controle.indiceReferencia = int.tryParse(valor)
+                      : widget.controle.indice = int.tryParse(valor),
         ),
       ],
     );
@@ -236,9 +231,7 @@ class _NivelIndiceState extends State<_NivelIndice> {
 }
 
 class _AssuntosEnunciadoAlternativas extends StatelessWidget {
-  const _AssuntosEnunciadoAlternativas({
-    required this.controle,
-  });
+  const _AssuntosEnunciadoAlternativas({required this.controle});
 
   final InserirQuestaoController controle;
 
@@ -260,20 +253,23 @@ class _AssuntosEnunciadoAlternativas extends StatelessWidget {
           child: Text('Gabarito:'),
         ),
         Row(
-          children: [0, 1, 2, 3, 4].map((sequencial) {
-            return Observer(builder: (_) {
-              return Column(
-                children: [
-                  Text('ABCDE'.substring(sequencial, sequencial + 1)),
-                  Radio<int>(
-                    value: sequencial,
-                    groupValue: controle.gabarito,
-                    onChanged: (valor) => controle.gabarito = valor,
-                  ),
-                ],
-              );
-            });
-          }).toList(),
+          children:
+              [0, 1, 2, 3, 4].map((sequencial) {
+                return Observer(
+                  builder: (_) {
+                    return RadioGroup(
+                      groupValue: controle.gabarito,
+                      onChanged: (valor) => controle.gabarito = valor,
+                      child: Column(
+                        children: [
+                          Text('ABCDE'.substring(sequencial, sequencial + 1)),
+                          Radio<int>(value: sequencial),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
         ),
       ],
     );
@@ -281,9 +277,7 @@ class _AssuntosEnunciadoAlternativas extends StatelessWidget {
 }
 
 class _Alternativas extends StatefulWidget {
-  const _Alternativas({
-    required this.controle,
-  });
+  const _Alternativas({required this.controle});
 
   final InserirQuestaoController controle;
 
@@ -323,15 +317,15 @@ class _AlternativasState extends State<_Alternativas> {
       }
 
       final valorTitulo = ValueNotifier<String?>(
-          widget.controle.alternativas[sequencial][keyConteudo]);
+        widget.controle.alternativas[sequencial][keyConteudo],
+      );
 
       titulo() {
         if (idTipo() != idImagem) {
           widget.controle.alternativas[sequencial][keyTipo] = idTexto;
-          final textControle = controlesTexto[sequencial] ??
-              TextEditingController(
-                text: valorTitulo.value,
-              );
+          final textControle =
+              controlesTexto[sequencial] ??
+              TextEditingController(text: valorTitulo.value);
           return TextField(
             controller: textControle,
             maxLines: null,
@@ -399,52 +393,51 @@ class _AlternativasState extends State<_Alternativas> {
 }
 
 class _Assuntos extends StatelessWidget {
-  const _Assuntos({
-    required this.controle,
-  });
+  const _Assuntos({required this.controle});
 
   final InserirQuestaoController controle;
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (context) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Assunto(s):'),
-          ...controle.assuntos.toList().map((e) {
-            return ListTile(
-              contentPadding: const EdgeInsets.all(.0),
-              title: Text(e.assunto.titulo),
-              trailing: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  controle.assuntos.remove(e);
-                },
-              ),
-            );
-          }),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              final arvore = await Navigator.of(context).push<ArvoreAssuntos>(
-                MaterialPageRoute(
-                    builder: (_) => SelecionarAssuntosPage(controle.assuntos)),
+    return Observer(
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Assunto(s):'),
+            ...controle.assuntos.toList().map((e) {
+              return ListTile(
+                contentPadding: const EdgeInsets.all(.0),
+                title: Text(e.assunto.titulo),
+                trailing: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    controle.assuntos.remove(e);
+                  },
+                ),
               );
-              if (arvore != null) controle.assuntos.add(arvore);
-            },
-          ),
-        ],
-      );
-    });
+            }),
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                final arvore = await Navigator.of(context).push<ArvoreAssuntos>(
+                  MaterialPageRoute(
+                    builder: (_) => SelecionarAssuntosPage(controle.assuntos),
+                  ),
+                );
+                if (arvore != null) controle.assuntos.add(arvore);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
 class _Enunciado extends StatefulWidget {
-  const _Enunciado({
-    required this.controle,
-  });
+  const _Enunciado({required this.controle});
 
   final InserirQuestaoController controle;
 
@@ -477,22 +470,23 @@ class _EnunciadoState extends State<_Enunciado> {
           onPressed: () async {
             final opcao = await showDialog<int>(
               context: context,
-              builder: (context) => SimpleDialog(
-                children: [
-                  SimpleDialogOption(
-                    child: const Text('Parágrafo'),
-                    onPressed: () => Navigator.of(context).pop(0),
+              builder:
+                  (context) => SimpleDialog(
+                    children: [
+                      SimpleDialogOption(
+                        child: const Text('Parágrafo'),
+                        onPressed: () => Navigator.of(context).pop(0),
+                      ),
+                      SimpleDialogOption(
+                        child: const Text('Imagem no parágrafo'),
+                        onPressed: () => Navigator.of(context).pop(1),
+                      ),
+                      SimpleDialogOption(
+                        child: const Text('Imagem destacada'),
+                        onPressed: () => Navigator.of(context).pop(2),
+                      ),
+                    ],
                   ),
-                  SimpleDialogOption(
-                    child: const Text('Imagem no parágrafo'),
-                    onPressed: () => Navigator.of(context).pop(1),
-                  ),
-                  SimpleDialogOption(
-                    child: const Text('Imagem destacada'),
-                    onPressed: () => Navigator.of(context).pop(2),
-                  ),
-                ],
-              ),
             );
 
             if (opcao == 0) {
