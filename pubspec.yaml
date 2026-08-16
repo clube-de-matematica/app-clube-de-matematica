@@ -30,7 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
-    sdk: flutter # Flutter version  3.29.3 on channel stable. Dart version 3.7.2.
+    sdk: flutter # Flutter version  3.32.8 on channel stable. Dart version 3.8.1.
   flutter_localizations:
     sdk: flutter
 
@@ -40,7 +40,7 @@ dependencies:
   firebase_core: ^3.13.0 #3.3.0 #2.32.0 #Recursos básicos
   google_sign_in: ^6.2.1 #6.1.4 #Login com uma conta Google
   firebase_crashlytics: ^4.3.5 #3.5.7 #Relatório de erros
-  flutter_math_fork: ^0.7.2 #0.6.3+1 #Renderização de equações matemáticas em puro Dart & Flutter.
+  flutter_math_fork: ^0.7.4 #0.7.2 #Renderização de equações matemáticas em puro Dart & Flutter.
   path: ^1.9.0 #1.8.2 #Fornece operações comuns para manipulação de caminhos: junção, divisão, normalização, etc.
   path_provider: ^2.1.1 #Um plugin Flutter para encontrar locais comumente usados ​​no sistema de arquivos. Suporta iOS, Android, Linux e MacOS. Nem todos os métodos são suportados em todas as plataformas.
   #transparent_image: ^2.0.0 #Uma imagem transparente simples. Representado como um Uint8List. Este pacote exporta uma constante: kTransparentImage.
