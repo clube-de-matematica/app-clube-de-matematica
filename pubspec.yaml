@@ -30,7 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
-    sdk: flutter # Flutter version  3.35.2 on channel stable. Dart version 3.9.0.
+    sdk: flutter # Flutter version  3.44.9 on channel stable. Dart version 3.12.2.
   flutter_localizations:
     sdk: flutter
 
